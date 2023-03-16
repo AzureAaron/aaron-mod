@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "id": "aaron-mod",
+  "version": "${version}",
+
+  "name": "Aaron's Mod",
+  "description": "Aaron's Mod is a collection of useful features for vanilla and Skyblock players!",
+  "authors": [
+    "AzureAaron"
+  ],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/aaron-mod",
+    "issues": "https://github.com/AzureAaron/aaron-mod/issues",
+    "sources": "https://github.com/AzureAaron/aaron-mod"
+  },
+
+  "license": "ARR",
+  "icon": "assets/aaron-mod/icon.png",
+
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "net.azureaaron.mod.Main"
+    ],
+    "modmenu": [
+      "net.azureaaron.mod.ModMenu"
+    ],
+    "preLaunch": [
+      "dev.cbyrne.betterinject.BetterInject::initialize",
+      "com.llamalad7.mixinextras.MixinExtrasBootstrap::init"
+    ]
+  },
+  "mixins": [
+    "aaron-mod.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.14.17",
+    "fabric-api": ">=0.76.0+1.19.4",
+    "minecraft": "~1.19.4",
+    "java": ">=17",
+    "yet-another-config-lib": ">=2.3.0"
+  },
+  "suggests": {
+    "modmenu": ">=6.1.0-rc.1"
+  },
+  "custom": {
+    "lithium:options": {
+      "mixin.math.sine_lut": false
+    }
+  }
+}

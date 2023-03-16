@@ -1,0 +1,41 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.azureaaron.mod.mixins",
+  "plugin": "net.azureaaron.mod.MixinPlugin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "ChatHudMixin",
+    "InGameHudMixin",
+    "ChatAccessor",
+    "KeyboardMixin",
+    "MinecraftClientMixin",
+    "ItemStackMixin",
+    "MouseMixin",
+    "DebugHudMixin",
+    "PlayerInventoryMixin",
+    "ClientPlayNetworkHandlerMixin",
+    "ParticleManagerMixin",
+    "FireworksSparkParticleMixin",
+    "ChestBlockEntityRendererMixin",
+    "AnvilScreenHandlerMixin",
+    "InGameOverlayRendererMixin",
+    "GenericContainerScreenMixin",
+    "MessageIndicatorMixin",
+    "GameRendererMixin",
+    "MathHelperMixin",
+    "SignBlockEntityRendererMixin",
+    "Vec3dMixin",
+    "Vec3iMixin",
+    "Vec2fMixin",
+    "ClientWorldMixin",
+    "EntityRendererMixin",
+    "TextRendererMixin",
+    "PotionItemMixin",
+    "MobSpawnerLogicMixin",
+    "MobSpawnerBlockEntityRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
