@@ -1,5 +1,5 @@
 # Aaron's Mod
-Aaron's mod is a collection of useful features for vanilla and Skyblock players alike!
+Aaron's Mod is a collection of useful features for vanilla and Skyblock players alike!
 
 ## Installation
 1. Install Fabric from [here](https://fabricmc.net/use/installer/) if you haven't already
@@ -9,7 +9,7 @@ Aaron's mod is a collection of useful features for vanilla and Skyblock players 
 Optionally, install [Mod Menu](https://modrinth.com/mod/modmenu) so that you can configure the mod!
 
 ## Features
-All of these can be toggled & customized inside of the configuration menu! To learn more about each feature, have a look at its correlating option in the configuration menu.
+All of these are client side and can be toggled & customized inside of the configuration menu! To learn more about each feature, have a look at its correlating option in the configuration menu.
 
 Vanilla:
 
@@ -30,7 +30,7 @@ Vanilla:
 * Infinite Hotbar Scrolling
 * Showing Item Groups Outside of Creative
 * Not Resetting Cursor Position Between Chest GUIs
-* Mac Only - Alternate FN+F3+N Keybind
+* Mac Only - Alternate FN+F3+N Keybind
 * Christmas Chests For the Whole Month of December
 
 * Particle Manager
@@ -76,7 +76,7 @@ Skyblock:
 
 * `/cata <player>` View a player's statistics related to the Catacombs.
 
-* `/essence <player>` See how much essence the a player has collected.
+* `/essence <player>` See how much essence a player has collected.
 
 * `/inventory <player>` Shows you a player's equipped armour and key items.
 
