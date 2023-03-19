@@ -21,7 +21,6 @@ public class ModScreen extends Screen {
 	private static final Text SOURCE_TEXT = Text.literal("Source");
     private static final Text REPORT_BUGS_TEXT = Text.translatable("menu.reportBugs");
 	private static final Text MODRINTH_TEXT = Text.literal("Modrinth");
-	private static final Text CURSEFORGE_TEXT = Text.literal("Curseforge");
 	private final Screen parent;
     private final ThreePartsLayoutWidget layout = new ThreePartsLayoutWidget(this);
 
@@ -40,7 +39,6 @@ public class ModScreen extends Screen {
 		adder.add(ButtonWidget.builder(SOURCE_TEXT, ConfirmLinkScreen.opening("https://github.com/AzureAaron/aaron-mod", this, true)).width(HALF_BUTTON_WIDTH).build());
 		adder.add(ButtonWidget.builder(REPORT_BUGS_TEXT, ConfirmLinkScreen.opening("https://github.com/AzureAaron/aaron-mod/issues", this, true)).width(HALF_BUTTON_WIDTH).build());
 		adder.add(ButtonWidget.builder(MODRINTH_TEXT, ConfirmLinkScreen.opening("https://modrinth.com/mod/aaron-mod", this, true)).width(HALF_BUTTON_WIDTH).build());
-		adder.add(ButtonWidget.builder(CURSEFORGE_TEXT, ConfirmLinkScreen.opening("https://www.curseforge.com/minecraft/mc-mods/aaron-mod", this, true)).width(HALF_BUTTON_WIDTH).build());
 		this.layout.addBody(ButtonWidget.builder(ScreenTexts.DONE, button -> this.close()).build());
 		this.layout.refreshPositions();
 		this.layout.forEachChild(this::addDrawableChild);
