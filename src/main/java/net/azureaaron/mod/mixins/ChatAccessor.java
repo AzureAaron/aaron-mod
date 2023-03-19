@@ -35,5 +35,5 @@ public interface ChatAccessor {
     int getMessageLineIndex(double chatLineX, double chatLineY);
         
     @Invoker("getMessageIndex")
-    int getMessageIndex(double chatLineX, double chatLineY);
+    int getMessageEndLineIndex(double chatLineX, double chatLineY);
 }

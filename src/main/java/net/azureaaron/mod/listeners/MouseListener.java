@@ -20,13 +20,48 @@ public class MouseListener {
 	private static final Text notFoundToastTitle = Text.literal("Not Found!");
 	private static final Text notFoundToastDescription = Text.literal("No message was hovered over!");
 	
+	private static int getMessageIndex(double chatLineX, double chatLineY) {
+		int lineIndex = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).getMessageLineIndex(chatLineX, chatLineY);
+		if(lineIndex == -1) return -1;
+		
+		List<ChatHudLine> messages = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).getMessages();
+		List<ChatHudLine.Visible> visibleMessages = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).getVisibleMessages();
+		int upperbound = 0; //Upper-bound value of range (position of start top of entry)
+		int lowerbound = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).getMessageEndLineIndex(chatLineX, chatLineY); //Lower-bound value of range (position of end of entry)
+		
+		for(int i = lowerbound + 1; i < visibleMessages.size(); i++) { //Iterate until we encounter the end of the next message
+			if(visibleMessages.get(i).endOfEntry()) {
+				upperbound = i - 1;
+				break;
+			}
+		}
+		
+		StringBuilder hoveredMessage = new StringBuilder();
+		
+		for(int i = upperbound; i >= lowerbound; i--) { //Iterate over the entries apart of this message and build the messages content
+			ChatHudLine.Visible currentEntry = visibleMessages.get(i);
+			currentEntry.content().accept((index, style, codePoint) -> {
+				hoveredMessage.append((char) codePoint);
+				return true;
+			});
+		}
+		
+		for(int i = 0; i < messages.size(); i++) { //Iterate over all stored messages
+			ChatHudLine currentMessage = messages.get(i);
+			String messageContent = Formatting.strip(currentMessage.content().getString()).replaceAll("\n", "");
+			if(messageContent.equals(hoveredMessage.toString())) return i;
+		}
+		
+		return -1;
+	}
+	
 	public static void listen() {
 		MouseEvent.EVENT.register((button, action, mods) -> {
 			//Button 0 = left click, Button 1 = right click, Button 2 = middle click & others are fancy mouse buttons
 			boolean isChatOpen = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).isChatFocused();
 			if(button == 2 && action == 1 && isChatOpen && Config.copyChatMessages) {
-				int mouseX = (int)(minecraftClient.mouse.getX() * (double)minecraftClient.getWindow().getScaledWidth() / (double)minecraftClient.getWindow().getWidth());
-				int mouseY = (int)(minecraftClient.mouse.getY() * (double)minecraftClient.getWindow().getScaledHeight() / (double)minecraftClient.getWindow().getHeight());
+				int mouseX = (int)(minecraftClient.mouse.getX() * minecraftClient.getWindow().getScaledWidth() / minecraftClient.getWindow().getWidth());
+				int mouseY = (int)(minecraftClient.mouse.getY() * minecraftClient.getWindow().getScaledHeight() / minecraftClient.getWindow().getHeight());
 				double chatLineX = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).toChatLineX(mouseX);
 				double chatLineY = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).toChatLineY(mouseY);
 								
@@ -39,7 +74,7 @@ public class MouseListener {
 						StringBuilder message = new StringBuilder();
 						
 						orderedText.accept((index, style, codePoint) -> {
-							message.append(Character.toString(codePoint));
+							message.append((char) codePoint);
 							return true;
 						});
 						
@@ -51,7 +86,7 @@ public class MouseListener {
 				}
 				
 				if(Config.copyChatMode == Config.CopyChatMode.ENTIRE_MESSAGE) {
-					int messageIndex = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).getMessageIndex(chatLineX, chatLineY);
+					int messageIndex = getMessageIndex(chatLineX, chatLineY);
 					List<ChatHudLine> messages = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).getMessages();
 					
 					if (messageIndex >= 0 && messageIndex < messages.size()) {

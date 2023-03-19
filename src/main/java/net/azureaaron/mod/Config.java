@@ -47,7 +47,7 @@ public class Config {
 			
 			JsonObject config = JsonParser.parseString(Files.readString(Main.CONFIG_PATH)).getAsJsonObject();
 			Class<?> cls = Class.forName("net.azureaaron.mod.Config");
-        	Field[] fields = cls.getDeclaredFields();
+			Field[] fields = cls.getDeclaredFields();
         	
         	for(int i = 0; i < fields.length; i++) {
         		Field currentField = fields[i];
