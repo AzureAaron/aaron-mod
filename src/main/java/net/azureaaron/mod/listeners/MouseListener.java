@@ -34,6 +34,7 @@ public class MouseListener {
 				upperbound = i - 1;
 				break;
 			}
+			if(i == visibleMessages.size() - 1) upperbound = i; //If another entry end wasn't found
 		}
 		
 		StringBuilder hoveredMessage = new StringBuilder();
@@ -48,8 +49,8 @@ public class MouseListener {
 		
 		for(int i = 0; i < messages.size(); i++) { //Iterate over all stored messages
 			ChatHudLine currentMessage = messages.get(i);
-			String messageContent = Formatting.strip(currentMessage.content().getString()).replaceAll("\n", "");
-			if(messageContent.equals(hoveredMessage.toString())) return i;
+			String messageContent = Formatting.strip(currentMessage.content().getString()).replaceAll("\n", "").replaceAll(" ", "");
+			if(messageContent.equals(hoveredMessage.toString().replaceAll(" ", ""))) return i;
 		}
 		
 		return -1;
