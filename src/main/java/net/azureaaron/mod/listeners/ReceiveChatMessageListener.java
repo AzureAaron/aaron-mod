@@ -40,6 +40,7 @@ public class ReceiveChatMessageListener {
 					Cache.lastTwoHundredSeventyScore = 0L;
 					Cache.lastThreeHundredScore = 0L;
 					Cache.inM7Phase5 = false;
+					Cache.currentScore = 0;
 				}
 
 				if(Config.dungeonScoreMessage && ((lowerForm.contains("skytils-sc >") && lowerForm.contains("270") && !lowerForm.contains("300")) || lowerForm.contains("270 score reached!")) && Cache.lastTwoHundredSeventyScore + 20000L < System.currentTimeMillis()) {

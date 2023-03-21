@@ -1,20 +1,13 @@
 package net.azureaaron.mod.mixins;
 
-import java.util.List;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-import dev.cbyrne.betterinject.annotations.Inject;
-import dev.cbyrne.betterinject.annotations.Local;
 import net.azureaaron.mod.Config;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.TextTransformer;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemGroups;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -69,10 +62,10 @@ public abstract class ItemStackMixin {
 		return text;
 	}
 	
-	@Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 0, remap = false, shift = At.Shift.AFTER))
+	/*@Inject(method = "getTooltip", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 0, remap = false, shift = At.Shift.AFTER))
 	private void aaronMod$showItemGroupsInSurvival(@Local(ordinal = 0) List<Text> tooltip) {
 		ItemStack stack = (ItemStack) ((Object) this);
-		MinecraftClient client = MinecraftClient.getInstance(); //This suffers from thread synchronization issues and I have no clue how to solve it :(
+		MinecraftClient client = MinecraftClient.getInstance();
 		//Categories only show in creative if the stack doesn't have any custom nbt (excluding the damage value if its 0) - maybe try to match this functionality better sometime down the road
 		if(client.player != null && !client.player.isCreative() && Config.showItemGroupsOutsideOfCreative && !this.hasCustomName() && !this.hasEnchantments() && !this.hasNbt()) {
 			int count = 1;
@@ -81,5 +74,5 @@ public abstract class ItemStackMixin {
 				tooltip.add(count++, group.getDisplayName().copy().formatted(Formatting.BLUE));
 			}
 		}
-	}
+	}*/
 }

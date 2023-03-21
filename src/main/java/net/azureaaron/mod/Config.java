@@ -372,8 +372,7 @@ public class Config {
 								.build())
 						.option(Option.createBuilder(boolean.class)
 								.name(Text.literal("Show Item Groups Outside of Creative"))
-								.tooltip(Text.literal("When enabled, item groups are appended to the lore of an item even when you're outside of creative.")
-										.append(Text.literal("\n\nNote: This feature suffers from thread related desync, so it may not work all the time! This will be fixed in the future.")))
+								.tooltip(Text.literal("When enabled, item groups are appended to the lore of an item even when you're outside of creative."))
 								.binding(false,
 										() -> showItemGroupsOutsideOfCreative,
 										newValue -> showItemGroupsOutsideOfCreative = newValue)
