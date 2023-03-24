@@ -35,8 +35,8 @@ implements RecipeBookProvider {
 	}
 	
 	private boolean shouldShowOperatorTab(PlayerEntity player) {
-        return player.isCreativeLevelTwoOp() && MinecraftClient.getInstance().options.getOperatorItemsTab().getValue().booleanValue();
-    }
+		return player.isCreativeLevelTwoOp() && MinecraftClient.getInstance().options.getOperatorItemsTab().getValue().booleanValue();
+	}
 	
 	@Override
 	public List<Text> getTooltipFromItem(ItemStack stack) {

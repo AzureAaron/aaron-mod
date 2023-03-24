@@ -79,7 +79,7 @@ public class CroesusCommand {
 				e.printStackTrace();
 			}
 			return null;
-		}).thenAccept(body -> printCroseus(body, source, session.getUuid(), session.getUsername()));
+		}).thenAccept(body -> printCroesus(body, source, session.getUuid(), session.getUsername()));
 		
 		return Command.SINGLE_SUCCESS;
 	}
@@ -124,7 +124,7 @@ public class CroesusCommand {
 				e.printStackTrace();
 			}
 			return null;
-		}).thenAccept(body -> printCroseus(body, source, uuid, name));
+		}).thenAccept(body -> printCroesus(body, source, uuid, name));
 		
 		return Command.SINGLE_SUCCESS;
 	}
@@ -132,7 +132,7 @@ public class CroesusCommand {
 	private record ChestData(String runId, String type, JsonArray rewards) {}
 	private record RunData(long timestamp, int floor, String dungeon, List<ChestData> chests) {}
 	
-	private static void printCroseus(JsonObject body, FabricClientCommandSource source, String uuid, String name) {
+	private static void printCroesus(JsonObject body, FabricClientCommandSource source, String uuid, String name) {
 		CroesusCommand.name = null;
 		CroesusCommand.uuid = null;
 		shouldSkip = false;
@@ -142,7 +142,7 @@ public class CroesusCommand {
 		JsonObject profile = body.get("members").getAsJsonObject().get(uuid).getAsJsonObject();
 		String endSpaces = "        " + name.replaceAll("[A-z0-9_]", "  ") + "        ";
 		
-		//The croseus api is a complete NIGHTMARE! you have been warned!!
+		//The Croesus api is a complete NIGHTMARE! you have been warned!!
 		
 		if(profile.get("dungeons").getAsJsonObject().get("treasures").getAsJsonObject().get("runs") == null) {
 			source.sendError(NO_TREASURES);
