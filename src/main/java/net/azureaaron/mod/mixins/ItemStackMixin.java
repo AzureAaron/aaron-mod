@@ -1,5 +1,8 @@
 package net.azureaaron.mod.mixins;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -7,8 +10,10 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import net.azureaaron.mod.Config;
 import net.azureaaron.mod.util.Functions;
+import net.azureaaron.mod.util.Skyblock;
 import net.azureaaron.mod.util.TextTransformer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -75,4 +80,34 @@ public abstract class ItemStackMixin {
 			}
 		}
 	}*/
+	
+	@ModifyVariable(method = "getTooltip", at = @At("STORE"), ordinal = 1)
+	private MutableText aaronMod$rainbowifyMaxSkyblockEnchantments(MutableText text) {
+		if(Config.rainbowifyMaxSkyblockEnchantments && Functions.isOnHypixel() && Functions.isInSkyblock()) {
+			MutableText newText = Text.empty().styled(style -> style.withItalic(false));
+			List<Text> textComponents = text.getSiblings();
+			int totalLength = 0;
+			int positionLeftOffAt = 0;
+			
+			//Exclude non-max enchants from counting towards total length since it looks weird & incomplete otherwise
+			for(int i = 0; i < textComponents.size(); i++) {
+				String componentString = textComponents.get(i).getString();
+				if(Arrays.stream(Skyblock.MAX_LEVEL_SKYBLOCK_ENCHANTMENTS).anyMatch(componentString::contains)) totalLength += componentString.length();
+			}
+						
+			for(int i = 0; i < textComponents.size(); i++) {
+				Text currentComponent = textComponents.get(i);
+				String componentString = currentComponent.getString();
+				if(Arrays.stream(Skyblock.MAX_LEVEL_SKYBLOCK_ENCHANTMENTS).anyMatch(componentString::contains)) {
+					newText.append(TextTransformer.progressivelyRainbowify(componentString, totalLength, positionLeftOffAt));
+					positionLeftOffAt += componentString.length();
+					continue;
+				}
+				
+				newText.append(currentComponent);
+			}
+			return newText;
+		}
+		return text;
+	}
 }

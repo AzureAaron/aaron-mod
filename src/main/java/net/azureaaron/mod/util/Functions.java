@@ -14,6 +14,7 @@ import com.sun.management.HotSpotDiagnosticMXBean;
 
 import it.unimi.dsi.fastutil.objects.Object2LongLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
+import net.minecraft.client.MinecraftClient;
 
 /**
  * Class containing various utility/helper functions.
@@ -125,5 +126,10 @@ public class Functions {
 	
 	public static int hsbToRGB(float hue, float saturation, float value) {
 		return Color.getHSBColor(hue, saturation, value).getRGB();
+	}
+	
+	@SuppressWarnings("resource")
+	public static boolean isInSkyblock() {
+		return MinecraftClient.getInstance().player.getScoreboard().containsObjective("SBScoreboard");
 	}
 }

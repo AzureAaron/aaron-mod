@@ -133,6 +133,7 @@ public class Config {
 	@ConfigEntry public static boolean shinyPotions = false;
 	@ConfigEntry(isEnum = true) public static CopyChatMode copyChatMode = CopyChatMode.ENTIRE_MESSAGE;
 	@ConfigEntry public static boolean hideSpinningMobInMobSpawner = false;
+	@ConfigEntry public static boolean rainbowifyMaxSkyblockEnchantments = false;
 	
 	private static void save() {
 		try {
@@ -425,6 +426,15 @@ public class Config {
 								newValue -> dayAverage = newValue)
 						.controller(opt -> new CyclingListController<DayAverage>(opt, List.of(DayAverage.values())))
 						.build())
+				.option(Option.createBuilder(boolean.class)
+						.name(Text.literal("Rainbowify Max Enchants"))
+						.tooltip(Text.literal("Changes the text colour of maximum level enchantments in an item's lore to be a pretty rainbow gradient!\n\nExample: ")
+								.append(TextTransformer.rainbowify("Critical VII, Vampirism VI")))
+						.binding(false,
+								() -> rainbowifyMaxSkyblockEnchantments,
+								newValue -> rainbowifyMaxSkyblockEnchantments = newValue)
+						.controller(BooleanController::new)
+						.build())
 				.group(OptionGroup.createBuilder()
 						.name(Text.literal("Dungeons"))
 						.option(Option.createBuilder(boolean.class)
@@ -469,7 +479,7 @@ public class Config {
 								.build())
 						.option(Option.createBuilder(boolean.class)
 								.name(Text.literal("Old Master Star Display"))
-								.tooltip(Text.literal("Reverts the display of master stars in item names to how it used to be.\n")
+								.tooltip(Text.literal("Reverts the display of master stars in item names to how it used to be.\n\n")
 										.append(TextTransformer.fromLegacy("Example: §dDark Claymore §6✪§6✪§6✪§6✪§6✪§c➎ §r→ §dDark Claymore §c✪✪✪✪✪")))
 								.binding(false,
 										() -> oldMasterStars,

@@ -151,7 +151,7 @@ public class TextTransformer {
 	 * @param replacementMatches How many matches should be made for {@code replaceableText}
 	 * 
 	 * @return The text object will all transformations applied
-	 * @see #stylize
+	 * @see #stylize(Text, Style, String, Style, int)
 	 */
 	public static Text stylizeAndReplace(@NotNull Text text, @NotNull Style baseStyle, @NotNull String textToStylize, @NotNull Style newStyle, 
 			@NotNull String[] replaceableText, @NotNull String replacementRegex, @NotNull String replacementText, int replacementMatches) {
@@ -236,6 +236,28 @@ public class TextTransformer {
 		newText.append(Text.literal(String.valueOf(text.charAt(0))).styled(style -> style.withColor(Functions.hsbToRGB(Math.nextDown(1.0f), 1.0f, 1.0f))));
 		for(int i = 1; i < textLength; ++i) {
 			float i2 = i; //For some reason Java doesn't like the direct reference
+			newText.append(Text.literal(String.valueOf(text.charAt(i))).styled(style -> style.withColor(Functions.hsbToRGB(i2 / next, 1.0f, 1.0f))));
+		}
+		return newText;
+	}
+	
+	/**
+	 * Allows for rainbowifying text while preserving the gradient throughout different positions (e.g. multiple components).
+	 * 
+	 * @param text The text object to be formatted into a partial rainbow gradient
+	 * @param totalTextLength The length of all the text that will be formatted across different positions
+	 * @param positionLeftOffAt The position left off at after formatting
+	 * @return A text object containing the {@ text} formatted into a partial rainbow gradient.
+	 * 
+	 * @see #rainbowify(String)
+	 */
+	public static Text progressivelyRainbowify(@NotNull String text, int totalTextLength, int positionLeftOffAt) {
+		MutableText newText = Text.empty();
+		float next = Math.nextDown(1.0f) * totalTextLength;
+		
+		newText.append(Text.literal(String.valueOf(text.charAt(0))).styled(style -> style.withColor(Functions.hsbToRGB(positionLeftOffAt / next, 1.0f, 1.0f))));
+		for(int i = 1; i < text.length(); ++i) {
+			float i2 = i + positionLeftOffAt; //For some reason Java doesn't like the direct reference
 			newText.append(Text.literal(String.valueOf(text.charAt(i))).styled(style -> style.withColor(Functions.hsbToRGB(i2 / next, 1.0f, 1.0f))));
 		}
 		return newText;
