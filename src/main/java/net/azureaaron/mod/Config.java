@@ -134,6 +134,7 @@ public class Config {
 	@ConfigEntry(isEnum = true) public static CopyChatMode copyChatMode = CopyChatMode.ENTIRE_MESSAGE;
 	@ConfigEntry public static boolean hideSpinningMobInMobSpawner = false;
 	@ConfigEntry public static boolean rainbowifyMaxSkyblockEnchantments = false;
+	@ConfigEntry public static boolean glowingM7Dragons = false;
 	
 	private static void save() {
 		try {
@@ -510,6 +511,14 @@ public class Config {
 								.binding(false,
 										() -> masterModeF7DragonBoxes,
 										newValue -> masterModeF7DragonBoxes = newValue)
+								.controller(BooleanController::new)
+								.build())
+						.option(Option.createBuilder(boolean.class)
+								.name(Text.literal("Glowing M7 Dragons"))
+								.tooltip(Text.literal("Adds a glowing outline to the dragons in M7, making them easier to spot!"))
+								.binding(false,
+										() -> glowingM7Dragons,
+										newValue -> glowingM7Dragons = newValue)
 								.controller(BooleanController::new)
 								.build())
 						.build())

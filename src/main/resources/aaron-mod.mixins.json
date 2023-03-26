@@ -34,7 +34,8 @@
     "PotionItemMixin",
     "MobSpawnerLogicMixin",
     "MobSpawnerBlockEntityRendererMixin",
-    "InventoryScreenMixin"
+    "InventoryScreenMixin",
+    "EnderDragonEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
