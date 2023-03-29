@@ -3,10 +3,6 @@ plugins {
 	id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
-archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
@@ -47,11 +43,15 @@ dependencies {
 	
 	implementation "com.github.LlamaLad7:MixinExtras:${mixinextras_version}"
 	include "com.github.LlamaLad7:MixinExtras:${mixinextras_version}"
-    annotationProcessor "com.github.LlamaLad7:MixinExtras:${mixinextras_version}"
+	annotationProcessor "com.github.LlamaLad7:MixinExtras:${mixinextras_version}"
 	
 	implementation "com.github.cbyrneee:BetterInject:${betterinject_version}"
 	include "com.github.cbyrneee:BetterInject:${betterinject_version}"
-    annotationProcessor "com.github.cbyrneee:BetterInject:${betterinject_version}"
+	annotationProcessor "com.github.cbyrneee:BetterInject:${betterinject_version}"
+}
+
+base {
+	archivesBaseName = project.archives_base_name
 }
 
 processResources {
@@ -72,11 +72,14 @@ java {
 	// if it is present.
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
+	
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
 }
 
 jar {
 	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}"}
+		rename { "${it}_${base.archivesName.get()}"}
 	}
 }
 

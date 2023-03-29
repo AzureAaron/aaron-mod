@@ -19,11 +19,11 @@ public class Skyblock {
 			"Sharpness VII", "Smite VII", "Smoldering V", "Snipe IV", "Syphon V", "Tabasco III", "Thunderbolt VI", "Thunderlord VII",
 			"Titan Killer VII", "Triple-Strike V", "Vampirism VI", "Venomous VI", "Vicious V", /* Fishing */ "Angler VI", "Blessing VI",
 			"Caster VI", "Charm V", "Corruption V", "Expertise X", "Frail VI", "Luck of the Sea VI", "Lure VI", "Magnet VI", "Piscary VI",
-			"Spiked Hook VI", /* Farming Specific */ "Cultivating X", "Dedicated IV", "Delicate V", "Green Thumb V", "Harvesting VI", "Replenish I", "Sunder VI",
-			"Turbo-Cacti V", "Turbo-Cane V", "Turbo-Carrot V", "Turbo-Cocoa V", "Turbo-Melon V", "Turbo-Mushrooms V", "Turbo-Potato V", 
-			"Turbo-Pumpkin V", "Turbo-Warts V", "Turbo-Wheat V", /* Axes/Pickaxes */ "Compact X", "Efficiency VI", "Efficiency X",
-			"Fortune IV", "Pristine V", "Silk Touch I", "Smelting Touch I", /* Equipment */ "Cayenne V", /* Misc/Multipurpose */ 
-			"Experience V", "Rainbow I" };
+			"Spiked Hook VI", /* Farming Specific */ "Cultivating X", "Dedicated IV", "Delicate V", "Green Thumb V", "Harvesting VI", 
+			"Replenish I", "Sunder VI", "Turbo-Cacti V", "Turbo-Cane V", "Turbo-Carrot V", "Turbo-Cocoa V", "Turbo-Melon V", 
+			"Turbo-Mushrooms V", "Turbo-Potato V", "Turbo-Pumpkin V", "Turbo-Warts V", "Turbo-Wheat V", 
+			/* Axes/Pickaxes */ "Compact X", "Efficiency VI", "Efficiency X", "Fortune IV", "Pristine V", "Silk Touch I", "Smelting Touch I", 
+			/* Equipment */ "Cayenne V", /* Misc/Multipurpose */ "Experience V", "Rainbow I" };
 	
 	public static JsonObject getSelectedProfile2(String profiles) {
 		if(profiles == null) return null;
