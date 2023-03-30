@@ -83,7 +83,7 @@ public abstract class ItemStackMixin {
 	
 	@ModifyVariable(method = "getTooltip", at = @At("STORE"), ordinal = 1)
 	private MutableText aaronMod$rainbowifyMaxSkyblockEnchantments(MutableText text) {
-		if(Config.rainbowifyMaxSkyblockEnchantments && Functions.isOnHypixel() && Functions.isInSkyblock()) {
+		if(Config.rainbowifyMaxSkyblockEnchantments && Functions.isOnHypixel() && Functions.isInSkyblock() && Arrays.stream(Skyblock.MAX_LEVEL_SKYBLOCK_ENCHANTMENTS).anyMatch(text.getString()::contains)) {
 			MutableText newText = Text.empty().styled(style -> style.withItalic(false));
 			List<Text> textComponents = text.getSiblings();
 			int totalLength = 0;
