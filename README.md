@@ -37,6 +37,7 @@ Vanilla:
 
 Skyblock:
 
+* Rainbowify Max Level Enchantments
 * Party Finder Stats Lookup
 * Colourful Party Finder Notes
 * Dungeon Score Messages
@@ -44,6 +45,7 @@ Skyblock:
 * *Fancy* Diamond Heads
 * Hiding Item Tooltips in Click On Time
 * M7 Dragon Statue Bounding Boxes
+* Glowing M7 Dragons
 
 Continue reading below for a list of commands the mod offers!
 
