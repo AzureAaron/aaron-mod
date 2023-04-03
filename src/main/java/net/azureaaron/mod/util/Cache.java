@@ -27,8 +27,9 @@ public class Cache {
 	public static long lastTwoHundredSeventyScore = 0L;
 	public static long lastThreeHundredScore = 0L;	
 	public static boolean inM7Phase5 = false;
+	public static boolean inDungeonBossRoom = false;
 	public static int currentScore = 0;
-	
+		
 	public static String currentServerAddress = "";
 	public static String lastServerAddress = "";
 	

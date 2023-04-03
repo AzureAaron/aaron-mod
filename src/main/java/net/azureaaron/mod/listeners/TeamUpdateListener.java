@@ -21,14 +21,11 @@ public class TeamUpdateListener {
 	 * 
 	 * We also don't need to check if Mayor Paul's Marauder perk is active since the +10 score is automatically apart of {@code scoreboardScore}.
 	 * 
-	 * @implNote When calculating the score, we make the assumption that if the score message has been sent then the 
-	 * player is inside the boss room.
-	 * 
 	 * @param scoreboardScore The dungeon score from the scoreboard
 	 * @return The current dungeon score
 	 */
 	private static int fastApproxScore(int scoreboardScore) {
-		return Cache.lastThreeHundredScore == 0L ? scoreboardScore + 28 : scoreboardScore;
+		return Cache.inDungeonBossRoom ? scoreboardScore : scoreboardScore + 28;
 	}
 
 	public static void listen() {
@@ -37,7 +34,7 @@ public class TeamUpdateListener {
 				SerializableTeam team = packet.getTeam().get();
 				String display = (team.getPrefix().getString() + team.getSuffix().getString()).trim();
 				Matcher scoreMatcher = SCORE_PATTERN.matcher(display);
-				
+								
 				if(scoreMatcher.matches() && Config.dungeonScoreMessage) {
 					int score = fastApproxScore(Integer.parseInt(scoreMatcher.group("score")));
 					Cache.currentScore = score;

@@ -21,7 +21,7 @@ public class ReceiveChatMessageListener {
 	public static void listen() {
 		ReceiveChatMessageEvent.EVENT.register((message, stringForm) -> {	
 			if(Functions.isOnHypixel()) {
-				String lowerForm = stringForm.toLowerCase();
+				//String lowerForm = stringForm.toLowerCase();
 				String strippedForm = Formatting.strip(stringForm);
 				Matcher partyMatcher = PARTY_PATTERN.matcher(stringForm);
 				Matcher playerBlessingMatcher = PLAYER_BLESSING_PATTERN.matcher(stringForm);
@@ -40,10 +40,16 @@ public class ReceiveChatMessageListener {
 					Cache.lastTwoHundredSeventyScore = 0L;
 					Cache.lastThreeHundredScore = 0L;
 					Cache.inM7Phase5 = false;
+					Cache.inDungeonBossRoom = false;
 					Cache.currentScore = 0;
 				}
+				
+				if(stringForm.equals("[BOSS] Bonzo: Gratz for making it this far, but I'm basically unbeatable.") || stringForm.equals("[BOSS] Scarf: This is where the journey ends for you, Adventurers.")
+						|| stringForm.equals("[BOSS] The Professor: I was burdened with terrible news recently...") || stringForm.equals("[BOSS] Thorn: Welcome Adventurers! I am Thorn, the Spirit! And host of the Vegan Trials!")
+						|| stringForm.equals("[BOSS] Livid: Welcome, you arrive right on time. I am Livid, the Master of Shadows.") || stringForm.equals("[BOSS] Sadan: So you made it all the way here... Now you wish to defy me? Sadan?!")
+						|| stringForm.equals("[BOSS] Maxor: WELL WELL WELL LOOK WHO'S HERE!")) Cache.inDungeonBossRoom = true;
 
-				if(Config.dungeonScoreMessage && ((lowerForm.contains("skytils-sc >") && lowerForm.contains("270") && !lowerForm.contains("300")) || lowerForm.contains("270 score reached!")) && Cache.lastTwoHundredSeventyScore + 20000L < System.currentTimeMillis()) {
+				/*if(Config.dungeonScoreMessage && ((lowerForm.contains("skytils-sc >") && lowerForm.contains("270") && !lowerForm.contains("300")) || lowerForm.contains("270 score reached!")) && Cache.lastTwoHundredSeventyScore + 20000L < System.currentTimeMillis()) {
 					Cache.lastTwoHundredSeventyScore = System.currentTimeMillis();
 					String S270 = Config.twoHundredSeventyScore.trim();
 					minecraftClient.player.networkHandler.sendChatMessage("270 Score → " + S270.substring(0, Math.min(S270.length(), 244)));
@@ -53,7 +59,7 @@ public class ReceiveChatMessageListener {
 					Cache.lastThreeHundredScore = System.currentTimeMillis();
 					String S300 = Config.threeHundredScore.trim();
 					minecraftClient.player.networkHandler.sendChatMessage("300 Score → " + S300.substring(0, Math.min(S300.length(), 244)));
-				}
+				}*/
 				
 				if(stringForm.equals("[BOSS] Wither King: You.. again?") || stringForm.equals("[BOSS] Wither King: Ohhh?")) Cache.inM7Phase5 = true;
 			}
