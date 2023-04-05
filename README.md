@@ -56,7 +56,7 @@ Vanilla:
 
 * `/aaronsmod` Opens a screen with various links for the mod.
 
-* `/copychat <excerpt>` Copies the most recent message containing the except (case sensitive).
+* `/copychat <excerpt>` Copies the most recent message containing the excerpt (case sensitive).
 
 * `/defaultskin <player>` Tells you the given player's default skin & model.
 
