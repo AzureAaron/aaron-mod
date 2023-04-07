@@ -31,7 +31,7 @@ public abstract class ItemStackMixin {
 	
 	@ModifyVariable(method = "getName", at = @At("STORE"))
 	private Text aaronMod$customItemName(Text text) {
-		if(Functions.isOnHypixel() && (Config.oldMasterStars || Config.fancyDiamondHeads)) {
+		if(Functions.isOnHypixel() && Functions.isInSkyblock() && (Config.oldMasterStars || Config.fancyDiamondHeads)) {
 			String itemName = text.getString();
 			
 			if(Config.fancyDiamondHeads && itemName.contains("Diamond") && itemName.contains("Head")) {

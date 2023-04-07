@@ -25,6 +25,6 @@ public abstract class AnvilScreenHandlerMixin extends ScreenHandler {
 	//This also works in vanilla somehow....
 	@Inject(method = "setNewItemName", at = @At(value = "FIELD", target = "Lnet/minecraft/screen/AnvilScreenHandler;newItemName:Ljava/lang/String;", opcode = Opcodes.PUTFIELD, ordinal = 0, shift = At.Shift.AFTER))
 	private void aaronMod$anvilColourCodeNaming() {
-		if(Config.colourfulPartyFinderNotes && Functions.isOnHypixel() && MinecraftClient.getInstance().currentScreen.getTitle().getString().equals("Enter your note!")) this.newItemName = this.newItemName.replace('&', '§');
+		if(Config.colourfulPartyFinderNotes && Functions.isOnHypixel() && Functions.isInSkyblock() && MinecraftClient.getInstance().currentScreen.getTitle().getString().equals("Enter your note!")) this.newItemName = this.newItemName.replace('&', '§');
 	}
 }
