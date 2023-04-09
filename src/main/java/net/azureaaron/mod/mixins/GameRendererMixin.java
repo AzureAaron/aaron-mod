@@ -7,8 +7,10 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
+import dev.cbyrne.betterinject.annotations.Inject;
 import net.azureaaron.mod.Config;
 import net.azureaaron.mod.Keybinds;
+import net.azureaaron.mod.util.TimeUniform;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
 
@@ -34,5 +36,10 @@ public class GameRendererMixin {
 			}
 		}
 		return fov;
+	}
+	
+	@Inject(method = "render", at = @At("HEAD"))
+	private void aaronMod$timeUniform() {
+		TimeUniform.updateShaderTime();
 	}
 }

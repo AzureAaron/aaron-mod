@@ -86,25 +86,40 @@ public abstract class ItemStackMixin {
 		if(Config.rainbowifyMaxSkyblockEnchantments && Functions.isOnHypixel() && Functions.isInSkyblock() && Arrays.stream(Skyblock.MAX_LEVEL_SKYBLOCK_ENCHANTMENTS).anyMatch(text.getString()::contains)) {
 			MutableText newText = Text.empty().styled(style -> style.withItalic(false));
 			List<Text> textComponents = text.getSiblings();
-			int totalLength = 0;
-			int positionLeftOffAt = 0;
 			
-			//Exclude non-max enchants from counting towards total length since it looks weird & incomplete otherwise
-			for(int i = 0; i < textComponents.size(); i++) {
-				String componentString = textComponents.get(i).getString();
-				if(Arrays.stream(Skyblock.MAX_LEVEL_SKYBLOCK_ENCHANTMENTS).anyMatch(componentString::contains)) totalLength += componentString.length();
-			}
-						
-			for(int i = 0; i < textComponents.size(); i++) {
-				Text currentComponent = textComponents.get(i);
-				String componentString = currentComponent.getString();
-				if(Arrays.stream(Skyblock.MAX_LEVEL_SKYBLOCK_ENCHANTMENTS).anyMatch(componentString::contains)) {
-					newText.append(TextTransformer.progressivelyRainbowify(componentString, totalLength, positionLeftOffAt));
-					positionLeftOffAt += componentString.length();
-					continue;
-				}
+			if(Config.rainbowifyMode == Config.RainbowifyMode.STATIC) {
+				int totalLength = 0;
+				int positionLeftOffAt = 0;
 				
-				newText.append(currentComponent);
+				//Exclude non-max enchants from counting towards total length since it looks weird & incomplete otherwise
+				for(int i = 0; i < textComponents.size(); i++) {
+					String componentString = textComponents.get(i).getString();
+					if(Arrays.stream(Skyblock.MAX_LEVEL_SKYBLOCK_ENCHANTMENTS).anyMatch(componentString::contains)) totalLength += componentString.length();
+				}
+							
+				for(int i = 0; i < textComponents.size(); i++) {
+					Text currentComponent = textComponents.get(i);
+					String componentString = currentComponent.getString();
+					if(Arrays.stream(Skyblock.MAX_LEVEL_SKYBLOCK_ENCHANTMENTS).anyMatch(componentString::contains)) {
+						newText.append(TextTransformer.progressivelyRainbowify(componentString, totalLength, positionLeftOffAt));
+						positionLeftOffAt += componentString.length();
+						continue;
+					}
+					
+					newText.append(currentComponent);
+				}
+			}
+			
+			if(Config.rainbowifyMode == Config.RainbowifyMode.DYNAMIC) {
+				for(int i = 0; i < textComponents.size(); i ++) {
+					String componentString = textComponents.get(i).getString();
+					if(Arrays.stream(Skyblock.MAX_LEVEL_SKYBLOCK_ENCHANTMENTS).anyMatch(componentString::contains)) {
+						newText.append(Text.literal(componentString).styled(style -> style.withColor(0xAA5500)));
+						continue;
+					}
+					
+					newText.append(textComponents.get(i));
+				}
 			}
 			return newText;
 		}

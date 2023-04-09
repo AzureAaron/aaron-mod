@@ -103,6 +103,11 @@ public class Config {
 		SINGLE_LINE;
 	}
 	
+	public enum RainbowifyMode {
+		STATIC,
+		DYNAMIC;
+	}
+	
 	@ConfigEntry public static String key = "";
 	@ConfigEntry public static boolean shadowedScoreboard = true;
 	@ConfigEntry public static boolean dungeonFinderPersonStats = true;
@@ -135,6 +140,7 @@ public class Config {
 	@ConfigEntry public static boolean hideSpinningMobInMobSpawner = false;
 	@ConfigEntry public static boolean rainbowifyMaxSkyblockEnchantments = false;
 	@ConfigEntry public static boolean glowingM7Dragons = false;
+	@ConfigEntry(isEnum = true) public static RainbowifyMode rainbowifyMode = RainbowifyMode.DYNAMIC;
 	
 	private static void save() {
 		try {
@@ -429,12 +435,23 @@ public class Config {
 						.build())
 				.option(Option.createBuilder(boolean.class)
 						.name(Text.literal("Rainbowify Max Enchants"))
-						.tooltip(Text.literal("Changes the text colour of maximum level enchantments in an item's lore to be a pretty rainbow gradient!\n\nExample: ")
-								.append(TextTransformer.rainbowify("Critical VII, Vampirism VI")))
+						.tooltip(Text.literal("Changes the text colour of maximum level enchantments in an item's lore to be a pretty rainbow gradient!\n\nCheck out of the 'Rainbowify Mode' option to see some examples!"))
 						.binding(false,
 								() -> rainbowifyMaxSkyblockEnchantments,
 								newValue -> rainbowifyMaxSkyblockEnchantments = newValue)
 						.controller(BooleanController::new)
+						.build())
+				.option(Option.createBuilder(RainbowifyMode.class)
+						.name(Text.literal("Rainbowify Mode"))
+						.tooltip(Text.literal("Changes how the rainbow gradient will look:\n")
+								.append(Text.literal("\nStatic: "))
+								.append(TextTransformer.rainbowify("Critical VII, Vampirism VI")) //H.H.
+								.append(Text.literal("\nDynamic: "))
+								.append(Text.literal("Critical VII, Vampirism VI").styled(style -> style.withColor(0xAA5500)))) //H.H.
+						.binding(RainbowifyMode.DYNAMIC,
+								() -> rainbowifyMode,
+								newValue -> rainbowifyMode = newValue)
+						.controller(opt -> new CyclingListController<RainbowifyMode>(opt, List.of(RainbowifyMode.values())))
 						.build())
 				.group(OptionGroup.createBuilder()
 						.name(Text.literal("Dungeons"))

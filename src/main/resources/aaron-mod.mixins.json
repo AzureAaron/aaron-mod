@@ -35,7 +35,9 @@
     "MobSpawnerLogicMixin",
     "MobSpawnerBlockEntityRendererMixin",
     "InventoryScreenMixin",
-    "EnderDragonEntityMixin"
+    "EnderDragonEntityMixin",
+    "ShaderProgramMixin",
+    "VertexBufferMixin"
   ],
   "injectors": {
     "defaultRequire": 1
