@@ -37,7 +37,7 @@ Vanilla:
 
 Skyblock:
 
-* Rainbowify Max Level Enchantments
+* Rainbowify Max Level Enchantments (with two different modes)
 * Party Finder Stats Lookup
 * Colourful Party Finder Notes
 * Dungeon Score Messages
