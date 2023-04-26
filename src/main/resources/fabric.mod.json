@@ -35,14 +35,14 @@
   ],
 
   "depends": {
-    "fabricloader": ">=0.14.17",
-    "fabric-api": ">=0.76.0+1.19.4",
+    "fabricloader": ">=0.14.19",
+    "fabric-api": ">=0.79.0+1.19.4",
     "minecraft": "~1.19.4",
     "java": ">=17",
-    "yet-another-config-lib": ">=2.4.0"
+    "yet-another-config-lib": ">=2.5.0+1.19.4"
   },
   "suggests": {
-    "modmenu": ">=6.1.0-rc.1"
+    "modmenu": ">=6.2.1"
   },
   "custom": {
     "lithium:options": {
