@@ -42,11 +42,8 @@
     "yet-another-config-lib": ">=2.5.0+1.19.4"
   },
   "suggests": {
-    "modmenu": ">=6.2.1"
+    "modmenu": ">=6.2.2"
   },
   "custom": {
-    "lithium:options": {
-      "mixin.math.sine_lut": false
-    }
   }
 }
