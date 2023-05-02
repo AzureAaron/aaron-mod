@@ -108,6 +108,11 @@ public class Config {
 		DYNAMIC;
 	}
 	
+	public enum MouseButton {
+		RIGHT,
+		MIDDLE;
+	}
+	
 	@ConfigEntry public static String key = "";
 	@ConfigEntry public static boolean shadowedScoreboard = true;
 	@ConfigEntry public static boolean dungeonFinderPersonStats = true;
@@ -141,6 +146,7 @@ public class Config {
 	@ConfigEntry public static boolean rainbowifyMaxSkyblockEnchantments = false;
 	@ConfigEntry public static boolean glowingM7Dragons = false;
 	@ConfigEntry(isEnum = true) public static RainbowifyMode rainbowifyMode = RainbowifyMode.DYNAMIC;
+	@ConfigEntry(isEnum = true) public static MouseButton copyChatMouseButton = MouseButton.MIDDLE;
 	
 	private static void save() {
 		try {
@@ -345,11 +351,19 @@ public class Config {
 								.build())
 						.option(Option.createBuilder(boolean.class)
 								.name(Text.literal("Copy Chat Messages"))
-								.tooltip(Text.literal("Allows you to copy a chat message by middle clicking on it!"))
+								.tooltip(Text.literal("Allows you to copy a chat message by middle/right clicking on it!"))
 								.binding(true,
 										() -> copyChatMessages,
 										newValue -> copyChatMessages = newValue)
 								.controller(BooleanController::new)
+								.build())
+						.option(Option.createBuilder(MouseButton.class)
+								.name(Text.literal("Copy Chat Mouse Button"))
+								.tooltip(Text.literal("Change the mouse button you use when copying chat! You can choose between middle click and right click!"))
+								.binding(MouseButton.MIDDLE,
+										() -> copyChatMouseButton,
+										newValue -> copyChatMouseButton = newValue)
+								.controller(opt -> new CyclingListController<MouseButton>(opt, List.of(MouseButton.values()), entry -> Text.literal(Functions.titleCase(entry.name()) + " Button")))
 								.build())
 						.option(Option.createBuilder(CopyChatMode.class)
 								.name(Text.literal("Copy Chat Mode"))

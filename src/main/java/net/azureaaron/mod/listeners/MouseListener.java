@@ -59,8 +59,9 @@ public class MouseListener {
 	public static void listen() {
 		MouseEvent.EVENT.register((button, action, mods) -> {
 			//Button 0 = left click, Button 1 = right click, Button 2 = middle click & others are fancy mouse buttons
+			int configuredButton = Config.copyChatMouseButton == Config.MouseButton.MIDDLE ? 2 : 1;
 			boolean isChatOpen = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).isChatFocused();
-			if(button == 2 && action == 1 && isChatOpen && Config.copyChatMessages) {
+			if(button == configuredButton && action == 1 && isChatOpen && Config.copyChatMessages) {
 				int mouseX = (int)(minecraftClient.mouse.getX() * minecraftClient.getWindow().getScaledWidth() / minecraftClient.getWindow().getWidth());
 				int mouseY = (int)(minecraftClient.mouse.getY() * minecraftClient.getWindow().getScaledHeight() / minecraftClient.getWindow().getHeight());
 				double chatLineX = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).toChatLineX(mouseX);
