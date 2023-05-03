@@ -33,8 +33,11 @@ import net.azureaaron.mod.util.Skyblock;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.util.Session;
 import net.minecraft.command.CommandSource;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.HoverEvent.Action;
+import net.minecraft.text.HoverEvent.ItemStackContent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -50,7 +53,7 @@ public class CroesusCommand {
 	private static final String[] RARE_REWARDS = {/*M7*/ "dark_claymore", "necron_handle", "wither_shield_scroll",
 			"implosion_scroll", "shadow_warp_scroll", "fifth_master_star", "necron_dye", "thunderlord_7", "master_skull_tier_5",
 			/*M6*/ "giants_sword", "fourth_master_star", /*M5*/ "shadow_fury", "shadow_assassin_chestplate", "third_master_star", 
-			/*M4*/ "spirit_wing", "item_spirit_bow", "second_master_star", /*All Floors*/ "recombobulator_3000"};
+			/*M4*/ "spirit_wing", "item_spirit_bow", "second_master_star", /*M3*/ "first_master_star", /*All Floors*/ "recombobulator_3000"};
 	
 	private static final Text NO_TREASURES = Text.literal("This player doesn't have any dungeon treasures to claim!").styled(style -> style.withColor(Formatting.RED));
 	
@@ -206,7 +209,14 @@ public class CroesusCommand {
 		}
 		
 		String rewardsString = rewards.toString();
-		boolean rareRewardAwaits = Arrays.stream(RARE_REWARDS).anyMatch(rewardsString::contains);
+		boolean rareLootAwaits = Arrays.stream(RARE_REWARDS).anyMatch(rewardsString::contains);
+		String[] rareLoot = Arrays.stream(RARE_REWARDS).filter(e -> rewards.contains(e)).toArray(String[]::new);
+		
+		ItemStack bundle = Items.BUNDLE.getDefaultStack().setCustomName(Text.literal("✦ Rare Loot Preview ✦").styled(style -> style.withItalic(false).withColor(colourProfile.infoColour)));
+		
+		for(int i = 0; i < rareLoot.length; i++) {
+			Functions.addToBundle(bundle, Skyblock.RARE_REWARD_ITEMS.get(rareLoot[i]));
+		}
 				
 		source.sendFeedback(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
 				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))
@@ -215,7 +225,8 @@ public class CroesusCommand {
 				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true)))));
 		
 		source.sendFeedback(Text.literal("Unclaimed Chests » " + runs.size()).styled(style -> style.withColor(colourProfile.infoColour)));
-		source.sendFeedback(Text.literal("Rare Reward Inside » " + ((rareRewardAwaits) ? "✓" : "✗")).styled(style -> style.withColor(colourProfile.infoColour)));
+		source.sendFeedback(Text.literal("Rare Loot Awaits » " + ((rareLootAwaits) ? "✓" : "✗"))
+				.styled(style -> style.withColor(colourProfile.infoColour).withHoverEvent(new HoverEvent(Action.SHOW_ITEM, new ItemStackContent(bundle)))));
 		source.sendFeedback(Text.literal(""));
 		
 		int count = 0;

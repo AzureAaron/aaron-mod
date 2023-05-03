@@ -37,7 +37,8 @@
     "InventoryScreenMixin",
     "EnderDragonEntityMixin",
     "ShaderProgramMixin",
-    "VertexBufferMixin"
+    "VertexBufferMixin",
+    "BundleAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

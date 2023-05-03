@@ -8,13 +8,19 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import com.sun.management.HotSpotDiagnosticMXBean;
 
 import it.unimi.dsi.fastutil.objects.Object2LongLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
+import net.azureaaron.mod.mixins.BundleAccessor;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
 
 /**
  * Class containing various utility/helper functions.
@@ -43,6 +49,9 @@ public class Functions {
     
     /** Date Format Example: Tue 15 March 2023 11:11 EST */
     public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("E d MMMM yyyy HH:mm zz").withZone(ZoneId.systemDefault());
+    
+    /** Used in {@link #addToBundle(ItemStack, ItemStack)}*/
+    public static final String BUNDLE_ITEMS_NBT_KEY = "Items";
 
     static {
         TIMES.put("year", TimeUnit.DAYS.toMillis(365));
@@ -131,5 +140,44 @@ public class Functions {
 	@SuppressWarnings("resource")
 	public static boolean isInSkyblock() {
 		return MinecraftClient.getInstance().player.getScoreboard().containsObjective("SBScoreboard");
+	}
+	
+	/**
+	 * Re-implementation of BundleItem#addToBundle which ignores the bundle's capacity limit<br><br>
+	 * Currently used for displaying a small inventory in chat by utilizing the bundle preview in the item's lore!
+	 * 
+	 * @param bundle The bundle to add the item to
+	 * @param stack The item stack to add into the bundle
+	 * @return An int representing the amount of space consumed?
+	 */
+	public static int addToBundle(ItemStack bundle, ItemStack stack) {
+		if(stack.isEmpty() || !stack.getItem().canBeNested()) return 0;
+		
+		NbtCompound nbtCompound = bundle.getOrCreateNbt();
+		if(!nbtCompound.contains(BUNDLE_ITEMS_NBT_KEY)) nbtCompound.put(BUNDLE_ITEMS_NBT_KEY, new NbtList());
+		
+		int i = BundleAccessor.getBundleOccupancy(bundle);
+		int j = BundleAccessor.getItemOccupancy(stack);
+		int k = Math.min(stack.getCount(), (64 - i) / j);
+		
+		NbtList nbtList = nbtCompound.getList(BUNDLE_ITEMS_NBT_KEY, NbtElement.COMPOUND_TYPE);
+		Optional<NbtCompound> optional = BundleAccessor.canMergeStack(stack, nbtList);
+		
+		if(optional.isPresent()) {
+			NbtCompound nbtCompound2 = optional.get();
+			ItemStack itemStack = ItemStack.fromNbt(nbtCompound2);
+			itemStack.increment(k);
+			itemStack.writeNbt(nbtCompound2);
+			nbtList.remove(nbtCompound2);
+			nbtList.add(0, nbtCompound2);
+		} else {
+			ItemStack itemStack2 = stack.copy();
+			itemStack2.setCount(k);
+			NbtCompound nbtCompound3 = new NbtCompound();
+			itemStack2.writeNbt(nbtCompound3);
+			nbtList.add(0, nbtCompound3);
+        }
+		
+		return k;
 	}
 }

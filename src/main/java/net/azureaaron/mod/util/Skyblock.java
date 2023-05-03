@@ -1,11 +1,18 @@
 package net.azureaaron.mod.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import net.azureaaron.mod.commands.NetworthCommand;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.StringNbtReader;
 
 public class Skyblock {
 	public static final String[] MAX_LEVEL_SKYBLOCK_ENCHANTMENTS = {/* Armour */ "Aqua Affinity I", "Big Brain V", "Blast Protection VII", 
@@ -24,6 +31,67 @@ public class Skyblock {
 			"Turbo-Mushrooms V", "Turbo-Potato V", "Turbo-Pumpkin V", "Turbo-Warts V", "Turbo-Wheat V", 
 			/* Axes/Pickaxes */ "Compact X", "Efficiency VI", "Efficiency X", "Fortune IV", "Pristine V", "Silk Touch I", "Smelting Touch I", 
 			/* Equipment */ "Cayenne V", /* Misc/Multipurpose */ "Experience V", "Rainbow I" };
+	
+	public static final Map<String, ItemStack> RARE_REWARD_ITEMS = new HashMap<>();
+	
+	static {
+		//Multipurpose things
+		ItemStack enchantedBook = Items.ENCHANTED_BOOK.getDefaultStack();
+		enchantedBook.addEnchantment(Enchantments.PROTECTION, 1);
+		
+		//Heads
+		ItemStack fifthStar = null;
+		ItemStack fifthMasterSkull = null;
+		ItemStack fourthStar = null;
+		ItemStack saChestplate = null;
+		ItemStack thirdStar = null;
+		ItemStack spiritWing = null;
+		ItemStack secondStar = null;
+		ItemStack firstStar = null;
+		ItemStack recombobulator = null;
+		
+		try {
+			fifthStar = ItemStack.fromNbt(StringNbtReader.parse("{id:\"minecraft:player_head\",Count:1,tag:{SkullOwner:{Id:[I;1904417095,756174249,-1302927470,1407004198],Properties:{textures:[{Value:\"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzFjODA0MjUyN2Y4MWM4ZTI5M2UyODEwMTEzNDg5ZjQzOTRjYzZlZmUxNWQxYWZhYzQzMTU3MWM3M2I2MmRjNCJ9fX0=\"}]}}}}"));
+			fifthMasterSkull = ItemStack.fromNbt(StringNbtReader.parse("{id:\"minecraft:player_head\",Count:1,tag:{SkullOwner:{Id:[I;-1613868903,-527154034,-1445577520,748807544],Properties:{textures:[{Value:\"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTEwZjlmMTA4NWQ0MDcxNDFlYjc3NjE3YTRhYmRhYWEwOGQ4YWYzM2I5NjAyMDBmZThjMTI2YzFkMTQ0NTY4MiJ9fX0=\"}]}}}}"));
+			fourthStar = ItemStack.fromNbt(StringNbtReader.parse("{id:\"minecraft:player_head\",Count:1,tag:{SkullOwner:{Id:[I;-91962356,985286078,-1601144504,1140606810],Properties:{textures:[{Value:\"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDM3YTE1OTY4N2JlMzY4NzdkNGUzYjA1ZjYxYmI1OThkODMzMWM3OTEwOGFjYzNjMWFmODBmMjI1Mzg5MmJiMiJ9fX0=\"}]}}}}"));
+			saChestplate = ItemStack.fromNbt(StringNbtReader.parse("{id:\"minecraft:leather_chestplate\",Count:1,tag:{display:{color:0}}}"));
+			thirdStar = ItemStack.fromNbt(StringNbtReader.parse("{id:\"minecraft:player_head\",Count:1,tag:{SkullOwner:{Id:[I;-1095679644,-806403158,-1833969157,2104192293],Properties:{textures:[{Value:\"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDcxYjk1NGU4OWFlZDE1NmY5MGZhZmNlNmRjNzc4OGFjNzZiNjQ2NmNlY2NhM2E0ZjRlYzFlNDYzZWI5MTRhMSJ9fX0=\"}]}}}}"));
+			spiritWing = ItemStack.fromNbt(StringNbtReader.parse("{id:\"minecraft:player_head\",Count:1,tag:{SkullOwner:{Id:[I;2122603902,193414073,-1522636624,168522212],Properties:{textures:[{Value:\"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTI5YWQ3NmMyNDU5OTExYzJiYmFjZGNkMGE3YjgyZTA4MzU1NjdlM2U1MTM0YjA1YTZmNWFmNjY5ZGQ4OGI4MyJ9fX0=\"}]}}}}"));
+			secondStar = ItemStack.fromNbt(StringNbtReader.parse("{id:\"minecraft:player_head\",Count:1,tag:{SkullOwner:{Id:[I;1070490748,815350713,-1408694809,-1514690304],Properties:{textures:[{Value:\"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWQ5OTEzYTY2MWMzOGY1ZjcwMGI4MDc5OGE4YzQ4NWQzMzJkNzgzNDViNzY3MWQwYTI0OGE4NGIyMDk5YmY0ZSJ9fX0=\"}]}}}}"));
+			firstStar = ItemStack.fromNbt(StringNbtReader.parse("{id:\"minecraft:player_head\",Count:1,tag:{SkullOwner:{Id:[I;1889180270,718883230,-1870722231,1189924325],Properties:{textures:[{Value:\"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjEzNjcyNDc0NWM4YzlhYmM3NWNkZjIyMDVmMmNkMWQzM2U2YmZlZmE0MTVmOTk1YmU3NjkyMjkxMjE2OWVjOSJ9fX0=\"}]}}}}"));
+			recombobulator = ItemStack.fromNbt(StringNbtReader.parse("{id:\"minecraft:player_head\",Count:1,tag:{SkullOwner:{Id:[I;1092254528,74860659,-1787555806,-1796476432],Properties:{textures:[{Value:\"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTdjY2QzNmRjOGY3MmFkY2IxZjhjOGU2MWVlODJjZDk2ZWFkMTQwY2YyYTE2YTEzNjZiZTliNWE4ZTNjYzNmYyJ9fX0=\"}]}}}}"));
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+		
+		//Specific stuff
+		
+		RARE_REWARD_ITEMS.put("dark_claymore", Items.STONE_SWORD.getDefaultStack());
+		
+		ItemStack necronHandle = Items.STICK.getDefaultStack();
+		necronHandle.addEnchantment(Enchantments.PROTECTION, 1);
+		RARE_REWARD_ITEMS.put("necron_handle", necronHandle);
+		
+		ItemStack scroll = Items.WRITABLE_BOOK.getDefaultStack();
+		scroll.addEnchantment(Enchantments.PROTECTION, 1);
+		RARE_REWARD_ITEMS.put("wither_shield_scroll", scroll);
+		RARE_REWARD_ITEMS.put("implosion_scroll", scroll);
+		RARE_REWARD_ITEMS.put("shadow_warp_scroll", scroll);
+		RARE_REWARD_ITEMS.put("fifth_master_star", fifthStar);
+		RARE_REWARD_ITEMS.put("necron_dye", Items.ORANGE_DYE.getDefaultStack());
+		RARE_REWARD_ITEMS.put("thunderlord_7", enchantedBook);
+		RARE_REWARD_ITEMS.put("master_skull_tier_5", fifthMasterSkull);
+		RARE_REWARD_ITEMS.put("giants_sword", Items.IRON_SWORD.getDefaultStack());
+		RARE_REWARD_ITEMS.put("fourth_master_star", fourthStar);
+		RARE_REWARD_ITEMS.put("shadow_fury", Items.DIAMOND_SWORD.getDefaultStack());
+		RARE_REWARD_ITEMS.put("shadow_assassin_chestplate", saChestplate);
+		RARE_REWARD_ITEMS.put("third_master_star", thirdStar);
+		RARE_REWARD_ITEMS.put("spirit_wing", spiritWing);
+		RARE_REWARD_ITEMS.put("item_spirit_bow", Items.BOW.getDefaultStack());
+		RARE_REWARD_ITEMS.put("second_master_star", secondStar);
+		RARE_REWARD_ITEMS.put("first_master_star", firstStar);
+		RARE_REWARD_ITEMS.put("recombobulator_3000", recombobulator);
+	}
 	
 	public static JsonObject getSelectedProfile2(String profiles) {
 		if(profiles == null) return null;
