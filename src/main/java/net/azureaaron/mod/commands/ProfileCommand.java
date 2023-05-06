@@ -147,7 +147,7 @@ public class ProfileCommand {
 		int foragingLevel = Levelling.getSkillLevel((profile.get("experience_skill_foraging") != null) ? profile.get("experience_skill_foraging").getAsLong() : 0, "FORAGING", 0);
 		int miningLevel = Levelling.getSkillLevel((profile.get("experience_skill_mining") != null) ? profile.get("experience_skill_mining").getAsLong() : 0, "MINING", 0);
 		int runecraftingLevel = Levelling.getSkillLevel((profile.get("experience_skill_runecrafting") != null) ? profile.get("experience_skill_runecrafting").getAsLong() : 0, "RUNECRAFTING", 0);
-		int socialLevel = Levelling.getSkillLevel((profile.get("experience_skill_social2") != null) ? profile.get("experience_skill_social2").getAsLong() : 0, "SOCIAL", 0);
+		int socialLevel = Levelling.getSkillLevel(Skyblock.calculateProfileSocialXp(body), "SOCIAL", 0);
 		int tamingLevel = Levelling.getSkillLevel((profile.get("experience_skill_taming") != null) ? profile.get("experience_skill_taming").getAsLong() : 0, "TAMING", 0);
 		float skillAverage = (float) (alchemyLevel + carpentryLevel + combatLevel + enchantingLevel + farmingLevel + fishingLevel + foragingLevel + miningLevel + tamingLevel) / 9;
 		
@@ -191,7 +191,7 @@ public class ProfileCommand {
 				.append(Text.literal("Api Disabled!")));
 		if(skillsEnabled) source.sendFeedback(Text.literal("(Cosmetic Skills)").styled(style -> style.withColor(colourProfile.hoverColour).withItalic(true)
 				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Runecrafting » " + String.valueOf(runecraftingLevel) + "\n").styled(style1 -> style1.withColor(colourProfile.infoColour).withItalic(false))
-						.append("Social* » " + String.valueOf(socialLevel))))));
+						.append("Social » " + String.valueOf(socialLevel))))));
 		if(!skillsEnabled) source.sendFeedback(Text.literal("(Cosmetic Skills)").styled(style -> style.withColor(colourProfile.hoverColour).withItalic(true)
 				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Api Disabled!").styled(style1 -> style1.withColor(colourProfile.infoColour).withItalic(false))))));
 		

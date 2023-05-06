@@ -145,4 +145,14 @@ public class Skyblock {
 		if(score < 200) return "F";
 		return "UNKNOWN";
 	}
+	
+	public static int calculateProfileSocialXp(JsonObject profile) {
+		int socialXp = 0;
+		for(String uuid : profile.get("members").getAsJsonObject().keySet()) {
+			JsonObject member = profile.get("members").getAsJsonObject().get(uuid).getAsJsonObject();
+			if(member.get("experience_skill_social2") != null) socialXp += member.get("experience_skill_social2").getAsInt();
+		}
+		
+		return socialXp;
+	}
 }
