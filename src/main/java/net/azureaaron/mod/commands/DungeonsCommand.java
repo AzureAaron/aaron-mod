@@ -166,7 +166,7 @@ public class DungeonsCommand {
 		long catacombsXp = profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("experience").getAsLong();
 		int catacombsLevel = Levelling.getDungeonLevel(catacombsXp);
 		int secrets = (playerJson.get("player").getAsJsonObject().get("achievements").getAsJsonObject().get("skyblock_treasure_hunter") != null) ? playerJson.get("player").getAsJsonObject().get("achievements").getAsJsonObject().get("skyblock_treasure_hunter").getAsInt() : 0;
-		String selectedClass = (profile.get("dungeons").getAsJsonObject().get("selected_dungeon_class") != null) ? profile.get("dungeons").getAsJsonObject().get("selected_dungeon_class").getAsString() : null;
+		String selectedClass = (profile.get("dungeons").getAsJsonObject().get("selected_dungeon_class") != null) ? profile.get("dungeons").getAsJsonObject().get("selected_dungeon_class").getAsString() : "None"; //The fallback value used to be null which was a great choice until it threw a NPE!
 		
 		int healerColour = ("healer".equals(selectedClass)) ? colourProfile.highlightColour : colourProfile.infoColour;
 		int mageColour = ("mage".equals(selectedClass)) ? colourProfile.highlightColour : colourProfile.infoColour;
@@ -175,8 +175,8 @@ public class DungeonsCommand {
 		int tankColour = ("tank".equals(selectedClass)) ? colourProfile.highlightColour : colourProfile.infoColour;
 		
 		JsonElement dailyRuns = profile.get("dungeons").getAsJsonObject().get("daily_runs");
-		JsonElement completedDailyRuns = profile.get("dungeons").getAsJsonObject().get("daily_runs").getAsJsonObject().get("completed_runs_count");
-		boolean onDailies = (dailyRuns != null && dailyRuns.getAsJsonObject().get("current_day_stamp").getAsLong() == Instant.EPOCH.until(Instant.now(), ChronoUnit.DAYS) && completedDailyRuns.getAsInt() < 5) ? true : false;
+		JsonElement completedDailyRuns = (dailyRuns != null) ? dailyRuns.getAsJsonObject().get("completed_runs_count") : null;
+		boolean onDailies = (dailyRuns != null && completedDailyRuns != null && dailyRuns.getAsJsonObject().get("current_day_stamp").getAsLong() == Instant.EPOCH.until(Instant.now(), ChronoUnit.DAYS) && completedDailyRuns.getAsInt() < 5) ? true : false;
 		String dailiesLeft = (onDailies) ? " (" + (5 - completedDailyRuns.getAsInt()) + ")" : "";
 		
 		int entrances = (profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("0") != null) ? profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("0").getAsInt() : 0;
