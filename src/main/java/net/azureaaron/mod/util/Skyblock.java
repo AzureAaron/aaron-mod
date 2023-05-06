@@ -32,7 +32,7 @@ public class Skyblock {
 			/* Axes/Pickaxes */ "Compact X", "Efficiency VI", "Efficiency X", "Fortune IV", "Pristine V", "Silk Touch I", "Smelting Touch I", 
 			/* Equipment */ "Cayenne V", /* Misc/Multipurpose */ "Experience V", "Rainbow I" };
 	
-	public static final Map<String, ItemStack> RARE_REWARD_ITEMS = new HashMap<>();
+	public static final Map<String, ItemStack> RARE_LOOT_ITEMS = new HashMap<>();
 	
 	static {
 		//Multipurpose things
@@ -66,31 +66,31 @@ public class Skyblock {
 		
 		//Specific stuff
 		
-		RARE_REWARD_ITEMS.put("dark_claymore", Items.STONE_SWORD.getDefaultStack());
+		RARE_LOOT_ITEMS.put("dark_claymore", Items.STONE_SWORD.getDefaultStack());
 		
 		ItemStack necronHandle = Items.STICK.getDefaultStack();
 		necronHandle.addEnchantment(Enchantments.PROTECTION, 1);
-		RARE_REWARD_ITEMS.put("necron_handle", necronHandle);
+		RARE_LOOT_ITEMS.put("necron_handle", necronHandle);
 		
 		ItemStack scroll = Items.WRITABLE_BOOK.getDefaultStack();
 		scroll.addEnchantment(Enchantments.PROTECTION, 1);
-		RARE_REWARD_ITEMS.put("wither_shield_scroll", scroll);
-		RARE_REWARD_ITEMS.put("implosion_scroll", scroll);
-		RARE_REWARD_ITEMS.put("shadow_warp_scroll", scroll);
-		RARE_REWARD_ITEMS.put("fifth_master_star", fifthStar);
-		RARE_REWARD_ITEMS.put("necron_dye", Items.ORANGE_DYE.getDefaultStack());
-		RARE_REWARD_ITEMS.put("thunderlord_7", enchantedBook);
-		RARE_REWARD_ITEMS.put("master_skull_tier_5", fifthMasterSkull);
-		RARE_REWARD_ITEMS.put("giants_sword", Items.IRON_SWORD.getDefaultStack());
-		RARE_REWARD_ITEMS.put("fourth_master_star", fourthStar);
-		RARE_REWARD_ITEMS.put("shadow_fury", Items.DIAMOND_SWORD.getDefaultStack());
-		RARE_REWARD_ITEMS.put("shadow_assassin_chestplate", saChestplate);
-		RARE_REWARD_ITEMS.put("third_master_star", thirdStar);
-		RARE_REWARD_ITEMS.put("spirit_wing", spiritWing);
-		RARE_REWARD_ITEMS.put("item_spirit_bow", Items.BOW.getDefaultStack());
-		RARE_REWARD_ITEMS.put("second_master_star", secondStar);
-		RARE_REWARD_ITEMS.put("first_master_star", firstStar);
-		RARE_REWARD_ITEMS.put("recombobulator_3000", recombobulator);
+		RARE_LOOT_ITEMS.put("wither_shield_scroll", scroll);
+		RARE_LOOT_ITEMS.put("implosion_scroll", scroll);
+		RARE_LOOT_ITEMS.put("shadow_warp_scroll", scroll);
+		RARE_LOOT_ITEMS.put("fifth_master_star", fifthStar);
+		RARE_LOOT_ITEMS.put("necron_dye", Items.ORANGE_DYE.getDefaultStack());
+		RARE_LOOT_ITEMS.put("thunderlord_7", enchantedBook);
+		RARE_LOOT_ITEMS.put("master_skull_tier_5", fifthMasterSkull);
+		RARE_LOOT_ITEMS.put("giants_sword", Items.IRON_SWORD.getDefaultStack());
+		RARE_LOOT_ITEMS.put("fourth_master_star", fourthStar);
+		RARE_LOOT_ITEMS.put("shadow_fury", Items.DIAMOND_SWORD.getDefaultStack());
+		RARE_LOOT_ITEMS.put("shadow_assassin_chestplate", saChestplate);
+		RARE_LOOT_ITEMS.put("third_master_star", thirdStar);
+		RARE_LOOT_ITEMS.put("spirit_wing", spiritWing);
+		RARE_LOOT_ITEMS.put("item_spirit_bow", Items.BOW.getDefaultStack());
+		RARE_LOOT_ITEMS.put("second_master_star", secondStar);
+		RARE_LOOT_ITEMS.put("first_master_star", firstStar);
+		RARE_LOOT_ITEMS.put("recombobulator_3000", recombobulator);
 	}
 	
 	public static JsonObject getSelectedProfile2(String profiles) {

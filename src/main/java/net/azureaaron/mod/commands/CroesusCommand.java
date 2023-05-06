@@ -50,7 +50,7 @@ public class CroesusCommand {
 						.executes(context -> handleCommand(context.getSource(), getString(context, "player")))));
 	}
 	
-	private static final String[] RARE_REWARDS = {/*M7*/ "dark_claymore", "necron_handle", "wither_shield_scroll",
+	private static final String[] RARE_LOOT = {/*M7*/ "dark_claymore", "necron_handle", "wither_shield_scroll",
 			"implosion_scroll", "shadow_warp_scroll", "fifth_master_star", "necron_dye", "thunderlord_7", "master_skull_tier_5",
 			/*M6*/ "giants_sword", "fourth_master_star", /*M5*/ "shadow_fury", "shadow_assassin_chestplate", "third_master_star", 
 			/*M4*/ "spirit_wing", "item_spirit_bow", "second_master_star", /*M3*/ "first_master_star", /*All Floors*/ "recombobulator_3000"};
@@ -209,13 +209,13 @@ public class CroesusCommand {
 		}
 		
 		String rewardsString = rewards.toString();
-		boolean rareLootAwaits = Arrays.stream(RARE_REWARDS).anyMatch(rewardsString::contains);
-		String[] rareLoot = Arrays.stream(RARE_REWARDS).filter(e -> rewards.contains(e)).toArray(String[]::new);
+		boolean rareLootAwaits = Arrays.stream(RARE_LOOT).anyMatch(rewardsString::contains);
+		String[] rareLoot = Arrays.stream(RARE_LOOT).filter(e -> rewards.contains(e)).toArray(String[]::new);
 		
 		ItemStack bundle = Items.BUNDLE.getDefaultStack().setCustomName(Text.literal("✦ Rare Loot Preview ✦").styled(style -> style.withItalic(false).withColor(colourProfile.infoColour)));
 		
 		for(int i = 0; i < rareLoot.length; i++) {
-			Functions.addToBundle(bundle, Skyblock.RARE_REWARD_ITEMS.get(rareLoot[i]));
+			Functions.addToBundle(bundle, Skyblock.RARE_LOOT_ITEMS.get(rareLoot[i]));
 		}
 				
 		source.sendFeedback(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
