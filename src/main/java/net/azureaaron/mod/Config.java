@@ -433,7 +433,8 @@ public class Config {
 				.name(Text.literal("Hypixel"))
 				.option(Option.createBuilder(String.class)
 						.name(Text.literal("Hypixel Api Key"))
-						.tooltip(Text.literal("Set your Hypixel Api Key! To get one login to Hypixel and type \"/api new\""))
+						.tooltip(Text.literal("Set your Hypixel Api Key! To get one login to Hypixel and type \"/api new\"\n\n")
+								.append(Text.literal("\u2139 This is only required for the skyblock commands and the Party Finder Stats Lookup feature!").styled(style -> style.withColor(0x218bff))))
 						.binding("",
 								() -> key, 
 								newValue -> key = newValue)
@@ -471,7 +472,8 @@ public class Config {
 						.name(Text.literal("Dungeons"))
 						.option(Option.createBuilder(boolean.class)
 								.name(Text.literal("Party Finder Stats Lookup"))
-								.tooltip(Text.literal("Automatically shows a player's dungeon stats when they join from party finder."))
+								.tooltip(Text.literal("Automatically shows a player's dungeon stats when they join from party finder.")
+										.append(Text.literal("\n\n\u2139 This requires you to have set your Api Key!").styled(style -> style.withColor(0x218bff))))
 								.binding(true,
 										() -> dungeonFinderPersonStats,
 										newValue -> dungeonFinderPersonStats = newValue)
