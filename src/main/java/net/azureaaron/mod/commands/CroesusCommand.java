@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -173,7 +174,7 @@ public class CroesusCommand {
 
 		HashSet<String> claimedRuns = new HashSet<String>(); //HashSet containing all the ids of runs where chests were paid for
 		HashSet<ChestData> chests = new HashSet<ChestData>(); //HashSet containing all unpaid chests
-		HashSet<String> rewards = new HashSet<String>(); //HashSet containing all of the rewards earned across all unopened chests
+		List<String> rewards = new ArrayList<String>(); //HashSet containing all of the rewards earned across all unopened chests
 
 		//Iterate over all chests available to determine if they were or weren't claimed then perform logic (read other comments)
 		for(JsonElement chest : profile.get("dungeons").getAsJsonObject().get("treasures").getAsJsonObject().get("chests").getAsJsonArray()) {
@@ -191,15 +192,20 @@ public class CroesusCommand {
 			//If the chest hasn't been paid for yet
 			if(!chestPaid) chests.add(new ChestData(chestRunId, iteratedChest.get("treasure_type").getAsString(), iteratedChest.get("rewards").getAsJsonObject().get("rewards").getAsJsonArray()));
 		}
-		
+				
 		//Append chests to the run they're associated with.
 		chests.forEach(chest -> {
 			if(!claimedRuns.contains(chest.runId()) && !ineligibleRuns.contains(chest.runId())) { //If the chest hasn't been claimed and isn't from an ineligible run
 				RunData old = runs.get(chest.runId());
 				runs.put(chest.runId(), new RunData(old.timestamp(), old.floor(), old.dungeon(), Stream.concat(old.chests().stream(), Arrays.asList(chest).stream()).toList()));
 				
-				//Add rewards to the rewards HashSet to later check for rare drops
-				chest.rewards().forEach((element) -> rewards.add(element.getAsString()));
+				//Add rewards to the rewards HashSet to later check for rare drops 
+				//rare drops can be duplicated in the list however common drops are deduplicated.
+				chest.rewards().forEach((element) -> {
+					String stringForm = element.getAsString();
+					boolean isRareLoot = Arrays.stream(RARE_LOOT).anyMatch(stringForm::equals);
+					if(isRareLoot || (!isRareLoot && !rewards.contains(stringForm))) rewards.add(stringForm);
+				});
 			}
 		});
 		
@@ -210,7 +216,8 @@ public class CroesusCommand {
 		
 		String rewardsString = rewards.toString();
 		boolean rareLootAwaits = Arrays.stream(RARE_LOOT).anyMatch(rewardsString::contains);
-		String[] rareLoot = Arrays.stream(RARE_LOOT).filter(e -> rewards.contains(e)).toArray(String[]::new);
+		Function<String, Boolean> containsRareLoot = s -> Arrays.stream(RARE_LOOT).anyMatch(s::equals);
+		String[] rareLoot = rewards.stream().filter(e -> containsRareLoot.apply(e)).toArray(String[]::new);
 		
 		ItemStack bundle = Items.BUNDLE.getDefaultStack().setCustomName(Text.literal("✦ Rare Loot Preview ✦").styled(style -> style.withItalic(false).withColor(colourProfile.infoColour)));
 		
