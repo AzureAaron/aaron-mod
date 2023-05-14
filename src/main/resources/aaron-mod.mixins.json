@@ -38,7 +38,8 @@
     "EnderDragonEntityMixin",
     "ShaderProgramMixin",
     "VertexBufferMixin",
-    "BundleAccessor"
+    "BundleAccessor",
+    "MusicTrackerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
