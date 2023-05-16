@@ -56,7 +56,7 @@ public class EssenceCommand {
 			try {
 				return Skyblock.getSelectedProfile2(body);
 			} catch (Exception e) {
-				source.sendError(Messages.JSON_PARSING_ERROR);
+				if(e instanceof IllegalStateException) source.sendError(Messages.PROFILES_NOT_MIGRATED_ERROR); else source.sendError(Messages.JSON_PARSING_ERROR);
 				e.printStackTrace();
 			}
 			return null;
@@ -101,7 +101,7 @@ public class EssenceCommand {
 			try {
 				return Skyblock.getSelectedProfile2(body);
 			} catch (Exception e) {
-				source.sendError(Messages.JSON_PARSING_ERROR);
+				if(e instanceof IllegalStateException) source.sendError(Messages.PROFILES_NOT_MIGRATED_ERROR); else source.sendError(Messages.JSON_PARSING_ERROR);
 				e.printStackTrace();
 			}
 			return null;

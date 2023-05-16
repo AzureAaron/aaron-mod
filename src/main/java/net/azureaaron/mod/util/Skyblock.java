@@ -93,10 +93,11 @@ public class Skyblock {
 		RARE_LOOT_ITEMS.put("recombobulator_3000", recombobulator);
 	}
 	
-	public static JsonObject getSelectedProfile2(String profiles) {
+	public static JsonObject getSelectedProfile2(String profiles) throws IllegalStateException {
 		if(profiles == null) return null;
 		JsonObject skyblockData = JsonParser.parseString(profiles).getAsJsonObject();
 		JsonArray profilesArray = skyblockData.get("profiles").getAsJsonArray();
+		if(profilesArray == null) throw new IllegalStateException(Messages.PROFILES_NOT_MIGRATED_ERROR.getString()); //If the player's profile hasn't been migrated
 		for(JsonElement profile : profilesArray) {
 			JsonObject iteratedProfile = profile.getAsJsonObject();
 			if(iteratedProfile.get("selected").getAsBoolean() == true) return iteratedProfile;

@@ -32,6 +32,9 @@ public interface Messages {
 	Text NO_API_KEY_ERROR = Text.literal("You haven't set your Hypixel Api Key!")
 			.styled(style -> style.withColor(Formatting.RED));
 	
+	Text PROFILES_NOT_MIGRATED_ERROR = Text.literal("This player hasn't migrated their skyblock profiles!")
+			.styled(style -> style.withColor(Formatting.RED));
+	
 	/*
 	 * Class-specific messages that don't fit well in their dedicated class
 	 */
