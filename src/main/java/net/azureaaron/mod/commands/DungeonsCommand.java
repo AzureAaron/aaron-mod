@@ -58,7 +58,7 @@ public class DungeonsCommand {
 	
 	private static int handleCommand(FabricClientCommandSource source) {
 		if(StringUtils.isBlank(Config.key)) {
-			source.sendFeedback(Messages.NO_API_KEY_ERROR);
+			source.sendError(Messages.NO_API_KEY_ERROR);
 			return Command.SINGLE_SUCCESS;
 		}
 		
@@ -92,7 +92,7 @@ public class DungeonsCommand {
 	
 	private static int handleCommand(FabricClientCommandSource source, String player) {
 		if(StringUtils.isBlank(Config.key)) {
-			source.sendFeedback(Messages.NO_API_KEY_ERROR);
+			source.sendError(Messages.NO_API_KEY_ERROR);
 			return Command.SINGLE_SUCCESS;
 		}
 		

@@ -39,7 +39,7 @@ public class CrimsonCommand {
 
 	private static int handleCommand(FabricClientCommandSource source) {
 		if(StringUtils.isBlank(Config.key)) {
-			source.sendFeedback(Messages.NO_API_KEY_ERROR);
+			source.sendError(Messages.NO_API_KEY_ERROR);
 			return Command.SINGLE_SUCCESS;
 		}
 		
@@ -73,7 +73,7 @@ public class CrimsonCommand {
 	
 	private static int handleCommand(FabricClientCommandSource source, String player) {
 		if(StringUtils.isBlank(Config.key)) {
-			source.sendFeedback(Messages.NO_API_KEY_ERROR);
+			source.sendError(Messages.NO_API_KEY_ERROR);
 			return Command.SINGLE_SUCCESS;
 		}
 		
@@ -94,7 +94,7 @@ public class CrimsonCommand {
 			try {
 				return Http.sendHypixelRequest("skyblock/profiles", "&uuid=" + uuid, true, shouldSkip);
 			} catch (Exception e) {
-				source.sendFeedback(Messages.SKYBLOCK_PROFILES_FETCH_ERROR);
+				source.sendError(Messages.SKYBLOCK_PROFILES_FETCH_ERROR);
 				e.printStackTrace();
 			}
 			return null;

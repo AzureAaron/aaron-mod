@@ -51,7 +51,7 @@ public class DefaultSkinCommand {
 				name = json.get("name").getAsString();
 				uuid = json.get("id").getAsString();
 			} catch (Exception e) {
-				source.sendFeedback(Messages.NAME_TO_UUID_ERROR);
+				source.sendError(Messages.NAME_TO_UUID_ERROR);
 				e.printStackTrace();
 			}
 			return null;
