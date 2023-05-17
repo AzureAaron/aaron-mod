@@ -459,6 +459,7 @@ public class Config {
 				.option(Option.createBuilder(RainbowifyMode.class)
 						.name(Text.literal("Rainbowify Mode"))
 						.tooltip(Text.literal("Changes how the rainbow gradient will look:\n")
+								.append(Text.literal("\n\u2139 In order for the dynamic mode to display correctly you'll need to have first joined a world.\n").styled(style -> style.withColor(0x218bff)))
 								.append(Text.literal("\nStatic: "))
 								.append(TextTransformer.rainbowify("Critical VII, Vampirism VI")) //H.H.
 								.append(Text.literal("\nDynamic: "))
