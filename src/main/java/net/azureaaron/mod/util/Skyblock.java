@@ -102,7 +102,7 @@ public class Skyblock {
 			JsonObject iteratedProfile = profile.getAsJsonObject();
 			if(iteratedProfile.get("selected").getAsBoolean() == true) return iteratedProfile;
 		}
-		return null;
+		throw new IllegalStateException(Messages.PROFILES_NOT_MIGRATED_ERROR.getString()); //After the migration players can apparently have no selected profile
 	}
 	
 	public static NetworthCommand.Networth readNetworthData(String data, long bank, long purse) {
