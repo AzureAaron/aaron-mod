@@ -10,7 +10,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import dev.cbyrne.betterinject.annotations.Inject;
 import net.azureaaron.mod.Config;
 import net.azureaaron.mod.Keybinds;
-import net.azureaaron.mod.util.TimeUniform;
+import net.azureaaron.mod.features.TimeUniform;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
 

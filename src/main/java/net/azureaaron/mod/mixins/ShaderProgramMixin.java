@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 
 import dev.cbyrne.betterinject.annotations.Inject;
-import net.azureaaron.mod.util.TimeUniformGetter;
+import net.azureaaron.mod.features.TimeUniformGetter;
 import net.minecraft.client.gl.GlUniform;
 import net.minecraft.client.gl.ShaderProgram;
 

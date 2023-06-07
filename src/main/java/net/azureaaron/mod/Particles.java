@@ -20,17 +20,15 @@ public class Particles {
 	public enum ParticleConfig {
 		minecraft_ash("Ash", State.FULL),
 		minecraft_block_marker("Block Marker", State.FULL),
+		minecraft_cherry_leaves("Cherry Leaves", State.FULL),
 		minecraft_crit("Crit", State.FULL),
-		minecraft_dripping_cherry_leaves("Dripping Cherry Leaves", State.FULL),
 		minecraft_dust("Dust", State.FULL),
 		minecraft_enchanted_hit("Enchanted Hit", State.FULL),
 		minecraft_entity_effect("Entity Effect", State.FULL),
 		minecraft_explosion("Explosion", State.FULL),
-		minecraft_falling_cherry_leaves("Falling Cherry Leaves", State.FULL),
 		minecraft_falling_spore_blossom("Falling Spore Blossom", State.FULL),
 		minecraft_firework("Firework", State.FULL),
 		minecraft_flash("Flash", State.FULL),
-		minecraft_landing_cherry_leaves("Landing Cherry Leaves", State.FULL),
 		minecraft_rain("Rain Splash", State.FULL),
 		minecraft_spore_blossom_air("Air Spore Blossom", State.FULL),
 		minecraft_white_ash("White Ash", State.FULL);

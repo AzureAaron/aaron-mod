@@ -6,10 +6,10 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.azureaaron.mod.Config;
 import net.azureaaron.mod.util.Functions;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.ScreenHandlerProvider;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.text.Text;
@@ -22,8 +22,8 @@ implements ScreenHandlerProvider<GenericContainerScreenHandler> {
 		super(handler, inventory, title);
 	}
 
-	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/GenericContainerScreen;drawMouseoverTooltip(Lnet/minecraft/client/util/math/MatrixStack;II)V", ordinal = 0))
-	private void aaronMod$hideScreenToolips(GenericContainerScreen container, MatrixStack matrices, int mouseX, int mouseY) {
-		if(!(Functions.isOnHypixel() && Config.hideClickOnTimeTooltips && this.title.getString().equals("Click the button on time!"))) this.drawMouseoverTooltip(matrices, mouseX, mouseY);
+	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/GenericContainerScreen;drawMouseoverTooltip(Lnet/minecraft/client/gui/DrawContext;II)V", ordinal = 0))
+	private void aaronMod$hideScreenToolips(GenericContainerScreen container, DrawContext context, int mouseX, int mouseY) {
+		if(!(Functions.isOnHypixel() && Config.hideClickOnTimeTooltips && this.title.getString().equals("Click the button on time!"))) this.drawMouseoverTooltip(context, mouseX, mouseY);
 	}
 }

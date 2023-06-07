@@ -1,4 +1,4 @@
-package net.azureaaron.mod.util;
+package net.azureaaron.mod.features;
 
 import net.minecraft.client.gl.GlUniform;
 

@@ -7,6 +7,8 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.arg
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +34,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.HoverEvent.Action;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -130,15 +133,102 @@ public class InventoryCommand {
 	
 	//Used to store and format an items data
 	private record ItemData(@NotNull String name, @Nullable NBTList lore) {
+		private static final String[] AARONMOD$MASTER_STARS = {"➊","➋","➌","➍","➎"};
+		private static final String AARONMOD$MASTER_STAR_REGEX = "➊|➋|➌|➍|➎";
+		private static final Style AARONMOD$BASE_STYLE = Style.EMPTY.withItalic(false);
+		
+		public MutableText fancifyFormatting(Text name) {
+			String itemName = name.getString();
+			
+			if(Config.fancyDiamondHeads && itemName.contains("Diamond") && itemName.contains("Head")) {
+				Style nameStyle = Style.EMPTY.withColor(0x84dadd);
+				Style starStyle = Style.EMPTY.withColor(Formatting.AQUA);
+				Style masterStarStyle = Style.EMPTY.withColor(Formatting.DARK_AQUA);
+				int masterStarsApplied = 0;
+				
+				if(itemName.contains("➊")) masterStarsApplied = 1;
+				if(itemName.contains("➋")) masterStarsApplied = 2;
+				if(itemName.contains("➌")) masterStarsApplied = 3;
+				if(itemName.contains("➍")) masterStarsApplied = 4;
+				if(itemName.contains("➎")) masterStarsApplied = 5;
+				
+				Text styledName = TextTransformer.stylize(name, AARONMOD$BASE_STYLE, "Diamond", nameStyle, 1);
+				Text styledStars = TextTransformer.stylize(styledName, AARONMOD$BASE_STYLE, "✪", starStyle, 5);
+				return (MutableText) TextTransformer.stylizeAndReplace(styledStars, AARONMOD$BASE_STYLE, "✪", masterStarStyle, AARONMOD$MASTER_STARS, AARONMOD$MASTER_STAR_REGEX, "", masterStarsApplied);
+			}
+			
+			if(Config.oldMasterStars) {
+				Style masterStarStyle = Style.EMPTY.withColor(Formatting.RED);
+				int masterStarsApplied = 0;
+				
+				if(itemName.contains("➊")) masterStarsApplied = 1;
+				if(itemName.contains("➋")) masterStarsApplied = 2;
+				if(itemName.contains("➌")) masterStarsApplied = 3;
+				if(itemName.contains("➍")) masterStarsApplied = 4;
+				if(itemName.contains("➎")) masterStarsApplied = 5;
+				
+				return (MutableText) TextTransformer.stylizeAndReplace(name, AARONMOD$BASE_STYLE, "✪", masterStarStyle, AARONMOD$MASTER_STARS, AARONMOD$MASTER_STAR_REGEX, "", masterStarsApplied);
+			}
+			return (MutableText) name;
+		}
+		
+		public MutableText rainbowifyEnchants(MutableText text) {
+			if(Config.rainbowifyMaxSkyblockEnchantments && Arrays.stream(Skyblock.MAX_LEVEL_SKYBLOCK_ENCHANTMENTS).anyMatch(text.getString()::contains)) {
+				MutableText newText = Text.empty().styled(style -> style.withItalic(false));
+				List<Text> textComponents = text.getSiblings();
+				
+				if(Config.rainbowifyMode == Config.RainbowifyMode.STATIC) {
+					int totalLength = 0;
+					int positionLeftOffAt = 0;
+					
+					//Exclude non-max enchants from counting towards total length since it looks weird & incomplete otherwise
+					for(int i = 0; i < textComponents.size(); i++) {
+						String componentString = textComponents.get(i).getString();
+						if(Arrays.stream(Skyblock.MAX_LEVEL_SKYBLOCK_ENCHANTMENTS).anyMatch(componentString::contains)) totalLength += componentString.length();
+					}
+								
+					for(int i = 0; i < textComponents.size(); i++) {
+						Text currentComponent = textComponents.get(i);
+						String componentString = currentComponent.getString();
+						if(Arrays.stream(Skyblock.MAX_LEVEL_SKYBLOCK_ENCHANTMENTS).anyMatch(componentString::contains)) {
+							newText.append(TextTransformer.progressivelyRainbowify(componentString, totalLength, positionLeftOffAt));
+							positionLeftOffAt += componentString.length();
+							continue;
+						}
+						
+						newText.append(currentComponent);
+					}
+				}
+				
+				if(Config.rainbowifyMode == Config.RainbowifyMode.DYNAMIC) {
+					for(int i = 0; i < textComponents.size(); i ++) {
+						String componentString = textComponents.get(i).getString();
+						if(Arrays.stream(Skyblock.MAX_LEVEL_SKYBLOCK_ENCHANTMENTS).anyMatch(componentString::contains)) {
+							newText.append(Text.literal(componentString).styled(style -> style.withColor(0xAA5500)));
+							continue;
+						}
+						
+						newText.append(textComponents.get(i));
+					}
+				}
+				return newText;
+			}
+			return text;
+		}
+		
+		public MutableText formatName() {
+			return fancifyFormatting(TextTransformer.fromLegacy(name));
+		}
 
 		public MutableText formatLore() {
 			if(lore == null) return null;
 			MutableText formattedLore = Text.empty();
-			formattedLore.append(TextTransformer.fromLegacy(name + "\n"));
+			MutableText formattedName = fancifyFormatting(TextTransformer.fromLegacy(name).append("\n"));
+			formattedLore.append(formattedName);
 			
 			for(int i = 0; i < lore.size(); i++) {
 				String addon = (i+1 == lore.size()) ? "" : "\n";
-				formattedLore.append(TextTransformer.fromLegacy(lore.getString(i) + addon));
+				formattedLore.append(rainbowifyEnchants(TextTransformer.fromLegacy(lore.getString(i)).append(addon)));
 			}
 			
 			return formattedLore;
@@ -205,16 +295,16 @@ public class InventoryCommand {
 		
 		source.sendFeedback(Text.literal("Inventory » " + ((inventoryEnabled) ? "✓" : "✗")).styled(style -> style.withColor(colourProfile.infoColour)));
 		source.sendFeedback(Text.literal(""));
-		source.sendFeedback(TextTransformer.fromLegacy(helmet.name()).styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, helmet.formatLore()))));
-		source.sendFeedback(TextTransformer.fromLegacy(chestplate.name()).styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, chestplate.formatLore()))));
-		source.sendFeedback(TextTransformer.fromLegacy(leggings.name()).styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, leggings.formatLore()))));
-		source.sendFeedback(TextTransformer.fromLegacy(boots.name()).styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, boots.formatLore()))));
+		source.sendFeedback(helmet.formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, helmet.formatLore()))));
+		source.sendFeedback(chestplate.formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, chestplate.formatLore()))));
+		source.sendFeedback(leggings.formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, leggings.formatLore()))));
+		source.sendFeedback(boots.formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, boots.formatLore()))));
 		
 		if(inventoryEnabled && (keyItems2[0] != null || keyItems2[1] != null || keyItems2[2] != null)) {
 			source.sendFeedback(Text.literal(""));
-			if(keyItems2[0] != null) source.sendFeedback(TextTransformer.fromLegacy(keyItems2[0].name()).styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, keyItems2[0].formatLore()))));
-			if(keyItems2[1] != null) source.sendFeedback(TextTransformer.fromLegacy(keyItems2[1].name()).styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, keyItems2[1].formatLore()))));
-			if(keyItems2[2] != null) source.sendFeedback(TextTransformer.fromLegacy(keyItems2[2].name()).styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, keyItems2[2].formatLore()))));
+			if(keyItems2[0] != null) source.sendFeedback(keyItems2[0].formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, keyItems2[0].formatLore()))));
+			if(keyItems2[1] != null) source.sendFeedback(keyItems2[1].formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, keyItems2[1].formatLore()))));
+			if(keyItems2[2] != null) source.sendFeedback(keyItems2[2].formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, keyItems2[2].formatLore()))));
 		}
 		
 		source.sendFeedback(Text.literal(endSpaces).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));

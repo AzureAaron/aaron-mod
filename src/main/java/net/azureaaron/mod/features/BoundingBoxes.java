@@ -1,12 +1,17 @@
 package net.azureaaron.mod.features;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.azureaaron.mod.Config;
 import net.azureaaron.mod.util.Cache;
 import net.azureaaron.mod.util.Functions;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
@@ -14,7 +19,6 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
 public class BoundingBoxes {
-	
 	private static final MinecraftClient minecraftClient = MinecraftClient.getInstance();
 	
 	private enum Dragons {
@@ -33,9 +37,9 @@ public class BoundingBoxes {
 		private Dragons(BlockPos pos1, BlockPos pos2, float red, float green, float blue) {
 			this.pos1 = pos1;
 			this.pos2 = pos2;
-			this.red = red;
-			this.green = green;
-			this.blue = blue;
+			this.red = red * 255f;
+			this.green = green * 255f;
+			this.blue = blue * 255f;
 		}
 	}
 	
@@ -43,14 +47,27 @@ public class BoundingBoxes {
 		if(Functions.isOnHypixel() && Config.masterModeF7DragonBoxes && Cache.inM7Phase5) {
 			for(Dragons dragon : Dragons.values()) {
 				Box box = new Box(dragon.pos1, dragon.pos2);
-				VertexConsumer vertexConsumer = wrc.consumers().getBuffer(RenderLayer.getLines());
 				Vec3d camera = minecraftClient.getCameraEntity().getCameraPosVec(wrc.tickDelta());
 				MatrixStack matrices = wrc.matrixStack();
 				
 				matrices.push();
 				matrices.translate(-camera.x, -camera.y, -camera.z);
-				WorldRenderer.drawBox(matrices, vertexConsumer, box, dragon.red * 255f, dragon.green * 255f, dragon.blue * 255f, 1f);
+				
+				Tessellator tessellator = RenderSystem.renderThreadTesselator();
+				BufferBuilder buffer = tessellator.getBuffer();
+				
+				RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
+				RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+				RenderSystem.lineWidth(3f);
+				RenderSystem.disableCull();
+				
+				buffer.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES);
+				WorldRenderer.drawBox(matrices, buffer, box, dragon.red, dragon.green, dragon.blue, 1f);
+				tessellator.draw();
+				
 				matrices.pop();
+				RenderSystem.lineWidth(1f);
+				RenderSystem.enableCull();
 			}
 		}
 	}

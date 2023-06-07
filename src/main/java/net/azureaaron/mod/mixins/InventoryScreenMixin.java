@@ -31,7 +31,7 @@ implements RecipeBookProvider {
 	@SuppressWarnings("resource")
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void aaronMod$initDisplayGroups(PlayerEntity player) {
-		ItemGroups.updateDisplayContext(MinecraftClient.getInstance().player.networkHandler.getEnabledFeatures(), shouldShowOperatorTab(player), player.world.getRegistryManager());
+		ItemGroups.updateDisplayContext(MinecraftClient.getInstance().player.networkHandler.getEnabledFeatures(), shouldShowOperatorTab(player), player.getWorld().getRegistryManager());
 	}
 	
 	private boolean shouldShowOperatorTab(PlayerEntity player) {

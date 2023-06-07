@@ -16,6 +16,7 @@ Vanilla:
 * Math FMA (Informational)
 * Shadowed Scoreboard Text
 * Shadowed Name tag Text
+* Fix Tab Translucency
 * FPS Display
 * Extra Debug Info
 * Hide Fire Overlay
@@ -39,7 +40,6 @@ Skyblock:
 
 * Rainbowify Max Level Enchantments (with two different modes)
 * Party Finder Stats Lookup
-* Colourful Party Finder Notes
 * Dungeon Score Messages
 * Old Master Star Display
 * *Fancy* Diamond Heads

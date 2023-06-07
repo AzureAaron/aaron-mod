@@ -18,7 +18,6 @@
     "ParticleManagerMixin",
     "FireworksSparkParticleMixin",
     "ChestBlockEntityRendererMixin",
-    "AnvilScreenHandlerMixin",
     "InGameOverlayRendererMixin",
     "GenericContainerScreenMixin",
     "MessageIndicatorMixin",
@@ -39,7 +38,8 @@
     "ShaderProgramMixin",
     "VertexBufferMixin",
     "BundleAccessor",
-    "MusicTrackerMixin"
+    "MusicTrackerMixin",
+    "PlayerListHudMixin"
   ],
   "injectors": {
     "defaultRequire": 1

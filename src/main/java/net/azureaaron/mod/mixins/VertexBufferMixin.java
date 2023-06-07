@@ -5,8 +5,8 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import dev.cbyrne.betterinject.annotations.Arg;
 import dev.cbyrne.betterinject.annotations.Inject;
-import net.azureaaron.mod.util.TimeUniform;
-import net.azureaaron.mod.util.TimeUniformGetter;
+import net.azureaaron.mod.features.TimeUniform;
+import net.azureaaron.mod.features.TimeUniformGetter;
 import net.minecraft.client.gl.ShaderProgram;
 import net.minecraft.client.gl.VertexBuffer;
 
