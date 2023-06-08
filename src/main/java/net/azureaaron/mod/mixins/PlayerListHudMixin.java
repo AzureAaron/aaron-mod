@@ -3,8 +3,6 @@ package net.azureaaron.mod.mixins;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import dev.cbyrne.betterinject.annotations.Arg;
 import dev.cbyrne.betterinject.annotations.Inject;
 import net.azureaaron.mod.Config;
@@ -18,7 +16,6 @@ public class PlayerListHudMixin {
 	private void aaronMod$fixTranslucency(@Arg DrawContext context) {
 		if(Config.fixTabTranslucency) {
 			context.getMatrices().translate(0f, 0f, 200f);
-			RenderSystem.enableBlend();
 		}
 	}
 }
