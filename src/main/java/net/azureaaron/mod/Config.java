@@ -151,6 +151,7 @@ public class Config {
 	@ConfigEntry(isEnum = true) public static RainbowifyMode rainbowifyMode = RainbowifyMode.DYNAMIC;
 	@ConfigEntry(isEnum = true) public static MouseButton copyChatMouseButton = MouseButton.MIDDLE;
 	@ConfigEntry public static boolean fixTabTranslucency = true;
+	@ConfigEntry public static boolean hideNametagBackground = false;
 	
 	private static void save() {
 		try {
@@ -287,6 +288,16 @@ public class Config {
 								.binding(true,
 										() -> shadowedNametags,
 										newValue -> shadowedNametags = newValue)
+								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.build())
+						.option(Option.<Boolean>createBuilder()
+								.name(Text.literal("Hide Nametag Background"))
+								.description(OptionDescription.createBuilder()
+										.text(Text.literal("Hides the background in nametags."))
+										.build())
+								.binding(false,
+										() -> hideNametagBackground,
+										newValue -> hideNametagBackground = newValue)
 								.controller(opt -> BooleanControllerBuilder.create(opt))
 								.build())
 						.option(Option.<Boolean>createBuilder()
