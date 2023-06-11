@@ -12,12 +12,13 @@ import dev.cbyrne.betterinject.annotations.Arg;
 import dev.cbyrne.betterinject.annotations.Inject;
 import net.azureaaron.mod.Config;
 import net.azureaaron.mod.events.MouseEvent;
+import net.azureaaron.mod.features.MouseGuiPositioner;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 
 @Mixin(Mouse.class)
-public class MouseMixin {
+public class MouseMixin implements MouseGuiPositioner {
 	
 	@Shadow @Final private MinecraftClient client;
 	@Shadow private double x;
@@ -61,5 +62,11 @@ public class MouseMixin {
 	@Inject(method = "unlockCursor", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/InputUtil;setCursorParameters(JIDD)V", ordinal = 0, shift = At.Shift.AFTER))
 	private void aaronMod$correctCursorPosition() {
 		if(Config.resetCursorPosition && client.currentScreen instanceof GenericContainerScreen) GLFW.glfwSetCursorPos(this.client.getWindow().getHandle(), this.aaronMod$guiX, this.aaronMod$guiY);
+	}
+
+	@Override
+	public void reset() {
+		this.x = this.client.getWindow().getWidth() / 2;
+		this.y = this.client.getWindow().getHeight() /2;
 	}
 }
