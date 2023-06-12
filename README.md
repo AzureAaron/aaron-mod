@@ -16,6 +16,7 @@ Vanilla:
 * Math FMA (Informational)
 * Shadowed Scoreboard Text
 * Shadowed Name tag Text
+* Hide Name tag Background
 * Fix Tab Translucency
 * FPS Display
 * Extra Debug Info
