@@ -42,6 +42,12 @@ public class ReceiveChatMessageListener {
 					Cache.inM7Phase5 = false;
 					Cache.inDungeonBossRoom = false;
 					Cache.currentScore = 0;
+					
+					Cache.powerDragonUuid = "";
+					Cache.flameDragonUuid = "";
+					Cache.apexDragonUuid = "";
+					Cache.iceDragonUuid = "";
+					Cache.soulDragonUuid = "";
 				}
 				
 				if(stringForm.equals("[BOSS] Bonzo: Gratz for making it this far, but I'm basically unbeatable.") || stringForm.equals("[BOSS] Scarf: This is where the journey ends for you, Adventurers.")

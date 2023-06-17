@@ -29,6 +29,12 @@ public class Cache {
 	public static boolean inM7Phase5 = false;
 	public static boolean inDungeonBossRoom = false;
 	public static int currentScore = 0;
+	
+	public static String powerDragonUuid;
+	public static String flameDragonUuid;
+	public static String apexDragonUuid;
+	public static String iceDragonUuid;
+	public static String soulDragonUuid;
 		
 	public static String currentServerAddress = "";
 	public static String lastServerAddress = "";

@@ -654,7 +654,7 @@ public class Config {
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Glowing M7 Dragons"))
 								.description(OptionDescription.createBuilder()
-										.text(Text.literal("Adds a glowing outline to the dragons in M7, making them easier to spot!"))
+										.text(Text.literal("Adds a glowing outline to the dragons in M7, making them easier to spot!\n\nThe colour of the glow corresponds with the dragon's colour!"))
 										.build())
 								.binding(false,
 										() -> glowingM7Dragons,

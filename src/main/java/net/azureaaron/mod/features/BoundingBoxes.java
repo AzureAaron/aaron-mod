@@ -21,18 +21,18 @@ import net.minecraft.util.math.Vec3d;
 public class BoundingBoxes {
 	private static final MinecraftClient minecraftClient = MinecraftClient.getInstance();
 	
-	private enum Dragons {
+	public enum Dragons {
 		POWER(new BlockPos(13, 5, 45), new BlockPos(41, 34, 72), 224f, 43f, 43f),
 		FLAME(new BlockPos(71, 5, 45), new BlockPos(102, 34, 72), 232f, 124f, 70f),
 		APEX(new BlockPos(13, 5, 80), new BlockPos(41, 34, 107), 22f, 138f, 22f),
 		ICE(new BlockPos(71, 5, 80), new BlockPos(102, 34, 107), 24f, 210f, 219f),
 		SOUL(new BlockPos(41, 5, 112), new BlockPos(71, 34, 145), 141f, 24f, 219f);
 		
-		private final BlockPos pos1;
-		private final BlockPos pos2;
-		private final float red;
-		private final float green;
-		private final float blue;
+		public final BlockPos pos1;
+		public final BlockPos pos2;
+		public final float red;
+		public final float green;
+		public final float blue;
 		
 		private Dragons(BlockPos pos1, BlockPos pos2, float red, float green, float blue) {
 			this.pos1 = pos1;
