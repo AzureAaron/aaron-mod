@@ -42,7 +42,7 @@ public class MouseListener {
 		for(int i = upperbound; i >= lowerbound; i--) { //Iterate over the entries apart of this message and build the messages content
 			ChatHudLine.Visible currentEntry = visibleMessages.get(i);
 			currentEntry.content().accept((index, style, codePoint) -> {
-				hoveredMessage.append((char) codePoint);
+				hoveredMessage.appendCodePoint(codePoint);
 				return true;
 			});
 		}
@@ -76,7 +76,7 @@ public class MouseListener {
 						StringBuilder message = new StringBuilder();
 						
 						orderedText.accept((index, style, codePoint) -> {
-							message.append((char) codePoint);
+							message.appendCodePoint(codePoint);
 							return true;
 						});
 						
