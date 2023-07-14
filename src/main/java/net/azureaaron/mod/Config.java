@@ -152,6 +152,7 @@ public class Config {
 	@ConfigEntry(isEnum = true) public static MouseButton copyChatMouseButton = MouseButton.MIDDLE;
 	@ConfigEntry public static boolean fixTabTranslucency = true;
 	@ConfigEntry public static boolean hideNametagBackground = false;
+	@ConfigEntry public static boolean m7DragonSpawnTimers = false;
 	
 	private static void save() {
 		try {
@@ -648,6 +649,16 @@ public class Config {
 								.binding(false,
 										() -> masterModeF7DragonBoxes,
 										newValue -> masterModeF7DragonBoxes = newValue)
+								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.build())
+						.option(Option.<Boolean>createBuilder()
+								.name(Text.literal("M7 Dragon Spawn Timers"))
+								.description(OptionDescription.createBuilder()
+										.text(Text.literal("Displays a timer under each statue that counts down to when the dragon spawns."))
+										.build())
+								.binding(false,
+										() -> m7DragonSpawnTimers,
+										newValue -> m7DragonSpawnTimers = newValue)
 								.controller(opt -> BooleanControllerBuilder.create(opt))
 								.build())
 						.option(Option.<Boolean>createBuilder()

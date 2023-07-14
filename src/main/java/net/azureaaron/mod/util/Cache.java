@@ -35,6 +35,12 @@ public class Cache {
 	public static String apexDragonUuid;
 	public static String iceDragonUuid;
 	public static String soulDragonUuid;
+	
+	public static volatile long powerSpawnStart;
+	public static volatile long flameSpawnStart;
+	public static volatile long apexSpawnStart;
+	public static volatile long iceSpawnStart;
+	public static volatile long soulSpawnStart;
 		
 	public static String currentServerAddress = "";
 	public static String lastServerAddress = "";

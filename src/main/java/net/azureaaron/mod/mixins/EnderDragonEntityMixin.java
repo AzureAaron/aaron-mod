@@ -36,11 +36,26 @@ public class EnderDragonEntityMixin extends MobEntity implements Monster {
 			Box iceBoundingBox = new Box(BoundingBoxes.Dragons.ICE.pos1, BoundingBoxes.Dragons.ICE.pos2);
 			Box soulBoundingBox = new Box(BoundingBoxes.Dragons.SOUL.pos1, BoundingBoxes.Dragons.SOUL.pos2);
 			
-			if(dragonBoundingBox.intersects(powerBoundingBox)) Cache.powerDragonUuid = this.getUuidAsString();
-			if(dragonBoundingBox.intersects(flameBoundingBox)) Cache.flameDragonUuid = this.getUuidAsString();
-			if(dragonBoundingBox.intersects(apexBoundingBox)) Cache.apexDragonUuid = this.getUuidAsString();
-			if(dragonBoundingBox.intersects(iceBoundingBox)) Cache.iceDragonUuid = this.getUuidAsString();
-			if(dragonBoundingBox.intersects(soulBoundingBox)) Cache.soulDragonUuid = this.getUuidAsString();
+			if(dragonBoundingBox.intersects(powerBoundingBox)) {
+				Cache.powerDragonUuid = this.getUuidAsString();
+				Cache.powerSpawnStart = 0L;
+			}
+			if(dragonBoundingBox.intersects(flameBoundingBox)) {
+				Cache.flameDragonUuid = this.getUuidAsString();
+				Cache.flameSpawnStart = 0L;	
+			}
+			if(dragonBoundingBox.intersects(apexBoundingBox)) {
+				Cache.apexDragonUuid = this.getUuidAsString();
+				Cache.apexSpawnStart = 0L;
+			}
+			if(dragonBoundingBox.intersects(iceBoundingBox)) {
+				Cache.iceDragonUuid = this.getUuidAsString();
+				Cache.iceSpawnStart = 0L;
+			}
+			if(dragonBoundingBox.intersects(soulBoundingBox)) {
+				Cache.soulDragonUuid = this.getUuidAsString();
+				Cache.soulSpawnStart = 0L;
+			}
 		}
 	}
 	

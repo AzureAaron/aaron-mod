@@ -48,6 +48,12 @@ public class ReceiveChatMessageListener {
 					Cache.apexDragonUuid = "";
 					Cache.iceDragonUuid = "";
 					Cache.soulDragonUuid = "";
+					
+					Cache.powerSpawnStart = 0L;
+					Cache.flameSpawnStart = 0L;
+					Cache.apexSpawnStart = 0L;
+					Cache.iceSpawnStart = 0L;
+					Cache.soulSpawnStart = 0L;
 				}
 				
 				if(stringForm.equals("[BOSS] Bonzo: Gratz for making it this far, but I'm basically unbeatable.") || stringForm.equals("[BOSS] Scarf: This is where the journey ends for you, Adventurers.")

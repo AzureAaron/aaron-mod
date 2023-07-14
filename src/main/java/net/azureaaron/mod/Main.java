@@ -26,6 +26,7 @@ import net.azureaaron.mod.commands.ReflectCommand;
 import net.azureaaron.mod.commands.UuidCommand;
 import net.azureaaron.mod.commands.WardenWarningLevelCommand;
 import net.azureaaron.mod.features.BoundingBoxes;
+import net.azureaaron.mod.features.DragonTimers;
 import net.azureaaron.mod.listeners.ClientPlayConnectionListener;
 import net.azureaaron.mod.listeners.MouseListener;
 import net.azureaaron.mod.listeners.PlaySoundListener;
@@ -59,6 +60,7 @@ public class Main implements ClientModInitializer {
 		WorldRenderEvents.LAST.register(BoundingBoxes::renderBoxes);
 		ClientPlayConnectionEvents.JOIN.register(ClientPlayConnectionListener::onJoin);
 		ClientPlayConnectionEvents.DISCONNECT.register(ClientPlayConnectionListener::onDisconnect);
+		WorldRenderEvents.LAST.register(DragonTimers::renderSpawnTimers);
 		
 		//Register Keybinds
 		registerKeybindings();

@@ -9,8 +9,10 @@ import dev.cbyrne.betterinject.annotations.Inject;
 import net.azureaaron.mod.Config;
 import net.azureaaron.mod.events.PlaySoundEvent;
 import net.azureaaron.mod.events.TeamUpdateEvent;
+import net.azureaaron.mod.features.DragonTimers;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.sound.MusicTracker;
+import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.TeamS2CPacket;
 
@@ -30,5 +32,10 @@ public class ClientPlayNetworkHandlerMixin {
 	@Inject(method = "onTeam", at = @At("HEAD"))
 	private void aaronMod$onTeamUpdate(@Arg TeamS2CPacket packet) {
 		TeamUpdateEvent.EVENT.invoker().onTeamUpdate(packet);
+	}
+	
+	@Inject(method = "onParticle", at = @At("HEAD"))
+	private void aaronMod$onParticleSpawn(@Arg ParticleS2CPacket packet) {
+		DragonTimers.tick(packet);
 	}
 }
