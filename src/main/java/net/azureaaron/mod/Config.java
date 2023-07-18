@@ -688,6 +688,14 @@ public class Config {
 						.available(!Main.OPTIFABRIC_LOADED)
 						.build())
 				.option(Option.<Particles.State>createBuilder()
+						.name(Text.literal("Block Breaking Particles"))
+						.binding(Particles.State.FULL,
+								() -> Particles.ParticleConfig.minecraft_block_breaking.state,
+								newValue -> Particles.ParticleConfig.minecraft_block_breaking.state = newValue)
+						.controller(PARTICLE_CONTROLLER)
+						.available(!Main.OPTIFABRIC_LOADED)
+						.build())
+				.option(Option.<Particles.State>createBuilder()
 						.name(Text.literal("Block Marker Particles"))
 						.description(OptionDescription.createBuilder()
 								.text(Text.literal("Block Marker particles are the particles you see for the light and barrier blocks for example."))

@@ -19,6 +19,7 @@ public class Particles {
 
 	public enum ParticleConfig {
 		minecraft_ash("Ash", State.FULL),
+		minecraft_block_breaking("Block Breaking", State.FULL), // Not a real id
 		minecraft_block_marker("Block Marker", State.FULL),
 		minecraft_cherry_leaves("Cherry Leaves", State.FULL),
 		minecraft_crit("Crit", State.FULL),
