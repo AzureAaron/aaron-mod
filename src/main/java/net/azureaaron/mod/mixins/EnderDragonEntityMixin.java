@@ -29,6 +29,8 @@ public class EnderDragonEntityMixin extends MobEntity implements Monster {
 	@Inject(method = "onSpawnPacket", at = @At("TAIL"))
 	private void aaronMod$determineDragonColour() {
 		if(Cache.inM7Phase5) {
+			if(doesAnotherDragonHaveTheSameEntityId(this.getId())) return;
+			
 			Box dragonBoundingBox = this.calculateBoundingBox();
 			Box powerBoundingBox = new Box(BoundingBoxes.Dragons.POWER.pos1, BoundingBoxes.Dragons.POWER.pos2);
 			Box flameBoundingBox = new Box(BoundingBoxes.Dragons.FLAME.pos1, BoundingBoxes.Dragons.FLAME.pos2);
@@ -37,36 +39,50 @@ public class EnderDragonEntityMixin extends MobEntity implements Monster {
 			Box soulBoundingBox = new Box(BoundingBoxes.Dragons.SOUL.pos1, BoundingBoxes.Dragons.SOUL.pos2);
 			
 			if(dragonBoundingBox.intersects(powerBoundingBox)) {
-				Cache.powerDragonUuid = this.getUuidAsString();
+				Cache.powerDragonId = this.getId();
 				Cache.powerSpawnStart = 0L;
 			}
+			
 			if(dragonBoundingBox.intersects(flameBoundingBox)) {
-				Cache.flameDragonUuid = this.getUuidAsString();
+				Cache.flameDragonId = this.getId();
 				Cache.flameSpawnStart = 0L;	
 			}
+			
 			if(dragonBoundingBox.intersects(apexBoundingBox)) {
-				Cache.apexDragonUuid = this.getUuidAsString();
+				Cache.apexDragonId = this.getId();
 				Cache.apexSpawnStart = 0L;
 			}
+			
 			if(dragonBoundingBox.intersects(iceBoundingBox)) {
-				Cache.iceDragonUuid = this.getUuidAsString();
+				Cache.iceDragonId = this.getId();
 				Cache.iceSpawnStart = 0L;
 			}
+			
 			if(dragonBoundingBox.intersects(soulBoundingBox)) {
-				Cache.soulDragonUuid = this.getUuidAsString();
+				Cache.soulDragonId = this.getId();
 				Cache.soulSpawnStart = 0L;
 			}
 		}
 	}
 	
+	/**
+	 * @return whether any dragon has the same entity id cached
+	 */
+	private static boolean doesAnotherDragonHaveTheSameEntityId(int id) {
+		if(Cache.powerDragonId == id || Cache.flameDragonId == id || Cache.apexDragonId == id 
+				|| Cache.iceDragonId == id || Cache.soulDragonId == id) return true;
+		
+		return false;
+	}
+	
 	@Override
 	public int getTeamColorValue() {
 		if(Cache.inM7Phase5) {
-			if(this.getUuidAsString().equals(Cache.powerDragonUuid)) return POWER_COLOUR;
-			if(this.getUuidAsString().equals(Cache.flameDragonUuid)) return FLAME_COLOUR;
-			if(this.getUuidAsString().equals(Cache.apexDragonUuid)) return APEX_COLOUR;
-			if(this.getUuidAsString().equals(Cache.iceDragonUuid)) return ICE_COLOUR;
-			if(this.getUuidAsString().equals(Cache.soulDragonUuid)) return SOUL_COLOUR;
+			if(this.getId() == Cache.powerDragonId) return POWER_COLOUR;
+			if(this.getId() == Cache.flameDragonId) return FLAME_COLOUR;
+			if(this.getId() == Cache.apexDragonId) return APEX_COLOUR;
+			if(this.getId() == Cache.iceDragonId) return ICE_COLOUR;
+			if(this.getId() == Cache.soulDragonId) return SOUL_COLOUR;
 		}
 		return super.getTeamColorValue();
 	}
