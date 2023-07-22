@@ -13,6 +13,7 @@ import com.google.gson.JsonParser;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 
+import net.azureaaron.mod.util.CommandPlayerData;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Http;
 import net.azureaaron.mod.util.Messages;
@@ -28,45 +29,42 @@ public class UuidCommand {
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("uuid")
-				.executes(context -> handleCommand(context.getSource()))
+				.executes(context -> handleSelf(context.getSource()))
 				.then(argument("player", word())
-						.suggests((context, builder) -> CommandSource.suggestMatching(context.getSource().getPlayerNames(), builder))
-						.executes(context -> handleCommand(context.getSource(), getString(context, "player")))));
+						.suggests((context, builder) -> CommandSource.suggestMatching(CommandPlayerData.getPlayerNames(context.getSource()), builder))
+						.executes(context -> handlePlayer(context.getSource(), getString(context, "player")))));
 	}
 	
-	private static int handleCommand(FabricClientCommandSource source) {
+	private static int handleSelf(FabricClientCommandSource source) {
 		Session session = source.getClient().getSession();
 		printUuid(source, session.getUsername(), session.getUuid());
 		return Command.SINGLE_SUCCESS;
 	}
 	
-	private static volatile String name = null;
-	private static volatile String uuid = null;
-	
-	private static int handleCommand(FabricClientCommandSource source, String player) {
-		
+	private static int handlePlayer(FabricClientCommandSource source, String player) {
 		CompletableFuture.supplyAsync(() -> {
 			try {
 				String response = Http.sendNameToUuidRequest(player);
 				JsonObject json = JsonParser.parseString(response).getAsJsonObject();
-				name = json.get("name").getAsString();
-				uuid = json.get("id").getAsString();
-			} catch (Exception e) {
+				String name = json.get("name").getAsString();
+				String uuid = json.get("id").getAsString();
+				
+				return new CommandPlayerData(name, uuid);
+			} catch (Throwable t) {
 				source.sendError(Messages.NAME_TO_UUID_ERROR);
-				e.printStackTrace();
+				t.printStackTrace();
+				
+				return null;
 			}
-			return null;
-		}).thenAccept(x -> {
-			printUuid(source, name, uuid);
+		})
+		.thenAccept(playerData -> {
+			if (playerData != null) printUuid(source, playerData.name(), playerData.uuid());
 		});
 		
 		return Command.SINGLE_SUCCESS;
 	}
 	
 	private static void printUuid(FabricClientCommandSource source, String name, String uuid) {
-		UuidCommand.name = null;
-		UuidCommand.uuid = null;
-		if(name == null || uuid == null) return;
 		source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Uuid » ").styled(style -> style.withColor(colourProfile.primaryColour))
 				.append(Text.literal(uuid).styled(style -> style.withColor(colourProfile.secondaryColour)))
 				.append("").styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.translatable("chat.copy.click")))

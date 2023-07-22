@@ -17,6 +17,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.Config;
+import net.azureaaron.mod.util.CommandPlayerData;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Http;
 import net.azureaaron.mod.util.Levelling;
@@ -33,94 +34,82 @@ public class ProfileCommand {
 
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("profile")
-				.executes(context -> handleCommand(context.getSource()))
+				.executes(context -> handleSelf(context.getSource()))
 				.then(argument("player", word())
-						.suggests((context, builder) -> CommandSource.suggestMatching(context.getSource().getPlayerNames(), builder))
-						.executes(context -> handleCommand(context.getSource(), getString(context, "player")))));
+						.suggests((context, builder) -> CommandSource.suggestMatching(CommandPlayerData.getPlayerNames(context.getSource()), builder))
+						.executes(context -> handlePlayer(context.getSource(), getString(context, "player")))));
 	}
 
-	private static int handleCommand(FabricClientCommandSource source) {
-		if(StringUtils.isBlank(Config.key)) {
-			source.sendError(Messages.NO_API_KEY_ERROR);
-			return Command.SINGLE_SUCCESS;
-		}
-		
+	private static int handleSelf(FabricClientCommandSource source) {
 		Session session = source.getClient().getSession();
-						
-		CompletableFuture.supplyAsync(() -> {
-			try {
-				return Http.sendHypixelRequest("skyblock/profiles", "&uuid=" + session.getUuid(), true, false);
-			} catch (Exception e) {
-				source.sendError(Messages.SKYBLOCK_PROFILES_FETCH_ERROR);
-				e.printStackTrace();
-			}
-			return null;
-		})
-		.thenApply(body -> {
-			try {
-				return Skyblock.getSelectedProfile2(body);
-			} catch (Exception e) {
-				if(e instanceof IllegalStateException) source.sendError(Messages.PROFILES_NOT_MIGRATED_ERROR); else source.sendError(Messages.JSON_PARSING_ERROR);
-				e.printStackTrace();
-			}
-			return null;
-		}).thenAccept(body -> printProfile(body, source, session.getUuid(), session.getUsername()));
 		
-		return Command.SINGLE_SUCCESS;
+		return handleCommand(source, new CommandPlayerData(session.getUsername(), session.getUuid()));
 	}
 	
-	private static volatile String name = null;
-	private static volatile String uuid = null;
-	private static volatile boolean shouldSkip = false;
-	
-	private static int handleCommand(FabricClientCommandSource source, String player) {
-		if(StringUtils.isBlank(Config.key)) {
-			source.sendError(Messages.NO_API_KEY_ERROR);
-			return Command.SINGLE_SUCCESS;
-		}
-		
+	private static int handlePlayer(FabricClientCommandSource source, String player) {
 		CompletableFuture.supplyAsync(() -> {
 			try {
 				String response = Http.sendNameToUuidRequest(player);
 				JsonObject json = JsonParser.parseString(response).getAsJsonObject();
-				name = json.get("name").getAsString();
-				uuid = json.get("id").getAsString();
-			} catch (Exception e) {
+				String name = json.get("name").getAsString();
+				String uuid = json.get("id").getAsString();
+				
+				return new CommandPlayerData(name, uuid);
+			} catch (Throwable t) {
 				source.sendError(Messages.NAME_TO_UUID_ERROR);
-				shouldSkip = true;
-				e.printStackTrace();
+				t.printStackTrace();
+				
+				return null;
 			}
-			return null;
 		})
-		.thenApply(x -> {
-			try {
-				return Http.sendHypixelRequest("skyblock/profiles", "&uuid=" + uuid, true, shouldSkip);
-			} catch (Exception e) {
-				source.sendError(Messages.SKYBLOCK_PROFILES_FETCH_ERROR);
-				e.printStackTrace();
-			}
-			return null;
-		})
-		.thenApply(body -> {
-			try {
-				return Skyblock.getSelectedProfile2(body);
-			} catch (Exception e) {
-				if(e instanceof IllegalStateException) source.sendError(Messages.PROFILES_NOT_MIGRATED_ERROR); else source.sendError(Messages.JSON_PARSING_ERROR);
-				e.printStackTrace();
-			}
-			return null;
-		}).thenAccept(body -> printProfile(body, source, uuid, name));
+		.thenAccept(playerData -> {
+			if (playerData != null) handleCommand(source, playerData);
+		});
 		
 		return Command.SINGLE_SUCCESS;
 	}
 	
-	private static void printProfile(JsonObject body, FabricClientCommandSource source, String uuid, String name) {
-		ProfileCommand.name = null;
-		ProfileCommand.uuid = null;
-		ProfileCommand.shouldSkip = false;
-		if(body == null) {
-			return;
+	private static int handleCommand(FabricClientCommandSource source, CommandPlayerData playerData) {
+		if (StringUtils.isBlank(Config.key)) {
+			source.sendError(Messages.NO_API_KEY_ERROR);
+			return Command.SINGLE_SUCCESS;
 		}
+		
+		CompletableFuture.supplyAsync(() -> {
+			try {
+				return Http.sendHypixelRequest("skyblock/profiles", "&uuid=" + playerData.uuid(), true, false);
+			} catch (Throwable t) {
+				source.sendError(Messages.SKYBLOCK_PROFILES_FETCH_ERROR);
+				t.printStackTrace();
+				
+				return null;
+			}
+		})
+		.thenApply(body -> {
+			try {
+				return Skyblock.getSelectedProfile2(body);
+			} catch (Throwable t) {
+				if (t instanceof IllegalStateException) source.sendError(Messages.PROFILES_NOT_MIGRATED_ERROR); else source.sendError(Messages.JSON_PARSING_ERROR);
+				t.printStackTrace();
+				
+				return null;
+			}
+		})
+		.thenAccept(profileData -> {
+			if (profileData != null) {
+				try {
+					printProfile(source, profileData, playerData.name(), playerData.uuid());
+				} catch (Throwable t) {
+					source.sendError(Messages.UNKNOWN_ERROR);
+					t.printStackTrace();
+				}
+			}
+		});
+		
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static void printProfile(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
 		JsonObject profile = body.get("members").getAsJsonObject().get(uuid).getAsJsonObject();
 		String endSpaces = "        " + name.replaceAll("[A-z0-9_]", "  ") + "        ";
 		

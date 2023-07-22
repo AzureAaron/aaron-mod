@@ -18,6 +18,7 @@ import net.azureaaron.mod.Config;
 import net.azureaaron.mod.util.Cache;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Http;
+import net.azureaaron.mod.util.Messages;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
@@ -80,7 +81,8 @@ public class LowestBinCommand {
 				e.printStackTrace();
 			}
 			return null;
-		}).thenApply(itemPrice -> {
+		})
+		.thenApply(itemPrice -> {
 			if(itemPrice == null) return null;
 			//TODO proper error msg for when there is no day average for an item (bc it hasn't been auctioned recently)
 			try {
@@ -103,15 +105,21 @@ public class LowestBinCommand {
 			return null;
 		})
 		.thenAccept(data -> {
-			printLowestBin(source, data, item, averageDescription);
+			if (data != null) {
+				try {
+					printLowestBin(source, data, item, averageDescription);
+				} catch (Throwable t) {
+					source.sendError(Messages.UNKNOWN_ERROR);
+					t.printStackTrace();
+				}
+			}
 		});
 		
 		return Command.SINGLE_SUCCESS;
 	}
 	
 	private static void printLowestBin(FabricClientCommandSource source, JsonObject data, String itemName, String desc) {
-		if(data == null) return;
-		final String endSpaces = "        " + itemName.replaceAll("[A-z0-9_()']", "  ") + "        ";
+		String endSpaces = "        " + itemName.replaceAll("[A-z0-9_()']", "  ") + "        ";
 		
 		source.sendFeedback(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
 				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))

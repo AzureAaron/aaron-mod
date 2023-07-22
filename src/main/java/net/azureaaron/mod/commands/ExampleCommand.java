@@ -2,33 +2,31 @@ package net.azureaaron.mod.commands;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
-import static net.azureaaron.mod.Colour.colourProfile;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.util.UUIDTypeAdapter;
 
+import net.azureaaron.mod.Config;
 import net.azureaaron.mod.util.CommandPlayerData;
-import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Http;
 import net.azureaaron.mod.util.Messages;
+import net.azureaaron.mod.util.Skyblock;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.client.util.Session;
 import net.minecraft.command.CommandSource;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
-public class DefaultSkinCommand {
+public class ExampleCommand {
+	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
-		dispatcher.register(literal("defaultskin")
+		dispatcher.register(literal("example")
 				.executes(context -> handleSelf(context.getSource()))
 				.then(argument("player", word())
 						.suggests((context, builder) -> CommandSource.suggestMatching(CommandPlayerData.getPlayerNames(context.getSource()), builder))
@@ -38,9 +36,7 @@ public class DefaultSkinCommand {
 	private static int handleSelf(FabricClientCommandSource source) {
 		Session session = source.getClient().getSession();
 		
-		printDefaultSkin(source, session.getUsername(), session.getUuid());
-		
-		return Command.SINGLE_SUCCESS;
+		return handleCommand(source, new CommandPlayerData(session.getUsername(), session.getUuid()));
 	}
 	
 	private static int handlePlayer(FabricClientCommandSource source, String player) {
@@ -60,20 +56,53 @@ public class DefaultSkinCommand {
 			}
 		})
 		.thenAccept(playerData -> {
-			if (playerData != null) printDefaultSkin(source, playerData.name(), playerData.uuid());
+			if (playerData != null) handleCommand(source, playerData);
 		});
 		
 		return Command.SINGLE_SUCCESS;
 	}
 	
-	private static void printDefaultSkin(FabricClientCommandSource source, String name, String uuid) {
-		UUID formattedUuid = UUIDTypeAdapter.fromString(uuid);
-		Identifier skinTexture = DefaultSkinHelper.getTexture(formattedUuid);
-		String skinName = Functions.titleCase(skinTexture.toString().replaceAll("minecraft:textures\\/entity\\/player\\/(wide|slim)\\/", "").replace(".png", ""));
-		String skinModel = Functions.titleCase(DefaultSkinHelper.getModel(formattedUuid));
+	private static int handleCommand(FabricClientCommandSource source, CommandPlayerData playerData) {
+		if (StringUtils.isBlank(Config.key)) {
+			source.sendError(Messages.NO_API_KEY_ERROR);
+			return Command.SINGLE_SUCCESS;
+		}
+		
+		CompletableFuture.supplyAsync(() -> {
+			try {
+				return Http.sendHypixelRequest("skyblock/profiles", "&uuid=" + playerData.uuid(), true, false);
+			} catch (Throwable t) {
+				source.sendError(Messages.SKYBLOCK_PROFILES_FETCH_ERROR);
+				t.printStackTrace();
 				
-		source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Default Skin » ").styled(style -> style.withColor(colourProfile.primaryColour))
-				.append(Text.literal(skinName + " (" + skinModel + ")").styled(style -> style.withColor(colourProfile.secondaryColour))));
-		return;
+				return null;
+			}
+		})
+		.thenApply(body -> {
+			try {
+				return Skyblock.getSelectedProfile2(body);
+			} catch (Throwable t) {
+				if (t instanceof IllegalStateException) source.sendError(Messages.PROFILES_NOT_MIGRATED_ERROR); else source.sendError(Messages.JSON_PARSING_ERROR);
+				t.printStackTrace();
+				
+				return null;
+			}
+		})
+		.thenAccept(profileData -> {
+			if (profileData != null) {
+				try {
+					print(source, profileData, playerData.name(), playerData.uuid());
+				} catch (Throwable t) {
+					source.sendError(Messages.UNKNOWN_ERROR);
+					t.printStackTrace();
+				}
+			}
+		});
+		
+		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static void print(FabricClientCommandSource source, JsonObject profileData, String name, String uuid) {
+		//Do stuff here
 	}
 }
