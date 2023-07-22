@@ -94,7 +94,7 @@ public class DungeonsCommand {
 		
 		CompletableFuture.supplyAsync(() -> {
 			try {
-				return Http.sendHypixelRequest("skyblock/profiles", "&uuid=" + playerData.uuid(), true, false);
+				return Http.sendHypixelRequest("skyblock/profiles", "&uuid=" + playerData.uuid(), true);
 			} catch (Throwable t) {
 				source.sendError(Messages.SKYBLOCK_PROFILES_FETCH_ERROR);
 				t.printStackTrace();
@@ -135,7 +135,7 @@ public class DungeonsCommand {
 		JsonObject profile = body.get("members").getAsJsonObject().get(uuid).getAsJsonObject();
 		JsonObject playerJson = null;
 		try {
-			String playerData = Http.sendHypixelRequest("player", "&uuid=" + uuid, true, false);
+			String playerData = Http.sendHypixelRequest("player", "&uuid=" + uuid, true);
 			playerJson = JsonParser.parseString(playerData).getAsJsonObject();
 		} catch (Exception e) {
 			source.sendError(Messages.HYPIXEL_PROFILE_FETCH_ERROR);

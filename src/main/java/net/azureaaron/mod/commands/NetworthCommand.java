@@ -6,7 +6,6 @@ import static net.azureaaron.mod.Colour.colourProfile;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
-import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
 import org.apache.commons.lang3.StringUtils;
@@ -83,7 +82,7 @@ public class NetworthCommand {
 		
 		CompletableFuture.supplyAsync(() -> {
 			try {
-				return Http.sendHypixelRequest("skyblock/profiles", "&uuid=" + playerData.uuid(), true, false);
+				return Http.sendHypixelRequest("skyblock/profiles", "&uuid=" + playerData.uuid(), true);
 			} catch (Throwable t) {
 				source.sendError(Messages.SKYBLOCK_PROFILES_FETCH_ERROR);
 				t.printStackTrace();
@@ -137,8 +136,8 @@ public class NetworthCommand {
 			try {
 				networthData = Http.sendNetworthRequest(networthPostBody);
 				networth = Skyblock.readNetworthData(networthData, bank, purse);
-			} catch (IOException | InterruptedException e) {
-				e.printStackTrace();
+			} catch (Throwable t) {
+				t.printStackTrace();
 				source.sendError(NETWORTH_FETCH_ERROR);
 				return;
 			}

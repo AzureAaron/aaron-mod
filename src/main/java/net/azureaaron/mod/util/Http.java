@@ -26,14 +26,14 @@ public class Http {
 	private static final String MOULBERRY = "https://moulberry.codes/";
 	private static final String USER_AGENT = "Aaron's Mod/" + Main.MOD_VERSION;
 			
-	public static String sendHypixelRequest(@NotNull String endpoint, @NotNull final String param, boolean authorization, boolean voidBoolean) throws IOException, InterruptedException, ApiException {
+	public static String sendHypixelRequest(@NotNull String endpoint, @NotNull final String parameters, boolean authorization) throws IOException, InterruptedException, ApiException {
 		if(authorization == true) endpoint += "?key=" + Config.key;
 		HttpRequest request = HttpRequest.newBuilder()
 				.GET()
 				.header("Accept", "application/json")
 				.header("User-Agent", USER_AGENT)
 				.version(Version.HTTP_2)
-				.uri(URI.create(HYPIXEL_BASE + endpoint + param))
+				.uri(URI.create(HYPIXEL_BASE + endpoint + parameters))
 				.build();
 		
 		HttpResponse<String> response = HTTP_CLIENT.send(request, BodyHandlers.ofString());

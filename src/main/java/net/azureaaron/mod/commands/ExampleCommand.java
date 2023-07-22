@@ -70,7 +70,7 @@ public class ExampleCommand {
 		
 		CompletableFuture.supplyAsync(() -> {
 			try {
-				return Http.sendHypixelRequest("skyblock/profiles", "&uuid=" + playerData.uuid(), true, false);
+				return Http.sendHypixelRequest("skyblock/profiles", "&uuid=" + playerData.uuid(), true);
 			} catch (Throwable t) {
 				source.sendError(Messages.SKYBLOCK_PROFILES_FETCH_ERROR);
 				t.printStackTrace();

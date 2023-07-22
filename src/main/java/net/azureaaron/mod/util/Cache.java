@@ -106,7 +106,7 @@ public class Cache {
 		CompletableFuture.supplyAsync(() -> {
 			//Populate skyblock items cache
 			try {
-				String itemsResponse = Http.sendHypixelRequest("resources/skyblock/items", "", false, false);
+				String itemsResponse = Http.sendHypixelRequest("resources/skyblock/items", "", false);
 				JsonObject itemsData = JsonParser.parseString(itemsResponse).getAsJsonObject();
 				
 				for(JsonElement item : itemsData.get("items").getAsJsonArray()) {
@@ -130,7 +130,7 @@ public class Cache {
 			//Populate bazaar products cache
 			if(!result) return false; //Prevent exception (crash?) if item cache doesn't get populated
 			try {
-				String bazaarResponse = Http.sendHypixelRequest("skyblock/bazaar", "", false, false);
+				String bazaarResponse = Http.sendHypixelRequest("skyblock/bazaar", "", false);
 				JsonObject bazaarData = JsonParser.parseString(bazaarResponse).getAsJsonObject();
 				
 				bazaarData.get("products").getAsJsonObject().keySet().forEach(key -> {
