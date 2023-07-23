@@ -1,12 +1,16 @@
 package net.azureaaron.mod.util;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Version;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.InflaterInputStream;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -31,14 +35,19 @@ public class Http {
 		HttpRequest request = HttpRequest.newBuilder()
 				.GET()
 				.header("Accept", "application/json")
+				.header("Accept-Encoding", "gzip, deflate")
 				.header("User-Agent", USER_AGENT)
 				.version(Version.HTTP_2)
 				.uri(URI.create(HYPIXEL_BASE + endpoint + parameters))
 				.build();
 		
-		HttpResponse<String> response = HTTP_CLIENT.send(request, BodyHandlers.ofString());
+		HttpResponse<InputStream> response = HTTP_CLIENT.send(request, BodyHandlers.ofInputStream());
 		if(response.statusCode() != 200) throw new ApiException("Hypixel Api Error [code=" + response.statusCode() + ", body=\"" + response.body() + "\"]");
-		return response.body();
+
+		InputStream decodedInputStream = getDecodedInputStream(response);
+		String apiResponse = new String(decodedInputStream.readAllBytes());
+		
+		return apiResponse;
 	}
 	
 	public static String sendNameToUuidRequest(@NotNull final String name) throws IOException, InterruptedException, ApiException {
@@ -71,13 +80,40 @@ public class Http {
 		HttpRequest request = HttpRequest.newBuilder()
 				.GET()
 				.header("Accept", "application/json")
+				.header("Accept-Encoding", "gzip, deflate")
 				.header("User-Agent", USER_AGENT)
 				.version(Version.HTTP_2)
 				.uri(URI.create(MOULBERRY + endpoint))
 				.build();
 		
-		HttpResponse<String> response = HTTP_CLIENT.send(request, BodyHandlers.ofString());
-		return response.body();
+		HttpResponse<InputStream> response = HTTP_CLIENT.send(request, BodyHandlers.ofInputStream());
+		InputStream decodedInputStream = getDecodedInputStream(response);
+		String apiResponse = new String(decodedInputStream.readAllBytes());
+		
+		return apiResponse;
+	}
+	
+	private static InputStream getDecodedInputStream(HttpResponse<InputStream> response) {
+		String encoding = getContentEncoding(response);
+		
+		try {
+			switch (encoding) {
+				case "":
+					return response.body();
+				case "gzip":
+					return new GZIPInputStream(response.body());
+				case "deflate":
+					return new InflaterInputStream(response.body());
+				default:
+					throw new UnsupportedOperationException("The server sent content in unexpected encoding: " + encoding);
+			}
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+	}
+	
+	private static String getContentEncoding(HttpResponse<InputStream> response) {
+		return response.headers().firstValue("Content-Encoding").orElse("");
 	}
 	
 	public static class ApiException extends Exception {
