@@ -154,7 +154,8 @@ public class DungeonsCommand {
 		
 		long catacombsXp = profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("experience").getAsLong();
 		int catacombsLevel = Levelling.getDungeonLevel(catacombsXp);
-		int secrets = (playerJson.get("player").getAsJsonObject().get("achievements").getAsJsonObject().get("skyblock_treasure_hunter") != null) ? playerJson.get("player").getAsJsonObject().get("achievements").getAsJsonObject().get("skyblock_treasure_hunter").getAsInt() : 0;
+		JsonObject achievements = (playerJson.get("player").getAsJsonObject().get("achievements") != null) ? playerJson.get("player").getAsJsonObject().get("achievements").getAsJsonObject() : null;
+		int secrets = (achievements != null && achievements.get("skyblock_treasure_hunter") != null) ? achievements.get("skyblock_treasure_hunter").getAsInt() : 0;
 		String selectedClass = (profile.get("dungeons").getAsJsonObject().get("selected_dungeon_class") != null) ? profile.get("dungeons").getAsJsonObject().get("selected_dungeon_class").getAsString() : "None"; //The fallback value used to be null which was a great choice until it threw a NPE!
 		
 		int healerColour = ("healer".equals(selectedClass)) ? colourProfile.highlightColour : colourProfile.infoColour;
