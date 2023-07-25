@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import dev.cbyrne.betterinject.annotations.Inject;
 import net.azureaaron.mod.Config;
-import net.azureaaron.mod.features.BoundingBoxes;
+import net.azureaaron.mod.features.BoundingBoxes.Dragons;
 import net.azureaaron.mod.util.Cache;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
@@ -32,33 +32,28 @@ public class EnderDragonEntityMixin extends MobEntity implements Monster {
 			if(doesAnotherDragonHaveTheSameEntityId(this.getId())) return;
 			
 			Box dragonBoundingBox = this.calculateBoundingBox();
-			Box powerBoundingBox = new Box(BoundingBoxes.Dragons.POWER.pos1, BoundingBoxes.Dragons.POWER.pos2);
-			Box flameBoundingBox = new Box(BoundingBoxes.Dragons.FLAME.pos1, BoundingBoxes.Dragons.FLAME.pos2);
-			Box apexBoundingBox = new Box(BoundingBoxes.Dragons.APEX.pos1, BoundingBoxes.Dragons.APEX.pos2);
-			Box iceBoundingBox = new Box(BoundingBoxes.Dragons.ICE.pos1, BoundingBoxes.Dragons.ICE.pos2);
-			Box soulBoundingBox = new Box(BoundingBoxes.Dragons.SOUL.pos1, BoundingBoxes.Dragons.SOUL.pos2);
 			
-			if(dragonBoundingBox.intersects(powerBoundingBox)) {
+			if(dragonBoundingBox.intersects(Dragons.POWER.box)) {
 				Cache.powerDragonId = this.getId();
 				Cache.powerSpawnStart = 0L;
 			}
 			
-			if(dragonBoundingBox.intersects(flameBoundingBox)) {
+			if(dragonBoundingBox.intersects(Dragons.FLAME.box)) {
 				Cache.flameDragonId = this.getId();
 				Cache.flameSpawnStart = 0L;	
 			}
 			
-			if(dragonBoundingBox.intersects(apexBoundingBox)) {
+			if(dragonBoundingBox.intersects(Dragons.APEX.box)) {
 				Cache.apexDragonId = this.getId();
 				Cache.apexSpawnStart = 0L;
 			}
 			
-			if(dragonBoundingBox.intersects(iceBoundingBox)) {
+			if(dragonBoundingBox.intersects(Dragons.ICE.box)) {
 				Cache.iceDragonId = this.getId();
 				Cache.iceSpawnStart = 0L;
 			}
 			
-			if(dragonBoundingBox.intersects(soulBoundingBox)) {
+			if(dragonBoundingBox.intersects(Dragons.SOUL.box)) {
 				Cache.soulDragonId = this.getId();
 				Cache.soulSpawnStart = 0L;
 			}

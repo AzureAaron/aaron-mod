@@ -30,6 +30,7 @@ public class BoundingBoxes {
 		
 		public final BlockPos pos1;
 		public final BlockPos pos2;
+		public final Box box;
 		public final float red;
 		public final float green;
 		public final float blue;
@@ -37,6 +38,7 @@ public class BoundingBoxes {
 		private Dragons(BlockPos pos1, BlockPos pos2, float red, float green, float blue) {
 			this.pos1 = pos1;
 			this.pos2 = pos2;
+			this.box = new Box(pos1, pos2);
 			this.red = red * 255f;
 			this.green = green * 255f;
 			this.blue = blue * 255f;
@@ -46,7 +48,6 @@ public class BoundingBoxes {
 	public static void renderBoxes(WorldRenderContext wrc) {
 		if(Functions.isOnHypixel() && Config.masterModeF7DragonBoxes && Cache.inM7Phase5) {
 			for(Dragons dragon : Dragons.values()) {
-				Box box = new Box(dragon.pos1, dragon.pos2);
 				Vec3d camera = minecraftClient.getCameraEntity().getCameraPosVec(wrc.tickDelta());
 				MatrixStack matrices = wrc.matrixStack();
 				
@@ -62,7 +63,7 @@ public class BoundingBoxes {
 				RenderSystem.disableCull();
 				
 				buffer.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES);
-				WorldRenderer.drawBox(matrices, buffer, box, dragon.red, dragon.green, dragon.blue, 1f);
+				WorldRenderer.drawBox(matrices, buffer, dragon.box, dragon.red, dragon.green, dragon.blue, 1f);
 				tessellator.draw();
 				
 				matrices.pop();
