@@ -26,8 +26,7 @@
       "net.azureaaron.mod.ModMenu"
     ],
     "preLaunch": [
-      "dev.cbyrne.betterinject.BetterInject::initialize",
-      "com.llamalad7.mixinextras.MixinExtrasBootstrap::init"
+      "dev.cbyrne.betterinject.BetterInject::initialize"
     ]
   },
   "mixins": [

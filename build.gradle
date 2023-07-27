@@ -41,9 +41,9 @@ dependencies {
 	
 	modImplementation "com.terraformersmc:modmenu:${modmenu_version}"
 	
-	implementation "com.github.LlamaLad7:MixinExtras:${mixinextras_version}"
-	include "com.github.LlamaLad7:MixinExtras:${mixinextras_version}"
-	annotationProcessor "com.github.LlamaLad7:MixinExtras:${mixinextras_version}"
+	implementation "com.github.llamalad7.mixinextras:mixinextras-fabric:${mixinextras_version}"
+	include "com.github.llamalad7.mixinextras:mixinextras-fabric:${mixinextras_version}"
+	annotationProcessor "com.github.llamalad7.mixinextras:mixinextras-fabric:${mixinextras_version}"
 	
 	implementation "com.github.cbyrneee:BetterInject:${betterinject_version}"
 	include "com.github.cbyrneee:BetterInject:${betterinject_version}"
