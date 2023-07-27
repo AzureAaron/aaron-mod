@@ -1,6 +1,7 @@
 package net.azureaaron.mod.features;
 
 import org.joml.Matrix4f;
+import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
@@ -105,8 +106,11 @@ public class DragonTimers {
 		BufferBuilder buffer = tessellator.getBuffer();
 		VertexConsumerProvider.Immediate consumers = VertexConsumerProvider.immediate(buffer);
 		
+		RenderSystem.depthFunc(GL11.GL_ALWAYS);
+		
 		textRenderer.draw(text, h, 0, 0xFFFFFFFF, false, positionMatrix, consumers, TextLayerType.SEE_THROUGH, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 		
+		RenderSystem.depthFunc(GL11.GL_LEQUAL);
 		consumers.draw();
 		matrices.pop();
 	}
