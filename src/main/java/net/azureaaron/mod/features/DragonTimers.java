@@ -109,9 +109,9 @@ public class DragonTimers {
 		RenderSystem.depthFunc(GL11.GL_ALWAYS);
 		
 		textRenderer.draw(text, h, 0, 0xFFFFFFFF, false, positionMatrix, consumers, TextLayerType.SEE_THROUGH, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
+		consumers.draw();
 		
 		RenderSystem.depthFunc(GL11.GL_LEQUAL);
-		consumers.draw();
 		matrices.pop();
 	}
 }
