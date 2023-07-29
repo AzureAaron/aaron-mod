@@ -63,11 +63,13 @@ public class ProfileCommand {
 		int tamingLevel = Levelling.getSkillLevel((profile.get("experience_skill_taming") != null) ? profile.get("experience_skill_taming").getAsLong() : 0, "TAMING", 0);
 		float skillAverage = (float) (alchemyLevel + carpentryLevel + combatLevel + enchantingLevel + farmingLevel + fishingLevel + foragingLevel + miningLevel + tamingLevel) / 9;
 		
-		int revenantHorrorLevel = Levelling.getSlayerLevel((profile.get("slayer_bosses").getAsJsonObject().get("zombie").getAsJsonObject().get("xp") != null) ? profile.get("slayer_bosses").getAsJsonObject().get("zombie").getAsJsonObject().get("xp").getAsInt() : 0, "REVENANT_HORROR");
-		int tarantulaBroodfatherLevel = Levelling.getSlayerLevel((profile.get("slayer_bosses").getAsJsonObject().get("spider").getAsJsonObject().get("xp") != null) ? profile.get("slayer_bosses").getAsJsonObject().get("spider").getAsJsonObject().get("xp").getAsInt() : 0, "TARANTULA_BROODFATHER");
-		int svenPackmasterLevel = Levelling.getSlayerLevel((profile.get("slayer_bosses").getAsJsonObject().get("wolf").getAsJsonObject().get("xp") != null) ? profile.get("slayer_bosses").getAsJsonObject().get("wolf").getAsJsonObject().get("xp").getAsInt() : 0, "SVEN_PACKMASTER");
-		int voidgloomSeraphLevel = Levelling.getSlayerLevel((profile.get("slayer_bosses").getAsJsonObject().get("enderman").getAsJsonObject().get("xp") != null) ? profile.get("slayer_bosses").getAsJsonObject().get("enderman").getAsJsonObject().get("xp").getAsInt() : 0, "VOIDGLOOM_SERAPH");
-		int infernoDemonlordLevel = Levelling.getSlayerLevel((profile.get("slayer_bosses").getAsJsonObject().get("blaze").getAsJsonObject().get("xp") != null) ? profile.get("slayer_bosses").getAsJsonObject().get("blaze").getAsJsonObject().get("xp").getAsInt() : 0, "INFERNO_DEMONLORD");
+		JsonObject slayerBosses = profile.get("slayer_bosses").getAsJsonObject();
+		int revenantHorrorLevel = Levelling.getSlayerLevel((slayerBosses.get("zombie").getAsJsonObject().get("xp") != null) ? slayerBosses.get("zombie").getAsJsonObject().get("xp").getAsInt() : 0, "REVENANT_HORROR");
+		int tarantulaBroodfatherLevel = Levelling.getSlayerLevel((slayerBosses.get("spider").getAsJsonObject().get("xp") != null) ? slayerBosses.get("spider").getAsJsonObject().get("xp").getAsInt() : 0, "TARANTULA_BROODFATHER");
+		int svenPackmasterLevel = Levelling.getSlayerLevel((slayerBosses.get("wolf").getAsJsonObject().get("xp") != null) ? slayerBosses.get("wolf").getAsJsonObject().get("xp").getAsInt() : 0, "SVEN_PACKMASTER");
+		int voidgloomSeraphLevel = Levelling.getSlayerLevel((slayerBosses.get("enderman").getAsJsonObject().get("xp") != null) ? slayerBosses.get("enderman").getAsJsonObject().get("xp").getAsInt() : 0, "VOIDGLOOM_SERAPH");
+		int infernoDemonlordLevel = Levelling.getSlayerLevel((slayerBosses.get("blaze").getAsJsonObject().get("xp") != null) ? slayerBosses.get("blaze").getAsJsonObject().get("xp").getAsInt() : 0, "INFERNO_DEMONLORD");
+		int riftstalkerBloodfiendLevel = Levelling.getSlayerLevel((slayerBosses.get("vampire").getAsJsonObject().get("xp") != null) ? slayerBosses.get("vampire").getAsJsonObject().get("xp").getAsInt() : 0, "RIFTSTALKER_BLOODFIEND");
 		
 		source.sendFeedback(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
 				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))
@@ -110,12 +112,13 @@ public class ProfileCommand {
 		source.sendFeedback(Text.literal(""));
 		
 		source.sendFeedback(Text.literal("Slayers » " + String.valueOf(revenantHorrorLevel) + " • " + String.valueOf(tarantulaBroodfatherLevel) + 
-				" • " + String.valueOf(svenPackmasterLevel) + " • " + String.valueOf(voidgloomSeraphLevel) + " • " + String.valueOf(infernoDemonlordLevel)).styled(style -> style.withColor(colourProfile.infoColour)
+				" • " + String.valueOf(svenPackmasterLevel) + " • " + String.valueOf(voidgloomSeraphLevel) + " • " + String.valueOf(infernoDemonlordLevel) + " • " + String.valueOf(riftstalkerBloodfiendLevel)).styled(style -> style.withColor(colourProfile.infoColour)
 						.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Revenant Horror » " + String.valueOf(revenantHorrorLevel) + "\n").styled(style1 -> style1.withColor(colourProfile.infoColour))
 								.append("Tarantula Broodfather » " + String.valueOf(tarantulaBroodfatherLevel) + "\n")
 								.append("Sven Packmaster » " + String.valueOf(svenPackmasterLevel) + "\n")
 								.append("Voidgloom Seraph » " + String.valueOf(voidgloomSeraphLevel) + "\n")
-								.append("Inferno Demonlord » " + String.valueOf(infernoDemonlordLevel))))));	
+								.append("Inferno Demonlord » " + String.valueOf(infernoDemonlordLevel) + "\n")
+								.append("Riftstalker Bloodfiend » " + String.valueOf(riftstalkerBloodfiendLevel))))));	
 		source.sendFeedback(Text.literal(endSpaces).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
 		return;
 	}

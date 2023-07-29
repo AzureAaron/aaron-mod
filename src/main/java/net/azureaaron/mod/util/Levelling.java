@@ -96,6 +96,7 @@ public class Levelling {
 		int[] svenXpChart = { 10, 30, 250, 1500, 5000, 20000, 100000, 400000, 1000000 };
 		int[] voidgloomXpChart = { 10, 30, 250, 1500, 5000, 20000, 100000, 400000, 1000000 };
 		int[] infernoXpChart = { 10, 30, 250, 1500, 5000, 20000, 100000, 400000, 1000000 };
+		int[] riftstalkerXpChart = { 20, 75, 240, 840, 2400 };
 		int[] xpChart = {};
 		
 		switch(slayer) {
@@ -114,18 +115,20 @@ public class Levelling {
 		case "INFERNO_DEMONLORD":
 			xpChart = infernoXpChart;
 			break;
+		case "RIFTSTALKER_BLOODFIEND":
+			xpChart = riftstalkerXpChart;
+			break;
 		}
 		
-		if(xp >= xpChart[8]) return 9;
-		if(xp >= xpChart[7]) return 8;
-		if(xp >= xpChart[6]) return 7;
-		if(xp >= xpChart[5]) return 6;
+		if(xpChart.length > 5 && xp >= xpChart[8]) return 9;
+		if(xpChart.length > 5 && xp >= xpChart[7]) return 8;
+		if(xpChart.length > 5 && xp >= xpChart[6]) return 7;
+		if(xpChart.length > 5 && xp >= xpChart[5]) return 6;
 		if(xp >= xpChart[4]) return 5;
 		if(xp >= xpChart[3]) return 4;
 		if(xp >= xpChart[2]) return 3;
 		if(xp >= xpChart[1]) return 2;
 		if(xp >= xpChart[0]) return 1;
-		if(xp < xpChart[0]) return 0;
 		return 0;
 	}
 }
