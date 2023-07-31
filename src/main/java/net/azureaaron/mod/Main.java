@@ -27,6 +27,7 @@ import net.azureaaron.mod.commands.UuidCommand;
 import net.azureaaron.mod.commands.WardenWarningLevelCommand;
 import net.azureaaron.mod.features.BoundingBoxes;
 import net.azureaaron.mod.features.DragonTimers;
+import net.azureaaron.mod.features.M7Waypoints;
 import net.azureaaron.mod.listeners.ClientPlayConnectionListener;
 import net.azureaaron.mod.listeners.MouseListener;
 import net.azureaaron.mod.listeners.PlaySoundListener;
@@ -57,10 +58,11 @@ public class Main implements ClientModInitializer {
 	public void onInitializeClient() {
 		//Register listeneres and commands
 		ClientCommandRegistrationCallback.EVENT.register(Main::registerCommands);
-		WorldRenderEvents.LAST.register(BoundingBoxes::renderBoxes);
+		WorldRenderEvents.BEFORE_DEBUG_RENDER.register(BoundingBoxes::renderBoxes);
 		ClientPlayConnectionEvents.JOIN.register(ClientPlayConnectionListener::onJoin);
 		ClientPlayConnectionEvents.DISCONNECT.register(ClientPlayConnectionListener::onDisconnect);
-		WorldRenderEvents.LAST.register(DragonTimers::renderSpawnTimers);
+		WorldRenderEvents.BEFORE_DEBUG_RENDER.register(DragonTimers::renderSpawnTimers);
+		WorldRenderEvents.AFTER_TRANSLUCENT.register(M7Waypoints::renderWaypoints);
 		
 		//Register Keybinds
 		registerKeybindings();

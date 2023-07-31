@@ -87,7 +87,7 @@ public class DragonTimers {
 	}
 
 	private static void renderTextInWorld(WorldRenderContext wrc, Vec3d targetPosition, OrderedText text) {
-		Vec3d camera = CLIENT.getCameraEntity().getCameraPosVec(wrc.tickDelta());
+		Vec3d camera = wrc.camera().getPos();
 		MatrixStack matrices = wrc.matrixStack();
 		TextRenderer textRenderer = CLIENT.textRenderer;
 		

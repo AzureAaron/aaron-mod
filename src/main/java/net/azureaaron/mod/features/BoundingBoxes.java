@@ -6,11 +6,10 @@ import net.azureaaron.mod.Config;
 import net.azureaaron.mod.util.Cache;
 import net.azureaaron.mod.util.Functions;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormat.DrawMode;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -19,7 +18,6 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
 public class BoundingBoxes {
-	private static final MinecraftClient minecraftClient = MinecraftClient.getInstance();
 	
 	public enum Dragons {
 		POWER(new BlockPos(13, 5, 45), new BlockPos(41, 34, 72), 224f, 43f, 43f),
@@ -48,7 +46,7 @@ public class BoundingBoxes {
 	public static void renderBoxes(WorldRenderContext wrc) {
 		if(Functions.isOnHypixel() && Config.masterModeF7DragonBoxes && Cache.inM7Phase5) {
 			for(Dragons dragon : Dragons.values()) {
-				Vec3d camera = minecraftClient.getCameraEntity().getCameraPosVec(wrc.tickDelta());
+				Vec3d camera = wrc.camera().getPos();
 				MatrixStack matrices = wrc.matrixStack();
 				
 				matrices.push();
@@ -61,14 +59,16 @@ public class BoundingBoxes {
 				RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 				RenderSystem.lineWidth(3f);
 				RenderSystem.disableCull();
+				RenderSystem.enableDepthTest();
 				
-				buffer.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES);
+				buffer.begin(DrawMode.LINES, VertexFormats.LINES);
 				WorldRenderer.drawBox(matrices, buffer, dragon.box, dragon.red, dragon.green, dragon.blue, 1f);
 				tessellator.draw();
 				
 				matrices.pop();
 				RenderSystem.lineWidth(1f);
 				RenderSystem.enableCull();
+				RenderSystem.disableDepthTest();
 			}
 		}
 	}

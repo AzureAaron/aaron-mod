@@ -153,6 +153,9 @@ public class Config {
 	@ConfigEntry public static boolean fixTabTranslucency = true;
 	@ConfigEntry public static boolean hideNametagBackground = false;
 	@ConfigEntry public static boolean m7DragonSpawnTimers = false;
+	@ConfigEntry public static boolean m7GyroWaypoints = false;
+	@ConfigEntry public static boolean m7ShootWaypoints = false;
+	@ConfigEntry public static boolean m7StackWaypoints = false;
 	
 	private static void save() {
 		try {
@@ -659,6 +662,36 @@ public class Config {
 								.binding(false,
 										() -> m7DragonSpawnTimers,
 										newValue -> m7DragonSpawnTimers = newValue)
+								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.build())
+						.option(Option.<Boolean>createBuilder()
+								.name(Text.literal("M7 Gyro Waypoints"))
+								.description(OptionDescription.createBuilder()
+										.text(Text.literal("Displays gyro waypoints for the Ice and Apex dragons."))
+										.build())
+								.binding(false,
+										() -> m7GyroWaypoints,
+										newValue -> m7GyroWaypoints = newValue)
+								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.build())
+						.option(Option.<Boolean>createBuilder()
+								.name(Text.literal("M7 Dragon Aim Waypoints"))
+								.description(OptionDescription.createBuilder()
+										.text(Text.literal("Displays waypoints to the location that you need to aim at in order to shoot the at dragon."))
+										.build())
+								.binding(false,
+										() -> m7ShootWaypoints,
+										newValue -> m7ShootWaypoints = newValue)
+								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.build())
+						.option(Option.<Boolean>createBuilder()
+								.name(Text.literal("M7 Arrow Stack Waypoints"))
+								.description(OptionDescription.createBuilder()
+										.text(Text.literal("Displays waypoints for arrow stacks."))
+										.build())
+								.binding(false,
+										() -> m7StackWaypoints,
+										newValue -> m7StackWaypoints = newValue)
 								.controller(opt -> BooleanControllerBuilder.create(opt))
 								.build())
 						.option(Option.<Boolean>createBuilder()
