@@ -1,5 +1,7 @@
 package net.azureaaron.mod.features;
 
+import org.lwjgl.opengl.GL11;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.azureaaron.mod.Config;
@@ -89,6 +91,8 @@ public class M7Waypoints {
 		RenderSystem.enablePolygonOffset();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
+		RenderSystem.enableDepthTest();
+		RenderSystem.depthFunc(GL11.GL_LEQUAL);
 		RenderSystem.disableCull();
 		
 		buffer.begin(DrawMode.TRIANGLE_STRIP, VertexFormats.POSITION_COLOR);
@@ -126,6 +130,8 @@ public class M7Waypoints {
 		RenderSystem.enablePolygonOffset();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
+		RenderSystem.enableDepthTest();
+		RenderSystem.depthFunc(GL11.GL_LEQUAL);
 		RenderSystem.disableCull();
 		
 		buffer.begin(DrawMode.TRIANGLE_STRIP, VertexFormats.POSITION_COLOR);
