@@ -18,6 +18,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import dev.isxander.yacl3.api.ButtonOption;
 import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
@@ -31,11 +32,14 @@ import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.StringControllerBuilder;
 import net.azureaaron.mod.annotations.ConfigEntry;
+import net.azureaaron.mod.features.TextReplacer;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.TextTransformer;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 public class Config {
 	protected static void load() {
@@ -86,6 +90,11 @@ public class Config {
         				currentField.set(null, value);
         			}
         		}
+        	}
+        	
+        	if (config.get("textReplacer") != null) {
+        		JsonObject textReplacerConfig = config.get("textReplacer").getAsJsonObject();
+        		TextReplacer.deserializeAndLoad(textReplacerConfig.get("textReplacements").getAsJsonObject());
         	}
 			
 		} catch (IOException | ReflectiveOperationException e) {
@@ -156,8 +165,9 @@ public class Config {
 	@ConfigEntry public static boolean m7GyroWaypoints = false;
 	@ConfigEntry public static boolean m7ShootWaypoints = false;
 	@ConfigEntry public static boolean m7StackWaypoints = false;
+	@ConfigEntry public static boolean visualTextReplacer = false;
 	
-	private static void save() {
+	public static void save() {
 		try {
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
 			JsonObject config = new JsonObject();
@@ -207,6 +217,12 @@ public class Config {
     			particleConfig.addProperty(value.name(), value.state.name());
     		}
     		config.add("particles", particleConfig);
+    		
+    		//Visual Text Replacer
+    		JsonObject textReplacerConfig = new JsonObject();
+    		
+    		textReplacerConfig.add("textReplacements", TextReplacer.serialize());
+    		config.add("textReplacer", textReplacerConfig);
     		
 			Files.write(Main.CONFIG_PATH, gson.toJson(config).getBytes(StandardCharsets.UTF_8));
 		} catch (IOException | ReflectiveOperationException e) {
@@ -864,6 +880,36 @@ public class Config {
 								newValue -> Particles.ParticleConfig.minecraft_white_ash.state = newValue)
 						.controller(PARTICLE_CONTROLLER)
 						.available(!Main.OPTIFABRIC_LOADED)
+						.build())
+				.build())
+		.category(ConfigCategory.createBuilder()
+				.name(Text.literal("Text Replacer"))
+				.option(Option.<Boolean>createBuilder()
+						.name(Text.literal("Enable Text Replacer"))
+						.description(OptionDescription.of(Text.literal("The text replacer allows you to visually replace almost any text on screen with whatever you want!")
+								.append(Text.literal("\n\nSpecial: Use HEX #AA5500 for "))
+								.append(Text.literal("rainbow text").styled(style -> style.withColor(0xAA5500)))
+								.append(Text.literal("!"))))
+						.binding(false,
+								() -> visualTextReplacer,
+								newValue -> visualTextReplacer = newValue)
+						.controller(opt -> BooleanControllerBuilder.create(opt))
+						.build())
+				.option(ButtonOption.createBuilder()
+						.name(Text.literal("How to use this! (Hover)"))
+						.text(Text.empty())
+						.description(OptionDescription.of(Text.literal("You can add text replacements with the command ")
+								.append(Text.literal("/textreplacer add \"<textReplacement>\" <textComponent>").styled(style -> style.withColor(Formatting.GRAY)))
+								.append(Text.literal("\n\nYou're able to remove text replacements with the command "))
+								.append(Text.literal("/textreplacer remove \"<textReplacement>\"").styled(style -> style.withColor(Formatting.GRAY)))
+								.append(Text.literal("\n\nIf you don't know how to create a text component use the website linked below, then copy n' paste the output!"))))
+						.action((screen, opt) -> {}) //Do nothing I guess
+						.build())
+				.option(ButtonOption.createBuilder()
+						.name(Text.literal("Text Component Generator Website"))
+						.description(OptionDescription.of(Text.literal("Click to open a link to the website!")))
+						.text(Text.literal("\u29C9"))
+						.action((screen, opt) -> ConfirmLinkScreen.open("https://minecraft.tools/en/json_text.php", screen, false))
 						.build())
 				.build())
 		.save(Config::save)

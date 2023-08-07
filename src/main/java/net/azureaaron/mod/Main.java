@@ -23,6 +23,7 @@ import net.azureaaron.mod.commands.NetworthCommand;
 import net.azureaaron.mod.commands.PingCommand;
 import net.azureaaron.mod.commands.ProfileCommand;
 import net.azureaaron.mod.commands.ReflectCommand;
+import net.azureaaron.mod.commands.TextReplacerCommand;
 import net.azureaaron.mod.commands.UuidCommand;
 import net.azureaaron.mod.commands.WardenWarningLevelCommand;
 import net.azureaaron.mod.features.BoundingBoxes;
@@ -102,6 +103,7 @@ public class Main implements ClientModInitializer {
 		DefaultSkinCommand.register(dispatcher);
 		WardenWarningLevelCommand.register(dispatcher);
 		ModScreenCommand.register(dispatcher);
+		TextReplacerCommand.register(dispatcher);
 	}
 	
 	public static void registerKeybindings() {

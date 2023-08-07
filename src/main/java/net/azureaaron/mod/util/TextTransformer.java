@@ -6,6 +6,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.text.MutableText;
+import net.minecraft.text.OrderedText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -261,5 +262,37 @@ public class TextTransformer {
 			newText.append(Text.literal(String.valueOf(text.charAt(i))).styled(style -> style.withColor(Functions.hsbToRGB(i2 / next, 1.0f, 1.0f))));
 		}
 		return newText;
+	}
+		
+	/**
+	 * Replaces a string of characters in an ordered text with custom styling in a performant way!
+	 */
+	public static OrderedText replaceInOrdered(OrderedText orderedText, String wantedWord, Text replacementText) {
+		MutableText text = Text.empty();
+		
+		orderedText.accept((index, style, codePoint) -> {
+			text.append(Text.literal(Character.toString(codePoint)).setStyle(style));
+			
+			return true;
+		});
+		
+		String stringified = text.getString();
+				
+		int startIndex = stringified.indexOf(wantedWord);
+		int endIndex = startIndex + wantedWord.length();
+		
+		if (startIndex == -1) return orderedText; // What we want to replace doesn't exist
+		
+		List<Text> textComponents = text.getSiblings();
+				
+		//Set the component (or first letter of our target word) to what we want to replace it with
+		textComponents.set(startIndex, replacementText);
+		
+		//Remove all useless components (or the rest of the letters of our target word)
+		for (int i = endIndex - 1; i >= startIndex + 1; i--) {
+			textComponents.remove(i);
+		}
+		
+		return text.asOrderedText();
 	}
 }

@@ -1,4 +1,4 @@
-package net.azureaaron.mod.features;
+package net.azureaaron.mod.screens;
 
 import net.azureaaron.mod.Config;
 import net.azureaaron.mod.Main;

@@ -4,8 +4,17 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+
+import dev.cbyrne.betterinject.annotations.Arg;
+import dev.cbyrne.betterinject.annotations.Inject;
+import net.azureaaron.mod.Config;
 import net.azureaaron.mod.features.NametagDrawer;
+import net.azureaaron.mod.features.TextReplacer;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.font.TextRenderer.TextLayerType;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -25,8 +34,15 @@ public class TextRendererMixin implements NametagDrawer {
 		return 1f;
 	}
 	
+	@Shadow 
+	public int getWidth(OrderedText text) {
+		return 1;
+	}
+	
 	@Override
-	public int drawNametag(OrderedText text, float x, float y, int colour, boolean shadow, Matrix4f matrix, VertexConsumerProvider vertexConsumerProvider, TextLayerType layerType, int backgroundColour, int light) {
+	public int drawNametag(OrderedText text, float x, float y, int colour, boolean shadow, Matrix4f matrix, VertexConsumerProvider vertexConsumerProvider, TextLayerType layerType, int backgroundColour, int light) {		
+		text = TextReplacer.visuallyReplaceText(text);
+		x = -getWidth(text) / 2; //Fix x offset
 		colour = tweakTransparency(colour);
         Matrix4f matrix4f = new Matrix4f(matrix);
         if (shadow) {
@@ -35,5 +51,15 @@ public class TextRendererMixin implements NametagDrawer {
         }
         x = this.drawLayer(text, x, y, colour, false, matrix4f, vertexConsumerProvider, layerType, backgroundColour, light);
         return (int) x + (shadow ? 1 : 0);
+	}
+	
+	@Inject(method = "drawInternal(Lnet/minecraft/text/OrderedText;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;II)I", at = @At("HEAD"))
+	private void aaronMod$visuallyReplaceOrderedText(@Arg OrderedText text, @Share("newText") LocalRef<OrderedText> newText) {
+		if (Config.visualTextReplacer) newText.set(TextReplacer.visuallyReplaceText(text));
+	}
+	
+	@ModifyVariable(method = "drawInternal(Lnet/minecraft/text/OrderedText;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;II)I", at = @At("LOAD"))
+	private OrderedText aaronMod$actuallyChangeTheText(OrderedText text, @Share("newText") LocalRef<OrderedText> newText) {
+		return Config.visualTextReplacer ? newText.get() : text;
 	}
 }

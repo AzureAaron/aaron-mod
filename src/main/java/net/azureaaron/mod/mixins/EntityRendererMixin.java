@@ -21,7 +21,6 @@ public class EntityRendererMixin {
 	@WrapOperation(method = "renderLabelIfPresent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/text/Text;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;II)I"))
 	private int aaronMod$shadowedNametags(TextRenderer textRenderer, Text text, float x, float y, int colour, boolean shadow, Matrix4f matrix, VertexConsumerProvider vertexConsumers, TextLayerType layerType, int backgroundColour, int light, Operation<Integer> operation) {
 		backgroundColour = (Config.hideNametagBackground) ? 0 : backgroundColour;
-		return Config.shadowedNametags ? ((NametagDrawer) textRenderer).drawNametag(text.asOrderedText(), x, y, colour, true, matrix, vertexConsumers, layerType, backgroundColour, light) : 
-			operation.call(textRenderer, text, x, y, colour, shadow, matrix, vertexConsumers, layerType, backgroundColour, light);
+		return ((NametagDrawer) textRenderer).drawNametag(text.asOrderedText(), x, y, colour, Config.shadowedNametags, matrix, vertexConsumers, layerType, backgroundColour, light);
 	}
 }
