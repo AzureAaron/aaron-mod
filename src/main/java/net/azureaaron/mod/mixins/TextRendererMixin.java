@@ -40,9 +40,12 @@ public class TextRendererMixin implements NametagDrawer {
 	}
 	
 	@Override
-	public int drawNametag(OrderedText text, float x, float y, int colour, boolean shadow, Matrix4f matrix, VertexConsumerProvider vertexConsumerProvider, TextLayerType layerType, int backgroundColour, int light) {		
-		text = TextReplacer.visuallyReplaceText(text);
-		x = -getWidth(text) / 2; //Fix x offset
+	public int drawNametag(OrderedText text, float x, float y, int colour, boolean shadow, Matrix4f matrix, VertexConsumerProvider vertexConsumerProvider, TextLayerType layerType, int backgroundColour, int light) {
+		if (Config.visualTextReplacer) {
+			text = TextReplacer.visuallyReplaceText(text);
+			x = -getWidth(text) / 2; //Fix x offset
+		}
+
 		colour = tweakTransparency(colour);
         Matrix4f matrix4f = new Matrix4f(matrix);
         if (shadow) {
