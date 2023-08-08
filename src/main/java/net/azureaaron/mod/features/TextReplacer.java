@@ -61,12 +61,6 @@ public class TextReplacer {
 	}
 	
 	public static OrderedText visuallyReplaceText(OrderedText text) {
-		//Maybe in the future we can just replace all of the text in one go, but it probably doesn't matter rn
-		//Reading the ordered text isn't that expensive anyways
-		for (Entry<String, Text> entry : TextReplacer.TEXT_REPLACEMENTS.entrySet()) {
-			text = TextTransformer.replaceInOrdered(text, entry.getKey(), entry.getValue());
-		}
-		
-		return text;
+		return TextTransformer.replaceMultipleEntriesInOrdered(text, TEXT_REPLACEMENTS);
 	}
 }

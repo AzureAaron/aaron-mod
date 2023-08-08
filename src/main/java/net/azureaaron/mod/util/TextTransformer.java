@@ -2,9 +2,12 @@ package net.azureaaron.mod.util;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map.Entry;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Style;
@@ -265,7 +268,7 @@ public class TextTransformer {
 	}
 		
 	/**
-	 * Replaces a string of characters in an ordered text with custom styling in a performant way!
+	 * Replaces the first occurrence of string in OrderedText with custom styling!
 	 */
 	public static OrderedText replaceInOrdered(OrderedText orderedText, String wantedWord, Text replacementText) {
 		MutableText text = Text.empty();
@@ -294,5 +297,146 @@ public class TextTransformer {
 		}
 		
 		return text.asOrderedText();
+	}
+	
+	/**
+	 * Replaces multiple occurrences of one string in OrderedText with custom styling!
+	 */
+	public static OrderedText replaceMultipleInOrdered(OrderedText orderedText, String wantedWord, Text replacementText) {
+		MutableText text = Text.empty();
+		
+		orderedText.accept((index, style, codePoint) -> {
+			text.append(Text.literal(Character.toString(codePoint)).setStyle(style));
+			
+			return true;
+		});
+		
+		String stringified = text.getString();
+		boolean occurs = stringified.indexOf(wantedWord) != -1;
+		
+		if (!occurs) return orderedText; // What we want to replace doesn't exist
+		
+		int occurrences = StringUtils.countMatches(stringified, wantedWord);
+		MutableText newText = text;
+		int indexFrom = 0;
+				
+		for (int i = 0; i < occurrences; i++) {
+			String currentString = newText.getString();
+			int startIndex = currentString.indexOf(wantedWord, indexFrom);
+			int endIndex = startIndex + wantedWord.length();
+			
+			if (startIndex == -1) break; //If for some reason the strings replacements just disappeared, should never happen
+			
+			List<Text> textComponents = newText.getSiblings();
+			
+			//Set the component (or first letter of our target word) to what we want to replace it with
+			textComponents.set(startIndex, replacementText);
+			
+			//Remove all useless components (or the rest of the letters of our target word)
+			for (int i2 = endIndex - 1; i2 >= startIndex + 1; i2--) {
+				textComponents.remove(i2);
+			}
+			
+			newText = deconstructComponents(newText);
+			
+			//Calculate the difference between the length of the text now from before we did any replacements
+			//used to offset what part we need to be replacing next
+			int lengthDiff = newText.getString().length() - currentString.length();
+			
+			indexFrom = endIndex + lengthDiff;
+		}
+		
+		return newText.asOrderedText();
+	}
+	
+	/**
+	 * Deconstructs the extra components of a text object into components of individual characters 
+	 * and their styles, similar to the format of {@link OrderedText}
+	 */
+	public static MutableText deconstructComponents(Text text) {
+		List<Text> currentComponents = text.getSiblings();
+		
+		MutableText newText = Text.empty();
+		List<Text> newComponents = newText.getSiblings();
+		
+		for (int i = 0; i < currentComponents.size(); i ++) {
+			Text current = currentComponents.get(i);
+			String currentString = current.getString();
+			
+			if (currentString.length() <= 1) {
+				newComponents.add(current);
+				
+				continue;
+			}
+			
+			//The conversion to ordered text is the only way to efficiently traverse the replacement component
+			//as it could have nesting layers or legacy formatting -- maybe we can cache this?
+			current.asOrderedText().accept((index, style, codePoint) -> {
+				newComponents.add(Text.literal(Character.toString(codePoint)).setStyle(style));
+				
+				return true;
+			});
+		}
+		
+		return newText;
+	}
+	
+	/**
+	 * Accepts a map of text replacements, which will then be used to replace occurrences of said strings in the {@code orderedText}
+	 */
+	public static OrderedText replaceMultipleEntriesInOrdered(OrderedText orderedText, Object2ObjectLinkedOpenHashMap<String, Text> replacements) {
+		MutableText text = Text.empty();
+		
+		orderedText.accept((index, style, codePoint) -> {
+			text.append(Text.literal(Character.toString(codePoint)).setStyle(style));
+			
+			return true;
+		});
+		
+		String stringified = text.getString();
+		MutableText newText = text;
+		
+		for (Entry<String, Text> entry : replacements.entrySet()) {
+			String wantedWord = entry.getKey();
+			Text replacementText = entry.getValue();
+			
+			boolean occurs = stringified.indexOf(wantedWord) != -1;
+			
+			if (!occurs) continue; // What we want to replace doesn't exist
+						
+			int occurrences = StringUtils.countMatches(stringified, wantedWord);
+			int indexFrom = 0;
+					
+			for (int i = 0; i < occurrences; i++) {
+				String currentString = newText.getString();
+				int startIndex = currentString.indexOf(wantedWord, indexFrom);
+				int endIndex = startIndex + wantedWord.length();
+				
+				//If for some reason the strings replacements just disappeared
+				//should only happen when another replacement caused this replacement to no longer exist
+				if (startIndex == -1) break; 
+				
+				List<Text> textComponents = newText.getSiblings();
+				
+				//Set the component (or first letter of our target word) to what we want to replace it with
+				textComponents.set(startIndex, replacementText);
+				
+				//Remove all useless components (or the rest of the letters of our target word)
+				for (int i2 = endIndex - 1; i2 >= startIndex + 1; i2--) {
+					textComponents.remove(i2);
+				}
+				
+				//Deconstruct the component to make it easy to work with for other replacements
+				newText = deconstructComponents(newText);
+				
+				//Calculate the difference between the length of the text now from before we did any replacements
+				//used to offset what part we need to be replacing next
+				int lengthDiff = newText.getString().length() - currentString.length();
+				
+				indexFrom = endIndex + lengthDiff;
+			}
+		}
+		
+		return (newText.equals(text)) ? orderedText : newText.asOrderedText();
 	}
 }
