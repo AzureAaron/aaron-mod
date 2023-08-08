@@ -39,7 +39,8 @@
     "VertexBufferMixin",
     "BundleAccessor",
     "MusicTrackerMixin",
-    "PlayerListHudMixin"
+    "PlayerListHudMixin",
+    "TextVisitFactoryMixin"
   ],
   "injectors": {
     "defaultRequire": 1

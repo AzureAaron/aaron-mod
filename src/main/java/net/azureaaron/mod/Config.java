@@ -118,6 +118,14 @@ public class Config {
 	public enum RainbowifyMode {
 		STATIC,
 		DYNAMIC;
+		
+		@Override
+		public String toString() {
+			return switch (this) {
+				case STATIC -> "Still";
+				case DYNAMIC -> "Chroma";
+			};
+		}
 	}
 	
 	public enum MouseButton {
@@ -565,15 +573,15 @@ public class Config {
 						.name(Text.literal("Rainbowify Mode"))
 						.description(OptionDescription.createBuilder()
 								.text(Text.literal("Changes how the rainbow gradient will look:\n")
-										.append(Text.literal("\nStatic: "))
+										.append(Text.literal("\nStill: "))
 										.append(TextTransformer.rainbowify("Critical VII, Vampirism VI")) //H.H.
-										.append(Text.literal("\nDynamic: "))
+										.append(Text.literal("\nChroma: "))
 										.append(Text.literal("Critical VII, Vampirism VI").styled(style -> style.withColor(0xAA5500)))) //H.H
 								.build())
 						.binding(RainbowifyMode.DYNAMIC,
 								() -> rainbowifyMode,
 								newValue -> rainbowifyMode = newValue)
-						.controller(opt -> CyclingListControllerBuilder.create(opt).values(RainbowifyMode.values()).valueFormatter(mode -> Text.literal(mode.name())))
+						.controller(opt -> CyclingListControllerBuilder.create(opt).values(RainbowifyMode.values()).valueFormatter(mode -> Text.literal(mode.toString())))
 						.build())
 				.group(OptionGroup.createBuilder()
 						.name(Text.literal("Dungeons"))
@@ -887,8 +895,8 @@ public class Config {
 				.option(Option.<Boolean>createBuilder()
 						.name(Text.literal("Enable Text Replacer"))
 						.description(OptionDescription.of(Text.literal("The text replacer allows you to visually replace almost any text on screen with whatever you want!")
-								.append(Text.literal("\n\nSpecial: Use HEX #AA5500 for "))
-								.append(Text.literal("rainbow text").styled(style -> style.withColor(0xAA5500)))
+								.append(Text.literal("\n\nSpecial: Use HEX #AA5500 or &z for "))
+								.append(Text.literal("chroma text").styled(style -> style.withColor(0xAA5500)))
 								.append(Text.literal("!"))))
 						.binding(false,
 								() -> visualTextReplacer,

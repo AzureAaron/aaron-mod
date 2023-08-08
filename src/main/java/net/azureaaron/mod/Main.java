@@ -84,7 +84,7 @@ public class Main implements ClientModInitializer {
 		Colour.init();
 	};
 	
-	private static void registerCommands(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	private static void registerCommands(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {		
 		PingCommand.register(dispatcher);
 		ProfileCommand.register(dispatcher);
 		UuidCommand.register(dispatcher);

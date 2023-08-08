@@ -11,7 +11,6 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.azureaaron.mod.features.TextReplacer;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
-import net.minecraft.command.argument.TextArgumentType;
 import net.minecraft.text.Text;
 
 public class TextReplacerCommand {
@@ -20,7 +19,7 @@ public class TextReplacerCommand {
 		dispatcher.register(literal("textreplacer")
 				.then(literal("add")
 						.then(argument("replacementText", string())
-								.then(argument("textComponent", TextArgumentType.text())
+								.then(argument("textComponent", ClientTextArgumentType.text())
 										.executes(context -> addReplacement(context.getSource(), getString(context, "replacementText"), context.getArgument("textComponent", Text.class)))))));
 		
 		dispatcher.register(literal("textreplacer")

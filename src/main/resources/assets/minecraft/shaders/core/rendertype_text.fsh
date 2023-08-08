@@ -38,30 +38,57 @@ bool isShadowedBrown(vec4 v) {
            abs(v.b - 0.0/255.0) < epsilon;
 }
 
+vec3 hsv2rgb_smooth(vec3 c){
+    vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),6.0)-3.0)-1.0, 0.0, 1.0 );
+    rgb = rgb*rgb*(3.0-2.0*rgb); // cubic smoothing - smooths out colour transitions
+    return c.z * mix(vec3(1.0), rgb, c.y);
+}
+
 void main() {
     vec4 colour = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
+
     if (colour.a < 0.1) {
-	discard;
+        discard;
     }
 
     if (isBrown(rawColour)) {
-        // Calculate a diagonal gradient by adding sine waves at different frequencies and phases
-        vec2 uv = gl_FragCoord.xy / ScreenSize.xy;
-        float freq = 6.0;
-        float phase = (Time * 20) * 2.0;
-        colour.r = 0.5 + 0.5 * sin(freq * (-uv.x + uv.y) + phase);
-        colour.g = 0.5 + 0.5 * sin(freq * (-uv.x + uv.y + 1.0/3.0) + phase);
-        colour.b = 0.5 + 0.5 * sin(freq * (-uv.x + uv.y + 2.0/3.0) + phase);
+        vec2 uv = gl_FragCoord.xy / ScreenSize.xy; // normalize coordinates to range [0, 1]
+        float offset = Time * 4.0; // adjust the speed of the animation
+    
+        // Move the gradient horizontally from the top left to the bottom right
+        uv.x -= uv.y;
+        uv.y = 0.0;
+
+        float h = mod(offset + -uv.x * 1.75, 1.0); // Vary the hue based on UV.x and time
+        float s = 0.75; // Keep saturation constant at 0.75 for 3/4 saturation
+        float v = 1.0; // Keep value constant at 1.0 for full brightness
+
+        vec3 hsv = vec3(h, s, v);
+        vec3 rgb = hsv2rgb_smooth(hsv);
+
+        colour.r = rgb.r;
+        colour.g = rgb.g;
+        colour.b = rgb.b;
     }
 
     if (isShadowedBrown(rawColour)) {
-        // Calculate a diagonal gradient by adding sine waves at different frequencies and phases
-        vec2 uv = gl_FragCoord.xy / ScreenSize.xy;
-        float freq = 6.0;
-        float phase = (Time * 20) * 2.0;
-        colour.r = 0.125 + 0.125 * sin(freq * (-uv.x + uv.y) + phase);
-        colour.g = 0.125 + 0.125 * sin(freq * (-uv.x + uv.y + 1.0/3.0) + phase);
-        colour.b = 0.125 + 0.125 * sin(freq * (-uv.x + uv.y + 2.0/3.0) + phase);
+        vec2 uv = gl_FragCoord.xy / ScreenSize.xy; // normalize coordinates to range [0, 1]
+        float offset = Time * 4.0; // adjust the speed of the animation
+    
+        // Move the gradient horizontally from the top left to the bottom right
+        uv.x -= uv.y;
+        uv.y = 0.0;
+
+        float h = mod(offset + -uv.x * 1.75, 1.0); // Vary the hue based on UV.x and time
+        float s = 0.75; // Keep saturation constant at 0.75 for 3/4 saturation
+        float v = 0.25; // Keep value constant at 0.25 for quarter brightness
+
+        vec3 hsv = vec3(h, s, v);
+        vec3 rgb = hsv2rgb_smooth(hsv);
+
+        colour.r = rgb.r;
+        colour.g = rgb.g;
+        colour.b = rgb.b;
     }
 
     fragColor = linear_fog(colour, vertexDistance, FogStart, FogEnd, FogColor);
