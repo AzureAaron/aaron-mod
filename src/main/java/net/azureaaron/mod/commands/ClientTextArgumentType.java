@@ -32,7 +32,7 @@ public class ClientTextArgumentType implements ArgumentType<Text> {
 	@Override
 	public Text parse(StringReader stringReader) throws CommandSyntaxException {
 		//Convert &z to §z
-		String str = stringReader.getRemaining().replaceAll("&z", "§z").replaceAll("&Z", "§z");
+		String str = stringReader.getRemaining().replaceAll("&z", "§z").replaceAll("&Z", "§Z");
 		StringReader reader = new StringReader(str);
 		try {
 			MutableText text = Text.Serializer.fromJson(reader);

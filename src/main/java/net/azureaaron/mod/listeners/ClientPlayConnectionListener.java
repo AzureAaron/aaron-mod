@@ -8,7 +8,7 @@ import net.minecraft.client.network.ClientPlayNetworkHandler;
 public class ClientPlayConnectionListener {
 	
 	public static void onJoin(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client) {
-		Cache.currentServerAddress = client.isInSingleplayer() ? "localhost" : handler.getServerInfo().address;
+		Cache.currentServerAddress = client.isInSingleplayer() || handler.getServerInfo().address == null ? "localhost" : handler.getServerInfo().address.toLowerCase();
 		
 		if(!Cache.lastServerAddress.equals(Cache.currentServerAddress)) {
 			Cache.warningLevel = 0;
