@@ -14,7 +14,6 @@ import java.util.zip.InflaterInputStream;
 
 import org.jetbrains.annotations.NotNull;
 
-import net.azureaaron.mod.Config;
 import net.azureaaron.mod.Main;
 
 /**
@@ -25,13 +24,13 @@ import net.azureaaron.mod.Main;
 public class Http {
 	private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder().build();
 	private static final String HYPIXEL_BASE = "https://api.hypixel.net/";
+	private static final String AARON_BASE = "https://api.azureaaron.net/hypixel/";
 	private static final String NAME_TO_UUID = "https://api.minecraftservices.com/minecraft/profile/lookup/name/";
 	private static final String NETWORTH = "https://maro.skyblockextras.com/api/networth/categories";
 	private static final String MOULBERRY = "https://moulberry.codes/";
 	private static final String USER_AGENT = "Aaron's Mod/" + Main.MOD_VERSION;
 			
-	public static String sendHypixelRequest(@NotNull String endpoint, @NotNull final String parameters, boolean authorization) throws IOException, InterruptedException, ApiException {
-		if(authorization == true) endpoint += "?key=" + Config.key;
+	public static String sendUnauthorizedHypixelRequest(@NotNull String endpoint, @NotNull final String parameters) throws IOException, InterruptedException, ApiException {
 		HttpRequest request = HttpRequest.newBuilder()
 				.GET()
 				.header("Accept", "application/json")
@@ -43,6 +42,25 @@ public class Http {
 		
 		HttpResponse<InputStream> response = HTTP_CLIENT.send(request, BodyHandlers.ofInputStream());
 		if(response.statusCode() != 200) throw new ApiException("Hypixel Api Error [code=" + response.statusCode() + ", body=\"" + response.body() + "\"]");
+
+		InputStream decodedInputStream = getDecodedInputStream(response);
+		String apiResponse = new String(decodedInputStream.readAllBytes());
+		
+		return apiResponse;
+	}
+	
+	public static String sendAuthorizedHypixelRequest(@NotNull String endpoint, @NotNull final String parameters) throws IOException, InterruptedException, ApiException {
+		HttpRequest request = HttpRequest.newBuilder()
+				.GET()
+				.header("Accept", "application/json")
+				.header("Accept-Encoding", "gzip, deflate")
+				.header("User-Agent", USER_AGENT)
+				.version(Version.HTTP_2)
+				.uri(URI.create(AARON_BASE + endpoint + parameters))
+				.build();
+		
+		HttpResponse<InputStream> response = HTTP_CLIENT.send(request, BodyHandlers.ofInputStream());
+		if(response.statusCode() != 200) throw new ApiException("Hypixel Authorized Api Proxy Error [code=" + response.statusCode() + ", body=\"" + response.body() + "\"]");
 
 		InputStream decodedInputStream = getDecodedInputStream(response);
 		String apiResponse = new String(decodedInputStream.readAllBytes());

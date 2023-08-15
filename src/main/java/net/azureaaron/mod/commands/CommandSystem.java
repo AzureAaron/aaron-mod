@@ -5,13 +5,10 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.concurrent.CompletableFuture;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.Command;
 
-import net.azureaaron.mod.Config;
 import net.azureaaron.mod.util.CommandPlayerData;
 import net.azureaaron.mod.util.Http;
 import net.azureaaron.mod.util.Messages;
@@ -90,14 +87,9 @@ public class CommandSystem {
 	}
 	
 	private static int handleSkyblockCommand(FabricClientCommandSource source, CommandPlayerData playerData, MethodHandle dispatchHandle) {
-		if (StringUtils.isBlank(Config.key)) {
-			source.sendError(Messages.NO_API_KEY_ERROR);
-			return Command.SINGLE_SUCCESS;
-		}
-		
 		CompletableFuture.supplyAsync(() -> {
 			try {
-				return Http.sendHypixelRequest("skyblock/profiles", "&uuid=" + playerData.uuid(), true);
+				return Http.sendAuthorizedHypixelRequest("skyblock/profiles", "?uuid=" + playerData.uuid());
 			} catch (Throwable t) {
 				source.sendError(Messages.SKYBLOCK_PROFILES_FETCH_ERROR);
 				t.printStackTrace();

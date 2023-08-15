@@ -133,7 +133,6 @@ public class Config {
 		MIDDLE;
 	}
 	
-	@ConfigEntry public static String key = "";
 	@ConfigEntry public static boolean shadowedScoreboard = true;
 	@ConfigEntry public static boolean dungeonFinderPersonStats = true;
 	@ConfigEntry(isEnum = true) public static DayAverage dayAverage = DayAverage.THREE_DAY;
@@ -538,17 +537,6 @@ public class Config {
 				.build())
 		.category(ConfigCategory.createBuilder()
 				.name(Text.literal("Hypixel"))
-				.option(Option.<String>createBuilder()
-						.name(Text.literal("Hypixel Api Key"))
-						.description(OptionDescription.createBuilder()
-								.text(Text.literal("Set your Hypixel Api Key! To get one login to Hypixel and type \"/api new\"\n\n")
-										.append(Text.literal("\u2139 This is only required for the skyblock commands and the Party Finder Stats Lookup feature!").styled(style -> style.withColor(0x218bff))))
-								.build())
-						.binding("",
-								() -> key, 
-								newValue -> key = newValue)
-						.controller(opt -> StringControllerBuilder.create(opt))
-						.build())
 				.option(Option.<DayAverage>createBuilder()
 						.name(Text.literal("Price Day Average"))
 						.description(OptionDescription.createBuilder()
@@ -591,8 +579,7 @@ public class Config {
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Party Finder Stats Lookup"))
 								.description(OptionDescription.createBuilder()
-										.text(Text.literal("Automatically shows a player's dungeon stats when they join from party finder.")
-												.append(Text.literal("\n\n\u2139 This requires you to have set your Api Key!").styled(style -> style.withColor(0x218bff))))
+										.text(Text.literal("Automatically shows a player's dungeon stats when they join from party finder."))
 										.build())
 								.binding(true,
 										() -> dungeonFinderPersonStats,
