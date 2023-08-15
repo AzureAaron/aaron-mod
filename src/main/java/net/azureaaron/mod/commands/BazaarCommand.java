@@ -46,7 +46,7 @@ public class BazaarCommand {
 		
 		CompletableFuture.supplyAsync(() -> {
 			try {
-				String response = Http.sendAuthorizedHypixelRequest("skyblock/bazaar", "");
+				String response = Http.sendUnauthorizedHypixelRequest("skyblock/bazaar", "");
 				JsonObject data = JsonParser.parseString(response).getAsJsonObject();
 				
 				return data.get("products").getAsJsonObject().get(Cache.PRODUCTS_MAP.get(product)).getAsJsonObject().get("quick_status").getAsJsonObject();
