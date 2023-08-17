@@ -1,7 +1,5 @@
 package net.azureaaron.mod;
 
-import static net.azureaaron.mod.Colour.colourProfile;
-
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -10,8 +8,6 @@ import java.nio.file.Files;
 import java.util.Calendar;
 import java.util.List;
 import java.util.function.Function;
-
-import org.joml.Options;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -277,7 +273,7 @@ public class Config {
 								newValue -> placeholderBoolean = newValue)
 						.controller(opt -> BooleanControllerBuilder.create(opt))
 						.available(false)
-						.build())*/
+						.build())
 				.option(Option.<Boolean>createBuilder()
 						.name(Text.literal("Math FMA"))
 						.description(OptionDescription.createBuilder()
@@ -291,7 +287,7 @@ public class Config {
 								newValue -> placeholderBoolean = newValue)
 						.controller(opt -> BooleanControllerBuilder.create(opt))
 						.available(false)
-						.build())
+						.build())*/
 				.group(OptionGroup.createBuilder()
 						.name(Text.literal("Display"))
 						.description(OptionDescription.createBuilder()
