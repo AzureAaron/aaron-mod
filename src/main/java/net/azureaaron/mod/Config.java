@@ -25,7 +25,7 @@ import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import dev.isxander.yacl3.api.controller.ControllerBuilder;
 import dev.isxander.yacl3.api.controller.CyclingListControllerBuilder;
 import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder;
-import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
+import dev.isxander.yacl3.api.controller.IntegerFieldControllerBuilder;
 import dev.isxander.yacl3.api.controller.StringControllerBuilder;
 import net.azureaaron.mod.annotations.ConfigEntry;
 import net.azureaaron.mod.features.TextReplacer;
@@ -326,7 +326,7 @@ public class Config {
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Fix Tab Translucency"))
 								.description(OptionDescription.createBuilder()
-										.text(Text.literal("Fixes an issue introduced in 1.20 where the tab's translucency is broken causing chat messages to render in front of it."))
+										.text(Text.literal("Fixes an issue introduced in 1.20 where the tab's translucency is broken causing chat messages to render in front of it. (MC-263256)"))
 										.build())
 								.binding(true,
 										() -> fixTabTranslucency,
@@ -469,12 +469,13 @@ public class Config {
 						.option(Option.<Integer>createBuilder()
 								.name(Text.literal("Chat History Length"))
 								.description(OptionDescription.createBuilder()
-										.text(Text.literal("Change the maximum length of your chat history so that you don't miss any messages!"))
+										.text(Text.literal("Change the maximum length of your chat history so that you don't miss any messages!")
+												.append(Text.literal("\n\n\u26a0 Warning: Significantly higher values will lead to more memory usage.").styled(style -> style.withColor(0xeac864))))
 										.build())
 								.binding(100,
 										() -> chatHistoryLength,
-										newValue -> chatHistoryLength = newValue)
-								.controller(opt -> IntegerSliderControllerBuilder.create(opt).range(100, 1000).step(10))
+										newValue -> chatHistoryLength = Math.max(100, newValue)) // If the value is somehow lower than 100
+								.controller(opt -> IntegerFieldControllerBuilder.create(opt).min(100))
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Infinite Hotbar Scrolling"))

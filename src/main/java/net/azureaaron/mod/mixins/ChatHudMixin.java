@@ -27,7 +27,7 @@ public class ChatHudMixin {
     
     @ModifyConstant(method = "addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;ILnet/minecraft/client/gui/hud/MessageIndicator;Z)V", constant = @Constant(intValue = 100))
     private int aaronMod$longerChatHistory(int maxMessages) {
-    	MAX_MESSAGES = (Config.chatHistoryLength < 100) ? 100 : Config.chatHistoryLength;
-    	return (Config.chatHistoryLength < 100) ? 100 : Config.chatHistoryLength;
+    	MAX_MESSAGES = Math.max(100, Config.chatHistoryLength);
+    	return Math.max(100, Config.chatHistoryLength);
     }
 }
