@@ -13,7 +13,6 @@ import net.fabricmc.loader.api.FabricLoader;
 public class MixinPlugin implements IMixinConfigPlugin {
 	private static final boolean OPTIFABRIC_LOADED = FabricLoader.getInstance().isModLoaded("optifabric");
 	private static final String MIXIN_PACKAGE = "net.azureaaron.mod.mixins.";
-	private static final boolean USE_BETTER_MATH = Boolean.parseBoolean(System.getProperty("aaronmod.useBetterMath", "false")) && !OPTIFABRIC_LOADED;
 
 	@Override
 	public void onLoad(String mixinPackage) {		
@@ -31,16 +30,6 @@ public class MixinPlugin implements IMixinConfigPlugin {
 		
 		//OptiFine compatibility
 		if(OPTIFABRIC_LOADED && (mixinClassName.equals(MIXIN_PACKAGE + "ParticleManagerMixin") || mixinClassName.equals(MIXIN_PACKAGE + "FireworksSparkParticleMixin"))) return false;
-		
-		//Better Math Toggle
-		if(!USE_BETTER_MATH) {
-			switch(mixinClassName) {
-			case MIXIN_PACKAGE + "MathHelperMixin": return false;
-			case MIXIN_PACKAGE + "Vec3dMixin": return false;
-			case MIXIN_PACKAGE + "Vec3iMixin": return false;
-			case MIXIN_PACKAGE + "Vec2fMixin": return false;
-			}
-		}
 		
 		return true;
 	}
