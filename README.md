@@ -13,7 +13,6 @@ All of these are client side and can be toggled & customized inside of the confi
 
 Vanilla:
 
-* Math FMA (Informational)
 * Shadowed Scoreboard Text
 * Shadowed Name tag Text
 * Hide Name tag Background
@@ -28,7 +27,7 @@ Vanilla:
 * Potion Enchantment Glint
 * Not Stopping Sounds on World Changes
 * Copy Chat Messages with Middle Click (with two different modes)
-* Chat History Length
+* Custom Chat History Length
 * Infinite Hotbar Scrolling
 * Showing Item Groups Outside of Creative
 * Not Resetting Cursor Position Between Chest GUIs
@@ -36,6 +35,8 @@ Vanilla:
 * Christmas Chests For the Whole Month of December
 
 * Particle Manager
+* Text Replacer
+    * Allows you to visually replace almost any text on screen!
 
 Skyblock:
 
@@ -46,12 +47,14 @@ Skyblock:
 * *Fancy* Diamond Heads
 * Hiding Item Tooltips in Click On Time
 * M7 Dragon Statue Bounding Boxes
-* Glowing M7 Dragons
+* M7 Dragon Spawn Timers
+* M7 Dragon Aim Waypoints, Gyro Waypoints, Arrow Stack Waypoints
+* Glowing M7 Dragons (Glow colour dependent on dragon colour!)
 
 Continue reading below for a list of commands the mod offers!
 
 ## Commands
-Inside of the configuration you can choose a colour profile! There is currently 5 available; Original, Midnight, Earth, Sakura and Cloudy. This setting will change the colours used to display command feedback.
+Inside of  the configuration you can choose a colour profile! There is currently 5 available; Original, Midnight, Earth, Sakura and Cloudy. This setting will change the colours used to display command feedback.
 
 Vanilla:
 
@@ -62,6 +65,8 @@ Vanilla:
 * `/defaultskin <player>` Tells you the given player's default skin & model.
 
 * `/ping` Lets you know what your ping is on multiplayer servers.
+
+* `/textreplacer add|remove <textReplacement> [<textComponent>]` Allows you to use the mod's text replacer!
 
 * `/uuid <player>` Returns the uuid of the given player.
 
