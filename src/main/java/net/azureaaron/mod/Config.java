@@ -169,6 +169,7 @@ public class Config {
 	@ConfigEntry public static boolean m7ShootWaypoints = false;
 	@ConfigEntry public static boolean m7StackWaypoints = false;
 	@ConfigEntry public static boolean visualTextReplacer = false;
+	@ConfigEntry public static boolean imagePreview = true;
 	
 	public static void save() {
 		try {
@@ -476,6 +477,15 @@ public class Config {
 										() -> chatHistoryLength,
 										newValue -> chatHistoryLength = Math.max(100, newValue)) // If the value is somehow lower than 100
 								.controller(opt -> IntegerFieldControllerBuilder.create(opt).min(100))
+								.build())
+						.option(Option.<Boolean>createBuilder()
+								.name(Text.literal("Image Preview"))
+								.description(OptionDescription.of(Text.literal("When hovering over a clickable image link in chat, a preview of that image will be displayed!")
+										.append(Text.literal("\n\nOnly images from these hosts can be previewed: cdn.discordapp.com, media.discordapp.net and i.imgur.com"))))
+								.binding(true,
+										() -> imagePreview,
+										newValue -> imagePreview = newValue)
+								.controller(opt -> BooleanControllerBuilder.create(opt))
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Infinite Hotbar Scrolling"))

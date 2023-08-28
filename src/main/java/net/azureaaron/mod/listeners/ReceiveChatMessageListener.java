@@ -75,7 +75,7 @@ public class ReceiveChatMessageListener {
 				
 				if(stringForm.equals("[BOSS] Wither King: You.. again?") || stringForm.equals("[BOSS] Wither King: Ohhh?")) Cache.inM7Phase5 = true;
 			}
-			return ActionResult.SUCCESS;
+			return ActionResult.PASS;
 		});
 	}
 }

@@ -5,6 +5,12 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 
+/**
+ * This event is called right before a message is added to the chat history/hud regardless of its type (system, player, etc.).
+ * 
+ * @author Aaron
+ */
+@FunctionalInterface
 public interface ReceiveChatMessageEvent {
 	Event<ReceiveChatMessageEvent> EVENT = EventFactory.createArrayBacked(ReceiveChatMessageEvent.class,
 			(listeners) -> (message, stringForm) -> {

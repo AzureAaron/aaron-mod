@@ -14,6 +14,8 @@ import java.util.zip.InflaterInputStream;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.google.common.collect.ImmutableSet;
+
 import net.azureaaron.mod.Main;
 
 /**
@@ -111,6 +113,27 @@ public class Http {
 		return apiResponse;
 	}
 	
+	public static InputStream sendGenericH2Request(URI uri, ImmutableSet<String> expectedContentTypes) throws IOException, InterruptedException {
+		HttpRequest request = HttpRequest.newBuilder()
+				.GET()
+				.header("Accept", "*/*")
+				.header("Accept-Encoding", "gzip, deflate")
+				.header("User-Agent", USER_AGENT)
+				.version(Version.HTTP_2)
+				.uri(uri)
+				.build();
+		
+		HttpResponse<InputStream> response = HTTP_CLIENT.send(request, BodyHandlers.ofInputStream());
+		int statusCode = response.statusCode();
+		String contentType = getContentType(response);
+		
+		//Status code & content type enforcement
+		if (statusCode != 200) throw new IllegalStateException("Request was unsuccessful! Code: " + statusCode);
+		if (!expectedContentTypes.contains(contentType)) throw new IllegalStateException("Unexpected content type received! Content Type: " + contentType);
+		
+		return getDecodedInputStream(response);
+	}
+	
 	private static InputStream getDecodedInputStream(HttpResponse<InputStream> response) {
 		String encoding = getContentEncoding(response);
 		
@@ -132,6 +155,10 @@ public class Http {
 	
 	private static String getContentEncoding(HttpResponse<InputStream> response) {
 		return response.headers().firstValue("Content-Encoding").orElse("");
+	}
+	
+	private static String getContentType(HttpResponse<InputStream> response) {
+		return response.headers().firstValue("Content-Type").orElse("");
 	}
 	
 	public static class ApiException extends Exception {

@@ -382,6 +382,45 @@ public class TextTransformer {
 	}
 	
 	/**
+	 * Deconstructs the extra components of a text object into components of individual characters 
+	 * and their styles, similar to the format of {@link OrderedText}
+	 */
+	public static MutableText deconstructAllComponents(Text text) {
+		List<Text> currentComponents = text.getSiblings();
+		
+		MutableText newText = Text.empty();
+		List<Text> newComponents = newText.getSiblings();
+		
+		//Deconstruct the main text
+		text.asOrderedText().accept((index, style, codePoint) -> {
+			newComponents.add(Text.literal(Character.toString(codePoint)).setStyle(style));
+			
+			return true;
+		});
+		
+		for (int i = 0; i < currentComponents.size(); i ++) {
+			Text current = currentComponents.get(i);
+			String currentString = current.getString();
+			
+			if (currentString.length() <= 1) {
+				newComponents.add(current);
+				
+				continue;
+			}
+			
+			//The conversion to ordered text is the only way to efficiently traverse the replacement component
+			//as it could have nesting layers or legacy formatting -- maybe we can cache this?
+			current.asOrderedText().accept((index, style, codePoint) -> {
+				newComponents.add(Text.literal(Character.toString(codePoint)).setStyle(style));
+				
+				return true;
+			});
+		}
+		
+		return newText;
+	}
+	
+	/**
 	 * Accepts a map of text replacements, which will then be used to replace occurrences of said strings in the {@code orderedText}
 	 */
 	public static OrderedText replaceMultipleEntriesInOrdered(OrderedText orderedText, Object2ObjectLinkedOpenHashMap<String, Text> replacements) {

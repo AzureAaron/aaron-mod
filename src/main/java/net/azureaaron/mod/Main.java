@@ -28,6 +28,7 @@ import net.azureaaron.mod.commands.UuidCommand;
 import net.azureaaron.mod.commands.WardenWarningLevelCommand;
 import net.azureaaron.mod.features.BoundingBoxes;
 import net.azureaaron.mod.features.DragonTimers;
+import net.azureaaron.mod.features.ImagePreview;
 import net.azureaaron.mod.features.M7Waypoints;
 import net.azureaaron.mod.listeners.ClientPlayConnectionListener;
 import net.azureaaron.mod.listeners.MouseListener;
@@ -73,6 +74,7 @@ public class Main implements ClientModInitializer {
 		MouseListener.listen();
 		PlaySoundListener.listen();
 		TeamUpdateListener.listen();
+		ImagePreview.init();
 						
 		//Load configuration
 		Config.load();
