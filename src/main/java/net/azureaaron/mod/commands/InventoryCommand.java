@@ -161,10 +161,14 @@ public class InventoryCommand {
 		boolean inventoryEnabled = (profile.get("inv_contents") != null) ? true : false;	
 		NBTCompound armour = null;
 		NBTCompound inventory = null;
+		NBTCompound equipment = null;
 		try {
 			armour = NBTReader.readBase64(profile.get("inv_armor").getAsJsonObject().get("data").getAsString());
-			if(inventoryEnabled) inventory = NBTReader.readBase64(profile.get("inv_contents").getAsJsonObject().get("data").getAsString());
-		} catch (IOException e) {
+			if(inventoryEnabled) {
+				inventory = NBTReader.readBase64(profile.get("inv_contents").getAsJsonObject().get("data").getAsString());
+				equipment = NBTReader.readBase64(profile.get("equippment_contents").getAsJsonObject().get("data").getAsString());
+			}
+		} catch (IOException | NullPointerException e) {
 			source.sendError(NBT_PARSING_ERROR);
 			e.printStackTrace();
 			return;
@@ -184,6 +188,21 @@ public class InventoryCommand {
 		ItemData helmet = new ItemData(
 				armour.getList("i").getCompound(3).getString("tag.display.Name", "§cNo helmet equipped!"), 
 				armour.getList("i").getCompound(3).getList("tag.display.Lore"));
+		
+		ItemData necklace = new ItemData(
+				equipment.getList("i").getCompound(0).getString("tag.display.Name", "§cNo necklace equipped!"), 
+				equipment.getList("i").getCompound(0).getList("tag.display.Lore"));
+		ItemData cloak = new ItemData(
+				equipment.getList("i").getCompound(1).getString("tag.display.Name", "§cNo cloak equipped!"), 
+				equipment.getList("i").getCompound(1).getList("tag.display.Lore"));
+		
+		ItemData belt = new ItemData(
+				equipment.getList("i").getCompound(2).getString("tag.display.Name", "§cNo belt equipped!"), 
+				equipment.getList("i").getCompound(2).getList("tag.display.Lore"));
+		
+		ItemData glovesAndBracelet = new ItemData(
+				equipment.getList("i").getCompound(3).getString("tag.display.Name", "§cNo gloves or bracelet equipped!"), 
+				equipment.getList("i").getCompound(3).getList("tag.display.Lore"));
 		
 		//Index 0 - Wither Blade
 		//Index 1 - Terminator
@@ -213,6 +232,13 @@ public class InventoryCommand {
 		source.sendFeedback(chestplate.formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, chestplate.formatLore()))));
 		source.sendFeedback(leggings.formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, leggings.formatLore()))));
 		source.sendFeedback(boots.formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, boots.formatLore()))));
+		
+		source.sendFeedback(Text.literal(""));
+		
+		source.sendFeedback(necklace.formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, necklace.formatLore()))));
+		source.sendFeedback(cloak.formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, cloak.formatLore()))));
+		source.sendFeedback(belt.formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, belt.formatLore()))));
+		source.sendFeedback(glovesAndBracelet.formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, glovesAndBracelet.formatLore()))));
 		
 		if(inventoryEnabled && (keyItems2[0] != null || keyItems2[1] != null || keyItems2[2] != null)) {
 			source.sendFeedback(Text.literal(""));
