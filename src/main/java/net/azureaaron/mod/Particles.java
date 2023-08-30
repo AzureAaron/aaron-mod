@@ -30,6 +30,7 @@ public class Particles {
 		minecraft_falling_spore_blossom("Falling Spore Blossom", State.FULL),
 		minecraft_firework("Firework", State.FULL),
 		minecraft_flash("Flash", State.FULL),
+		minecraft_heart("Heart", State.FULL),
 		minecraft_rain("Rain Splash", State.FULL),
 		minecraft_spore_blossom_air("Air Spore Blossom", State.FULL),
 		minecraft_white_ash("White Ash", State.FULL);

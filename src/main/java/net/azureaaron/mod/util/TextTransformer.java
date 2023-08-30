@@ -435,6 +435,9 @@ public class TextTransformer {
 		String stringified = text.getString();
 		MutableText newText = text;
 		
+		//This doesn't work properly when a character is made up of multiple codepoint units
+		if (stringified.length() != text.getSiblings().size()) return orderedText;
+		
 		for (Entry<String, Text> entry : replacements.entrySet()) {
 			String wantedWord = entry.getKey();
 			Text replacementText = entry.getValue();

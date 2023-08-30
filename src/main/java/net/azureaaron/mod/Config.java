@@ -840,6 +840,14 @@ public class Config {
 						.available(!Main.OPTIFABRIC_LOADED)
 						.build())
 				.option(Option.<Particles.State>createBuilder()
+						.name(Text.literal("Heart Particles"))
+						.binding(Particles.State.FULL,
+								() -> Particles.ParticleConfig.minecraft_heart.state,
+								newValue -> Particles.ParticleConfig.minecraft_heart.state = newValue)
+						.controller(PARTICLE_CONTROLLER)
+						.available(!Main.OPTIFABRIC_LOADED)
+						.build())
+				.option(Option.<Particles.State>createBuilder()
 						.name(Text.literal("Rain Splash Particles"))
 						.description(OptionDescription.createBuilder()
 								.text(Text.literal("The small splashes of water you see on the ground when it rains."))
