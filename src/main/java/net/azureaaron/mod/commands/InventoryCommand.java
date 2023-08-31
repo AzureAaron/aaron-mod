@@ -189,20 +189,24 @@ public class InventoryCommand {
 				armour.getList("i").getCompound(3).getString("tag.display.Name", "§cNo helmet equipped!"), 
 				armour.getList("i").getCompound(3).getList("tag.display.Lore"));
 		
-		ItemData necklace = new ItemData(
-				equipment.getList("i").getCompound(0).getString("tag.display.Name", "§cNo necklace equipped!"), 
-				equipment.getList("i").getCompound(0).getList("tag.display.Lore"));
-		ItemData cloak = new ItemData(
-				equipment.getList("i").getCompound(1).getString("tag.display.Name", "§cNo cloak equipped!"), 
-				equipment.getList("i").getCompound(1).getList("tag.display.Lore"));
+		ItemData[] equipmentPieces = new ItemData[4];
 		
-		ItemData belt = new ItemData(
-				equipment.getList("i").getCompound(2).getString("tag.display.Name", "§cNo belt equipped!"), 
-				equipment.getList("i").getCompound(2).getList("tag.display.Lore"));
-		
-		ItemData glovesAndBracelet = new ItemData(
-				equipment.getList("i").getCompound(3).getString("tag.display.Name", "§cNo gloves or bracelet equipped!"), 
-				equipment.getList("i").getCompound(3).getList("tag.display.Lore"));
+		if (equipment != null) {			
+			equipmentPieces[0] = new ItemData(
+					equipment.getList("i").getCompound(0).getString("tag.display.Name", "§cNo necklace equipped!"), 
+					equipment.getList("i").getCompound(0).getList("tag.display.Lore"));
+			equipmentPieces[1] = new ItemData(
+					equipment.getList("i").getCompound(1).getString("tag.display.Name", "§cNo cloak equipped!"), 
+					equipment.getList("i").getCompound(1).getList("tag.display.Lore"));
+			
+			equipmentPieces[2] = new ItemData(
+					equipment.getList("i").getCompound(2).getString("tag.display.Name", "§cNo belt equipped!"), 
+					equipment.getList("i").getCompound(2).getList("tag.display.Lore"));
+			
+			equipmentPieces[3] = new ItemData(
+					equipment.getList("i").getCompound(3).getString("tag.display.Name", "§cNo gloves or bracelet equipped!"), 
+					equipment.getList("i").getCompound(3).getList("tag.display.Lore"));
+		}
 		
 		//Index 0 - Wither Blade
 		//Index 1 - Terminator
@@ -233,12 +237,14 @@ public class InventoryCommand {
 		source.sendFeedback(leggings.formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, leggings.formatLore()))));
 		source.sendFeedback(boots.formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, boots.formatLore()))));
 		
-		source.sendFeedback(Text.literal(""));
-		
-		source.sendFeedback(necklace.formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, necklace.formatLore()))));
-		source.sendFeedback(cloak.formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, cloak.formatLore()))));
-		source.sendFeedback(belt.formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, belt.formatLore()))));
-		source.sendFeedback(glovesAndBracelet.formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, glovesAndBracelet.formatLore()))));
+		if (equipment != null) {
+			source.sendFeedback(Text.literal(""));
+			
+			source.sendFeedback(equipmentPieces[0].formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, equipmentPieces[0].formatLore()))));
+			source.sendFeedback(equipmentPieces[1].formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, equipmentPieces[1].formatLore()))));
+			source.sendFeedback(equipmentPieces[2].formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, equipmentPieces[2].formatLore()))));
+			source.sendFeedback(equipmentPieces[3].formatName().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, equipmentPieces[3].formatLore()))));
+		}
 		
 		if(inventoryEnabled && (keyItems2[0] != null || keyItems2[1] != null || keyItems2[2] != null)) {
 			source.sendFeedback(Text.literal(""));
