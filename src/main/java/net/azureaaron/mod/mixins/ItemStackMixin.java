@@ -13,6 +13,7 @@ import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Skyblock;
 import net.azureaaron.mod.util.TextTransformer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -20,6 +21,7 @@ import net.minecraft.util.Formatting;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
+	@Shadow private NbtCompound nbt;
 	
 	@Shadow public abstract boolean hasCustomName();
 	@Shadow public abstract boolean hasEnchantments();
@@ -31,7 +33,7 @@ public abstract class ItemStackMixin {
 	
 	@ModifyVariable(method = "getName", at = @At("STORE"))
 	private Text aaronMod$customItemName(Text text) {
-		if(Functions.isOnHypixel() && Functions.isInSkyblock() && (Config.oldMasterStars || Config.fancyDiamondHeads)) {
+		if(Functions.isOnHypixel() && (Functions.isInSkyblock() || aaronMod$shouldApplyEffect()) && (Config.oldMasterStars || Config.fancyDiamondHeads)) {
 			String itemName = text.getString();
 			
 			if(Config.fancyDiamondHeads && itemName.contains("Diamond") && itemName.contains("Head")) {
@@ -83,7 +85,7 @@ public abstract class ItemStackMixin {
 	
 	@ModifyVariable(method = "getTooltip", at = @At("STORE"), ordinal = 1)
 	private MutableText aaronMod$rainbowifyMaxSkyblockEnchantments(MutableText text) {
-		if(Config.rainbowifyMaxSkyblockEnchantments && Functions.isOnHypixel() && Functions.isInSkyblock() && Arrays.stream(Skyblock.MAX_LEVEL_SKYBLOCK_ENCHANTMENTS).anyMatch(text.getString()::contains)) {
+		if(Config.rainbowifyMaxSkyblockEnchantments && Functions.isOnHypixel() && (Functions.isInSkyblock() || aaronMod$shouldApplyEffect()) && Arrays.stream(Skyblock.MAX_LEVEL_SKYBLOCK_ENCHANTMENTS).anyMatch(text.getString()::contains)) {
 			MutableText newText = Text.empty().styled(style -> style.withItalic(false));
 			List<Text> textComponents = text.getSiblings();
 			
@@ -124,5 +126,9 @@ public abstract class ItemStackMixin {
 			return newText;
 		}
 		return text;
+	}
+	
+	private boolean aaronMod$shouldApplyEffect() {
+		return nbt != null && nbt.contains("aaronModAlwaysDisplaySBStuff") && nbt.getBoolean("aaronModAlwaysDisplaySBStuff");
 	}
 }

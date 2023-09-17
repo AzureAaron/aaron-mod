@@ -92,7 +92,7 @@ public class TextTransformer {
 					format[0] = Formatting.DARK_PURPLE;
 					break;
 				case 'f':
-					format[0] = Formatting.RESET;
+					format[0] = Formatting.WHITE;
 					break;
 				case '7':
 					format[0] = Formatting.GRAY;
