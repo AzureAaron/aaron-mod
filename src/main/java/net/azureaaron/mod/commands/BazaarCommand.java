@@ -26,12 +26,12 @@ import net.minecraft.util.Formatting;
 public class BazaarCommand {
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
-		final LiteralCommandNode<FabricClientCommandSource> bazaarCommand = dispatcher.register(literal("bazaar")
+		final LiteralCommandNode<FabricClientCommandSource> bazaarCommand = dispatcher.register(literal("bazaarprice")
 				.then(argument("product", greedyString())
 						.suggests((context, builder) -> CommandSource.suggestMatching(Cache.PRODUCTS_LIST, builder))
 						.executes(context -> handleCommand(context.getSource(), getString(context, "product")))));
 		
-		dispatcher.register(literal("bz").redirect(bazaarCommand));
+		dispatcher.register(literal("bzprice").redirect(bazaarCommand));
 	}
 	
 	private static final Text NON_EXISTENT_PRODUCT_ERROR = Text.literal("The product you've provided is non existent!").styled(style -> style.withColor(Formatting.RED));

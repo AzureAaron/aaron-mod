@@ -74,7 +74,7 @@ Vanilla:
 
 Skyblock:
 
-* `/bz <product>` Allows you to query the stats of a product on the Skyblock bazaar!
+* `/bzprice <product>` Allows you to query the stats of a product on the Skyblock bazaar!
 
 * `/blessings` View all the blessings you've collected during your dungeon runs.
 
