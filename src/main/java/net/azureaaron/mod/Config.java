@@ -6,8 +6,6 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Calendar;
-import java.util.List;
-import java.util.function.Function;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -22,7 +20,6 @@ import dev.isxander.yacl3.api.OptionFlag;
 import dev.isxander.yacl3.api.OptionGroup;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
-import dev.isxander.yacl3.api.controller.ControllerBuilder;
 import dev.isxander.yacl3.api.controller.CyclingListControllerBuilder;
 import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.IntegerFieldControllerBuilder;
@@ -36,6 +33,7 @@ import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Util;
 
 public class Config {
 	protected static void load() {
@@ -92,6 +90,8 @@ public class Config {
         		JsonObject textReplacerConfig = config.get("textReplacer").getAsJsonObject();
         		TextReplacer.deserializeAndLoad(textReplacerConfig.get("textReplacements").getAsJsonObject());
         	}
+        	
+        	Particles.init(config);
 			
 		} catch (IOException | ReflectiveOperationException e) {
 			Main.LOGGER.error("[Aaron's Mod] Failed to load config!");
@@ -215,18 +215,24 @@ public class Config {
         	//Colour Profile
         	config.addProperty("colourProfile", Colour.colourProfile.name());
         	
-        	//Particles
-    		JsonObject particleConfig = new JsonObject();
-    		for(Particles.ParticleConfig value : Particles.ParticleConfig.values()) {
-    			particleConfig.addProperty(value.name(), value.state.name());
-    		}
-    		config.add("particles", particleConfig);
+        	//Particle States
+    		config.add("particles", Util.make(new JsonObject(), states -> {
+        		for (Particles.ParticleConfig value : Particles.ParticleConfig.values()) {
+        			states.addProperty(value.name(), value.state.name());
+        		}
+    		}));
     		
-    		//Visual Text Replacer
-    		JsonObject textReplacerConfig = new JsonObject();
+    		//Particle Scale
+    		config.add("particleScaling", Util.make(new JsonObject(), scaling -> {
+        		for (Particles.ParticleConfig value : Particles.ParticleConfig.values()) {
+        			scaling.addProperty(value.name(), value.scaleMultiplier);
+        		}
+    		}));
     		
-    		textReplacerConfig.add("textReplacements", TextReplacer.serialize());
-    		config.add("textReplacer", textReplacerConfig);
+    		//Visual Text Replacer    		
+    		config.add("textReplacer", Util.make(new JsonObject(), tr -> {
+    			tr.add("textReplacements", TextReplacer.serialize());
+    		}));
     		
 			Files.write(Main.CONFIG_PATH, gson.toJson(config).getBytes(StandardCharsets.UTF_8));
 		} catch (IOException | ReflectiveOperationException e) {
@@ -240,10 +246,6 @@ public class Config {
 	/**Placeholder variables for configuration values that are set through JVM flags for example.*/
 	@SuppressWarnings("unused")
 	private static transient boolean placeholderBoolean = false;
-		
-	private static final Function<Option<Particles.State>, ControllerBuilder<Particles.State>> PARTICLE_CONTROLLER = (opt) -> CyclingListControllerBuilder.create(opt)
-			.values(List.of(Particles.State.values()))
-			.valueFormatter(particleState -> Text.literal(Functions.titleCase(particleState.name())));
 			
 	public static Screen createGui(Screen parent) {
 		return YetAnotherConfigLib.createBuilder()
@@ -727,171 +729,9 @@ public class Config {
 		
 		.category(ConfigCategory.createBuilder()
 				.name(Text.literal("Particles"))
-				.option(Option.<Particles.State>createBuilder()
-						.name(Text.literal("Ash Particles"))
-						.description(OptionDescription.createBuilder()
-								.text(Text.literal("Ash particles naturally generate in soul sand valleys."))
-								.build())
-						.binding(Particles.State.FULL,
-								() -> Particles.ParticleConfig.minecraft_ash.state,
-								newValue -> Particles.ParticleConfig.minecraft_ash.state = newValue)
-						.controller(PARTICLE_CONTROLLER)
-						.available(!Main.OPTIFABRIC_LOADED)
-						.build())
-				.option(Option.<Particles.State>createBuilder()
-						.name(Text.literal("Block Breaking Particles"))
-						.binding(Particles.State.FULL,
-								() -> Particles.ParticleConfig.minecraft_block_breaking.state,
-								newValue -> Particles.ParticleConfig.minecraft_block_breaking.state = newValue)
-						.controller(PARTICLE_CONTROLLER)
-						.available(!Main.OPTIFABRIC_LOADED)
-						.build())
-				.option(Option.<Particles.State>createBuilder()
-						.name(Text.literal("Block Marker Particles"))
-						.description(OptionDescription.createBuilder()
-								.text(Text.literal("Block Marker particles are the particles you see for the light and barrier blocks for example."))
-								.build())
-						.binding(Particles.State.FULL,
-								() -> Particles.ParticleConfig.minecraft_block_marker.state,
-								newValue -> Particles.ParticleConfig.minecraft_block_marker.state = newValue)
-						.controller(PARTICLE_CONTROLLER)
-						.available(!Main.OPTIFABRIC_LOADED)
-						.build())
-				.option(Option.<Particles.State>createBuilder()
-						.name(Text.literal("Cherry Leaves"))
-						.description(OptionDescription.createBuilder()
-								.text(Text.literal("The leaves that fall from cherry trees."))
-								.build())
-						.binding(Particles.State.FULL,
-								() -> Particles.ParticleConfig.minecraft_cherry_leaves.state,
-								newValue -> Particles.ParticleConfig.minecraft_cherry_leaves.state = newValue)
-						.controller(PARTICLE_CONTROLLER)
-						.available(!Main.OPTIFABRIC_LOADED)
-						.build())
-				.option(Option.<Particles.State>createBuilder()
-						.name(Text.literal("Crit Particles"))
-						.description(OptionDescription.createBuilder()
-								.text(Text.literal("These particles can be seen when a critical hit is dealt against an enemy."))
-								.build())
-						.binding(Particles.State.FULL,
-								() -> Particles.ParticleConfig.minecraft_crit.state,
-								newValue -> Particles.ParticleConfig.minecraft_crit.state = newValue)
-						.controller(PARTICLE_CONTROLLER)
-						.available(!Main.OPTIFABRIC_LOADED)
-						.build())
-				.option(Option.<Particles.State>createBuilder()
-						.name(Text.literal("Dust Particles"))
-						.description(OptionDescription.createBuilder()
-								.text(Text.literal("Dust particles can come in any colour! One example of their usage is the dust emitted by redstone torches."))
-								.build())
-						.binding(Particles.State.FULL,
-								() -> Particles.ParticleConfig.minecraft_dust.state,
-								newValue -> Particles.ParticleConfig.minecraft_dust.state = newValue)
-						.controller(PARTICLE_CONTROLLER)
-						.available(!Main.OPTIFABRIC_LOADED)
-						.build())
-				.option(Option.<Particles.State>createBuilder()
-						.name(Text.literal("Entity Effect Particles"))
-						.description(OptionDescription.createBuilder()
-								.text(Text.literal("The particles seen when an entity has an active potion effect."))
-								.build())
-						.binding(Particles.State.FULL,
-								() -> Particles.ParticleConfig.minecraft_entity_effect.state,
-								newValue -> Particles.ParticleConfig.minecraft_entity_effect.state = newValue)
-						.controller(PARTICLE_CONTROLLER)
-						.available(!Main.OPTIFABRIC_LOADED)
-						.build())
-				.option(Option.<Particles.State>createBuilder()
-						.name(Text.literal("Enchanted Hit Particles"))
-						.description(OptionDescription.createBuilder()
-								.text(Text.literal("Enchanted Hit particles can be seen when dealing damage with a weapon thats enchanted."))
-								.build())
-						.binding(Particles.State.FULL,
-								() -> Particles.ParticleConfig.minecraft_enchanted_hit.state,
-								newValue -> Particles.ParticleConfig.minecraft_enchanted_hit.state = newValue)
-						.controller(PARTICLE_CONTROLLER)
-						.available(!Main.OPTIFABRIC_LOADED)
-						.build())
-				.option(Option.<Particles.State>createBuilder()
-						.name(Text.literal("Explosion Particles"))
-						.binding(Particles.State.FULL,
-								() -> Particles.ParticleConfig.minecraft_explosion.state,
-								newValue -> Particles.ParticleConfig.minecraft_explosion.state = newValue)
-						.controller(PARTICLE_CONTROLLER)
-						.available(!Main.OPTIFABRIC_LOADED)
-						.build())
-				.option(Option.<Particles.State>createBuilder()
-						.name(Text.literal("Firework Particles"))
-						.binding(Particles.State.FULL,
-								() -> Particles.ParticleConfig.minecraft_firework.state,
-								newValue -> Particles.ParticleConfig.minecraft_firework.state = newValue)
-						.controller(PARTICLE_CONTROLLER)
-						.available(!Main.OPTIFABRIC_LOADED)
-						.build())
-				.option(Option.<Particles.State>createBuilder()
-						.name(Text.literal("Flash Particles"))
-						.description(OptionDescription.createBuilder()
-								.text(Text.literal("Flash particles are the flash of colour you see in the air when a firework explodes."))
-								.build())
-						.binding(Particles.State.FULL,
-								() -> Particles.ParticleConfig.minecraft_flash.state,
-								newValue -> Particles.ParticleConfig.minecraft_flash.state = newValue)
-						.controller(PARTICLE_CONTROLLER)
-						.available(!Main.OPTIFABRIC_LOADED)
-						.build())
-				.option(Option.<Particles.State>createBuilder()
-						.name(Text.literal("Heart Particles"))
-						.binding(Particles.State.FULL,
-								() -> Particles.ParticleConfig.minecraft_heart.state,
-								newValue -> Particles.ParticleConfig.minecraft_heart.state = newValue)
-						.controller(PARTICLE_CONTROLLER)
-						.available(!Main.OPTIFABRIC_LOADED)
-						.build())
-				.option(Option.<Particles.State>createBuilder()
-						.name(Text.literal("Rain Splash Particles"))
-						.description(OptionDescription.createBuilder()
-								.text(Text.literal("The small splashes of water you see on the ground when it rains."))
-								.build())
-						.binding(Particles.State.FULL,
-								() -> Particles.ParticleConfig.minecraft_rain.state,
-								newValue -> Particles.ParticleConfig.minecraft_rain.state = newValue)
-						.controller(PARTICLE_CONTROLLER)
-						.available(!Main.OPTIFABRIC_LOADED)
-						.build())
-				.option(Option.<Particles.State>createBuilder()
-						.name(Text.literal("Air Spore Blossom Particles"))
-						.description(OptionDescription.createBuilder()
-								.text(Text.literal("The particles that float around in the air near spore blossoms."))
-								.build())
-						.binding(Particles.State.FULL,
-								() -> Particles.ParticleConfig.minecraft_spore_blossom_air.state,
-								newValue -> Particles.ParticleConfig.minecraft_spore_blossom_air.state = newValue)
-						.controller(PARTICLE_CONTROLLER)
-						.available(!Main.OPTIFABRIC_LOADED)
-						.build())
-				.option(Option.<Particles.State>createBuilder()
-						.name(Text.literal("Falling Spore Blossom Particles"))
-						.description(OptionDescription.createBuilder()
-								.text(Text.literal("The particles that fall down beneath spore blossoms."))
-								.build())
-						.binding(Particles.State.FULL,
-								() -> Particles.ParticleConfig.minecraft_falling_spore_blossom.state,
-								newValue -> Particles.ParticleConfig.minecraft_falling_spore_blossom.state = newValue)
-						.controller(PARTICLE_CONTROLLER)
-						.available(!Main.OPTIFABRIC_LOADED)
-						.build())
-				.option(Option.<Particles.State>createBuilder()
-						.name(Text.literal("White Ash Particles"))
-						.description(OptionDescription.createBuilder()
-								.text(Text.literal("White Ash can be frequently found in the Basalt Deltas!"))
-								.build())
-						.binding(Particles.State.FULL,
-								() -> Particles.ParticleConfig.minecraft_white_ash.state,
-								newValue -> Particles.ParticleConfig.minecraft_white_ash.state = newValue)
-						.controller(PARTICLE_CONTROLLER)
-						.available(!Main.OPTIFABRIC_LOADED)
-						.build())
+				.groups(Particles.getOptionGroups())
 				.build())
+		
 		.category(ConfigCategory.createBuilder()
 				.name(Text.literal("Text Replacer"))
 				.option(Option.<Boolean>createBuilder()
