@@ -59,7 +59,7 @@ public class ImagePreview {
 				ClickEvent clickEvent = currentStyle.getClickEvent();
 				
 				if (clickEvent != null && clickEvent.getAction() == ClickEvent.Action.OPEN_URL) {
-					String url = clickEvent.getValue();
+					String url = fixupLink(clickEvent.getValue());
 					
 					if (IMAGE_URL_PATTERN.matcher(url).matches()) foundImages.add(url);
 				}
@@ -109,7 +109,7 @@ public class ImagePreview {
 				ClickEvent clickEvent = style.getClickEvent();
 				
 				if (clickEvent.getAction() == ClickEvent.Action.OPEN_URL) {
-					CachedImage image = ImagePreview.IMAGE_CACHE.getOrDefault(clickEvent.getValue(), null);
+					CachedImage image = ImagePreview.IMAGE_CACHE.getOrDefault(fixupLink(clickEvent.getValue()), null);
 					
 					if (image != null) {
 						MatrixStack matrices = context.getMatrices();
@@ -145,6 +145,17 @@ public class ImagePreview {
 	
 	private static boolean isAllowedImageHost(String host) {
 		return host.equals("cdn.discordapp.com") || host.equals("media.discordapp.net") || host.equals("i.imgur.com");
+	}
+	
+	/**
+	 * Converts imgur.com to i.imgur.com
+	 */
+	private static String fixupLink(String url) {
+		if (url.startsWith("https://imgur.com")) {
+			return url.replace("https://imgur.com", "https://i.imgur.com");
+		}
+			
+		return url;
 	}
 	
 	private static record CachedImage(long creationTime, Identifier texture, int width, int height) {
