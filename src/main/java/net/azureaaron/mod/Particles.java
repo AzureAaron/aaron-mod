@@ -3,29 +3,22 @@ package net.azureaaron.mod;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.function.Function;
 
 import com.google.gson.JsonObject;
 
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.OptionGroup;
-import dev.isxander.yacl3.api.controller.ControllerBuilder;
-import dev.isxander.yacl3.api.controller.CyclingListControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
 import net.azureaaron.mod.util.Functions;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 
-public class Particles {
-	private static final Function<Option<State>, ControllerBuilder<State>> PARTICLE_CONTROLLER = (opt) -> CyclingListControllerBuilder.create(opt)
-			.values(List.of(State.values()))
-			.valueFormatter(particleState -> Text.literal(Functions.titleCase(particleState.name())));
-		
+public class Particles {		
 	/**This {@link HashSet} is used to avoid looking up enum constants that don't exist.*/
-	public static HashSet<String> particlesSupported = Util.make(new HashSet<>(), supportedParticles -> {
+	public static final HashSet<String> PARTICLES_SUPPORTED = Util.make(new HashSet<>(), supportedParticles -> {
 		for (ParticleConfig value : ParticleConfig.values()) {
-			supportedParticles.add(value.toString());
+			supportedParticles.add(value.name());
 		}
 	});
 
@@ -58,6 +51,11 @@ public class Particles {
 			this.name = name;
 			this.state = state;
 			this.scaleMultiplier = scaleMultiplier;
+		}
+		
+		@Override
+		public String toString() {
+			return Functions.titleCase(this.name());
 		}
 		
 		public String getDescription() {
@@ -93,14 +91,14 @@ public class Particles {
 			JsonObject configuredParticleStates = config.get("particles").getAsJsonObject();
 			if (configuredParticleStates != null) {
 				for (String particle : configuredParticleStates.keySet()) {
-					if (particlesSupported.contains(particle)) ParticleConfig.valueOf(particle).state = State.valueOf(configuredParticleStates.get(particle).getAsString());
+					if (PARTICLES_SUPPORTED.contains(particle)) ParticleConfig.valueOf(particle).state = State.valueOf(configuredParticleStates.get(particle).getAsString());
 				}
 			}
 			
 			JsonObject configuredParticleScaling = config.get("particleScaling").getAsJsonObject();
 			if (configuredParticleScaling != null) {
 				for (String particle : configuredParticleScaling.keySet()) {
-					if (particlesSupported.contains(particle)) ParticleConfig.valueOf(particle).scaleMultiplier  =configuredParticleScaling.get(particle).getAsFloat();
+					if (PARTICLES_SUPPORTED.contains(particle)) ParticleConfig.valueOf(particle).scaleMultiplier  =configuredParticleScaling.get(particle).getAsFloat();
 				}
 			}
 		} catch (Throwable t) {
@@ -125,7 +123,7 @@ public class Particles {
 									() -> particle.state,
 									newValue -> particle.state = newValue)
 							.available(!Main.OPTIFABRIC_LOADED)
-							.controller(PARTICLE_CONTROLLER)
+							.controller(Config::createCyclingListController4Enum)
 							.build())
 					
 					//Scale Multiplier

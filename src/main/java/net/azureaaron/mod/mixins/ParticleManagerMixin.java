@@ -32,7 +32,7 @@ public class ParticleManagerMixin {
 		Identifier particleId = Registries.PARTICLE_TYPE.getId(parameters.getType());
 		String id = particleId.toUnderscoreSeparatedString();
 		
-		if (Particles.particlesSupported.contains(id) && Particles.ParticleConfig.valueOf(id).state == Particles.State.NONE) cir.cancel();
+		if (Particles.PARTICLES_SUPPORTED.contains(id) && Particles.ParticleConfig.valueOf(id).state == Particles.State.NONE) cir.cancel();
 	}
 	
 	@Inject(method = "addBlockBreakParticles", at = @At("HEAD"), cancellable = true)
@@ -52,7 +52,7 @@ public class ParticleManagerMixin {
 		Identifier particleId = Registries.PARTICLE_TYPE.getId(parameters.getType());
 		String id = particleId.toUnderscoreSeparatedString();
 		
-		if (Particles.particlesSupported.contains(id)) aaronMod$scaleParticle(particle, ParticleConfig.valueOf(id).scaleMultiplier);
+		if (Particles.PARTICLES_SUPPORTED.contains(id)) aaronMod$scaleParticle(particle, ParticleConfig.valueOf(id).scaleMultiplier);
 	}
 	
 	@Redirect(method = "method_34020", at = @At(value = "NEW", target = "Lnet/minecraft/client/particle/BlockDustParticle;"))

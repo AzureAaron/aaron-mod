@@ -104,11 +104,21 @@ public class Config {
 		ONE_DAY, 
 		THREE_DAY, 
 		SEVEN_DAY;
+		
+		@Override
+		public String toString() {
+			return Functions.titleCase(this.name().replace('_', ' '));
+		}
 	}
 	
 	public enum CopyChatMode {
 		ENTIRE_MESSAGE,
 		SINGLE_LINE;
+		
+		@Override
+		public String toString() {
+			return Functions.titleCase(this.name().replace('_', ' '));
+		}
 	}
 	
 	public enum RainbowifyMode {
@@ -127,6 +137,11 @@ public class Config {
 	public enum MouseButton {
 		RIGHT,
 		MIDDLE;
+		
+		@Override
+		public String toString() {
+			return Functions.titleCase(this.name()) + " Button";
+		}
 	}
 	
 	@ConfigEntry public static boolean shadowedScoreboard = true;
@@ -246,6 +261,13 @@ public class Config {
 	/**Placeholder variables for configuration values that are set through JVM flags for example.*/
 	@SuppressWarnings("unused")
 	private static transient boolean placeholderBoolean = false;
+	
+	@SuppressWarnings("unchecked")
+	static <E extends Enum<?>> CyclingListControllerBuilder<E> createCyclingListController4Enum(Option<E> opt) {
+		E[] constants = (E[]) opt.binding().defaultValue().getClass().getEnumConstants();
+		
+		return CyclingListControllerBuilder.create(opt).values(constants).formatValue(c -> Text.of(c.toString()));
+	}
 			
 	public static Screen createGui(Screen parent) {
 		return YetAnotherConfigLib.createBuilder()
@@ -265,7 +287,7 @@ public class Config {
 						.binding(Colour.Colours.Original,
 								() -> Colour.colourProfile,
 								newValue -> Colour.colourProfile = newValue)
-						.controller(opt -> CyclingListControllerBuilder.create(opt).values(Colour.Colours.values()).valueFormatter(colour -> Text.literal(colour.name())))
+						.controller(Config::createCyclingListController4Enum)
 						.build())
 				/*.option(Option.createBuilder(boolean.class)
 						.name(Text.literal("Better Math"))
@@ -274,7 +296,7 @@ public class Config {
 						.binding(false,
 								() -> Main.USE_BETTER_MATH,
 								newValue -> placeholderBoolean = newValue)
-						.controller(opt -> BooleanControllerBuilder.create(opt))
+						.controller(BooleanControllerBuilder::create)
 						.available(false)
 						.build())
 				.option(Option.<Boolean>createBuilder()
@@ -288,7 +310,7 @@ public class Config {
 						.binding(false,
 								() -> Options.USE_MATH_FMA,
 								newValue -> placeholderBoolean = newValue)
-						.controller(opt -> BooleanControllerBuilder.create(opt))
+						.controller(BooleanControllerBuilder::create)
 						.available(false)
 						.build())*/
 				.group(OptionGroup.createBuilder()
@@ -304,7 +326,7 @@ public class Config {
 								.binding(true,
 										() -> shadowedScoreboard,
 										newValue -> shadowedScoreboard = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Shadowed Nametag Text"))
@@ -314,7 +336,7 @@ public class Config {
 								.binding(true,
 										() -> shadowedNametags,
 										newValue -> shadowedNametags = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Hide Nametag Background"))
@@ -324,7 +346,7 @@ public class Config {
 								.binding(false,
 										() -> hideNametagBackground,
 										newValue -> hideNametagBackground = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Fix Tab Translucency"))
@@ -334,7 +356,7 @@ public class Config {
 								.binding(true,
 										() -> fixTabTranslucency,
 										newValue -> fixTabTranslucency = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("FPS Display"))
@@ -344,7 +366,7 @@ public class Config {
 								.binding(true,
 										() -> fpsDisplay,
 										newValue -> fpsDisplay = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Extra Debug Info"))
@@ -354,7 +376,7 @@ public class Config {
 								.binding(true, 
 										() -> extraDebugInfo, 
 										newValue -> extraDebugInfo = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Hide Fire Overlay"))
@@ -364,7 +386,7 @@ public class Config {
 								.binding(false,
 										() -> hideFireOverlay, 
 										newValue -> hideFireOverlay = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Hide Mob Spawner Animations"))
@@ -374,7 +396,7 @@ public class Config {
 								.binding(false,
 										() -> hideSpinningMobInMobSpawner,
 										newValue -> hideSpinningMobInMobSpawner = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Correct Ambient Darkness"))
@@ -384,7 +406,7 @@ public class Config {
 								.binding(true,
 										() -> correctAmbientDarkness,
 										newValue -> correctAmbientDarkness = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Double>createBuilder()
 								.name(Text.literal("Zoom Multiplier"))
@@ -408,7 +430,7 @@ public class Config {
 								.binding(false,
 										() -> oldMessageIndicatorColours, 
 										newValue -> oldMessageIndicatorColours = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Potion Enchantment Glint"))
@@ -418,7 +440,7 @@ public class Config {
 								.binding(false,
 										() -> shinyPotions,
 										newValue -> shinyPotions = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.build())
 				.group(OptionGroup.createBuilder()
@@ -434,7 +456,7 @@ public class Config {
 								.binding(false,
 										() -> stopSoundsOnWorldChange,
 										newValue -> stopSoundsOnWorldChange = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Copy Chat Messages"))
@@ -444,7 +466,7 @@ public class Config {
 								.binding(true,
 										() -> copyChatMessages,
 										newValue -> copyChatMessages = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<MouseButton>createBuilder()
 								.name(Text.literal("Copy Chat Mouse Button"))
@@ -454,7 +476,7 @@ public class Config {
 								.binding(MouseButton.MIDDLE,
 										() -> copyChatMouseButton,
 										newValue -> copyChatMouseButton = newValue)
-								.controller(opt -> CyclingListControllerBuilder.create(opt).values(MouseButton.values()).valueFormatter(entry -> Text.literal(Functions.titleCase(entry.name()) + " Button")))
+								.controller(Config::createCyclingListController4Enum)
 								.build())
 						.option(Option.<CopyChatMode>createBuilder()
 								.name(Text.literal("Copy Chat Mode"))
@@ -466,7 +488,7 @@ public class Config {
 								.binding(CopyChatMode.ENTIRE_MESSAGE,
 										() -> copyChatMode,
 										newValue -> copyChatMode = newValue)
-								.controller(opt -> CyclingListControllerBuilder.create(opt).values(CopyChatMode.values()).valueFormatter(entry -> Text.literal(Functions.titleCase(entry.name().replace('_', ' ')))))
+								.controller(Config::createCyclingListController4Enum)
 								.available(copyChatMessages)
 								.build())
 						.option(Option.<Integer>createBuilder()
@@ -487,7 +509,7 @@ public class Config {
 								.binding(true,
 										() -> imagePreview,
 										newValue -> imagePreview = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Infinite Hotbar Scrolling"))
@@ -497,7 +519,7 @@ public class Config {
 								.binding(true,
 										() -> infiniteHotbarScrolling,
 										newValue -> infiniteHotbarScrolling = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Show Item Groups Outside of Creative"))
@@ -507,7 +529,7 @@ public class Config {
 								.binding(false,
 										() -> showItemGroupsOutsideOfCreative,
 										newValue -> showItemGroupsOutsideOfCreative = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Don't Reset Cursor Position"))
@@ -517,7 +539,7 @@ public class Config {
 								.binding(false,
 										() -> resetCursorPosition,
 										newValue -> resetCursorPosition = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Mac Only - Alt. FN+F3+N Keybind"))
@@ -527,7 +549,7 @@ public class Config {
 								.binding(false,
 										() -> alternateF3PlusNKey,
 										newValue -> alternateF3PlusNKey = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.available(MinecraftClient.IS_SYSTEM_MAC)
 								.build())
 						.option(Option.<Boolean>createBuilder()
@@ -538,7 +560,7 @@ public class Config {
 								.binding(false,
 										() -> decemberChristmasChests,
 										newValue -> decemberChristmasChests = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.available(CALENDAR.get(Calendar.MONTH) + 1 == 12)
 								.flag(OptionFlag.ASSET_RELOAD)
 								.build())
@@ -554,7 +576,7 @@ public class Config {
 						.binding(DayAverage.THREE_DAY,
 								() -> dayAverage,
 								newValue -> dayAverage = newValue)
-						.controller(opt -> CyclingListControllerBuilder.create(opt).values(DayAverage.values()).valueFormatter(average -> Text.literal(average.name())))
+						.controller(Config::createCyclingListController4Enum)
 						.build())
 				.option(Option.<Boolean>createBuilder()
 						.name(Text.literal("Rainbowify Max Enchants"))
@@ -564,7 +586,7 @@ public class Config {
 						.binding(false,
 								() -> rainbowifyMaxSkyblockEnchantments,
 								newValue -> rainbowifyMaxSkyblockEnchantments = newValue)
-						.controller(opt -> BooleanControllerBuilder.create(opt))
+						.controller(BooleanControllerBuilder::create)
 						.build())
 				.option(Option.<RainbowifyMode>createBuilder()
 						.name(Text.literal("Rainbowify Mode"))
@@ -578,7 +600,7 @@ public class Config {
 						.binding(RainbowifyMode.DYNAMIC,
 								() -> rainbowifyMode,
 								newValue -> rainbowifyMode = newValue)
-						.controller(opt -> CyclingListControllerBuilder.create(opt).values(RainbowifyMode.values()).valueFormatter(mode -> Text.literal(mode.toString())))
+						.controller(Config::createCyclingListController4Enum)
 						.build())
 				.group(OptionGroup.createBuilder()
 						.name(Text.literal("Dungeons"))
@@ -593,7 +615,7 @@ public class Config {
 								.binding(true,
 										() -> dungeonFinderPersonStats,
 										newValue -> dungeonFinderPersonStats = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						/*.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Colourful Party Finder Notes"))
@@ -603,7 +625,7 @@ public class Config {
 								.binding(false,
 										() -> colourfulPartyFinderNotes,
 										newValue -> colourfulPartyFinderNotes = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())*/
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Dungeon Score Message"))
@@ -613,7 +635,7 @@ public class Config {
 								.binding(true,
 										() -> dungeonScoreMessage,
 										newValue -> dungeonScoreMessage = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<String>createBuilder()
 								.name(Text.literal("270 Score Message"))
@@ -640,7 +662,7 @@ public class Config {
 								.binding(false,
 										() -> oldMasterStars,
 										newValue -> oldMasterStars = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Fancy Diamond Heads"))
@@ -652,7 +674,7 @@ public class Config {
 								.binding(false,
 										() -> fancyDiamondHeads,
 										newValue -> fancyDiamondHeads = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Hide Tooltips In Click On Time"))
@@ -662,7 +684,7 @@ public class Config {
 								.binding(true,
 										() -> hideClickOnTimeTooltips,
 										newValue -> hideClickOnTimeTooltips = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("M7 Dragon Bounding Box"))
@@ -672,7 +694,7 @@ public class Config {
 								.binding(false,
 										() -> masterModeF7DragonBoxes,
 										newValue -> masterModeF7DragonBoxes = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("M7 Dragon Spawn Timers"))
@@ -682,7 +704,7 @@ public class Config {
 								.binding(false,
 										() -> m7DragonSpawnTimers,
 										newValue -> m7DragonSpawnTimers = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("M7 Gyro Waypoints"))
@@ -692,7 +714,7 @@ public class Config {
 								.binding(false,
 										() -> m7GyroWaypoints,
 										newValue -> m7GyroWaypoints = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("M7 Dragon Aim Waypoints"))
@@ -702,7 +724,7 @@ public class Config {
 								.binding(false,
 										() -> m7ShootWaypoints,
 										newValue -> m7ShootWaypoints = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("M7 Arrow Stack Waypoints"))
@@ -712,7 +734,7 @@ public class Config {
 								.binding(false,
 										() -> m7StackWaypoints,
 										newValue -> m7StackWaypoints = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Glowing M7 Dragons"))
@@ -722,7 +744,7 @@ public class Config {
 								.binding(false,
 										() -> glowingM7Dragons,
 										newValue -> glowingM7Dragons = newValue)
-								.controller(opt -> BooleanControllerBuilder.create(opt))
+								.controller(BooleanControllerBuilder::create)
 								.build())
 						.build())
 				.build())
@@ -743,7 +765,7 @@ public class Config {
 						.binding(false,
 								() -> visualTextReplacer,
 								newValue -> visualTextReplacer = newValue)
-						.controller(opt -> BooleanControllerBuilder.create(opt))
+						.controller(BooleanControllerBuilder::create)
 						.build())
 				.option(ButtonOption.createBuilder()
 						.name(Text.literal("How to use this! (Hover)"))
