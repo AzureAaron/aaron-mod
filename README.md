@@ -28,6 +28,7 @@ Vanilla:
 * Not Stopping Sounds on World Changes
 * Copy Chat Messages with Middle Click (with two different modes)
 * Custom Chat History Length
+* Image Preview
 * Infinite Hotbar Scrolling
 * Showing Item Groups Outside of Creative
 * Not Resetting Cursor Position Between Chest GUIs
@@ -35,6 +36,9 @@ Vanilla:
 * Christmas Chests For the Whole Month of December
 
 * Particle Manager
+    * Particles can be toggled on or off
+    * You can change the scale of particles too!
+
 * Text Replacer
     * Allows you to visually replace almost any text on screen!
 
