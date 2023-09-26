@@ -139,7 +139,7 @@ public class Functions {
 	
 	@SuppressWarnings("resource")
 	public static boolean isInSkyblock() {
-		return MinecraftClient.getInstance().player.getScoreboard().containsObjective("SBScoreboard");
+		return MinecraftClient.getInstance().player.getScoreboard().getObjectiveNames().contains("SBScoreboard");
 	}
 	
 	/**

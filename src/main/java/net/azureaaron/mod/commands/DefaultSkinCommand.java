@@ -10,14 +10,14 @@ import java.lang.invoke.MethodHandle;
 import java.util.UUID;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.util.UUIDTypeAdapter;
+import com.mojang.util.UndashedUuid;
 
 import net.azureaaron.mod.util.Functions;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.util.DefaultSkinHelper;
+import net.minecraft.client.util.SkinTextures;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 public class DefaultSkinCommand {
 	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Vanilla(DefaultSkinCommand.class, "printDefaultSkin");
@@ -31,10 +31,10 @@ public class DefaultSkinCommand {
 	}
 	
 	protected static void printDefaultSkin(FabricClientCommandSource source, String name, String uuid) {
-		UUID formattedUuid = UUIDTypeAdapter.fromString(uuid);
-		Identifier skinTexture = DefaultSkinHelper.getTexture(formattedUuid);
-		String skinName = Functions.titleCase(skinTexture.toString().replaceAll("minecraft:textures\\/entity\\/player\\/(wide|slim)\\/", "").replace(".png", ""));
-		String skinModel = Functions.titleCase(DefaultSkinHelper.getModel(formattedUuid));
+		UUID formattedUuid = UndashedUuid.fromString(uuid);
+		SkinTextures skinTexture = DefaultSkinHelper.getTexture(formattedUuid);
+		String skinName = Functions.titleCase(skinTexture.texture().toString().replaceAll("minecraft:textures\\/entity\\/player\\/(wide|slim)\\/", "").replace(".png", ""));
+		String skinModel = Functions.titleCase(DefaultSkinHelper.getTexture(formattedUuid).model().getName());
 				
 		source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Default Skin » ").styled(style -> style.withColor(colourProfile.primaryColour))
 				.append(Text.literal(skinName + " (" + skinModel + ")").styled(style -> style.withColor(colourProfile.secondaryColour))));

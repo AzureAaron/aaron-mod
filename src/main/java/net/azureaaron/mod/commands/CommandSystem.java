@@ -14,7 +14,7 @@ import net.azureaaron.mod.util.Http;
 import net.azureaaron.mod.util.Messages;
 import net.azureaaron.mod.util.Skyblock;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.util.Session;
+import net.minecraft.client.session.Session;
 
 /**
  * Provides core functionality for the mod's commands.
@@ -57,7 +57,7 @@ public class CommandSystem {
 	public static int handleSelf4Skyblock(FabricClientCommandSource source, MethodHandle dispatchHandle) {
 		Session session = source.getClient().getSession();
 		
-		return handleSkyblockCommand(source, new CommandPlayerData(session.getUsername(), session.getUuid()), dispatchHandle);
+		return handleSkyblockCommand(source, new CommandPlayerData(session.getUsername(), session.getUuidOrNull().toString().replaceAll("-", "")), dispatchHandle);
 	}
 	
 	/**
@@ -146,7 +146,7 @@ public class CommandSystem {
 		Session session = source.getClient().getSession();
 		
 		try {
-			dispatchHandle.invokeExact(source, session.getUsername(), session.getUuid());
+			dispatchHandle.invokeExact(source, session.getUsername(), session.getUuidOrNull().toString().replaceAll("-", ""));
 		} catch (Throwable t) {
 			source.sendError(Messages.UNKNOWN_ERROR);
 			t.printStackTrace();

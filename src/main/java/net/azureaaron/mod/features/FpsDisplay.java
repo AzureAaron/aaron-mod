@@ -8,7 +8,7 @@ public class FpsDisplay {
 	private static final MinecraftClient client = MinecraftClient.getInstance();
 	
 	public static void render(DrawContext context) {
-		if(!client.options.debugEnabled) {
+		if(!client.getDebugHud().shouldShowDebugHud()) {
 			MatrixStack matrices = context.getMatrices();
 	        matrices.push();
 	        matrices.translate(2, 2, 0);
