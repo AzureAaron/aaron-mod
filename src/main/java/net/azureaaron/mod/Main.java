@@ -80,7 +80,7 @@ public class Main implements ClientModInitializer {
 		Config.load();
 		
 		//Particle Stuff :)
-		//Particles.init();
+		Particles.registerSyntheticParticles();
 		
 		//Colour Profiles!
 		Colour.init();

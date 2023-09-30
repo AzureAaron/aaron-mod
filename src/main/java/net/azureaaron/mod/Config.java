@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Calendar;
-
+import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -24,6 +24,7 @@ import dev.isxander.yacl3.api.controller.CyclingListControllerBuilder;
 import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.IntegerFieldControllerBuilder;
 import dev.isxander.yacl3.api.controller.StringControllerBuilder;
+import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import net.azureaaron.mod.annotations.ConfigEntry;
 import net.azureaaron.mod.features.TextReplacer;
 import net.azureaaron.mod.util.Functions;
@@ -33,6 +34,7 @@ import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
 public class Config {
@@ -232,15 +234,15 @@ public class Config {
         	
         	//Particle States
     		config.add("particles", Util.make(new JsonObject(), states -> {
-        		for (Particles.ParticleConfig value : Particles.ParticleConfig.values()) {
-        			states.addProperty(value.name(), value.state.name());
+        		for (Map.Entry<Identifier, Particles.State> entry : Particles.PARTICLE_STATES.entrySet()) {
+        			states.addProperty(entry.getKey().toString(), entry.getValue().name());
         		}
     		}));
     		
     		//Particle Scale
-    		config.add("particleScaling", Util.make(new JsonObject(), scaling -> {
-        		for (Particles.ParticleConfig value : Particles.ParticleConfig.values()) {
-        			scaling.addProperty(value.name(), value.scaleMultiplier);
+    		config.add("particleScaling", Util.make(new JsonObject(), scales -> {
+        		for (Object2FloatMap.Entry<Identifier> entry : Particles.PARTICLE_SCALES.object2FloatEntrySet()) {
+        			scales.addProperty(entry.getKey().toString(), entry.getFloatValue());
         		}
     		}));
     		
