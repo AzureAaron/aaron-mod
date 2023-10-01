@@ -146,6 +146,19 @@ public class Config {
 		}
 	}
 	
+	public enum LatencyFetchMode {
+		PLAYER_LIST,
+		QUERY;
+		
+		@Override
+		public String toString() {
+			return switch (this) {
+				case PLAYER_LIST -> "Player List";
+				case QUERY -> "Query";
+			};
+		}
+	}
+	
 	@ConfigEntry public static boolean shadowedScoreboard = true;
 	@ConfigEntry public static boolean dungeonFinderPersonStats = true;
 	@ConfigEntry(isEnum = true) public static DayAverage dayAverage = DayAverage.THREE_DAY;
@@ -187,6 +200,7 @@ public class Config {
 	@ConfigEntry public static boolean m7StackWaypoints = false;
 	@ConfigEntry public static boolean visualTextReplacer = false;
 	@ConfigEntry public static boolean imagePreview = true;
+	@ConfigEntry(isEnum = true) public static LatencyFetchMode latencyFetchMode = LatencyFetchMode.PLAYER_LIST;
 	
 	public static void save() {
 		try {
@@ -565,6 +579,14 @@ public class Config {
 								.controller(BooleanControllerBuilder::create)
 								.available(CALENDAR.get(Calendar.MONTH) + 1 == 12)
 								.flag(OptionFlag.ASSET_RELOAD)
+								.build())
+						.option(Option.<LatencyFetchMode>createBuilder()
+								.name(Text.literal("Latency Fetch Mode"))
+								.description(OptionDescription.of(Text.literal("Changes how /ping calculates your latency!"), Text.literal("\nPlayer List: Gets your ping from the player list (tab)"), Text.literal("\nQuery: Queries the server and calculates your ping. (May sometimes not work)")))
+								.binding(LatencyFetchMode.PLAYER_LIST,
+										() -> Config.latencyFetchMode,
+										newValue -> Config.latencyFetchMode = newValue)
+								.controller(Config::createCyclingListController4Enum)
 								.build())
 						.build())
 				.build())
