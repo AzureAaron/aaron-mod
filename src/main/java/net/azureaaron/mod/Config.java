@@ -730,7 +730,7 @@ public class Config {
 										newValue -> m7DragonSpawnTimers = newValue)
 								.controller(BooleanControllerBuilder::create)
 								.build())
-						.option(Option.<Boolean>createBuilder()
+						/*.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("M7 Gyro Waypoints"))
 								.description(OptionDescription.createBuilder()
 										.text(Text.literal("Displays gyro waypoints for the Ice and Apex dragons."))
@@ -739,7 +739,7 @@ public class Config {
 										() -> m7GyroWaypoints,
 										newValue -> m7GyroWaypoints = newValue)
 								.controller(BooleanControllerBuilder::create)
-								.build())
+								.build())*/
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("M7 Dragon Aim Waypoints"))
 								.description(OptionDescription.createBuilder()

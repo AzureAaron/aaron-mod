@@ -21,8 +21,8 @@ import net.minecraft.util.math.Vec3d;
 
 public class M7Waypoints {
 	//Gyro Spots
-	private static final BlockPos BLUE_GYRO = new BlockPos(83, 5, 102);
-	private static final BlockPos GREEN_GYRO = new BlockPos(24, 5, 82);
+	/*private static final BlockPos BLUE_GYRO = new BlockPos(83, 5, 102);
+	private static final BlockPos GREEN_GYRO = new BlockPos(24, 5, 82);*/
 	
 	// Shoot Spots
 	private static final BlockPos BLUE_SHOOT = new BlockPos(85, 20, 94);
@@ -44,10 +44,10 @@ public class M7Waypoints {
 	
 	public static void renderWaypoints(WorldRenderContext wrc) {
 		if (Functions.isOnHypixel() && Cache.inM7Phase5) {
-			if (Config.m7GyroWaypoints) {
+			/*if (Config.m7GyroWaypoints) {
 				renderFilled(wrc, BLUE_GYRO, 252f * 255f, 211f * 255f, 3 * 255f);
 				renderFilled(wrc, GREEN_GYRO, 252f * 255f, 211f * 255f, 3 * 255f);
-			}
+			}*/
 			
 			if (Config.m7ShootWaypoints) {
 				renderFilled(wrc, BLUE_SHOOT, Dragons.ICE.red, Dragons.ICE.green, Dragons.ICE.blue);
