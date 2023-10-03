@@ -31,7 +31,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 
 public class ImagePreview {
-	private static final Pattern IMAGE_URL_PATTERN = Pattern.compile("(https?:\\/\\/.*\\.(?:png|jpg|jpeg|gif)\\.?)", Pattern.CASE_INSENSITIVE);
+	private static final Pattern IMAGE_URL_PATTERN = Pattern.compile("(https?:\\/\\/.*\\.(?:png|jpg|jpeg|gif)\\.?(?:\\?.+)?)", Pattern.CASE_INSENSITIVE);
 	private static final ImmutableSet<String> EXPECTED_CONTENT_TYPES = ImmutableSet.of("image/png", "image/jpeg", "image/gif");
 	
 	//The actual image caches, we retain a separate set of urls to avoid attempting to cache the same image twice which'd cause a memory leak
@@ -76,7 +76,7 @@ public class ImagePreview {
 	}
 	
 	private static void cacheImage(String url) {
-		CompletableFuture.supplyAsync(() -> {
+		CompletableFuture.runAsync(() -> {
 			MinecraftClient client = MinecraftClient.getInstance();
 			URI uri = URI.create(url);
 			
@@ -90,13 +90,11 @@ public class ImagePreview {
 					
 					IMAGE_CACHE.put(url, new CachedImage(System.currentTimeMillis(), texture, image.getWidth(), image.getHeight()));
 				} catch (Exception e) {
-					Main.LOGGER.error("[Aaron's Mod Image Preivew] Failed to cache image! URL: " + url);
-					e.printStackTrace();
+					Main.LOGGER.error("[Aaron's Mod Image Preivew] Failed to cache image! URL: {}, {}", url, e);
 					
 					IMAGE_URLS_CACHED.remove(url);
 				}
 			}
-			return (Void) null;
 		});
 	}
 	
