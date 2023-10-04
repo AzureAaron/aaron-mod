@@ -33,7 +33,7 @@ public abstract class ItemStackMixin {
 	
 	@ModifyVariable(method = "getName", at = @At("STORE"))
 	private Text aaronMod$customItemName(Text text) {
-		if(Functions.isOnHypixel() && (Functions.isInSkyblock() || aaronMod$shouldApplyEffect()) && (Config.oldMasterStars || Config.fancyDiamondHeads)) {
+		if((Functions.isOnHypixel() && Functions.isInSkyblock()) || aaronMod$shouldApplyEffect() && (Config.oldMasterStars || Config.fancyDiamondHeads)) {
 			String itemName = text.getString();
 			
 			if(Config.fancyDiamondHeads && itemName.contains("Diamond") && itemName.contains("Head")) {
@@ -85,7 +85,7 @@ public abstract class ItemStackMixin {
 	
 	@ModifyVariable(method = "getTooltip", at = @At("STORE"), ordinal = 1)
 	private MutableText aaronMod$rainbowifyMaxSkyblockEnchantments(MutableText text) {
-		if(Config.rainbowifyMaxSkyblockEnchantments && Functions.isOnHypixel() && (Functions.isInSkyblock() || aaronMod$shouldApplyEffect()) && Arrays.stream(Skyblock.MAX_LEVEL_SKYBLOCK_ENCHANTMENTS).anyMatch(text.getString()::contains)) {
+		if(Config.rainbowifyMaxSkyblockEnchantments && ((Functions.isOnHypixel() && Functions.isInSkyblock()) || aaronMod$shouldApplyEffect()) && Arrays.stream(Skyblock.MAX_LEVEL_SKYBLOCK_ENCHANTMENTS).anyMatch(text.getString()::contains)) {
 			MutableText newText = Text.empty().styled(style -> style.withItalic(false));
 			List<Text> textComponents = text.getSiblings();
 			
