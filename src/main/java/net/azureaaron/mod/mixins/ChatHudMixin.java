@@ -5,8 +5,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
+
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 import dev.cbyrne.betterinject.annotations.Arg;
 import dev.cbyrne.betterinject.annotations.Inject;
@@ -28,7 +28,7 @@ public class ChatHudMixin {
     	ReceiveChatMessageEvent.EVENT.invoker().onMessage(message, message.getString());
     }
     
-    @ModifyConstant(method = "addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;ILnet/minecraft/client/gui/hud/MessageIndicator;Z)V", constant = @Constant(intValue = 100))
+    @ModifyExpressionValue(method = "addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;ILnet/minecraft/client/gui/hud/MessageIndicator;Z)V", at = @At(value = "CONSTANT", args = "intValue=100"))
     private int aaronMod$longerChatHistory(int maxMessages) {
     	MAX_MESSAGES = Math.max(100, Config.chatHistoryLength);
     	return Math.max(100, Config.chatHistoryLength);
