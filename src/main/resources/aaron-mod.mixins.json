@@ -37,7 +37,8 @@
     "MusicTrackerMixin",
     "PlayerListHudMixin",
     "TextVisitFactoryMixin",
-    "PingMeasurerMixin"
+    "PingMeasurerMixin",
+    "GameRenderer$1Mixin"
   ],
   "injectors": {
     "defaultRequire": 1
