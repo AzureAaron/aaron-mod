@@ -53,6 +53,9 @@ public class InventoryCommand {
 			return TextTransformer.fromLegacy(name);
 		}
 		
+		/**
+		 * Calling this when the item wasn't found will throw an exception
+		 */
 		private Text[] formattedLore() {
 			return nbt.getList("tag.display.Lore").stream().map(element -> TextTransformer.fromLegacy((String) element)).toArray(Text[]::new);
 		}
@@ -76,6 +79,8 @@ public class InventoryCommand {
 		}
 		
 		private MutableText feedbackMessage() {
+			if (formattedName().getString().endsWith("equipped!")) return formattedName();
+			
 			ItemStack stack = getStack();
 			MutableText name = (MutableText) stack.getName();
 			
