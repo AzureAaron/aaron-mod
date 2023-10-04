@@ -36,7 +36,8 @@
     "BundleAccessor",
     "MusicTrackerMixin",
     "PlayerListHudMixin",
-    "TextVisitFactoryMixin"
+    "TextVisitFactoryMixin",
+    "PingMeasurerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
