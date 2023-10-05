@@ -103,14 +103,11 @@ public class Particles {
 		List<Entry<RegistryKey<ParticleType<?>>, ParticleType<?>>> entryList = new ArrayList<>(Registries.PARTICLE_TYPE.getEntrySet());
 		
 		//Alphabetically sort the entries for logical ordering
-		entryList.sort(new Comparator<>() {
-			@Override
-			public int compare(Entry<RegistryKey<ParticleType<?>>, ParticleType<?>> o1, Entry<RegistryKey<ParticleType<?>>, ParticleType<?>> o2) {
-				String o1Name = getParticleDisplayName(Registries.PARTICLE_TYPE.getId(o1.getValue()).toString());
-				String o2Name = getParticleDisplayName(Registries.PARTICLE_TYPE.getId(o2.getValue()).toString());
-				
-				return o1Name.compareTo(o2Name);
-			}
+		entryList.sort((o1, o2) -> {
+			String o1Name = getParticleDisplayName(Registries.PARTICLE_TYPE.getId(o1.getValue()).toString());
+			String o2Name = getParticleDisplayName(Registries.PARTICLE_TYPE.getId(o2.getValue()).toString());
+			
+			return o1Name.compareTo(o2Name);
 		});
 		
 		for (Entry<RegistryKey<ParticleType<?>>, ParticleType<?>> entry : entryList) {
