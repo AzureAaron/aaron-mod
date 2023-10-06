@@ -82,7 +82,7 @@ public class InventoryCommand {
 			if (formattedName().getString().endsWith("equipped!")) return formattedName();
 			
 			ItemStack stack = getStack();
-			MutableText name = (MutableText) stack.getName();
+			MutableText name = (MutableText) stack.getName().copy();
 			
 			return name.styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_ITEM, new ItemStackContent(stack))));
 		}
