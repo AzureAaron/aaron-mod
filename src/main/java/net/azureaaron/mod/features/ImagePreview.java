@@ -27,7 +27,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 
 public class ImagePreview {
@@ -47,8 +46,8 @@ public class ImagePreview {
 		});
 	}
 	
-	private static ActionResult inspectMessageForImageLinks(Text text, String stringForm) {
-		if (Config.imagePreview) {
+	private static void inspectMessageForImageLinks(Text text, boolean overlay, boolean cancelled) {
+		if (Config.imagePreview && !overlay && !cancelled) {
 			ObjectOpenHashSet<String> foundImages = new ObjectOpenHashSet<>();
 			Text deconstructedText = TextTransformer.deconstructAllComponents(text); 
 			List<Text> components = deconstructedText.getSiblings();
@@ -71,8 +70,6 @@ public class ImagePreview {
 				}
 			}
 		}
-		
-		return ActionResult.PASS;
 	}
 	
 	private static void cacheImage(String url) {

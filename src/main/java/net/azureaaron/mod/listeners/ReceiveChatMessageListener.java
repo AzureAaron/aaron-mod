@@ -8,7 +8,6 @@ import net.azureaaron.mod.events.ReceiveChatMessageEvent;
 import net.azureaaron.mod.util.Cache;
 import net.azureaaron.mod.util.Functions;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 
 public class ReceiveChatMessageListener {
@@ -19,9 +18,9 @@ public class ReceiveChatMessageListener {
 	private static final Pattern TEAM_SCORE_PATTERN = Pattern.compile(" +Team Score: [0-9]+ \\([A-z+]+\\)");
 	
 	public static void listen() {
-		ReceiveChatMessageEvent.EVENT.register((message, stringForm) -> {	
-			if(Functions.isOnHypixel()) {
-				//String lowerForm = stringForm.toLowerCase();
+		ReceiveChatMessageEvent.EVENT.register((message, overlay, cancelled) -> {	
+			if(Functions.isOnHypixel() && !overlay) {
+				String stringForm = message.getString();
 				String strippedForm = Formatting.strip(stringForm);
 				Matcher partyMatcher = PARTY_PATTERN.matcher(stringForm);
 				Matcher playerBlessingMatcher = PLAYER_BLESSING_PATTERN.matcher(stringForm);
@@ -75,7 +74,6 @@ public class ReceiveChatMessageListener {
 				
 				if(stringForm.equals("[BOSS] Wither King: You.. again?") || stringForm.equals("[BOSS] Wither King: Ohhh?")) Cache.inM7Phase5 = true;
 			}
-			return ActionResult.PASS;
 		});
 	}
 }

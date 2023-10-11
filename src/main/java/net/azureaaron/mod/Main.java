@@ -26,6 +26,7 @@ import net.azureaaron.mod.commands.ReflectCommand;
 import net.azureaaron.mod.commands.TextReplacerCommand;
 import net.azureaaron.mod.commands.UuidCommand;
 import net.azureaaron.mod.commands.WardenWarningLevelCommand;
+import net.azureaaron.mod.events.ReceiveChatMessageEvent;
 import net.azureaaron.mod.features.BoundingBoxes;
 import net.azureaaron.mod.features.DragonTimers;
 import net.azureaaron.mod.features.ImagePreview;
@@ -65,6 +66,7 @@ public class Main implements ClientModInitializer {
 		ClientPlayConnectionEvents.DISCONNECT.register(ClientPlayConnectionListener::onDisconnect);
 		WorldRenderEvents.BEFORE_DEBUG_RENDER.register(DragonTimers::renderSpawnTimers);
 		WorldRenderEvents.AFTER_TRANSLUCENT.register(M7Waypoints::renderWaypoints);
+		ReceiveChatMessageEvent.init();
 		
 		//Register Keybinds
 		registerKeybindings();
