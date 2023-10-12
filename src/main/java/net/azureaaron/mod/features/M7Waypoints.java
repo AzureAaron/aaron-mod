@@ -96,7 +96,7 @@ public class M7Waypoints {
 		RenderSystem.disableCull();
 		
 		buffer.begin(DrawMode.TRIANGLE_STRIP, VertexFormats.POSITION_COLOR);
-		WorldRenderer.renderFilledBox(matrices, buffer, x, y, z, x + 1, y + 1, z + 1, red, green, blue, 0.5f);
+		WorldRenderer.renderFilledBox(matrices, buffer, x, y, z, x + 1, y + 1, z + 1, red / 255f, green / 255f, blue / 255f, 0.5f);
 		tessellator.draw();
 		
 		matrices.pop();
@@ -135,7 +135,7 @@ public class M7Waypoints {
 		RenderSystem.disableCull();
 		
 		buffer.begin(DrawMode.TRIANGLE_STRIP, VertexFormats.POSITION_COLOR);
-		WorldRenderer.renderFilledBox(matrices, buffer, x, y, z, x + 1f, y + 1f, z + 0.5f, red, green, blue, 0.5f);
+		WorldRenderer.renderFilledBox(matrices, buffer, x, y, z, x + 1f, y + 1f, z + 0.5f, red / 255f, green / 255f, blue / 255f, 0.5f);
 		tessellator.draw();
 		
 		matrices.pop();

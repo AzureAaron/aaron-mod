@@ -30,12 +30,6 @@ public class Cache {
 	public static volatile boolean inDungeonBossRoom = false;
 	public static int currentScore = 0;
 	
-	public static int powerDragonId;
-	public static int flameDragonId;
-	public static int apexDragonId;
-	public static int iceDragonId;
-	public static int soulDragonId;
-	
 	public static volatile long powerSpawnStart;
 	public static volatile long flameSpawnStart;
 	public static volatile long apexSpawnStart;

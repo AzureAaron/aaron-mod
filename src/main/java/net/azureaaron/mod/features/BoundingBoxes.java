@@ -20,32 +20,36 @@ import net.minecraft.util.math.Vec3d;
 public class BoundingBoxes {
 	
 	public enum Dragons {
-		POWER(new BlockPos(13, 5, 45), new BlockPos(41, 34, 72), 224f, 43f, 43f),
-		FLAME(new BlockPos(71, 5, 45), new BlockPos(102, 34, 72), 232f, 124f, 70f),
-		APEX(new BlockPos(13, 5, 80), new BlockPos(41, 34, 107), 22f, 138f, 22f),
-		ICE(new BlockPos(71, 5, 80), new BlockPos(102, 34, 107), 24f, 210f, 219f),
-		SOUL(new BlockPos(41, 5, 112), new BlockPos(71, 34, 145), 141f, 24f, 219f);
+		POWER(new BlockPos(13, 5, 45), new BlockPos(41, 34, 72), 0xe02b2b),
+		FLAME(new BlockPos(71, 5, 45), new BlockPos(102, 34, 72), 0xe87c46),
+		APEX(new BlockPos(13, 5, 80), new BlockPos(41, 34, 107), 0x168a16),
+		ICE(new BlockPos(71, 5, 80), new BlockPos(102, 34, 107), 0x18d2db),
+		SOUL(new BlockPos(41, 5, 112), new BlockPos(71, 34, 145), 0x8d18db);
 		
 		public final BlockPos pos1;
 		public final BlockPos pos2;
 		public final Box box;
+		
+		public final int colour;
 		public final float red;
 		public final float green;
 		public final float blue;
 		
-		private Dragons(BlockPos pos1, BlockPos pos2, float red, float green, float blue) {
+		private Dragons(BlockPos pos1, BlockPos pos2, int colour) {
 			this.pos1 = pos1;
 			this.pos2 = pos2;
 			this.box = new Box(pos1, pos2);
-			this.red = red * 255f;
-			this.green = green * 255f;
-			this.blue = blue * 255f;
+			
+			this.colour = colour;
+			this.red = (colour >> 16) & 0xFF;
+			this.green = (colour >> 8) & 0xFF;
+			this.blue = colour & 0xFF;
 		}
 	}
 	
 	public static void renderBoxes(WorldRenderContext wrc) {
-		if(Functions.isOnHypixel() && Config.masterModeF7DragonBoxes && Cache.inM7Phase5) {
-			for(Dragons dragon : Dragons.values()) {
+		if (Functions.isOnHypixel() && Config.masterModeF7DragonBoxes && Cache.inM7Phase5) {
+			for (Dragons dragon : Dragons.values()) {
 				Vec3d camera = wrc.camera().getPos();
 				MatrixStack matrices = wrc.matrixStack();
 				
@@ -62,7 +66,7 @@ public class BoundingBoxes {
 				RenderSystem.enableDepthTest();
 				
 				buffer.begin(DrawMode.LINES, VertexFormats.LINES);
-				WorldRenderer.drawBox(matrices, buffer, dragon.box, dragon.red, dragon.green, dragon.blue, 1f);
+				WorldRenderer.drawBox(matrices, buffer, dragon.box, dragon.red / 255f, dragon.green / 255f, dragon.blue / 255f, 1f);
 				tessellator.draw();
 				
 				matrices.pop();

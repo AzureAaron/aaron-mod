@@ -42,12 +42,6 @@ public class ReceiveChatMessageListener {
 					Cache.inDungeonBossRoom = false;
 					Cache.currentScore = 0;
 					
-					Cache.powerDragonId = 0;
-					Cache.flameDragonId = 0;
-					Cache.apexDragonId = 0;
-					Cache.iceDragonId = 0;
-					Cache.soulDragonId = 0;
-					
 					Cache.powerSpawnStart = 0L;
 					Cache.flameSpawnStart = 0L;
 					Cache.apexSpawnStart = 0L;
