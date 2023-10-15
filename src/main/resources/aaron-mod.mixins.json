@@ -38,7 +38,8 @@
     "PlayerListHudMixin",
     "TextVisitFactoryMixin",
     "PingMeasurerMixin",
-    "GameRenderer$1Mixin"
+    "GameRenderer$1Mixin",
+    "ScreenshotRecorderMixin"
   ],
   "injectors": {
     "defaultRequire": 1

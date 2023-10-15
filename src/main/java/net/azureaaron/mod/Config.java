@@ -201,6 +201,7 @@ public class Config {
 	@ConfigEntry public static boolean visualTextReplacer = false;
 	@ConfigEntry public static boolean imagePreview = true;
 	@ConfigEntry public static boolean m7DragonHealth = false;
+	@ConfigEntry public static boolean optimizedScreenshots = false;
 	
 	public static void save() {
 		try {
@@ -555,6 +556,14 @@ public class Config {
 								.binding(false,
 										() -> resetCursorPosition,
 										newValue -> resetCursorPosition = newValue)
+								.controller(BooleanControllerBuilder::create)
+								.build())
+						.option(Option.<Boolean>createBuilder()
+								.name(Text.literal("Optimized Screenshots"))
+								.description(OptionDescription.of(Text.literal("Saves screenshots without the alpha channel which is unused, reducing file sizes by ~11%.")))
+								.binding(false,
+										() -> optimizedScreenshots,
+										newValue -> optimizedScreenshots = newValue)
 								.controller(BooleanControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
