@@ -28,6 +28,7 @@ import net.azureaaron.mod.commands.UuidCommand;
 import net.azureaaron.mod.commands.WardenWarningLevelCommand;
 import net.azureaaron.mod.events.ReceiveChatMessageEvent;
 import net.azureaaron.mod.features.BoundingBoxes;
+import net.azureaaron.mod.features.DragonHealth;
 import net.azureaaron.mod.features.DragonTimers;
 import net.azureaaron.mod.features.ImagePreview;
 import net.azureaaron.mod.features.M7Waypoints;
@@ -67,6 +68,8 @@ public class Main implements ClientModInitializer {
 		WorldRenderEvents.BEFORE_DEBUG_RENDER.register(DragonTimers::renderSpawnTimers);
 		WorldRenderEvents.AFTER_TRANSLUCENT.register(M7Waypoints::renderWaypoints);
 		ReceiveChatMessageEvent.init();
+		DragonHealth.init();
+		
 		
 		//Register Keybinds
 		registerKeybindings();

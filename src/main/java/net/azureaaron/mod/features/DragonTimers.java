@@ -1,23 +1,11 @@
 package net.azureaaron.mod.features;
 
-import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL11;
-
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.azureaaron.mod.Config;
 import net.azureaaron.mod.features.BoundingBoxes.Dragons;
 import net.azureaaron.mod.util.Cache;
 import net.azureaaron.mod.util.Functions;
+import net.azureaaron.mod.util.Renderer;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.font.TextRenderer.TextLayerType;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.LightmapTextureManager;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.text.OrderedText;
@@ -26,7 +14,6 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
 public class DragonTimers {
-	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
 	private static final Vec3d POWER_TEXT_LOCATION = new Vec3d(26, 16, 59); //26 6 59
 	private static final Vec3d FLAME_TEXT_LOCATION = new Vec3d(86, 16, 56); //86 6 56
 	private static final Vec3d APEX_TEXT_LOCATION = new Vec3d(26, 16, 94); //26 6 94
@@ -38,31 +25,31 @@ public class DragonTimers {
 			if(Cache.powerSpawnStart != 0L && Cache.powerSpawnStart + 5000 > System.currentTimeMillis()) {
 				int timeUntilSpawn = (int) (Cache.powerSpawnStart + 5000 - System.currentTimeMillis());
 				OrderedText spawnText = Text.literal(timeUntilSpawn + " ms").asOrderedText();
-				renderTextInWorld(wrc, POWER_TEXT_LOCATION, spawnText);
+				Renderer.renderText(wrc, POWER_TEXT_LOCATION, spawnText, true);
 			}
 			
 			if(Cache.flameSpawnStart != 0L && Cache.flameSpawnStart + 5000 > System.currentTimeMillis()) {
 				int timeUntilSpawn = (int) (Cache.flameSpawnStart + 5000 - System.currentTimeMillis());
 				OrderedText spawnText = Text.literal(timeUntilSpawn + " ms").asOrderedText();
-				renderTextInWorld(wrc, FLAME_TEXT_LOCATION, spawnText);
+				Renderer.renderText(wrc, FLAME_TEXT_LOCATION, spawnText, true);
 			}
 			
 			if(Cache.apexSpawnStart != 0L && Cache.apexSpawnStart + 5000 > System.currentTimeMillis()) {
 				int timeUntilSpawn = (int) (Cache.apexSpawnStart + 5000 - System.currentTimeMillis());
 				OrderedText spawnText = Text.literal(timeUntilSpawn + " ms").asOrderedText();
-				renderTextInWorld(wrc, APEX_TEXT_LOCATION, spawnText);
+				Renderer.renderText(wrc, APEX_TEXT_LOCATION, spawnText, true);
 			}
 			
 			if(Cache.iceSpawnStart != 0L && Cache.iceSpawnStart + 5000 > System.currentTimeMillis()) {
 				int timeUntilSpawn = (int) (Cache.iceSpawnStart + 5000 - System.currentTimeMillis());
 				OrderedText spawnText = Text.literal(timeUntilSpawn + " ms").asOrderedText();
-				renderTextInWorld(wrc, ICE_TEXT_LOCATION, spawnText);
+				Renderer.renderText(wrc, ICE_TEXT_LOCATION, spawnText, true);
 			}
 			
 			if(Cache.soulSpawnStart != 0L && Cache.soulSpawnStart + 5000 > System.currentTimeMillis()) {
 				int timeUntilSpawn = (int) (Cache.soulSpawnStart + 5000 - System.currentTimeMillis());
 				OrderedText spawnText = Text.literal(timeUntilSpawn + " ms").asOrderedText();
-				renderTextInWorld(wrc, SOUL_TEXT_LOCATION, spawnText);
+				Renderer.renderText(wrc, SOUL_TEXT_LOCATION, spawnText, true);
 			}
 		}
 	}
@@ -84,34 +71,5 @@ public class DragonTimers {
 				}
 			}
 		}
-	}
-
-	private static void renderTextInWorld(WorldRenderContext wrc, Vec3d targetPosition, OrderedText text) {
-		Vec3d camera = wrc.camera().getPos();
-		MatrixStack matrices = wrc.matrixStack();
-		TextRenderer textRenderer = CLIENT.textRenderer;
-		
-		Vec3d transformedPosition = targetPosition.subtract(camera);
-		
-		matrices.push();
-		matrices.translate(transformedPosition.x, transformedPosition.y, transformedPosition.z);
-		matrices.peek().getPositionMatrix().mul(RenderSystem.getModelViewMatrix());
-		matrices.multiply(wrc.camera().getRotation());
-		matrices.scale(-0.2f, -0.2f, 0.2f);
-		
-		Matrix4f positionMatrix = matrices.peek().getPositionMatrix();
-		float h = -textRenderer.getWidth(text) / 2f;
-		
-		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		BufferBuilder buffer = tessellator.getBuffer();
-		VertexConsumerProvider.Immediate consumers = VertexConsumerProvider.immediate(buffer);
-		
-		RenderSystem.depthFunc(GL11.GL_ALWAYS);
-		
-		textRenderer.draw(text, h, 0, 0xFFFFFFFF, false, positionMatrix, consumers, TextLayerType.SEE_THROUGH, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
-		consumers.draw();
-		
-		RenderSystem.depthFunc(GL11.GL_LEQUAL);
-		matrices.pop();
 	}
 }

@@ -200,6 +200,7 @@ public class Config {
 	@ConfigEntry public static boolean m7StackWaypoints = false;
 	@ConfigEntry public static boolean visualTextReplacer = false;
 	@ConfigEntry public static boolean imagePreview = true;
+	@ConfigEntry public static boolean m7DragonHealth = false;
 	
 	public static void save() {
 		try {
@@ -719,6 +720,16 @@ public class Config {
 								.binding(false,
 										() -> m7DragonSpawnTimers,
 										newValue -> m7DragonSpawnTimers = newValue)
+								.controller(BooleanControllerBuilder::create)
+								.build())
+						.option(Option.<Boolean>createBuilder()
+								.name(Text.literal("M7 Dragon Health Display"))
+								.description(OptionDescription.createBuilder()
+										.text(Text.literal("Displays the health of a dragon underneath it."))
+										.build())
+								.binding(false,
+										() -> m7DragonHealth,
+										newValue -> m7DragonHealth = newValue)
 								.controller(BooleanControllerBuilder::create)
 								.build())
 						/*.option(Option.<Boolean>createBuilder()
