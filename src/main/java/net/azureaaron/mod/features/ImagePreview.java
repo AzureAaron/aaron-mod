@@ -112,7 +112,7 @@ public class ImagePreview {
 						int height = image.height();
 						
 						//Reasonably scale the image so it doesn't go off screen and isn't too large or too small
-						float scale = Math.min(1f, Math.min(getPrevHeightMult() / height, getPrevWidthMult() / width));
+						float scale = Math.min(1f, Math.min(getPrevHeightDiv() / height, getPrevWidthDiv() / width));
 						
 						matrices.push();
 						matrices.scale(scale, scale, 200f);
@@ -151,11 +151,11 @@ public class ImagePreview {
 		return url;
 	}
 	
-	private static float getPrevHeightMult() {
+	private static float getPrevHeightDiv() {
 		return (6.75f * 15f) * Config.imagePreviewScale;
 	}
 	
-	private static float getPrevWidthMult() {
+	private static float getPrevWidthDiv() {
 		return (12f * 15f) * Config.imagePreviewScale;
 	}
 	
