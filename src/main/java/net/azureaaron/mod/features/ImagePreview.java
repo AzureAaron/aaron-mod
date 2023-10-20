@@ -112,7 +112,7 @@ public class ImagePreview {
 						int height = image.height();
 						
 						//Reasonably scale the image so it doesn't go off screen and isn't too large or too small
-						float scale = Math.min(1f, Math.min((6.75f * 15f) / height, (12f * 15f) / width));
+						float scale = Math.min(1f, Math.min(getPrevHeightMult() / height, getPrevWidthMult() / width));
 						
 						matrices.push();
 						matrices.scale(scale, scale, 200f);
@@ -146,14 +146,18 @@ public class ImagePreview {
 	 * Converts imgur.com to i.imgur.com
 	 */
 	private static String fixupLink(String url) {
-		if (url.startsWith("https://imgur.com")) {
-			return url.replace("https://imgur.com", "https://i.imgur.com");
-		}
+		if (url.startsWith("https://imgur.com")) return url.replace("https://imgur.com", "https://i.imgur.com");
 			
 		return url;
 	}
 	
-	private static record CachedImage(long creationTime, Identifier texture, int width, int height) {
-		
+	private static float getPrevHeightMult() {
+		return (6.75f * 15f) * Config.imagePreviewScale;
 	}
+	
+	private static float getPrevWidthMult() {
+		return (12f * 15f) * Config.imagePreviewScale;
+	}
+	
+	private static record CachedImage(long creationTime, Identifier texture, int width, int height) {}
 }

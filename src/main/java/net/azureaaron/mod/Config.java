@@ -22,6 +22,7 @@ import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import dev.isxander.yacl3.api.controller.CyclingListControllerBuilder;
 import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder;
+import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
 import dev.isxander.yacl3.api.controller.IntegerFieldControllerBuilder;
 import dev.isxander.yacl3.api.controller.StringControllerBuilder;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
@@ -202,6 +203,7 @@ public class Config {
 	@ConfigEntry public static boolean imagePreview = true;
 	@ConfigEntry public static boolean m7DragonHealth = false;
 	@ConfigEntry public static boolean optimizedScreenshots = false;
+	@ConfigEntry public static float imagePreviewScale = 1f;
 	
 	public static void save() {
 		try {
@@ -288,6 +290,10 @@ public class Config {
 	
 	private static BooleanControllerBuilder createBooleanController(Option<Boolean> opt) {
 		return BooleanControllerBuilder.create(opt).coloured(true);
+	}
+	
+	private static FloatFieldControllerBuilder createFloatMultFieldController(Option<Float> opt) {
+		return FloatFieldControllerBuilder.create(opt).formatValue(f -> Text.of(f + "x"));
 	}
 			
 	public static Screen createGui(Screen parent) {
@@ -531,6 +537,14 @@ public class Config {
 										() -> imagePreview,
 										newValue -> imagePreview = newValue)
 								.controller(Config::createBooleanController)
+								.build())
+						.option(Option.<Float>createBuilder()
+								.name(Text.literal("Image Preview Scale"))
+								.description(OptionDescription.of(Text.literal("Change the scaling of previewed images.")))
+								.binding(1f,
+										() -> imagePreviewScale,
+										newValue -> imagePreviewScale = newValue)
+								.controller(Config::createFloatMultFieldController)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Infinite Hotbar Scrolling"))
