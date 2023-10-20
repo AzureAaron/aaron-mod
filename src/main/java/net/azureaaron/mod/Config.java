@@ -350,9 +350,9 @@ public class Config {
 								.controller(Config::createBooleanController)
 								.build())
 						.option(Option.<Boolean>createBuilder()
-								.name(Text.literal("Shadowed Nametag Text"))
+								.name(Text.literal("Shadowed Name Tag Text"))
 								.description(OptionDescription.createBuilder()
-										.text(Text.literal("Adds text shadowing to nametags!"))
+										.text(Text.literal("Adds text shadowing to name tags!"))
 										.build())
 								.binding(true,
 										() -> shadowedNametags,
@@ -360,9 +360,9 @@ public class Config {
 								.controller(Config::createBooleanController)
 								.build())
 						.option(Option.<Boolean>createBuilder()
-								.name(Text.literal("Hide Nametag Background"))
+								.name(Text.literal("Hide Name Tag Background"))
 								.description(OptionDescription.createBuilder()
-										.text(Text.literal("Hides the background in nametags."))
+										.text(Text.literal("Hides the background in name tags."))
 										.build())
 								.binding(false,
 										() -> hideNametagBackground,
