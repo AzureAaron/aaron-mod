@@ -65,9 +65,9 @@ public class Main implements ClientModInitializer {
 		WorldRenderEvents.BEFORE_DEBUG_RENDER.register(BoundingBoxes::renderBoxes);
 		ClientPlayConnectionEvents.JOIN.register(ClientPlayConnectionListener::onJoin);
 		ClientPlayConnectionEvents.DISCONNECT.register(ClientPlayConnectionListener::onDisconnect);
-		WorldRenderEvents.BEFORE_DEBUG_RENDER.register(DragonTimers::renderSpawnTimers);
 		WorldRenderEvents.AFTER_TRANSLUCENT.register(M7Waypoints::renderWaypoints);
 		ReceiveChatMessageEvent.init();
+		DragonTimers.init();
 		DragonHealth.init();
 		
 		

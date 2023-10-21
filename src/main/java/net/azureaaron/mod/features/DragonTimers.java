@@ -1,11 +1,13 @@
 package net.azureaaron.mod.features;
 
 import net.azureaaron.mod.Config;
+import net.azureaaron.mod.events.ParticleSpawnEvent;
 import net.azureaaron.mod.features.BoundingBoxes.Dragons;
 import net.azureaaron.mod.util.Cache;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Renderer;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.text.OrderedText;
@@ -20,7 +22,12 @@ public class DragonTimers {
 	private static final Vec3d ICE_TEXT_LOCATION = new Vec3d(85, 16, 94); //85 6 94
 	private static final Vec3d SOUL_TEXT_LOCATION = new Vec3d(56, 16, 126); //56 8 126
 	
-	public static void renderSpawnTimers(WorldRenderContext wrc) {
+	public static void init() {
+		WorldRenderEvents.BEFORE_DEBUG_RENDER.register(DragonTimers::renderSpawnTimers);
+		ParticleSpawnEvent.EVENT.register(DragonTimers::tick);
+	}
+	
+	private static void renderSpawnTimers(WorldRenderContext wrc) {
 		if(Functions.isOnHypixel() && Config.m7DragonSpawnTimers && Cache.inM7Phase5) {
 			if(Cache.powerSpawnStart != 0L && Cache.powerSpawnStart + 5000 > System.currentTimeMillis()) {
 				int timeUntilSpawn = (int) (Cache.powerSpawnStart + 5000 - System.currentTimeMillis());
@@ -54,7 +61,7 @@ public class DragonTimers {
 		}
 	}
 	
-	public static void tick(ParticleS2CPacket packet) {
+	private static void tick(ParticleS2CPacket packet) {
 		if(Functions.isOnHypixel() && Cache.inM7Phase5 && packet.getParameters().getType().equals(ParticleTypes.ENCHANT)) {
 			for(Dragons dragon : Dragons.values()) {
 				String dragonName = dragon.name();

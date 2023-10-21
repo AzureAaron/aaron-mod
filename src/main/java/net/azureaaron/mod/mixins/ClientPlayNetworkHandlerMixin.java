@@ -7,9 +7,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import dev.cbyrne.betterinject.annotations.Arg;
 import dev.cbyrne.betterinject.annotations.Inject;
 import net.azureaaron.mod.Config;
+import net.azureaaron.mod.events.ParticleSpawnEvent;
 import net.azureaaron.mod.events.PlaySoundEvent;
 import net.azureaaron.mod.events.TeamUpdateEvent;
-import net.azureaaron.mod.features.DragonTimers;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.sound.MusicTracker;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
@@ -36,6 +36,6 @@ public class ClientPlayNetworkHandlerMixin {
 	
 	@Inject(method = "onParticle", at = @At("HEAD"))
 	private void aaronMod$onParticleSpawn(@Arg ParticleS2CPacket packet) {
-		DragonTimers.tick(packet);
+		ParticleSpawnEvent.EVENT.invoker().onParticleSpawn(packet);
 	}
 }
