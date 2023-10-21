@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import dev.cbyrne.betterinject.annotations.Arg;
 import dev.cbyrne.betterinject.annotations.Inject;
 import net.azureaaron.mod.Config;
-import net.azureaaron.mod.events.MouseEvent;
+import net.azureaaron.mod.events.MouseInputEvent;
 import net.azureaaron.mod.features.MouseGuiPositioner;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
@@ -28,7 +28,7 @@ public class MouseMixin implements MouseGuiPositioner {
 
 	@Inject(method = "onMouseButton", at = @At("HEAD"))
 	private void aaronMod$onMouseButton(@Arg(ordinal = 0) int button, @Arg(ordinal = 1) int action, @Arg(ordinal = 2) int mods) {
-        MouseEvent.EVENT.invoker().onMouse(button, action, mods);
+        MouseInputEvent.EVENT.invoker().onMouseInput(button, action, mods);
     }
 	
 	@Inject(method = "lockCursor", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Mouse;x:D", ordinal = 0, shift = At.Shift.BEFORE))

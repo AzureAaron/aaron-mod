@@ -3,14 +3,13 @@ package net.azureaaron.mod.listeners;
 import java.util.List;
 
 import net.azureaaron.mod.Config;
-import net.azureaaron.mod.events.MouseEvent;
+import net.azureaaron.mod.events.MouseInputEvent;
 import net.azureaaron.mod.mixins.ChatAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 
 public class MouseListener {
@@ -57,7 +56,7 @@ public class MouseListener {
 	}
 	
 	public static void listen() {
-		MouseEvent.EVENT.register((button, action, mods) -> {
+		MouseInputEvent.EVENT.register((button, action, mods) -> {
 			//Button 0 = left click, Button 1 = right click, Button 2 = middle click & others are fancy mouse buttons
 			int configuredButton = Config.copyChatMouseButton == Config.MouseButton.MIDDLE ? 2 : 1;
 			boolean isChatOpen = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).isChatFocused();
@@ -101,7 +100,6 @@ public class MouseListener {
 					}
 				}
 			}
-			return ActionResult.SUCCESS;
 		});
 	}
 }

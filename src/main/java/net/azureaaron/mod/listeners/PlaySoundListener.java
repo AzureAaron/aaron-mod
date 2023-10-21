@@ -7,7 +7,6 @@ import net.azureaaron.mod.util.Cache;
 import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
@@ -43,7 +42,6 @@ public class PlaySoundListener {
 					break;
 				}
 			}
-			return ActionResult.SUCCESS;
 		});
 	}
 }

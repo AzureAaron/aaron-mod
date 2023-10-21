@@ -9,7 +9,6 @@ import net.azureaaron.mod.util.Cache;
 import net.azureaaron.mod.util.Functions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.s2c.play.TeamS2CPacket.SerializableTeam;
-import net.minecraft.util.ActionResult;
 
 public class TeamUpdateListener {
 	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
@@ -52,7 +51,6 @@ public class TeamUpdateListener {
 					};
 				};
 			}
-			return ActionResult.SUCCESS;
 		});
 	}
 }
