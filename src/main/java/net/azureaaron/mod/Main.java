@@ -43,7 +43,6 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
@@ -62,14 +61,16 @@ public class Main implements ClientModInitializer {
 	public void onInitializeClient() {
 		//Register listeneres and commands
 		ClientCommandRegistrationCallback.EVENT.register(Main::registerCommands);
-		WorldRenderEvents.BEFORE_DEBUG_RENDER.register(BoundingBoxes::renderBoxes);
 		ClientPlayConnectionEvents.JOIN.register(ClientPlayConnectionListener::onJoin);
 		ClientPlayConnectionEvents.DISCONNECT.register(ClientPlayConnectionListener::onDisconnect);
-		WorldRenderEvents.AFTER_TRANSLUCENT.register(M7Waypoints::renderWaypoints);
 		ReceiveChatMessageEvent.init();
-		DragonTimers.init();
-		DragonHealth.init();
 		
+		//Initialize Features
+		BoundingBoxes.init();
+		DragonTimers.init();
+		M7Waypoints.init();
+		ImagePreview.init();
+		DragonHealth.init();
 		
 		//Register Keybinds
 		registerKeybindings();
@@ -79,7 +80,6 @@ public class Main implements ClientModInitializer {
 		MouseListener.listen();
 		PlaySoundListener.listen();
 		TeamUpdateListener.listen();
-		ImagePreview.init();
 						
 		//Load configuration
 		Config.load();
@@ -113,7 +113,7 @@ public class Main implements ClientModInitializer {
 		TextReplacerCommand.register(dispatcher);
 	}
 	
-	public static void registerKeybindings() {
+	private static void registerKeybindings() {
 		//I used to cheat the translation key system but now I abide by it :)
 		Keybinds.zoomKeybind = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.aaron-mod.zoom", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_C, "category.aaron-mod.main"));
 	}

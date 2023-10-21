@@ -6,6 +6,7 @@ import net.azureaaron.mod.util.Cache;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Renderer;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.util.math.Vec3d;
 
 public class M7Waypoints {
@@ -29,7 +30,11 @@ public class M7Waypoints {
 	private static final Vec3d RED_STACK = new Vec3d(20, 5, 86);
 	private static final Vec3d RED_STACK_ALT = new Vec3d(12, 6, 90);
 	
-	public static void renderWaypoints(WorldRenderContext wrc) {
+	public static void init() {
+		WorldRenderEvents.AFTER_TRANSLUCENT.register(M7Waypoints::renderWaypoints);
+	}
+	
+	private static void renderWaypoints(WorldRenderContext wrc) {
 		if (Functions.isOnHypixel() && Cache.inM7Phase5) {
 			/*if (Config.m7GyroWaypoints) {
 				renderFilled(wrc, BLUE_GYRO, 252f * 255f, 211f * 255f, 3 * 255f);
