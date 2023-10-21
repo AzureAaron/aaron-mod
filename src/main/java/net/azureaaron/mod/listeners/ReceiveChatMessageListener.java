@@ -53,18 +53,6 @@ public class ReceiveChatMessageListener {
 						|| stringForm.equals("[BOSS] The Professor: I was burdened with terrible news recently...") || stringForm.equals("[BOSS] Thorn: Welcome Adventurers! I am Thorn, the Spirit! And host of the Vegan Trials!")
 						|| stringForm.equals("[BOSS] Livid: Welcome, you've arrived right on time. I am Livid, the Master of Shadows.") || stringForm.equals("[BOSS] Sadan: So you made it all the way here... Now you wish to defy me? Sadan?!")
 						|| stringForm.equals("[BOSS] Maxor: WELL! WELL! WELL! LOOK WHO'S HERE!")) Cache.inDungeonBossRoom = true;
-
-				/*if(Config.dungeonScoreMessage && ((lowerForm.contains("skytils-sc >") && lowerForm.contains("270") && !lowerForm.contains("300")) || lowerForm.contains("270 score reached!")) && Cache.lastTwoHundredSeventyScore + 20000L < System.currentTimeMillis()) {
-					Cache.lastTwoHundredSeventyScore = System.currentTimeMillis();
-					String S270 = Config.twoHundredSeventyScore.trim();
-					minecraftClient.player.networkHandler.sendChatMessage("270 Score → " + S270.substring(0, Math.min(S270.length(), 244)));
-				}
-				
-				if(Config.dungeonScoreMessage && ((lowerForm.contains("skytils-sc >") && lowerForm.contains("300") && !lowerForm.contains("270")) || lowerForm.contains("300 score reached!")) && Cache.lastThreeHundredScore + 20000L < System.currentTimeMillis()) {
-					Cache.lastThreeHundredScore = System.currentTimeMillis();
-					String S300 = Config.threeHundredScore.trim();
-					minecraftClient.player.networkHandler.sendChatMessage("300 Score → " + S300.substring(0, Math.min(S300.length(), 244)));
-				}*/
 				
 				if(stringForm.equals("[BOSS] Wither King: You.. again?") || stringForm.equals("[BOSS] Wither King: Ohhh?")) Cache.inM7Phase5 = true;
 			}
