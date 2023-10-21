@@ -2,6 +2,9 @@ package net.azureaaron.mod.features;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import net.azureaaron.mod.annotations.InterfaceInjected;
+import net.minecraft.client.gl.GlUniform;
+
 public class TimeUniform {
 	/** 
 	 * Used to create a custom core shader uniform named {@code Time} which is a singular {@code float} value.<br>
@@ -14,7 +17,7 @@ public class TimeUniform {
 	
 	public static void updateShaderTime() {
 		float time = (System.currentTimeMillis() % 30000L) / 30000f;
-		if(!RenderSystem.isOnRenderThread()) {
+		if (!RenderSystem.isOnRenderThread()) {
 			RenderSystem.recordRenderCall(() -> {
 				shaderTime = time;
 			});
@@ -25,6 +28,12 @@ public class TimeUniform {
 	
 	public static float getShaderTime() {
 		RenderSystem.assertOnRenderThread();
+		
 		return shaderTime;
+	}
+	
+	@InterfaceInjected
+	public interface Getter {
+		GlUniform getTime();
 	}
 }
