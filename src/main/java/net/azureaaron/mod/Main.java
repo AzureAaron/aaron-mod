@@ -37,7 +37,6 @@ import net.azureaaron.mod.listeners.MouseListener;
 import net.azureaaron.mod.listeners.PlaySoundListener;
 import net.azureaaron.mod.listeners.ReceiveChatMessageListener;
 import net.azureaaron.mod.listeners.TeamUpdateListener;
-import net.azureaaron.mod.util.Functions;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -50,12 +49,10 @@ import net.minecraft.command.CommandRegistryAccess;
 
 public class Main implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("aaron-mod");
-	public static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("aaron-mod.json");
+	protected static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("aaron-mod.json");
 	public static final boolean OPTIFABRIC_LOADED = FabricLoader.getInstance().isModLoaded("optifabric");
-	public static final boolean USE_BETTER_MATH = Boolean.parseBoolean(System.getProperty("aaronmod.useBetterMath", "false")) && !OPTIFABRIC_LOADED;
-	public static final boolean SUPPORTS_FMA = Functions.supportsFMA();
-	private static final boolean ENABLE_REFLECT_COMMAND = Boolean.parseBoolean(System.getProperty("aaronmod.enableReflectCommand", "false"));
 	public static final String MOD_VERSION = FabricLoader.getInstance().getModContainer("aaron-mod").get().getMetadata().getVersion().getFriendlyString();
+	private static final boolean ENABLE_REFLECT_COMMAND = Boolean.parseBoolean(System.getProperty("aaronmod.enableReflectCommand", "false"));
 		
 	@Override
 	public void onInitializeClient() {
