@@ -6,9 +6,11 @@ import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Version;
+import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.time.Duration;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -24,67 +26,52 @@ import net.azureaaron.mod.Main;
  * @author Aaron
  */
 public class Http {
-	private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder().build();
+	private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
 	private static final String HYPIXEL_BASE = "https://api.hypixel.net/";
 	private static final String AARON_BASE = "https://api.azureaaron.net/hypixel/";
 	private static final String NAME_TO_UUID = "https://api.minecraftservices.com/minecraft/profile/lookup/name/";
 	private static final String NETWORTH = "https://maro.skyblockextras.com/api/networth/categories";
 	private static final String MOULBERRY = "https://moulberry.codes/";
 	private static final String USER_AGENT = "Aaron's Mod/" + Main.MOD_VERSION;
+	
+	private static ApiResponse sendGetRequest(String url, boolean h2, boolean throwOnNonOk) throws IOException, InterruptedException, ApiException {
+		HttpRequest request = HttpRequest.newBuilder()
+				.GET()
+				.header("Accept", "application/json")
+				.header("Accept-Encoding", "gzip, deflate")
+				.header("User-Agent", USER_AGENT)
+				.version(h2 ? Version.HTTP_2 : Version.HTTP_1_1)
+				.uri(URI.create(url))
+				.build();
+		
+		HttpResponse<InputStream> response = HTTP_CLIENT.send(request, BodyHandlers.ofInputStream());
+		InputStream decodedInputStream = getDecodedInputStream(response);
+		
+		String body = new String(decodedInputStream.readAllBytes());
+		int statusCode = response.statusCode();
+		
+		if (throwOnNonOk && statusCode != 200) throw new ApiException("[Aaron's Mod] API Error! URL: " + url + ", Code: " + statusCode + ", Body: " + body);
+		
+		return new ApiResponse(body, statusCode, response.headers());
+	}
 			
-	public static String sendUnauthorizedHypixelRequest(@NotNull String endpoint, @NotNull final String parameters) throws IOException, InterruptedException, ApiException {
-		HttpRequest request = HttpRequest.newBuilder()
-				.GET()
-				.header("Accept", "application/json")
-				.header("Accept-Encoding", "gzip, deflate")
-				.header("User-Agent", USER_AGENT)
-				.version(Version.HTTP_2)
-				.uri(URI.create(HYPIXEL_BASE + endpoint + parameters))
-				.build();
-		
-		HttpResponse<InputStream> response = HTTP_CLIENT.send(request, BodyHandlers.ofInputStream());
-		if(response.statusCode() != 200) throw new ApiException("Hypixel Api Error [code=" + response.statusCode() + ", body=\"" + response.body() + "\"]");
-
-		InputStream decodedInputStream = getDecodedInputStream(response);
-		String apiResponse = new String(decodedInputStream.readAllBytes());
-		
-		return apiResponse;
+	public static String sendUnauthorizedHypixelRequest(String endpoint, @NotNull String parameters) throws IOException, InterruptedException, ApiException {
+		return sendGetRequest(HYPIXEL_BASE + endpoint + parameters, true, true).content();
 	}
 	
-	public static String sendAuthorizedHypixelRequest(@NotNull String endpoint, @NotNull final String parameters) throws IOException, InterruptedException, ApiException {
-		HttpRequest request = HttpRequest.newBuilder()
-				.GET()
-				.header("Accept", "application/json")
-				.header("Accept-Encoding", "gzip, deflate")
-				.header("User-Agent", USER_AGENT)
-				.version(Version.HTTP_2)
-				.uri(URI.create(AARON_BASE + endpoint + parameters))
-				.build();
-		
-		HttpResponse<InputStream> response = HTTP_CLIENT.send(request, BodyHandlers.ofInputStream());
-		if(response.statusCode() != 200) throw new ApiException("Hypixel Authorized Api Proxy Error [code=" + response.statusCode() + ", body=\"" + response.body() + "\"]");
-
-		InputStream decodedInputStream = getDecodedInputStream(response);
-		String apiResponse = new String(decodedInputStream.readAllBytes());
-		
-		return apiResponse;
+	public static String sendAuthorizedHypixelRequest(String endpoint, @NotNull String parameters) throws IOException, InterruptedException, ApiException {
+		return sendGetRequest(AARON_BASE + endpoint + parameters, true, true).content();
 	}
 	
-	public static String sendNameToUuidRequest(@NotNull final String name) throws IOException, InterruptedException, ApiException {
-		HttpRequest request = HttpRequest.newBuilder()
-				.GET()
-				.header("Accept", "application/json")
-				.header("User-Agent", USER_AGENT)
-				.version(Version.HTTP_2)
-				.uri(URI.create(NAME_TO_UUID + name))
-				.build();
-		
-		HttpResponse<String> response = HTTP_CLIENT.send(request, BodyHandlers.ofString());
-		if(response.statusCode() != 200) throw new ApiException("Minecraft Services Api Error [code=" + response.statusCode() + ", body=\"" + response.body() + "\"]");
-		return response.body();
+	public static String sendNameToUuidRequest(String name) throws IOException, InterruptedException, ApiException {
+		return sendGetRequest(NAME_TO_UUID + name, true, true).content();
 	}
 	
-	public static String sendNetworthRequest(@NotNull final String body) throws IOException, InterruptedException {		
+	public static String sendMoulberryRequest(String endpoint) throws IOException, InterruptedException, ApiException {
+		return sendGetRequest(MOULBERRY + endpoint, true, false).content();
+	}
+	
+	public static String sendNetworthRequest(String body) throws IOException, InterruptedException {		
 		HttpRequest request = HttpRequest.newBuilder()
 				.POST(HttpRequest.BodyPublishers.ofString(body))
 				.header("Accept", "application/json")
@@ -93,27 +80,11 @@ public class Http {
 				.build();
 		
 		HttpResponse<String> response = HTTP_CLIENT.send(request, BodyHandlers.ofString());
+		
 		return response.body();
 	}
 	
-	public static String sendMoulberryRequest(@NotNull final String endpoint) throws IOException, InterruptedException {
-		HttpRequest request = HttpRequest.newBuilder()
-				.GET()
-				.header("Accept", "application/json")
-				.header("Accept-Encoding", "gzip, deflate")
-				.header("User-Agent", USER_AGENT)
-				.version(Version.HTTP_2)
-				.uri(URI.create(MOULBERRY + endpoint))
-				.build();
-		
-		HttpResponse<InputStream> response = HTTP_CLIENT.send(request, BodyHandlers.ofInputStream());
-		InputStream decodedInputStream = getDecodedInputStream(response);
-		String apiResponse = new String(decodedInputStream.readAllBytes());
-		
-		return apiResponse;
-	}
-	
-	public static InputStream sendGenericH2Request(URI uri, ImmutableSet<String> expectedContentTypes) throws IOException, InterruptedException {
+	public static InputStream sendGenericH2Request(URI uri, ImmutableSet<String> expectedContentTypes) throws IOException, InterruptedException, ApiException {		
 		HttpRequest request = HttpRequest.newBuilder()
 				.GET()
 				.header("Accept", "*/*")
@@ -159,6 +130,13 @@ public class Http {
 	
 	private static String getContentType(HttpResponse<InputStream> response) {
 		return response.headers().firstValue("Content-Type").orElse("");
+	}
+	
+	public record ApiResponse(String content, int statusCode, HttpHeaders headers) {
+		
+		public boolean ok() {
+			return statusCode == 200;
+		}
 	}
 	
 	public static class ApiException extends Exception {
