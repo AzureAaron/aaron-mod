@@ -14,7 +14,7 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 
 public class ModScreenCommand {
-	private static final long ONE_TICK = 200L;
+	private static final long ONE_TICK = 50L;
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("aaronsmod")
