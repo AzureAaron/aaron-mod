@@ -173,10 +173,9 @@ public class Renderer {
 		MatrixTransformer POSITION_RELATIVE = (wrc, pos) -> {
 			Vec3d camera = wrc.camera().getPos();
 			MatrixStack matrices = wrc.matrixStack();
-			Vec3d transformedPosition = pos.subtract(camera);
 			
 			matrices.push();
-			matrices.translate(transformedPosition.x, transformedPosition.y, transformedPosition.z);
+			matrices.translate(pos.x - camera.x, pos.y - camera.y, pos.z - camera.z);
 			
 			return matrices;
 		};
