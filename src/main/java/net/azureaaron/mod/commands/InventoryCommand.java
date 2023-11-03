@@ -15,6 +15,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import me.nullicorn.nedit.NBTReader;
 import me.nullicorn.nedit.type.NBTCompound;
+import me.nullicorn.nedit.type.NBTList;
 import net.azureaaron.mod.util.ItemUtils;
 import net.azureaaron.mod.util.TextTransformer;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -91,15 +92,23 @@ public class InventoryCommand {
 	protected static void printInventory(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
 		JsonObject profile = body.get("members").getAsJsonObject().get(uuid).getAsJsonObject();
 		String endSpaces = "        " + name.replaceAll("[A-z0-9_]", "  ") + "        ";
-		boolean inventoryEnabled = (profile.get("inv_contents") != null) ? true : false;	
-		NBTCompound armour = null;
-		NBTCompound inventory = null;
-		NBTCompound equipment = null;
+		
+		boolean inventoryEnabled = (profile.get("inv_contents") != null) ? true : false;
+		
+		NBTList armour = null;
+		NBTList inventory = null;
+		NBTList equipment = null;
+		
 		try {
-			armour = NBTReader.readBase64(profile.get("inv_armor").getAsJsonObject().get("data").getAsString());
+			String armourContents = profile.get("inv_armor").getAsJsonObject().get("data").getAsString();
+			armour = NBTReader.readBase64(armourContents).getList("i");
+			
 			if(inventoryEnabled) {
-				inventory = NBTReader.readBase64(profile.get("inv_contents").getAsJsonObject().get("data").getAsString());
-				equipment = NBTReader.readBase64(profile.get("equippment_contents").getAsJsonObject().get("data").getAsString());
+				String inventoryContents = profile.get("inv_contents").getAsJsonObject().get("data").getAsString();
+				inventory = NBTReader.readBase64(inventoryContents).getList("i");
+				
+				String equipmentContents = profile.get("equippment_contents").getAsJsonObject().get("data").getAsString();
+				equipment = NBTReader.readBase64(equipmentContents).getList("i");
 			}
 		} catch (IOException | NullPointerException e) {
 			source.sendError(NBT_PARSING_ERROR);
@@ -110,35 +119,35 @@ public class InventoryCommand {
 		//TODO eventually support fancy dia heads & old master stars
 		
 		ItemData3 boots = new ItemData3(
-				armour.getList("i").getCompound(0).getString("tag.display.Name", "§cNo boots equipped!"), 
-				armour.getList("i").getCompound(0));
+				armour.getCompound(0).getString("tag.display.Name", "§cNo boots equipped!"), 
+				armour.getCompound(0));
 		ItemData3 leggings = new ItemData3(
-				armour.getList("i").getCompound(1).getString("tag.display.Name", "§cNo leggings equipped!"), //I originally misspelled leggings as beggings.
-				armour.getList("i").getCompound(1));
+				armour.getCompound(1).getString("tag.display.Name", "§cNo leggings equipped!"), //I originally misspelled leggings as beggings.
+				armour.getCompound(1));
 		ItemData3 chestplate = new ItemData3(
-				armour.getList("i").getCompound(2).getString("tag.display.Name", "§cNo chestplate equipped!"), 
-				armour.getList("i").getCompound(2));
+				armour.getCompound(2).getString("tag.display.Name", "§cNo chestplate equipped!"), 
+				armour.getCompound(2));
 		ItemData3 helmet = new ItemData3(
-				armour.getList("i").getCompound(3).getString("tag.display.Name", "§cNo helmet equipped!"), 
-				armour.getList("i").getCompound(3));
+				armour.getCompound(3).getString("tag.display.Name", "§cNo helmet equipped!"), 
+				armour.getCompound(3));
 		
 		ItemData3[] equipmentPieces = new ItemData3[4];
 		
 		if (equipment != null) {			
 			equipmentPieces[0] = new ItemData3(
-					equipment.getList("i").getCompound(0).getString("tag.display.Name", "§cNo necklace equipped!"), 
-					equipment.getList("i").getCompound(0));
+					equipment.getCompound(0).getString("tag.display.Name", "§cNo necklace equipped!"), 
+					equipment.getCompound(0));
 			equipmentPieces[1] = new ItemData3(
-					equipment.getList("i").getCompound(1).getString("tag.display.Name", "§cNo cloak equipped!"), 
-					equipment.getList("i").getCompound(1));
+					equipment.getCompound(1).getString("tag.display.Name", "§cNo cloak equipped!"), 
+					equipment.getCompound(1));
 			
 			equipmentPieces[2] = new ItemData3(
-					equipment.getList("i").getCompound(2).getString("tag.display.Name", "§cNo belt equipped!"), 
-					equipment.getList("i").getCompound(2));
+					equipment.getCompound(2).getString("tag.display.Name", "§cNo belt equipped!"), 
+					equipment.getCompound(2));
 			
 			equipmentPieces[3] = new ItemData3(
-					equipment.getList("i").getCompound(3).getString("tag.display.Name", "§cNo gloves or bracelet equipped!"), 
-					equipment.getList("i").getCompound(3));
+					equipment.getCompound(3).getString("tag.display.Name", "§cNo gloves or bracelet equipped!"), 
+					equipment.getCompound(3));
 		}
 		
 		//Index 0 - Wither Blade
@@ -146,14 +155,14 @@ public class InventoryCommand {
 		//Index 2 - Dark Claymore
 		ItemData3[] keyItems2 = new ItemData3[3];
 		
-		if(inventoryEnabled) {
-			for(int i = 0; i < 36; i++) {
-				NBTCompound item = inventory.getList("i").getCompound(i);
+		if (inventoryEnabled) {
+			for (int i = 0; i < 36; i++) {
+				NBTCompound item = inventory.getCompound(i);
 				String itemId = item.getString("tag.ExtraAttributes.id", "NONE");
 				
-				if(itemId.equals("ASTRAEA") || itemId.equals("HYPERION") || itemId.equals("SCYLLA") || itemId.equals("VALKYRIE")) keyItems2[0] = new ItemData3(item.getString("tag.display.Name"), item);
-				if(itemId.equals("TERMINATOR")) keyItems2[1] = new ItemData3(item.getString("tag.display.Name"), item);
-				if(itemId.equals("DARK_CLAYMORE")) keyItems2[2] = new ItemData3(item.getString("tag.display.Name"), item);
+				if (itemId.equals("ASTRAEA") || itemId.equals("HYPERION") || itemId.equals("SCYLLA") || itemId.equals("VALKYRIE")) keyItems2[0] = new ItemData3(item.getString("tag.display.Name"), item);
+				if (itemId.equals("TERMINATOR")) keyItems2[1] = new ItemData3(item.getString("tag.display.Name"), item);
+				if (itemId.equals("DARK_CLAYMORE")) keyItems2[2] = new ItemData3(item.getString("tag.display.Name"), item);
 			}
 		}
 		
@@ -179,11 +188,11 @@ public class InventoryCommand {
 			source.sendFeedback(equipmentPieces[3].feedbackMessage());
 		}
 		
-		if(inventoryEnabled && (keyItems2[0] != null || keyItems2[1] != null || keyItems2[2] != null)) {
+		if (inventoryEnabled && (keyItems2[0] != null || keyItems2[1] != null || keyItems2[2] != null)) {
 			source.sendFeedback(Text.literal(""));
-			if(keyItems2[0] != null) source.sendFeedback(keyItems2[0].feedbackMessage());
-			if(keyItems2[1] != null) source.sendFeedback(keyItems2[1].feedbackMessage());
-			if(keyItems2[2] != null) source.sendFeedback(keyItems2[2].feedbackMessage());
+			if (keyItems2[0] != null) source.sendFeedback(keyItems2[0].feedbackMessage());
+			if (keyItems2[1] != null) source.sendFeedback(keyItems2[1].feedbackMessage());
+			if (keyItems2[2] != null) source.sendFeedback(keyItems2[2].feedbackMessage());
 		}
 		
 		source.sendFeedback(Text.literal(endSpaces).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
