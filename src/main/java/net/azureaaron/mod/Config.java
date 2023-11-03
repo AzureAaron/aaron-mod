@@ -609,7 +609,7 @@ public class Config {
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("December Christmas Chests"))
 								.description(OptionDescription.createBuilder()
-										.text(Text.literal("You'll be able to see the christmas chests for the entire month of december!"))
+										.text(Text.literal("You'll be able to see the christmas chests for the entire month of December!"))
 										.build())
 								.binding(false,
 										() -> decemberChristmasChests,
