@@ -13,6 +13,7 @@ import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
 
 import it.unimi.dsi.fastutil.ints.IntIntPair;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import me.nullicorn.nedit.NBTReader;
 import me.nullicorn.nedit.type.NBTCompound;
 import me.nullicorn.nedit.type.NBTList;
@@ -65,9 +66,13 @@ public class InventoryCommand {
 			return IntIntPair.of(nbt.getInt("id", 0), nbt.getInt("Damage", 0));
 		}
 		
+		private String getItemId() {
+			return nbt.getString("tag.ExtraAttributes.id", "UNKNOWN");
+		}
+		
 		private ItemStack getStack() {
 			IntIntPair idAndDmg = getIdAndDamage();
-			String sbId = nbt.getString("tag.ExtraAttributes.id", "UNKNOWN");
+			String sbId = getItemId();
 			String timestamp = nbt.getString("tag.ExtraAttributes.timestamp", "1/1/70 12:00 AM");
 			String uuid = nbt.getString("tag.ExtraAttributes.uuid", "UNKNOWN");
 			
@@ -150,21 +155,20 @@ public class InventoryCommand {
 					equipment.getCompound(3));
 		}
 		
-		//Index 0 - Wither Blade
-		//Index 1 - Terminator
-		//Index 2 - Dark Claymore
-		ItemData3[] keyItems2 = new ItemData3[3];
+		ObjectArrayList<ItemData3> keyItems = new ObjectArrayList<>();
 		
 		if (inventoryEnabled) {
 			for (int i = 0; i < 36; i++) {
 				NBTCompound item = inventory.getCompound(i);
 				String itemId = item.getString("tag.ExtraAttributes.id", "NONE");
 				
-				if (itemId.equals("ASTRAEA") || itemId.equals("HYPERION") || itemId.equals("SCYLLA") || itemId.equals("VALKYRIE")) keyItems2[0] = new ItemData3(item.getString("tag.display.Name"), item);
-				if (itemId.equals("TERMINATOR")) keyItems2[1] = new ItemData3(item.getString("tag.display.Name"), item);
-				if (itemId.equals("DARK_CLAYMORE")) keyItems2[2] = new ItemData3(item.getString("tag.display.Name"), item);
+				if (itemId.equals("ASTRAEA") || itemId.equals("HYPERION") || itemId.equals("SCYLLA") || itemId.equals("VALKYRIE")
+						|| itemId.equals("TERMINATOR") || itemId.equals("DARK_CLAYMORE")) keyItems.add(new ItemData3(item.getString("tag.display.Name"), item));
 			}
 		}
+		
+		//Sort key items by name
+		keyItems.sort((o1, o2) -> o1.formattedName().getString().compareTo(o2.formattedName().getString()));
 		
 		source.sendFeedback(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
 				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))
@@ -188,11 +192,13 @@ public class InventoryCommand {
 			source.sendFeedback(equipmentPieces[3].feedbackMessage());
 		}
 		
-		if (inventoryEnabled && (keyItems2[0] != null || keyItems2[1] != null || keyItems2[2] != null)) {
+		//Print feedback
+		if (keyItems.size() > 0) {
 			source.sendFeedback(Text.literal(""));
-			if (keyItems2[0] != null) source.sendFeedback(keyItems2[0].feedbackMessage());
-			if (keyItems2[1] != null) source.sendFeedback(keyItems2[1].feedbackMessage());
-			if (keyItems2[2] != null) source.sendFeedback(keyItems2[2].feedbackMessage());
+			
+			for (ItemData3 item : keyItems) {
+				source.sendFeedback(item.feedbackMessage());
+			}
 		}
 		
 		source.sendFeedback(Text.literal(endSpaces).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
