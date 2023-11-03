@@ -39,7 +39,8 @@
     "TextVisitFactoryMixin",
     "PingMeasurerMixin",
     "GameRenderer$1Mixin",
-    "ScreenshotRecorderMixin"
+    "ScreenshotRecorderMixin",
+    "DirectoryResourcePackMixin"
   ],
   "injectors": {
     "defaultRequire": 1

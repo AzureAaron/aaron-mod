@@ -204,6 +204,7 @@ public class Config {
 	@ConfigEntry public static boolean m7DragonHealth = false;
 	@ConfigEntry public static boolean optimizedScreenshots = false;
 	@ConfigEntry public static float imagePreviewScale = 1f;
+	@ConfigEntry public static boolean silenceResourcePackLogSpam = true;
 	
 	public static void save() {
 		try {
@@ -582,6 +583,14 @@ public class Config {
 								.binding(false,
 										() -> optimizedScreenshots,
 										newValue -> optimizedScreenshots = newValue)
+								.controller(Config::createBooleanController)
+								.build())
+						.option(Option.<Boolean>createBuilder()
+								.name(Text.literal("Silence Resource Pack Log Spam"))
+								.description(OptionDescription.of(Text.literal("Silences those pesky errors complaining about resource pack directories not existing.")))
+								.binding(false,
+										() -> silenceResourcePackLogSpam,
+										newValue -> silenceResourcePackLogSpam = newValue)
 								.controller(Config::createBooleanController)
 								.build())
 						.option(Option.<Boolean>createBuilder()
