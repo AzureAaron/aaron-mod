@@ -35,7 +35,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class CroesusCommand {
-	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock(CroesusCommand.class, "printCroesus");
+	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printCroesus");
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("croesus")

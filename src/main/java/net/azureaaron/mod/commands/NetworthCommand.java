@@ -21,7 +21,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class NetworthCommand {
-	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock(NetworthCommand.class, "printNetworth");
+	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printNetworth");
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("networth")

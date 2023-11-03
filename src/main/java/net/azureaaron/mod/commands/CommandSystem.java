@@ -1,15 +1,18 @@
 package net.azureaaron.mod.commands;
 
+import java.lang.StackWalker.Option;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.concurrent.CompletableFuture;
 
+import org.slf4j.Logger;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.Command;
+import com.mojang.logging.LogUtils;
 
-import net.azureaaron.mod.util.CommandPlayerData;
 import net.azureaaron.mod.util.Http;
 import net.azureaaron.mod.util.Messages;
 import net.azureaaron.mod.util.Skyblock;
@@ -22,6 +25,7 @@ import net.minecraft.client.session.Session;
  * @author Aaron
  */
 public class CommandSystem {
+	private static final Logger LOGGER = LogUtils.getLogger();
 	
 	/**
 	 * Ensures that "dummy" players aren't included in command suggestions
@@ -32,12 +36,12 @@ public class CommandSystem {
 	
 	/**
 	 * Specialized to skyblock commands!
-	 * 
-	 * @param cmdClass The class of the command
 	 * @param printMethod The name of the command's print method
+	 * 
 	 * @return A {@link java.lang.invoke.MethodHandle MethodHandle} for the command's print method.
 	 */
-	public static MethodHandle obtainDispatchHandle4Skyblock(Class<?> cmdClass, String printMethod) {
+	public static MethodHandle obtainDispatchHandle4Skyblock(String printMethod) {
+		Class<?> cmdClass = StackWalker.getInstance(Option.RETAIN_CLASS_REFERENCE).getCallerClass();
 		MethodHandles.Lookup lookup = MethodHandles.lookup();
 		MethodType mt = MethodType.methodType(void.class, FabricClientCommandSource.class, JsonObject.class, String.class, String.class);
 		MethodHandle handle = null;
@@ -45,7 +49,7 @@ public class CommandSystem {
 		try {
 			handle = lookup.findStatic(cmdClass, printMethod, mt);
 		} catch (Throwable t) {
-			t.printStackTrace();
+			LOGGER.error("[Aaron's Mod] Encountered an exception while obtaining a skyblock command dispatch handle!", t);
 		}
 		
 		return handle;
@@ -74,7 +78,7 @@ public class CommandSystem {
 				return new CommandPlayerData(name, uuid);
 			} catch (Throwable t) {
 				source.sendError(Messages.NAME_TO_UUID_ERROR);
-				t.printStackTrace();
+				LOGGER.error("[Aaron's Mod] Encountered an exception while resolving a player's uuid!", t);
 				
 				return null;
 			}
@@ -92,7 +96,7 @@ public class CommandSystem {
 				return Http.sendAuthorizedHypixelRequest("skyblock/profiles", "?uuid=" + playerData.uuid());
 			} catch (Throwable t) {
 				source.sendError(Messages.SKYBLOCK_PROFILES_FETCH_ERROR);
-				t.printStackTrace();
+				LOGGER.error("[Aaron's Mod] Encountered an exception while fetching a player's skyblock profiles!", t);
 				
 				return null;
 			}
@@ -102,7 +106,7 @@ public class CommandSystem {
 				return Skyblock.getSelectedProfile2(body);
 			} catch (Throwable t) {
 				if (t instanceof IllegalStateException) source.sendError(Messages.PROFILES_NOT_MIGRATED_ERROR); else source.sendError(Messages.JSON_PARSING_ERROR);
-				t.printStackTrace();
+				LOGGER.error("[Aaron's Mod] Encountered an exception while determining a player's selected skyblock profile!", t);
 				
 				return null;
 			}
@@ -113,7 +117,7 @@ public class CommandSystem {
 					dispatchHandle.invokeExact(source, profileData, playerData.name(), playerData.uuid());
 				} catch (Throwable t) {
 					source.sendError(Messages.UNKNOWN_ERROR);
-					t.printStackTrace();
+					LOGGER.error("[Aaron's Mod] Encountered an exception while dispatching a skyblock command! Handle: {}", dispatchHandle.describeConstable(), t);
 				}
 			}
 		});
@@ -123,12 +127,12 @@ public class CommandSystem {
 	
 	/**
 	 * Specialized to vanilla commands!
-	 * 
-	 * @param cmdClass The class of the command
 	 * @param printMethod The name of the command's print method
+	 * 
 	 * @return A {@link java.lang.invoke.MethodHandle MethodHandle} for the command's print method.
 	 */
-	public static MethodHandle obtainDispatchHandle4Vanilla(Class<?> cmdClass, String printMethod) {
+	public static MethodHandle obtainDispatchHandle4Vanilla(String printMethod) {
+		Class<?> cmdClass = StackWalker.getInstance(Option.RETAIN_CLASS_REFERENCE).getCallerClass();
 		MethodHandles.Lookup lookup = MethodHandles.lookup();
 		MethodType mt = MethodType.methodType(void.class, FabricClientCommandSource.class, String.class, String.class);
 		MethodHandle handle = null;
@@ -136,7 +140,7 @@ public class CommandSystem {
 		try {
 			handle = lookup.findStatic(cmdClass, printMethod, mt);
 		} catch (Throwable t) {
-			t.printStackTrace();
+			LOGGER.error("[Aaron's Mod] Encountered an exception while obtaining a vanilla command dispatch handle!", t);
 		}
 		
 		return handle;
@@ -149,7 +153,7 @@ public class CommandSystem {
 			dispatchHandle.invokeExact(source, session.getUsername(), session.getUuidOrNull().toString().replaceAll("-", ""));
 		} catch (Throwable t) {
 			source.sendError(Messages.UNKNOWN_ERROR);
-			t.printStackTrace();
+			LOGGER.error("[Aaron's Mod] Encountered an exception while dispatching a vanilla command! Handle: {}", dispatchHandle.describeConstable(), t);
 		}
 		
 		return Command.SINGLE_SUCCESS;
@@ -166,7 +170,7 @@ public class CommandSystem {
 				return new CommandPlayerData(name, uuid);
 			} catch (Throwable t) {
 				source.sendError(Messages.NAME_TO_UUID_ERROR);
-				t.printStackTrace();
+				LOGGER.error("[Aaron's Mod] Encountered an exception while resolving a player's uuid!", t);
 				
 				return null;
 			}
@@ -177,7 +181,7 @@ public class CommandSystem {
 					dispatchHandle.invokeExact(source, playerData.name(), playerData.uuid());
 				} catch (Throwable t) {
 					source.sendError(Messages.UNKNOWN_ERROR);
-					t.printStackTrace();
+					LOGGER.error("[Aaron's Mod] Encountered an exception while dispatching a vanilla command! Handle: {}", dispatchHandle.describeConstable(), t);
 				}
 			}
 		});

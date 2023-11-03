@@ -20,7 +20,7 @@ import net.minecraft.text.HoverEvent.Action;
 import net.minecraft.text.Text;
 
 public class CrimsonCommand {
-	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock(CrimsonCommand.class, "printCrimson");
+	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printCrimson");
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("crimson")

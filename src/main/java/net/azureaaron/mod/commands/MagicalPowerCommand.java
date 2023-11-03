@@ -38,7 +38,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class MagicalPowerCommand {
-	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock(MagicalPowerCommand.class, "printMP");
+	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printMP");
 	private static final Text NO_ACCESSORY_BAG_DATA = Text.literal("This profile doesn't have any accessory bag data!");
 	private static final Text NBT_PARSING_ERROR = Text.literal("There was an error while trying to parse NBT!").styled(style -> style.withColor(Formatting.RED)); //TODO make constant
 	private static final Pattern ACCESSORY_RARITY_PATTERN = Pattern.compile("(?:a )?(?<rarity>(?:VERY )?[A-Za-z]+) (?:DUNGEON )?(?:A|HAT)CCESSORY(?: a)?");

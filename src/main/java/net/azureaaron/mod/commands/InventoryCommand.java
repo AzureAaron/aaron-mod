@@ -29,7 +29,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class InventoryCommand {
-	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock(InventoryCommand.class, "printInventory");
+	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printInventory");
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("inventory")

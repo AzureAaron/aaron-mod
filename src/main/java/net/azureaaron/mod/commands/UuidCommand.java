@@ -19,7 +19,7 @@ import net.minecraft.text.HoverEvent.Action;
 import net.minecraft.text.Text;
 
 public class UuidCommand {
-	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Vanilla(UuidCommand.class, "printUuid");
+	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Vanilla("printUuid");
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("uuid")

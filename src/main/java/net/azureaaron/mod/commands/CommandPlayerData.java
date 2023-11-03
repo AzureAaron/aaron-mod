@@ -1,4 +1,4 @@
-package net.azureaaron.mod.util;
+package net.azureaaron.mod.commands;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -9,9 +9,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
  * 
  * @author Aaron
  */
-public record CommandPlayerData(String name, String uuid) {
-	public static final Codec<CommandPlayerData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+record CommandPlayerData(String name, String uuid) {
+	static final Codec<CommandPlayerData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.STRING.fieldOf("name").forGetter(CommandPlayerData::name),
-			Codec.STRING.fieldOf("uuid").forGetter(CommandPlayerData::uuid)
-			).apply(instance, CommandPlayerData::new));
+			Codec.STRING.fieldOf("uuid").forGetter(CommandPlayerData::uuid))
+			.apply(instance, CommandPlayerData::new));
 }

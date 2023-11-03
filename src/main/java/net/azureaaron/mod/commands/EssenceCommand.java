@@ -17,7 +17,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
 
 public class EssenceCommand {
-	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock(EssenceCommand.class, "printEssence");
+	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printEssence");
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("essence")

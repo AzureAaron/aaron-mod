@@ -27,7 +27,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class DungeonsCommand {
-	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock(DungeonsCommand.class, "printDungeons");
+	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printDungeons");
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("dungeons")

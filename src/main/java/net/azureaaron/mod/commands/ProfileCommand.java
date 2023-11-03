@@ -22,7 +22,7 @@ import net.minecraft.text.HoverEvent.Action;
 import net.minecraft.text.Text;
 
 public class ProfileCommand {
-	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock(ProfileCommand.class, "printProfile");
+	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printProfile");
 
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("profile")
