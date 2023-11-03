@@ -32,9 +32,9 @@ public class DefaultSkinCommand {
 	
 	protected static void printDefaultSkin(FabricClientCommandSource source, String name, String uuid) {
 		UUID formattedUuid = UndashedUuid.fromString(uuid);
-		SkinTextures skinTexture = DefaultSkinHelper.getTexture(formattedUuid);
+		SkinTextures skinTexture = DefaultSkinHelper.getSkinTextures(formattedUuid);
 		String skinName = Functions.titleCase(skinTexture.texture().toString().replaceAll("minecraft:textures\\/entity\\/player\\/(wide|slim)\\/", "").replace(".png", ""));
-		String skinModel = Functions.titleCase(DefaultSkinHelper.getTexture(formattedUuid).model().getName());
+		String skinModel = Functions.titleCase(DefaultSkinHelper.getSkinTextures(formattedUuid).model().getName());
 				
 		source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Default Skin » ").styled(style -> style.withColor(colourProfile.primaryColour))
 				.append(Text.literal(skinName + " (" + skinModel + ")").styled(style -> style.withColor(colourProfile.secondaryColour))));

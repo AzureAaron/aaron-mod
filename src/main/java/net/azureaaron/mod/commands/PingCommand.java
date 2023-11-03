@@ -46,7 +46,7 @@ public class PingCommand {
 
 	private static void sendPingPacket(MinecraftClient client, ClientPlayNetworkHandler networkHandler) {
 		sentCommand = true;
-		if (!client.getDebugHud().showShowPacketSizeAndPingCharts()) networkHandler.sendPacket(new QueryPingC2SPacket(Util.getMeasuringTimeMs()));
+		if (!client.getDebugHud().shouldShowPacketSizeAndPingCharts()) networkHandler.sendPacket(new QueryPingC2SPacket(Util.getMeasuringTimeMs()));
 	}
 
 	private static void onPingResult(long ping) {
