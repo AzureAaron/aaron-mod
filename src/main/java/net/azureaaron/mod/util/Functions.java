@@ -37,6 +37,9 @@ public class Functions {
     
     /** Format with 1 decimal of precision. */
     public static final DecimalFormat NUMBER_FORMATTER_OD = new DecimalFormat("#,###.0");
+    
+    /** Format with 1 decimal of precision except that the decimal won't show if its a zero. */
+    public static final DecimalFormat NUMBER_FORMATTER_OPT_DEC = new DecimalFormat("#,###.#");
 
 	/** Format with no decimals. */
     public static final DecimalFormat NUMBER_FORMATTER_ND = new DecimalFormat("#,###");

@@ -18,6 +18,7 @@ import net.azureaaron.mod.commands.DungeonsCommand;
 import net.azureaaron.mod.commands.EssenceCommand;
 import net.azureaaron.mod.commands.InventoryCommand;
 import net.azureaaron.mod.commands.LowestBinCommand;
+import net.azureaaron.mod.commands.MagicalPowerCommand;
 import net.azureaaron.mod.commands.ModScreenCommand;
 import net.azureaaron.mod.commands.NetworthCommand;
 import net.azureaaron.mod.commands.PingCommand;
@@ -108,6 +109,7 @@ public class Main implements ClientModInitializer {
 		WardenWarningLevelCommand.register(dispatcher);
 		ModScreenCommand.register(dispatcher);
 		TextReplacerCommand.register(dispatcher);
+		MagicalPowerCommand.register(dispatcher);
 	}
 	
 	private static void registerKeybindings() {

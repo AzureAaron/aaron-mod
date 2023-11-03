@@ -94,6 +94,8 @@ Skyblock:
 
 * `/lbin <item name>` Allows you to query some statistics about an item on the Skyblock auction house.
 
+* `/mp <player>` Get an oversight on a player's magical power and accessory bag configuration!
+
 * `/networth <player>` View a players net worth and see where it comes from!
 
 * `/profile <player>` View general stats about the given player's Skyblock profile.
