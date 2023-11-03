@@ -28,16 +28,19 @@ Vanilla:
 * Not Stopping Sounds on World Changes
 * Copy Chat Messages with Middle Click (with two different modes)
 * Custom Chat History Length
-* Image Preview
+* Image Preview (with option to increase/decrease image scaling)
 * Infinite Hotbar Scrolling
 * Showing Item Groups Outside of Creative
 * Not Resetting Cursor Position Between Chest GUIs
+* Optimized Screenshots (11% smaller file sizes with zero quality loss!)
+* Silence Resource Pack Log Spam
 * Mac Only - Alternate FN+F3+N Keybind
 * Christmas Chests For the Whole Month of December
 
 * Particle Manager
     * Particles can be toggled on or off
     * You can change the scale of particles too!
+    * Works with all particles, vanilla or modded!
 
 * Text Replacer
     * Allows you to visually replace almost any text on screen!
@@ -52,13 +55,14 @@ Skyblock:
 * Hiding Item Tooltips in Click On Time
 * M7 Dragon Statue Bounding Boxes
 * M7 Dragon Spawn Timers
-* M7 Dragon Aim Waypoints, Gyro Waypoints, Arrow Stack Waypoints
+* M7 Dragon Health Display
+* M7 Dragon Aim Waypoints, Arrow Stack Waypoints
 * Glowing M7 Dragons (Glow colour dependent on dragon colour!)
 
 Continue reading below for a list of commands the mod offers!
 
 ## Commands
-Inside of  the configuration you can choose a colour profile! There is currently 5 available; Original, Midnight, Earth, Sakura and Cloudy. This setting will change the colours used to display command feedback.
+Inside of  the configuration you can choose a colour profile! There is currently 6 available; Original, Midnight, Earth, Sakura, Cloudy and Halloween. This setting will change the colours used to display command feedback.
 
 Vanilla:
 
@@ -68,7 +72,7 @@ Vanilla:
 
 * `/defaultskin <player>` Tells you the given player's default skin & model.
 
-* `/ping` Lets you know what your ping is on multiplayer servers.
+* `/ping` Lets you know what your ping is on multiplayer servers or realms.
 
 * `/textreplacer add|remove <textReplacement> [<textComponent>]` Allows you to use the mod's text replacer!
 
@@ -101,6 +105,6 @@ Skyblock:
 * `/profile <player>` View general stats about the given player's Skyblock profile.
 
 ## Contributing & Maintaining
-This mod will be maintained for only the **latest version** of Minecraft.  I have no plans to create any ports of this mod either.
+This mod will be maintained for only the **latest version** of Minecraft. I have no plans to create any ports of this mod either.
 
 I'm not accepting contributions right now, but if you have any suggestions please let me know! :)
