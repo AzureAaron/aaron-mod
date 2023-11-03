@@ -52,8 +52,7 @@ public class ImagePreview {
 			Text deconstructedText = TextTransformer.deconstructAllComponents(text); 
 			List<Text> components = deconstructedText.getSiblings();
 			
-			for (int i = 0; i < components.size(); i++) {
-				Text currentComponent = components.get(i);
+			for (Text currentComponent : components) {
 				Style currentStyle = currentComponent.getStyle();
 				ClickEvent clickEvent = currentStyle.getClickEvent();
 				
