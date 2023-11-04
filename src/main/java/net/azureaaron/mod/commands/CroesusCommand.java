@@ -57,7 +57,6 @@ public class CroesusCommand {
 	
 	protected static void printCroesus(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
 		JsonObject profile = body.get("members").getAsJsonObject().get(uuid).getAsJsonObject();
-		String endSpaces = "        " + name.replaceAll("[A-z0-9_]", "  ") + "        ";
 		
 		//The Croesus api is a complete NIGHTMARE! you have been warned!!
 		
@@ -138,11 +137,13 @@ public class CroesusCommand {
 			Functions.addToBundle(bundle, Skyblock.RARE_LOOT_ITEMS.get(rareLoot[i]));
 		}
 				
-		source.sendFeedback(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
+		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
 				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))
 				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour).withBold(true).withStrikethrough(false))
 				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour).withBold(false).withStrikethrough(false)))
-				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true)))));
+				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true))));
+		
+		source.sendFeedback(startText);
 		
 		source.sendFeedback(Text.literal("Unclaimed Chests » " + runs.size()).styled(style -> style.withColor(colourProfile.infoColour)));
 		source.sendFeedback(Text.literal("Rare Loot Awaits » " + ((rareLootAwaits) ? "✓" : "✗"))
@@ -167,7 +168,7 @@ public class CroesusCommand {
 		
 		if(count > 10) source.sendFeedback(Text.literal("and " + (runs.size()-10) + " more...").styled(style -> style.withColor(colourProfile.supportingInfoColour).withItalic(true)));
 		
-		source.sendFeedback(Text.literal(endSpaces).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
+		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
 		
 		return;
 	}

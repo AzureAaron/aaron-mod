@@ -96,7 +96,6 @@ public class InventoryCommand {
 	
 	protected static void printInventory(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
 		JsonObject profile = body.get("members").getAsJsonObject().get(uuid).getAsJsonObject();
-		String endSpaces = "        " + name.replaceAll("[A-z0-9_]", "  ") + "        ";
 		
 		boolean inventoryEnabled = (profile.get("inv_contents") != null) ? true : false;
 		
@@ -170,11 +169,13 @@ public class InventoryCommand {
 		//Sort key items by name
 		keyItems.sort((o1, o2) -> o1.formattedName().getString().compareTo(o2.formattedName().getString()));
 		
-		source.sendFeedback(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
+		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
 				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))
 				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour).withBold(true).withStrikethrough(false))
 				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour).withBold(false).withStrikethrough(false)))
-				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true)))));
+				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true))));
+		
+		source.sendFeedback(startText);
 		
 		source.sendFeedback(Text.literal("Inventory API » " + ((inventoryEnabled) ? "✓" : "✗")).styled(style -> style.withColor(colourProfile.infoColour)));
 		source.sendFeedback(Text.literal(""));
@@ -201,7 +202,7 @@ public class InventoryCommand {
 			}
 		}
 		
-		source.sendFeedback(Text.literal(endSpaces).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
+		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
 		return;
 	}
 }

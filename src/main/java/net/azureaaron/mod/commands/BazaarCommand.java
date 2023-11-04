@@ -70,14 +70,14 @@ public class BazaarCommand {
 		return Command.SINGLE_SUCCESS;
 	}
 	
-	private static void printBazaar(FabricClientCommandSource source, JsonObject productData, String productName) {
-		final String endSpaces = "        " + productName.replaceAll("[A-z0-9_()']", "  ") + "        ";
-		
-		source.sendFeedback(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
+	private static void printBazaar(FabricClientCommandSource source, JsonObject productData, String productName) {		
+		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
 				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))
 				.append(Text.literal(productName).styled(style -> style.withColor(colourProfile.secondaryColour).withBold(true).withStrikethrough(false))
 				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour).withBold(false).withStrikethrough(false)))
-				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true)))));
+				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true))));
+		
+		source.sendFeedback(startText);
 		
 		source.sendFeedback(Text.literal("Buy Price » " + Functions.NUMBER_FORMATTER.format(productData.get("buyPrice").getAsDouble())).styled(style -> style.withColor(colourProfile.infoColour)));
 		source.sendFeedback(Text.literal(Functions.NUMBER_FORMATTER_S.format(productData.get("buyVolume").getAsInt()) + " in " + Functions.NUMBER_FORMATTER_S.format(productData.get("buyOrders").getAsInt()) + " offers").styled(style -> style.withColor(colourProfile.supportingInfoColour)));
@@ -89,7 +89,7 @@ public class BazaarCommand {
 		source.sendFeedback(Text.literal(Functions.NUMBER_FORMATTER_S.format(productData.get("sellVolume").getAsInt()) + " in " + Functions.NUMBER_FORMATTER_S.format(productData.get("sellOrders").getAsInt()) + " orders").styled(style -> style.withColor(colourProfile.supportingInfoColour)));
 		source.sendFeedback(Text.literal(Functions.NUMBER_FORMATTER_S.format(productData.get("sellMovingWeek").getAsInt()) + " insta-sells in 7 days").styled(style -> style.withColor(colourProfile.supportingInfoColour)));
 		
-		source.sendFeedback(Text.literal(endSpaces).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
+		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
 		return;
 	}
 }

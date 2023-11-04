@@ -62,9 +62,7 @@ public class MagicalPowerCommand {
 	//TODO maybe make this account for when you can't use an accessory
 	//TODO also display the stats you get from your power
 	protected static void printMP(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
-		JsonObject profile = body.get("members").getAsJsonObject().get(uuid).getAsJsonObject();
-		String endSpaces = "        " + name.replaceAll("[A-z0-9_]", "  ") + "        ";
-		
+		JsonObject profile = body.get("members").getAsJsonObject().get(uuid).getAsJsonObject();		
 		boolean inventoryEnabled = profile.has("inv_contents");
 		
 		if (!inventoryEnabled) {
@@ -190,11 +188,13 @@ public class MagicalPowerCommand {
 		//Item Rarity Counts - Maybe I'll make this happen later (I'd really need an ItemRarity enum to reduce code duplication/hackiness)
 		//List<Text> rarities = collectedAccessories.entrySet().stream().map(entry -> getRarityBreakdownText(entry.getValue(), collectedAccessories)).collect(Collectors.toList());
 				
-		source.sendFeedback(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
+		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
 				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))
 				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour).withBold(true).withStrikethrough(false))
 				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour).withBold(false).withStrikethrough(false)))
-				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true)))));
+				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true))));
+		
+		source.sendFeedback(startText);
 		
 		source.sendFeedback(Text.literal("Magical Power » ").styled(WITH_COLOUR.apply(colourProfile.infoColour))
 				.append(Text.literal(Functions.NUMBER_FORMATTER_ND.format(magicalPower)).styled(WITH_COLOUR.apply(colourProfile.highlightColour))));
@@ -205,7 +205,7 @@ public class MagicalPowerCommand {
 		source.sendFeedback(Text.literal("(Tunings)").styled(style -> style.withColor(colourProfile.hoverColour).withHoverEvent(
 				new HoverEvent(HoverEvent.Action.SHOW_TEXT, getStatsBreakdown(tunings)))));
 		
-		source.sendFeedback(Text.literal(endSpaces).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
+		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
 	}
 	
 	private static Text getStatText(String stat, int tuningAmount) {

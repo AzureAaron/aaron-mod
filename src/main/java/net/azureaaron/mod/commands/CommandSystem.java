@@ -5,6 +5,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 
@@ -13,11 +14,15 @@ import com.google.gson.JsonParser;
 import com.mojang.brigadier.Command;
 import com.mojang.logging.LogUtils;
 
+import net.azureaaron.mod.features.TextReplacer;
 import net.azureaaron.mod.util.Http;
 import net.azureaaron.mod.util.Messages;
 import net.azureaaron.mod.util.Skyblock;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.session.Session;
+import net.minecraft.text.Text;
 
 /**
  * Provides core functionality for the mod's commands.
@@ -26,12 +31,29 @@ import net.minecraft.client.session.Session;
  */
 public class CommandSystem {
 	private static final Logger LOGGER = LogUtils.getLogger();
+	private static final Supplier<TextRenderer> TEXT_RENDERER = () -> MinecraftClient.getInstance().textRenderer;
 	
 	/**
 	 * Ensures that "dummy" players aren't included in command suggestions
 	 */
 	public static String[] getPlayerSuggestions(FabricClientCommandSource source) {
 		return source.getPlayerNames().stream().filter(playerName -> playerName.matches("[A-Za-z0-9_]+")).toArray(String[]::new);
+	}
+	
+	public static String getEndSpaces(Text text) {
+		TextRenderer textRenderer = TEXT_RENDERER.get();
+		
+		int spaceWidth = textRenderer.getWidth(" ");
+		int textWidth = textRenderer.getWidth(TextReplacer.visuallyReplaceText(text.asOrderedText()));
+		int spacesNeeded = (int) Math.ceil((double) textWidth / (double) spaceWidth);
+		
+		String spaces = "";
+		
+		for (int i = 0; i < spacesNeeded; i++) {
+			spaces += " ";
+		}
+		
+		return spaces;
 	}
 	
 	/**

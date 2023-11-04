@@ -118,20 +118,20 @@ public class LowestBinCommand {
 		return Command.SINGLE_SUCCESS;
 	}
 	
-	private static void printLowestBin(FabricClientCommandSource source, JsonObject data, String itemName, String desc) {
-		String endSpaces = "        " + itemName.replaceAll("[A-z0-9_()']", "  ") + "        ";
-		
-		source.sendFeedback(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
+	private static void printLowestBin(FabricClientCommandSource source, JsonObject data, String itemName, String desc) {		
+		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
 				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))
 				.append(Text.literal(itemName).styled(style -> style.withColor(colourProfile.secondaryColour).withBold(true).withStrikethrough(false))
 				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour).withBold(false).withStrikethrough(false)))
-				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true)))));
+				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true))));
+		
+		source.sendFeedback(startText);
 		
 		source.sendFeedback(Text.literal("Lowest BIN Price » " + Functions.NUMBER_FORMATTER_ND.format(data.get("price").getAsLong())).styled(style -> style.withColor(colourProfile.infoColour)));
 		source.sendFeedback(Text.literal(""));
 		source.sendFeedback(Text.literal(desc + " Price » " + Functions.NUMBER_FORMATTER_ND.format(data.get("dayAverage").getAsLong())).styled(style -> style.withColor(colourProfile.infoColour)));
 		
-		source.sendFeedback(Text.literal(endSpaces).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
+		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
 		return;
 	}
 }

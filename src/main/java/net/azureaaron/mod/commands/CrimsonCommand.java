@@ -32,7 +32,6 @@ public class CrimsonCommand {
 	
 	protected static void printCrimson(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
 		JsonObject profile = body.get("members").getAsJsonObject().get(uuid).getAsJsonObject();		
-		String endSpaces = "        " + name.replaceAll("[A-z0-9_]", "  ") + "        ";
 		
 		String selectedFaction = (profile.get("nether_island_player_data").getAsJsonObject().get("selected_faction") != null) ? profile.get("nether_island_player_data").getAsJsonObject().get("selected_faction").getAsString() : "None";
 		
@@ -66,11 +65,13 @@ public class CrimsonCommand {
 		String controlGrade = Skyblock.getDojoGrade(controlScore);
 		String tenacityGrade = Skyblock.getDojoGrade(tenacityScore);
 		
-		source.sendFeedback(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
+		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
 				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))
 				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour).withBold(true).withStrikethrough(false))
 				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour).withBold(false).withStrikethrough(false)))
-				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true)))));
+				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true))));
+		
+		source.sendFeedback(startText);
 		
 		source.sendFeedback(Text.literal("Faction » ").styled(style -> style.withColor(colourProfile.infoColour))
 				.append(Text.literal(Functions.titleCase(selectedFaction)).styled(style -> style.withColor(colourProfile.highlightColour))));
@@ -103,7 +104,7 @@ public class CrimsonCommand {
 						.append(Text.literal("Control » " + controlGrade + " (" + Functions.NUMBER_FORMATTER_ND.format(controlScore) + ") \n" ))
 						.append(Text.literal("Tenacity » " + tenacityGrade + " (" + Functions.NUMBER_FORMATTER_ND.format(tenacityScore) + ")" ))))));
 		
-		source.sendFeedback(Text.literal(endSpaces).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
+		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
 		return;
 	}
 }

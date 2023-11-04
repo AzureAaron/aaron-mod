@@ -29,7 +29,6 @@ public class EssenceCommand {
 	
 	protected static void printEssence(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
 		JsonObject profile = body.get("members").getAsJsonObject().get(uuid).getAsJsonObject();
-		String endSpaces = "        " + name.replaceAll("[A-z0-9_]", "  ") + "        ";
 		
 		int witherEssence = profile.get("essence_wither") != null ? profile.get("essence_wither").getAsInt() : 0;
 		int spiderEssence = profile.get("essence_spider") != null ? profile.get("essence_spider").getAsInt() : 0;
@@ -40,11 +39,13 @@ public class EssenceCommand {
 		int iceEssence = profile.get("essence_ice") != null ? profile.get("essence_ice").getAsInt() : 0;
 		int crimsonEssence = profile.get("essence_crimson") != null ? profile.get("essence_crimson").getAsInt() : 0;
 		
-		source.sendFeedback(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
+		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
 				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))
 				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour).withBold(true).withStrikethrough(false))
 				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour).withBold(false).withStrikethrough(false)))
-				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true)))));
+				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true))));
+		
+		source.sendFeedback(startText);
 		
 		source.sendFeedback(Text.literal("Wither » " + Functions.NUMBER_FORMATTER_ND.format(witherEssence)).styled(style -> style.withColor(colourProfile.infoColour)));
 		source.sendFeedback(Text.literal("Spider » " + Functions.NUMBER_FORMATTER_ND.format(spiderEssence)).styled(style -> style.withColor(colourProfile.infoColour)));
@@ -55,7 +56,7 @@ public class EssenceCommand {
 		source.sendFeedback(Text.literal("Ice » " + Functions.NUMBER_FORMATTER_ND.format(iceEssence)).styled(style -> style.withColor(colourProfile.infoColour)));
 		source.sendFeedback(Text.literal("Crimson » " + Functions.NUMBER_FORMATTER_ND.format(crimsonEssence)).styled(style -> style.withColor(colourProfile.infoColour)));
 		
-		source.sendFeedback(Text.literal(endSpaces).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
+		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
 		
 		return;
 	}

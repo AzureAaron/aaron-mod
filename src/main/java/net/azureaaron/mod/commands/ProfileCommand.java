@@ -34,7 +34,6 @@ public class ProfileCommand {
 	
 	protected static void printProfile(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
 		JsonObject profile = body.get("members").getAsJsonObject().get(uuid).getAsJsonObject();
-		String endSpaces = "        " + name.replaceAll("[A-z0-9_]", "  ") + "        ";
 		
 		//Check if apis enabled
 		boolean bankingEnabled = (body.get("banking") != null) ? true : false;
@@ -71,11 +70,13 @@ public class ProfileCommand {
 		int infernoDemonlordLevel = Levelling.getSlayerLevel((slayerBosses.get("blaze").getAsJsonObject().get("xp") != null) ? slayerBosses.get("blaze").getAsJsonObject().get("xp").getAsInt() : 0, "INFERNO_DEMONLORD");
 		int riftstalkerBloodfiendLevel = Levelling.getSlayerLevel((slayerBosses.get("vampire").getAsJsonObject().get("xp") != null) ? slayerBosses.get("vampire").getAsJsonObject().get("xp").getAsInt() : 0, "RIFTSTALKER_BLOODFIEND");
 		
-		source.sendFeedback(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
+		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
 				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))
 				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour).withBold(true).withStrikethrough(false))
 				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour).withBold(false).withStrikethrough(false)))
-				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true)))));
+				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true))));
+		
+		source.sendFeedback(startText);
 		
 		source.sendFeedback(Text.literal("Profile » " + Functions.titleCase(body.get("cute_name").getAsString())).styled(style -> style.withColor(colourProfile.infoColour)));
 		source.sendFeedback(Text.literal("Joined » " + Functions.toRelative(firstJoinRelative).split(",")[0].replaceAll(" ago", "") + " ago")
@@ -119,7 +120,7 @@ public class ProfileCommand {
 								.append("Voidgloom Seraph » " + String.valueOf(voidgloomSeraphLevel) + "\n")
 								.append("Inferno Demonlord » " + String.valueOf(infernoDemonlordLevel) + "\n")
 								.append("Riftstalker Bloodfiend » " + String.valueOf(riftstalkerBloodfiendLevel))))));	
-		source.sendFeedback(Text.literal(endSpaces).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
+		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
 		return;
 	}
 }

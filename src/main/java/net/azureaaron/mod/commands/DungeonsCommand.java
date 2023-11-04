@@ -67,9 +67,7 @@ public class DungeonsCommand {
 			e.printStackTrace();
 			return;
 		}
-		
-		String endSpaces = "        " + name.replaceAll("[A-z0-9_]", "  ") + "        ";
-		
+				
 		int healerLevel = Levelling.getDungeonLevel((profile.get("dungeons").getAsJsonObject().get("player_classes").getAsJsonObject().get("healer").getAsJsonObject().get("experience") != null) ? profile.get("dungeons").getAsJsonObject().get("player_classes").getAsJsonObject().get("healer").getAsJsonObject().get("experience").getAsLong() : 0);
 		int mageLevel = Levelling.getDungeonLevel((profile.get("dungeons").getAsJsonObject().get("player_classes").getAsJsonObject().get("mage").getAsJsonObject().get("experience") != null) ? profile.get("dungeons").getAsJsonObject().get("player_classes").getAsJsonObject().get("mage").getAsJsonObject().get("experience").getAsLong() : 0);
 		int berserkLevel = Levelling.getDungeonLevel((profile.get("dungeons").getAsJsonObject().get("player_classes").getAsJsonObject().get("berserk").getAsJsonObject().get("experience") != null) ? profile.get("dungeons").getAsJsonObject().get("player_classes").getAsJsonObject().get("berserk").getAsJsonObject().get("experience").getAsLong() : 0);
@@ -111,11 +109,13 @@ public class DungeonsCommand {
 		int masterFloor6s = (profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("master_catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("6") != null) ? profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("master_catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("6").getAsInt() : 0;
 		int masterFloor7s = (profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("master_catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("7") != null) ? profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("master_catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("7").getAsInt() : 0;
 		
-		source.sendFeedback(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
+		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
 				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))
 				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour).withBold(true).withStrikethrough(false))
 				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour).withBold(false).withStrikethrough(false)))
-				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true)))));
+				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true))));
+		
+		source.sendFeedback(startText);
 		
 		source.sendFeedback(Text.literal("Level » " + String.valueOf(catacombsLevel)).styled(style -> style.withColor(colourProfile.infoColour)
 				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Total XP: " + Functions.NUMBER_FORMATTER_ND.format(catacombsXp)).styled(style1 -> style1.withColor(colourProfile.infoColour))))));
@@ -157,7 +157,7 @@ public class DungeonsCommand {
 						.append(Text.literal("M6 » " + Functions.NUMBER_FORMATTER_ND.format(masterFloor6s) + "\n"))
 						.append(Text.literal("M7 » " + Functions.NUMBER_FORMATTER_ND.format(masterFloor7s)))))));
 		
-		source.sendFeedback(Text.literal(endSpaces).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
+		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
 		
 		return;
 	}

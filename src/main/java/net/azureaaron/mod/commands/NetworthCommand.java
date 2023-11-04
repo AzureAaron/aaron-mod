@@ -45,8 +45,6 @@ public class NetworthCommand {
 	protected static void printNetworth(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
 		JsonObject profile = body.get("members").getAsJsonObject().get(uuid).getAsJsonObject();
 		
-		String endSpaces = "        " + name.replaceAll("[A-z0-9_]", "  ") + "        ";
-
 		boolean inventoryEnabled = (profile.get("inv_contents") != null) ? true : false;
 		long purse = (profile.get("coin_purse") != null) ? profile.get("coin_purse").getAsLong() : 0L;
 		long bank = (body.get("banking") != null) ? body.get("banking").getAsJsonObject().get("balance").getAsLong() : 0L;
@@ -71,11 +69,13 @@ public class NetworthCommand {
 			return;
 		}
 		
-		source.sendFeedback(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
+		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
 				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))
 				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour).withBold(true).withStrikethrough(false))
 				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour).withBold(false).withStrikethrough(false)))
-				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true)))));
+				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true))));
+		
+		source.sendFeedback(startText);
 		
 		source.sendFeedback(Text.literal("Networth » " + Functions.NUMBER_FORMATTER.format(networth.overallValue())).styled(style -> style.withColor(colourProfile.infoColour)));
 		source.sendFeedback(Text.literal(""));
@@ -91,7 +91,7 @@ public class NetworthCommand {
 		source.sendFeedback(Text.literal("Bank » " + Functions.NUMBER_FORMATTER.format(networth.bankValue())).styled(style -> style.withColor(colourProfile.infoColour)));
 		source.sendFeedback(Text.literal("Purse » " + Functions.NUMBER_FORMATTER.format(networth.purseValue())).styled(style -> style.withColor(colourProfile.infoColour)));
 		
-		source.sendFeedback(Text.literal(endSpaces).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
+		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
 		return;
 	}
 }
