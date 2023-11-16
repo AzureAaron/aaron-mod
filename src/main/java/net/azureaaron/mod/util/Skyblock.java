@@ -94,30 +94,34 @@ public class Skyblock {
 	}
 	
 	public static JsonObject getSelectedProfile2(String profiles) throws IllegalStateException {
-		if(profiles == null) return null;
+		if (profiles == null) return null;
+		
 		JsonObject skyblockData = JsonParser.parseString(profiles).getAsJsonObject();
-		JsonArray profilesArray = skyblockData.get("profiles").getAsJsonArray();
-		if(profilesArray == null) throw new IllegalStateException(Messages.PROFILES_NOT_MIGRATED_ERROR.getString()); //If the player's profile hasn't been migrated
-		for(JsonElement profile : profilesArray) {
+		JsonArray profilesArray = skyblockData.getAsJsonArray("profiles");
+		
+		if (profilesArray == null) throw new IllegalStateException(Messages.PROFILES_NOT_MIGRATED_ERROR.getString()); //If the player's profile hasn't been migrated
+		
+		for (JsonElement profile : profilesArray) {
 			JsonObject iteratedProfile = profile.getAsJsonObject();
-			if(iteratedProfile.get("selected").getAsBoolean() == true) return iteratedProfile;
+			if (iteratedProfile.get("selected").getAsBoolean() == true) return iteratedProfile;
 		}
+		
 		throw new IllegalStateException(Messages.PROFILES_NOT_MIGRATED_ERROR.getString()); //After the migration players can apparently have no selected profile
 	}
 	
 	public static NetworthCommand.Networth readNetworthData(String data, long bank, long purse) {
-		if(data == null) return null;
+		if (data == null) return null;
 		JsonObject json = JsonParser.parseString(data).getAsJsonObject();
-		JsonObject networthData = json.get("data").getAsJsonObject().get("categories").getAsJsonObject();
+		JsonObject networthData = json.getAsJsonObject("data").getAsJsonObject("categories");
 		
-		long accessoriesValue = (networthData.get("talismans") != null) ? networthData.get("talismans").getAsJsonObject().get("total").getAsLong() : 0L;
-		long armourValue = (networthData.get("armor") != null) ? networthData.get("armor").getAsJsonObject().get("total").getAsLong() : 0L;
-		long enderchestValue = (networthData.get("enderchest") != null) ? networthData.get("enderchest").getAsJsonObject().get("total").getAsLong() : 0L;
-		long inventoryValue = (networthData.get("inventory") != null) ? networthData.get("inventory").getAsJsonObject().get("total").getAsLong() : 0L;
-		long petsValue = (networthData.get("pets") != null) ? networthData.get("pets").getAsJsonObject().get("total").getAsLong() : 0L;
-		long sacksValue = (json.get("data").getAsJsonObject().get("sacks") != null) ? json.get("data").getAsJsonObject().get("sacks").getAsLong() : 0L;
-		long storageValue = (networthData.get("storage") != null) ? networthData.get("storage").getAsJsonObject().get("total").getAsLong() : 0L;
-		long wardrobeValue = (networthData.get("wardrobe_inventory") != null) ? networthData.get("wardrobe_inventory").getAsJsonObject().get("total").getAsLong() : 0L;
+		long accessoriesValue = JsonHelper.getLong(networthData, "talismans.total").orElse(0L);
+		long armourValue = JsonHelper.getLong(networthData, "armor.total").orElse(0L);
+		long enderchestValue = JsonHelper.getLong(networthData, "enderchest.total").orElse(0L);
+		long inventoryValue = JsonHelper.getLong(networthData, "inventory.total").orElse(0L);
+		long petsValue = JsonHelper.getLong(networthData, "pets.total").orElse(0L);
+		long sacksValue = JsonHelper.getLong(json, "data.sacks").orElse(0L);
+		long storageValue = JsonHelper.getLong(networthData, "storage.total").orElse(0L);
+		long wardrobeValue = JsonHelper.getLong(networthData, "wardrobe_inventory.total").orElse(0L);
 		
 		long overallValue = accessoriesValue + armourValue + bank + enderchestValue + inventoryValue + petsValue + purse + sacksValue + storageValue + wardrobeValue;
 		
@@ -137,21 +141,24 @@ public class Skyblock {
 	}
 	
 	public static String getDojoGrade(int score) {
-		if(score == 0) return "None";
-		if(score >= 1000) return "S";
-		if(score >= 800) return "A";
-		if(score >= 600) return "B";
-		if(score >= 400) return "C";
-		if(score >= 200) return "D";
-		if(score < 200) return "F";
+		if (score == 0) return "None";
+		if (score >= 1000) return "S";
+		if (score >= 800) return "A";
+		if (score >= 600) return "B";
+		if (score >= 400) return "C";
+		if (score >= 200) return "D";
+		if (score < 200) return "F";
+		
 		return "UNKNOWN";
 	}
 	
 	public static int calculateProfileSocialXp(JsonObject profile) {
 		int socialXp = 0;
-		for(String uuid : profile.get("members").getAsJsonObject().keySet()) {
-			JsonObject member = profile.get("members").getAsJsonObject().get(uuid).getAsJsonObject();
-			if(member.get("experience_skill_social2") != null) socialXp += member.get("experience_skill_social2").getAsInt();
+		JsonObject members = profile.getAsJsonObject("members");
+		
+		for (String uuid : members.keySet()) {
+			JsonObject member = members.getAsJsonObject(uuid);
+			socialXp += JsonHelper.getInt(member, "experience_skill_social2").orElse(0);
 		}
 		
 		return socialXp;

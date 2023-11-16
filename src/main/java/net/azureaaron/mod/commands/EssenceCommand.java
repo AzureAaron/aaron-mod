@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.util.Functions;
+import net.azureaaron.mod.util.JsonHelper;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
@@ -28,16 +29,16 @@ public class EssenceCommand {
 	}
 	
 	protected static void printEssence(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
-		JsonObject profile = body.get("members").getAsJsonObject().get(uuid).getAsJsonObject();
+		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);
 		
-		int witherEssence = profile.get("essence_wither") != null ? profile.get("essence_wither").getAsInt() : 0;
-		int spiderEssence = profile.get("essence_spider") != null ? profile.get("essence_spider").getAsInt() : 0;
-		int undeadEssence = profile.get("essence_undead") != null ? profile.get("essence_undead").getAsInt() : 0;
-		int dragonEssence = profile.get("essence_dragon") != null ? profile.get("essence_dragon").getAsInt() : 0;
-		int goldEssence = profile.get("essence_gold") != null ? profile.get("essence_gold").getAsInt() : 0;
-		int diamondEssence = profile.get("essence_diamond") != null ? profile.get("essence_diamond").getAsInt() : 0;
-		int iceEssence = profile.get("essence_ice") != null ? profile.get("essence_ice").getAsInt() : 0;
-		int crimsonEssence = profile.get("essence_crimson") != null ? profile.get("essence_crimson").getAsInt() : 0;
+		int witherEssence = JsonHelper.getInt(profile, "essence_wither").orElse(0);
+		int spiderEssence = JsonHelper.getInt(profile, "essence_spider").orElse(0);
+		int undeadEssence = JsonHelper.getInt(profile, "essence_undead").orElse(0);
+		int dragonEssence = JsonHelper.getInt(profile, "essence_dragon").orElse(0);
+		int goldEssence = JsonHelper.getInt(profile, "essence_gold").orElse(0);
+		int diamondEssence = JsonHelper.getInt(profile, "essence_diamond").orElse(0);
+		int iceEssence = JsonHelper.getInt(profile, "essence_ice").orElse(0);
+		int crimsonEssence = JsonHelper.getInt(profile, "essence_crimson").orElse(0);
 		
 		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
 				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))

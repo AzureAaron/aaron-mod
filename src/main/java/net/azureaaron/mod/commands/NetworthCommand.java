@@ -8,11 +8,15 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 
 import java.lang.invoke.MethodHandle;
 
+import org.slf4j.Logger;
+
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.logging.LogUtils;
 
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Http;
+import net.azureaaron.mod.util.JsonHelper;
 import net.azureaaron.mod.util.Messages;
 import net.azureaaron.mod.util.Skyblock;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -21,6 +25,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class NetworthCommand {
+	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printNetworth");
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
@@ -39,15 +44,14 @@ public class NetworthCommand {
 	
 	private static final Text NETWORTH_FETCH_ERROR = Text.literal("There was an error while fetching a player's networth!").styled(style -> style.withColor(Formatting.RED));
 	
-	public record Networth(long accessoriesValue, long armourValue, long bankValue, long enderchestValue, long inventoryValue, long overallValue, long petsValue, long purseValue, long sacksValue, long storageValue, long wardrobeValue) {
-	}
+	public record Networth(long accessoriesValue, long armourValue, long bankValue, long enderchestValue, long inventoryValue, long overallValue, long petsValue, long purseValue, long sacksValue, long storageValue, long wardrobeValue) {}
 		
 	protected static void printNetworth(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
-		JsonObject profile = body.get("members").getAsJsonObject().get(uuid).getAsJsonObject();
+		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);
 		
-		boolean inventoryEnabled = (profile.get("inv_contents") != null) ? true : false;
-		long purse = (profile.get("coin_purse") != null) ? profile.get("coin_purse").getAsLong() : 0L;
-		long bank = (body.get("banking") != null) ? body.get("banking").getAsJsonObject().get("balance").getAsLong() : 0L;
+		boolean inventoryEnabled = profile.has("inv_contents");
+		long purse = JsonHelper.getLong(profile, "coin_purse").orElse(0L);
+		long bank = JsonHelper.getLong(body, "banking.balance").orElse(0L);
 		
 		JsonObject networthPostObject = new JsonObject();
 		networthPostObject.add("data", profile);
@@ -55,17 +59,19 @@ public class NetworthCommand {
 		
 		String networthData;
 		Networth networth = null;
-		if(inventoryEnabled == true) {
+		if (inventoryEnabled == true) {
 			try {
 				networthData = Http.sendNetworthRequest(networthPostBody);
 				networth = Skyblock.readNetworthData(networthData, bank, purse);
 			} catch (Throwable t) {
-				t.printStackTrace();
 				source.sendError(NETWORTH_FETCH_ERROR);
+				LOGGER.error("[Aaron's Mod] Encountered an exception while requesting networth data!", t);
+				
 				return;
 			}
 		} else {
 			source.sendError(Messages.INVENTORY_API_DISABLED_ERROR);
+			
 			return;
 		}
 		

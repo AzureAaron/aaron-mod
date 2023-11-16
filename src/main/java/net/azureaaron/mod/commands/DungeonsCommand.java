@@ -10,13 +10,17 @@ import java.lang.invoke.MethodHandle;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+import org.slf4j.Logger;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.logging.LogUtils;
 
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Http;
+import net.azureaaron.mod.util.JsonHelper;
 import net.azureaaron.mod.util.Levelling;
 import net.azureaaron.mod.util.Messages;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -27,6 +31,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class DungeonsCommand {
+	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printDungeons");
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
@@ -52,34 +57,39 @@ public class DungeonsCommand {
 	private static final Text NEVER_PLAYED_DUNGEONS_ERROR = Text.literal("This player hasn't entered the catacombs yet!").styled(style -> style.withColor(Formatting.RED));
 		
 	protected static void printDungeons(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
-		if(body.get("members").getAsJsonObject().get(uuid).getAsJsonObject().get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("times_played") == null) {
+		if (body.getAsJsonObject("members").getAsJsonObject(uuid).getAsJsonObject("dungeons").getAsJsonObject("dungeon_types").getAsJsonObject("catacombs").get("times_played") == null) {
 			source.sendError(NEVER_PLAYED_DUNGEONS_ERROR);
+			
 			return;
 		}
 		
-		JsonObject profile = body.get("members").getAsJsonObject().get(uuid).getAsJsonObject();
+		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);
 		JsonObject playerJson = null;
 		try {
 			String playerData = Http.sendAuthorizedHypixelRequest("player", "?uuid=" + uuid);
 			playerJson = JsonParser.parseString(playerData).getAsJsonObject();
 		} catch (Exception e) {
 			source.sendError(Messages.HYPIXEL_PROFILE_FETCH_ERROR);
-			e.printStackTrace();
+			LOGGER.error("[Aaron's Mod] Failed to request " + Functions.possessiveEnding(name) + " Hypixel profile!", e);
+			
 			return;
 		}
+		
+		JsonObject dungeonsStats = profile.getAsJsonObject("dungeons");
 				
-		int healerLevel = Levelling.getDungeonLevel((profile.get("dungeons").getAsJsonObject().get("player_classes").getAsJsonObject().get("healer").getAsJsonObject().get("experience") != null) ? profile.get("dungeons").getAsJsonObject().get("player_classes").getAsJsonObject().get("healer").getAsJsonObject().get("experience").getAsLong() : 0);
-		int mageLevel = Levelling.getDungeonLevel((profile.get("dungeons").getAsJsonObject().get("player_classes").getAsJsonObject().get("mage").getAsJsonObject().get("experience") != null) ? profile.get("dungeons").getAsJsonObject().get("player_classes").getAsJsonObject().get("mage").getAsJsonObject().get("experience").getAsLong() : 0);
-		int berserkLevel = Levelling.getDungeonLevel((profile.get("dungeons").getAsJsonObject().get("player_classes").getAsJsonObject().get("berserk").getAsJsonObject().get("experience") != null) ? profile.get("dungeons").getAsJsonObject().get("player_classes").getAsJsonObject().get("berserk").getAsJsonObject().get("experience").getAsLong() : 0);
-		int archerLevel = Levelling.getDungeonLevel((profile.get("dungeons").getAsJsonObject().get("player_classes").getAsJsonObject().get("archer").getAsJsonObject().get("experience") != null) ? profile.get("dungeons").getAsJsonObject().get("player_classes").getAsJsonObject().get("archer").getAsJsonObject().get("experience").getAsLong() : 0);
-		int tankLevel = Levelling.getDungeonLevel((profile.get("dungeons").getAsJsonObject().get("player_classes").getAsJsonObject().get("tank").getAsJsonObject().get("experience") != null) ? profile.get("dungeons").getAsJsonObject().get("player_classes").getAsJsonObject().get("tank").getAsJsonObject().get("experience").getAsLong() : 0);
+		int healerLevel = Levelling.getDungeonLevel(JsonHelper.getLong(dungeonsStats, "player_classes.healer.experience").orElse(0L));
+		int mageLevel = Levelling.getDungeonLevel(JsonHelper.getLong(dungeonsStats, "player_classes.mage.experience").orElse(0L));
+		int berserkLevel = Levelling.getDungeonLevel(JsonHelper.getLong(dungeonsStats, "player_classes.berserk.experience").orElse(0L));
+		int archerLevel = Levelling.getDungeonLevel(JsonHelper.getLong(dungeonsStats, "player_classes.archer.experience").orElse(0L));
+		int tankLevel = Levelling.getDungeonLevel(JsonHelper.getLong(dungeonsStats, "player_classes.tank.experience").orElse(0L));
 		float classAverage = (float) (healerLevel + mageLevel + berserkLevel + archerLevel + tankLevel) / 5;
 		
-		long catacombsXp = profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("experience").getAsLong();
+		JsonObject catacombsStats = dungeonsStats.getAsJsonObject("dungeon_types").getAsJsonObject("catacombs");
+		
+		long catacombsXp = JsonHelper.getLong(catacombsStats, "experience").orElse(0L);
 		int catacombsLevel = Levelling.getDungeonLevel(catacombsXp);
-		JsonObject achievements = (playerJson.get("player").getAsJsonObject().get("achievements") != null) ? playerJson.get("player").getAsJsonObject().get("achievements").getAsJsonObject() : null;
-		int secrets = (achievements != null && achievements.get("skyblock_treasure_hunter") != null) ? achievements.get("skyblock_treasure_hunter").getAsInt() : 0;
-		String selectedClass = (profile.get("dungeons").getAsJsonObject().get("selected_dungeon_class") != null) ? profile.get("dungeons").getAsJsonObject().get("selected_dungeon_class").getAsString() : "None"; //The fallback value used to be null which was a great choice until it threw a NPE!
+		int secrets = JsonHelper.getInt(playerJson, "player.achievements.skyblock_treasure_hunter").orElse(0);
+		String selectedClass = JsonHelper.getString(dungeonsStats, "selected_dungeon_class").orElse("None"); //The fallback value used to be null which was a great choice until it threw an NPE!
 		
 		int healerColour = ("healer".equals(selectedClass)) ? colourProfile.highlightColour : colourProfile.infoColour;
 		int mageColour = ("mage".equals(selectedClass)) ? colourProfile.highlightColour : colourProfile.infoColour;
@@ -87,27 +97,33 @@ public class DungeonsCommand {
 		int archerColour = ("archer".equals(selectedClass)) ? colourProfile.highlightColour : colourProfile.infoColour;
 		int tankColour = ("tank".equals(selectedClass)) ? colourProfile.highlightColour : colourProfile.infoColour;
 		
-		JsonElement dailyRuns = profile.get("dungeons").getAsJsonObject().get("daily_runs");
+		//TODO rework this slightly?
+		JsonElement dailyRuns = dungeonsStats.get("daily_runs");
 		JsonElement completedDailyRuns = (dailyRuns != null) ? dailyRuns.getAsJsonObject().get("completed_runs_count") : null;
 		boolean onDailies = (dailyRuns != null && completedDailyRuns != null && dailyRuns.getAsJsonObject().get("current_day_stamp").getAsLong() == Instant.EPOCH.until(Instant.now(), ChronoUnit.DAYS) && completedDailyRuns.getAsInt() < 5) ? true : false;
 		String dailiesLeft = (onDailies) ? " (" + (5 - completedDailyRuns.getAsInt()) + ")" : "";
 		
-		int entrances = (profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("0") != null) ? profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("0").getAsInt() : 0;
-		int floor1s = (profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("1") != null) ? profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("1").getAsInt() : 0;
-		int floor2s = (profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("2") != null) ? profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("2").getAsInt() : 0;
-		int floor3s = (profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("3") != null) ? profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("3").getAsInt() : 0;
-		int floor4s = (profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("4") != null) ? profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("4").getAsInt() : 0;
-		int floor5s = (profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("5") != null) ? profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("5").getAsInt() : 0;
-		int floor6s = (profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("6") != null) ? profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("6").getAsInt() : 0;
-		int floor7s = (profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("7") != null) ? profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("7").getAsInt() : 0;
+		JsonObject tierCompletions = catacombsStats.getAsJsonObject("tier_completions");
 		
-		int masterFloor1s = (profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("master_catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("1") != null) ? profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("master_catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("1").getAsInt() : 0;
-		int masterFloor2s = (profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("master_catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("2") != null) ? profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("master_catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("2").getAsInt() : 0;
-		int masterFloor3s = (profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("master_catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("3") != null) ? profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("master_catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("3").getAsInt() : 0;
-		int masterFloor4s = (profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("master_catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("4") != null) ? profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("master_catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("4").getAsInt() : 0;
-		int masterFloor5s = (profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("master_catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("5") != null) ? profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("master_catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("5").getAsInt() : 0;
-		int masterFloor6s = (profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("master_catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("6") != null) ? profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("master_catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("6").getAsInt() : 0;
-		int masterFloor7s = (profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("master_catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("7") != null) ? profile.get("dungeons").getAsJsonObject().get("dungeon_types").getAsJsonObject().get("master_catacombs").getAsJsonObject().get("tier_completions").getAsJsonObject().get("7").getAsInt() : 0;
+		int entrances = JsonHelper.getInt(tierCompletions, "0").orElse(0);
+		int floor1s = JsonHelper.getInt(tierCompletions, "1").orElse(0);
+		int floor2s = JsonHelper.getInt(tierCompletions, "2").orElse(0);
+		int floor3s = JsonHelper.getInt(tierCompletions, "3").orElse(0);
+		int floor4s = JsonHelper.getInt(tierCompletions, "4").orElse(0);
+		int floor5s = JsonHelper.getInt(tierCompletions, "5").orElse(0);
+		int floor6s = JsonHelper.getInt(tierCompletions, "6").orElse(0);
+		int floor7s = JsonHelper.getInt(tierCompletions, "7").orElse(0);
+		
+		JsonObject masterModeStats = dungeonsStats.getAsJsonObject("dungeon_types").getAsJsonObject("master_catacombs");
+		JsonObject masterTierCompletions = masterModeStats.getAsJsonObject("tier_completions");
+		
+		int masterFloor1s = JsonHelper.getInt(masterTierCompletions, "1").orElse(0);
+		int masterFloor2s = JsonHelper.getInt(masterTierCompletions, "2").orElse(0);
+		int masterFloor3s = JsonHelper.getInt(masterTierCompletions, "3").orElse(0);
+		int masterFloor4s = JsonHelper.getInt(masterTierCompletions, "4").orElse(0);
+		int masterFloor5s = JsonHelper.getInt(masterTierCompletions, "5").orElse(0);
+		int masterFloor6s = JsonHelper.getInt(masterTierCompletions, "6").orElse(0);
+		int masterFloor7s = JsonHelper.getInt(masterTierCompletions, "7").orElse(0);
 		
 		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
 				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))
@@ -158,7 +174,5 @@ public class DungeonsCommand {
 						.append(Text.literal("M7 » " + Functions.NUMBER_FORMATTER_ND.format(masterFloor7s)))))));
 		
 		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
-		
-		return;
 	}
 }

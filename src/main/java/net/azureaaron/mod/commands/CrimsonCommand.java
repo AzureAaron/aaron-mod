@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.util.Functions;
+import net.azureaaron.mod.util.JsonHelper;
 import net.azureaaron.mod.util.Skyblock;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
@@ -31,30 +32,35 @@ public class CrimsonCommand {
 	}
 	
 	protected static void printCrimson(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
-		JsonObject profile = body.get("members").getAsJsonObject().get(uuid).getAsJsonObject();		
+		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);
+		JsonObject crimsonIsleStats = profile.getAsJsonObject("nether_island_player_data");
 		
-		String selectedFaction = (profile.get("nether_island_player_data").getAsJsonObject().get("selected_faction") != null) ? profile.get("nether_island_player_data").getAsJsonObject().get("selected_faction").getAsString() : "None";
+		String selectedFaction = JsonHelper.getString(crimsonIsleStats, "selected_faction").orElse("None");
 		
 		int barbarianColour = (selectedFaction.equals("barbarians")) ? colourProfile.highlightColour : colourProfile.infoColour;
 		int mageColour = (selectedFaction.equals("mages")) ? colourProfile.highlightColour : colourProfile.infoColour;
 		
-		int barbarianReputation = (profile.get("nether_island_player_data").getAsJsonObject().get("barbarians_reputation") != null) ? profile.get("nether_island_player_data").getAsJsonObject().get("barbarians_reputation").getAsInt() : 0;
-		int mageReputation = (profile.get("nether_island_player_data").getAsJsonObject().get("mages_reputation") != null) ? profile.get("nether_island_player_data").getAsJsonObject().get("mages_reputation").getAsInt() : 0;
+		int barbarianReputation = JsonHelper.getInt(crimsonIsleStats, "barbarians_reputation").orElse(0);
+		int mageReputation = JsonHelper.getInt(crimsonIsleStats, "mages_reputation").orElse(0);
 		
-		int basicCompletions = (profile.get("nether_island_player_data").getAsJsonObject().get("kuudra_completed_tiers").getAsJsonObject().get("none") != null) ? profile.get("nether_island_player_data").getAsJsonObject().get("kuudra_completed_tiers").getAsJsonObject().get("none").getAsInt() : 0;
-		int hotCompletions = (profile.get("nether_island_player_data").getAsJsonObject().get("kuudra_completed_tiers").getAsJsonObject().get("hot") != null) ? profile.get("nether_island_player_data").getAsJsonObject().get("kuudra_completed_tiers").getAsJsonObject().get("hot").getAsInt() : 0;
-		int burningCompletions = (profile.get("nether_island_player_data").getAsJsonObject().get("kuudra_completed_tiers").getAsJsonObject().get("burning") != null) ? profile.get("nether_island_player_data").getAsJsonObject().get("kuudra_completed_tiers").getAsJsonObject().get("burning").getAsInt() : 0;
-		int fieryCompletions = (profile.get("nether_island_player_data").getAsJsonObject().get("kuudra_completed_tiers").getAsJsonObject().get("fiery") != null) ? profile.get("nether_island_player_data").getAsJsonObject().get("kuudra_completed_tiers").getAsJsonObject().get("fiery").getAsInt() : 0;
-		int infernalCompletions = (profile.get("nether_island_player_data").getAsJsonObject().get("kuudra_completed_tiers").getAsJsonObject().get("infernal") != null) ? profile.get("nether_island_player_data").getAsJsonObject().get("kuudra_completed_tiers").getAsJsonObject().get("infernal").getAsInt() : 0;
+		JsonObject kuudraTierCompletions = crimsonIsleStats.getAsJsonObject("kuudra_completed_tiers");
+		
+		int basicCompletions = JsonHelper.getInt(kuudraTierCompletions, "none").orElse(0);
+		int hotCompletions = JsonHelper.getInt(kuudraTierCompletions, "hot").orElse(0);
+		int burningCompletions = JsonHelper.getInt(kuudraTierCompletions, "burning").orElse(0);
+		int fieryCompletions = JsonHelper.getInt(kuudraTierCompletions, "fiery").orElse(0);
+		int infernalCompletions = JsonHelper.getInt(kuudraTierCompletions, "infernal").orElse(0);
 		int totalKuudraCompletions = basicCompletions + hotCompletions + burningCompletions + fieryCompletions + infernalCompletions;
 		
-		int forceScore = (profile.get("nether_island_player_data").getAsJsonObject().get("dojo").getAsJsonObject().get("dojo_points_mob_kb") != null) ? profile.get("nether_island_player_data").getAsJsonObject().get("dojo").getAsJsonObject().get("dojo_points_mob_kb").getAsInt() : 0;
-		int staminaScore = (profile.get("nether_island_player_data").getAsJsonObject().get("dojo").getAsJsonObject().get("dojo_points_wall_jump") != null) ? profile.get("nether_island_player_data").getAsJsonObject().get("dojo").getAsJsonObject().get("dojo_points_wall_jump").getAsInt() : 0;
-		int masteryScore = (profile.get("nether_island_player_data").getAsJsonObject().get("dojo").getAsJsonObject().get("dojo_points_archer") != null) ? profile.get("nether_island_player_data").getAsJsonObject().get("dojo").getAsJsonObject().get("dojo_points_archer").getAsInt() : 0;
-		int disciplineScore = (profile.get("nether_island_player_data").getAsJsonObject().get("dojo").getAsJsonObject().get("dojo_points_sword_swap") != null) ? profile.get("nether_island_player_data").getAsJsonObject().get("dojo").getAsJsonObject().get("dojo_points_sword_swap").getAsInt() : 0;
-		int swiftnessScore = (profile.get("nether_island_player_data").getAsJsonObject().get("dojo").getAsJsonObject().get("dojo_points_snake") != null) ? profile.get("nether_island_player_data").getAsJsonObject().get("dojo").getAsJsonObject().get("dojo_points_snake").getAsInt() : 0;
-		int controlScore = (profile.get("nether_island_player_data").getAsJsonObject().get("dojo").getAsJsonObject().get("dojo_points_lock_head") != null) ? profile.get("nether_island_player_data").getAsJsonObject().get("dojo").getAsJsonObject().get("dojo_points_lock_head").getAsInt() : 0;
-		int tenacityScore = (profile.get("nether_island_player_data").getAsJsonObject().get("dojo").getAsJsonObject().get("dojo_points_fireball") != null) ? profile.get("nether_island_player_data").getAsJsonObject().get("dojo").getAsJsonObject().get("dojo_points_fireball").getAsInt() : 0;
+		JsonObject dojoStats = crimsonIsleStats.getAsJsonObject("dojo");
+		
+		int forceScore = JsonHelper.getInt(dojoStats, "dojo_points_mob_kb").orElse(0);
+		int staminaScore = JsonHelper.getInt(dojoStats, "dojo_points_wall_jump").orElse(0);
+		int masteryScore = JsonHelper.getInt(dojoStats, "dojo_points_archer").orElse(0);
+		int disciplineScore = JsonHelper.getInt(dojoStats, "dojo_points_sword_swap").orElse(0);
+		int swiftnessScore = JsonHelper.getInt(dojoStats, "dojo_points_snake").orElse(0);
+		int controlScore = JsonHelper.getInt(dojoStats, "dojo_points_lock_head").orElse(0);
+		int tenacityScore = JsonHelper.getInt(dojoStats, "dojo_points_fireball").orElse(0);
 		int totalDojoScore = forceScore + staminaScore + masteryScore + disciplineScore + swiftnessScore + controlScore + tenacityScore;
 		
 		String forceGrade = Skyblock.getDojoGrade(forceScore);

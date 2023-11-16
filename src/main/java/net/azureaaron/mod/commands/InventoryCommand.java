@@ -9,8 +9,11 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 
+import org.slf4j.Logger;
+
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.logging.LogUtils;
 
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -18,6 +21,7 @@ import me.nullicorn.nedit.NBTReader;
 import me.nullicorn.nedit.type.NBTCompound;
 import me.nullicorn.nedit.type.NBTList;
 import net.azureaaron.mod.util.ItemUtils;
+import net.azureaaron.mod.util.JsonHelper;
 import net.azureaaron.mod.util.TextTransformer;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
@@ -31,6 +35,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class InventoryCommand {
+	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printInventory");
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
@@ -95,28 +100,29 @@ public class InventoryCommand {
 	};
 	
 	protected static void printInventory(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
-		JsonObject profile = body.get("members").getAsJsonObject().get(uuid).getAsJsonObject();
+		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);
 		
-		boolean inventoryEnabled = (profile.get("inv_contents") != null) ? true : false;
+		boolean inventoryEnabled = profile.has("inv_contents");
 		
 		NBTList armour = null;
 		NBTList inventory = null;
 		NBTList equipment = null;
 		
 		try {
-			String armourContents = profile.get("inv_armor").getAsJsonObject().get("data").getAsString();
+			String armourContents = JsonHelper.getString(profile, "inv_armor.data").orElseThrow();
 			armour = NBTReader.readBase64(armourContents).getList("i");
 			
-			if(inventoryEnabled) {
-				String inventoryContents = profile.get("inv_contents").getAsJsonObject().get("data").getAsString();
+			if (inventoryEnabled) {
+				String inventoryContents = JsonHelper.getString(profile, "inv_contents.data").orElseThrow();
 				inventory = NBTReader.readBase64(inventoryContents).getList("i");
 				
-				String equipmentContents = profile.get("equippment_contents").getAsJsonObject().get("data").getAsString();
+				String equipmentContents = JsonHelper.getString(profile, "equippment_contents.data").orElseThrow();
 				equipment = NBTReader.readBase64(equipmentContents).getList("i");
 			}
 		} catch (IOException | NullPointerException e) {
 			source.sendError(NBT_PARSING_ERROR);
-			e.printStackTrace();
+			LOGGER.error("[Aaron's Mod] Encountered an exception while parsing NBT!", e);
+			
 			return;
 		}
 		

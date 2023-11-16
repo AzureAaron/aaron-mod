@@ -19,12 +19,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.logging.LogUtils;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.azureaaron.mod.util.Functions;
+import net.azureaaron.mod.util.JsonHelper;
 import net.azureaaron.mod.util.Messages;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
@@ -38,6 +42,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class MagicalPowerCommand {
+	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printMP");
 	private static final Text NO_ACCESSORY_BAG_DATA = Text.literal("This profile doesn't have any accessory bag data!");
 	private static final Text NBT_PARSING_ERROR = Text.literal("There was an error while trying to parse NBT!").styled(style -> style.withColor(Formatting.RED)); //TODO make constant
@@ -62,7 +67,7 @@ public class MagicalPowerCommand {
 	//TODO maybe make this account for when you can't use an accessory
 	//TODO also display the stats you get from your power
 	protected static void printMP(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
-		JsonObject profile = body.get("members").getAsJsonObject().get(uuid).getAsJsonObject();		
+		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);	
 		boolean inventoryEnabled = profile.has("inv_contents");
 		
 		if (!inventoryEnabled) {
@@ -79,14 +84,14 @@ public class MagicalPowerCommand {
 			return;
 		}
 		
-		String accessoriesItemData = profile.getAsJsonObject("talisman_bag").get("data").getAsString();
+		String accessoriesItemData = JsonHelper.getString(profile, "talisman_bag.data").orElseThrow();
 		NbtList accessories;
 		
 		try {
 			accessories = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(accessoriesItemData))).getList("i", NbtElement.COMPOUND_TYPE);
 		} catch (IOException e) {
 			source.sendError(NBT_PARSING_ERROR);
-			e.printStackTrace();
+			LOGGER.error("[Aaron's Mod] Encountered an exception while parsing NBT!", e);
 			
 			return;
 		}
@@ -173,11 +178,11 @@ public class MagicalPowerCommand {
 		if (profile.has("rift")) {
 			JsonObject riftAccess = profile.getAsJsonObject("rift").getAsJsonObject("access");
 			
-			if (riftAccess.has("consumed_prism") && riftAccess.get("consumed_prism").getAsBoolean()) magicalPower += 11;
+			if (JsonHelper.getBoolean(riftAccess, "consumed_prism").orElse(false)) magicalPower += 11;
 		}
 		
 		//Selected power & tunings
-		String selectedPower = (accessoryBagStorage.has("selected_power")) ? accessoryBagStorage.get("selected_power").getAsString() : "None";
+		String selectedPower = JsonHelper.getString(accessoryBagStorage, "selected_power").orElse("None");
 		
 		//Tunings
 		var tuningData = accessoryBagStorage.getAsJsonObject("tuning").getAsJsonObject("slot_0").asMap(); //Having Map<String, JsonElement> be the type broke command+click inspection for some reason
