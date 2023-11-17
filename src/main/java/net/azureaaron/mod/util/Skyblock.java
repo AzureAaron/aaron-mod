@@ -109,6 +109,14 @@ public class Skyblock {
 		throw new IllegalStateException(Messages.PROFILES_NOT_MIGRATED_ERROR.getString()); //After the migration players can apparently have no selected profile
 	}
 	
+	public static boolean isInventoryApiEnabled(JsonObject inventoryData) {
+		return inventoryData.has("inv_contents");
+	}
+	
+	public static boolean isSkillsApiEnabled(JsonObject profile) {
+		return profile.getAsJsonObject("player_data").has("experience");
+	}
+	
 	public static NetworthCommand.Networth readNetworthData(String data, long bank, long purse) {
 		if (data == null) return null;
 		JsonObject json = JsonParser.parseString(data).getAsJsonObject();
@@ -158,7 +166,7 @@ public class Skyblock {
 		
 		for (String uuid : members.keySet()) {
 			JsonObject member = members.getAsJsonObject(uuid);
-			socialXp += JsonHelper.getInt(member, "experience_skill_social2").orElse(0);
+			socialXp += JsonHelper.getInt(member, "player_data.experience.SKILL_SOCIAL").orElse(0);
 		}
 		
 		return socialXp;

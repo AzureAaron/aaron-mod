@@ -30,6 +30,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.JsonHelper;
 import net.azureaaron.mod.util.Messages;
+import net.azureaaron.mod.util.Skyblock;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
 import net.minecraft.nbt.NbtCompound;
@@ -68,7 +69,9 @@ public class MagicalPowerCommand {
 	//TODO also display the stats you get from your power
 	protected static void printMP(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
 		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);	
-		boolean inventoryEnabled = profile.has("inv_contents");
+		
+		JsonObject inventoryData = profile.getAsJsonObject("inventory");
+		boolean inventoryEnabled = Skyblock.isInventoryApiEnabled(inventoryData);
 		
 		if (!inventoryEnabled) {
 			source.sendError(Messages.INVENTORY_API_DISABLED_ERROR);
@@ -84,7 +87,7 @@ public class MagicalPowerCommand {
 			return;
 		}
 		
-		String accessoriesItemData = JsonHelper.getString(profile, "talisman_bag.data").orElseThrow();
+		String accessoriesItemData = JsonHelper.getString(inventoryData, "bag_contents.talisman_bag.data").orElseThrow();
 		NbtList accessories;
 		
 		try {

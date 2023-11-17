@@ -40,32 +40,34 @@ public class ProfileCommand {
 		
 		//Check if apis enabled
 		boolean bankingEnabled = body.has("banking");
-		boolean skillsEnabled = profile.has("experience_skill_mining");
+		boolean skillsEnabled = Skyblock.isSkillsApiEnabled(profile);
 		
-		int farmingLevelCap = JsonHelper.getInt(profile, "jacob2.perks.farming_level_cap").orElse(0);		
+		int farmingLevelCap = JsonHelper.getInt(profile, "jacobs_contest.perks.farming_level_cap").orElse(0);		
 		
 		String bank = Functions.NUMBER_FORMATTER.format(JsonHelper.getLong(body, "banking.balance").orElse(0L));
-		String purse = Functions.NUMBER_FORMATTER.format(profile.get("coin_purse").getAsLong());
+		String purse = Functions.NUMBER_FORMATTER.format(JsonHelper.getLong(profile, "currencies.coin_purse").orElse(0L));
 		
-		long firstJoinTimestamp = profile.get("first_join").getAsLong();
+		long firstJoinTimestamp = profile.getAsJsonObject("profile").get("first_join").getAsLong();
 		long firstJoinRelative = System.currentTimeMillis() - firstJoinTimestamp;
 		
 		int level = Levelling.getSkyblockLevel(JsonHelper.getInt(profile, "leveling.experience").orElse(0));
 		
-		int alchemyLevel = Levelling.getSkillLevel(JsonHelper.getLong(profile, "experience_skill_alchemy").orElse(0L), Skills.ALCHEMY, 0);
-		int carpentryLevel = Levelling.getSkillLevel(JsonHelper.getLong(profile, "experience_skill_carpentry").orElse(0L), Skills.CARPENTRY, 0);
-		int combatLevel = Levelling.getSkillLevel(JsonHelper.getLong(profile, "experience_skill_combat").orElse(0L), Skills.COMBAT, 0);
-		int enchantingLevel = Levelling.getSkillLevel(JsonHelper.getLong(profile, "experience_skill_enchanting").orElse(0L), Skills.ENCHANTING, 0);
-		int farmingLevel = Levelling.getSkillLevel(JsonHelper.getLong(profile, "experience_skill_farming").orElse(0L), Skills.FARMING, farmingLevelCap);
-		int fishingLevel = Levelling.getSkillLevel(JsonHelper.getLong(profile, "experience_skill_fishing").orElse(0L), Skills.FISHING, 0);
-		int foragingLevel = Levelling.getSkillLevel(JsonHelper.getLong(profile, "experience_skill_foraging").orElse(0L), Skills.FORAGING, 0);
-		int miningLevel = Levelling.getSkillLevel(JsonHelper.getLong(profile, "experience_skill_mining").orElse(0L), Skills.MINING, 0);
-		int runecraftingLevel = Levelling.getSkillLevel(JsonHelper.getLong(profile, "experience_skill_runecrafting").orElse(0L), Skills.RUNECRAFTING, 0);
+		JsonObject playerData = profile.getAsJsonObject("player_data");
+		
+		int alchemyLevel = Levelling.getSkillLevel(JsonHelper.getLong(playerData, "experience.SKILL_ALCHEMY").orElse(0L), Skills.ALCHEMY, 0);
+		int carpentryLevel = Levelling.getSkillLevel(JsonHelper.getLong(playerData, "experience.SKILL_CARPENTRY").orElse(0L), Skills.CARPENTRY, 0);
+		int combatLevel = Levelling.getSkillLevel(JsonHelper.getLong(playerData, "experience.SKILL_COMBAT").orElse(0L), Skills.COMBAT, 0);
+		int enchantingLevel = Levelling.getSkillLevel(JsonHelper.getLong(playerData, "experience.SKILL_ENCHANTING").orElse(0L), Skills.ENCHANTING, 0);
+		int farmingLevel = Levelling.getSkillLevel(JsonHelper.getLong(playerData, "experience.SKILL_FARMING").orElse(0L), Skills.FARMING, farmingLevelCap);
+		int fishingLevel = Levelling.getSkillLevel(JsonHelper.getLong(playerData, "experience.SKILL_FISHING").orElse(0L), Skills.FISHING, 0);
+		int foragingLevel = Levelling.getSkillLevel(JsonHelper.getLong(playerData, "experience.SKILL_FORAGING").orElse(0L), Skills.FORAGING, 0);
+		int miningLevel = Levelling.getSkillLevel(JsonHelper.getLong(playerData, "experience.SKILL_MINING").orElse(0L), Skills.MINING, 0);
+		int runecraftingLevel = Levelling.getSkillLevel(JsonHelper.getLong(playerData, "experience.SKILL_RUNECRAFTING").orElse(0L), Skills.RUNECRAFTING, 0);
 		int socialLevel = Levelling.getSkillLevel(Skyblock.calculateProfileSocialXp(body), Skills.SOCIAL, 0);
-		int tamingLevel = Levelling.getSkillLevel(JsonHelper.getLong(profile, "experience_skill_taming").orElse(0L), Skills.TAMING, 0);
+		int tamingLevel = Levelling.getSkillLevel(JsonHelper.getLong(playerData, "experience.SKILL_TAMING").orElse(0L), Skills.TAMING, 0);
 		float skillAverage = (float) (alchemyLevel + carpentryLevel + combatLevel + enchantingLevel + farmingLevel + fishingLevel + foragingLevel + miningLevel + tamingLevel) / 9;
 		
-		JsonObject slayerBosses = profile.get("slayer_bosses").getAsJsonObject();
+		JsonObject slayerBosses = profile.has("slayer") ? profile.getAsJsonObject("slayer").getAsJsonObject("slayer_bosses") : null;
 		
 		int revenantHorrorLevel = Levelling.getSlayerLevel(JsonHelper.getInt(slayerBosses, "zombie.xp").orElse(0), Slayers.REVENANT_HORROR);
 		int tarantulaBroodfatherLevel = Levelling.getSlayerLevel(JsonHelper.getInt(slayerBosses, "spider.xp").orElse(0), Slayers.TARANTULA_BROODFATHER);

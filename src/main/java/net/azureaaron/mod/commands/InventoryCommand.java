@@ -22,6 +22,7 @@ import me.nullicorn.nedit.type.NBTCompound;
 import me.nullicorn.nedit.type.NBTList;
 import net.azureaaron.mod.util.ItemUtils;
 import net.azureaaron.mod.util.JsonHelper;
+import net.azureaaron.mod.util.Skyblock;
 import net.azureaaron.mod.util.TextTransformer;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
@@ -102,21 +103,22 @@ public class InventoryCommand {
 	protected static void printInventory(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
 		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);
 		
-		boolean inventoryEnabled = profile.has("inv_contents");
+		JsonObject inventoryData = profile.getAsJsonObject("inventory");
+		boolean inventoryEnabled = Skyblock.isInventoryApiEnabled(inventoryData);
 		
 		NBTList armour = null;
 		NBTList inventory = null;
 		NBTList equipment = null;
 		
 		try {
-			String armourContents = JsonHelper.getString(profile, "inv_armor.data").orElseThrow();
+			String armourContents = JsonHelper.getString(inventoryData, "inv_armor.data").orElseThrow();
 			armour = NBTReader.readBase64(armourContents).getList("i");
 			
 			if (inventoryEnabled) {
-				String inventoryContents = JsonHelper.getString(profile, "inv_contents.data").orElseThrow();
+				String inventoryContents = JsonHelper.getString(inventoryData, "inv_contents.data").orElseThrow();
 				inventory = NBTReader.readBase64(inventoryContents).getList("i");
 				
-				String equipmentContents = JsonHelper.getString(profile, "equippment_contents.data").orElseThrow();
+				String equipmentContents = JsonHelper.getString(inventoryData, "equipment_contents.data").orElseThrow();
 				equipment = NBTReader.readBase64(equipmentContents).getList("i");
 			}
 		} catch (IOException | NullPointerException e) {

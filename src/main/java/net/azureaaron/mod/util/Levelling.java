@@ -17,7 +17,7 @@ public class Levelling {
 		
 		private final int cap;
 		
-		private Skills(int cap) {
+		Skills(int cap) {
 			this.cap = cap;
 		}
 	}
@@ -32,7 +32,7 @@ public class Levelling {
 		
 		private final int[] xpChart;
 		
-		private Slayers(int[] xpChart) {
+		Slayers(int[] xpChart) {
 			this.xpChart = xpChart;
 		}
 	}

@@ -31,14 +31,16 @@ public class EssenceCommand {
 	protected static void printEssence(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
 		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);
 		
-		int witherEssence = JsonHelper.getInt(profile, "essence_wither").orElse(0);
-		int spiderEssence = JsonHelper.getInt(profile, "essence_spider").orElse(0);
-		int undeadEssence = JsonHelper.getInt(profile, "essence_undead").orElse(0);
-		int dragonEssence = JsonHelper.getInt(profile, "essence_dragon").orElse(0);
-		int goldEssence = JsonHelper.getInt(profile, "essence_gold").orElse(0);
-		int diamondEssence = JsonHelper.getInt(profile, "essence_diamond").orElse(0);
-		int iceEssence = JsonHelper.getInt(profile, "essence_ice").orElse(0);
-		int crimsonEssence = JsonHelper.getInt(profile, "essence_crimson").orElse(0);
+		JsonObject currencies = profile.getAsJsonObject("currencies");
+		
+		int witherEssence = JsonHelper.getInt(currencies, "essence.WITHER.current").orElse(0);
+		int spiderEssence = JsonHelper.getInt(currencies, "essence.SPIDER.current").orElse(0);
+		int undeadEssence = JsonHelper.getInt(currencies, "essence.UNDEAD.current").orElse(0);
+		int dragonEssence = JsonHelper.getInt(currencies, "essence.DRAGON.current").orElse(0);
+		int goldEssence = JsonHelper.getInt(currencies, "essence.GOLD.current").orElse(0);
+		int diamondEssence = JsonHelper.getInt(currencies, "essence.DIAMOND.current").orElse(0);
+		int iceEssence = JsonHelper.getInt(currencies, "essence.ICE.current").orElse(0);
+		int crimsonEssence = JsonHelper.getInt(currencies, "essence.CRIMSON.current").orElse(0);
 		
 		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
 				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))

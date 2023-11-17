@@ -115,7 +115,8 @@ public class CommandSystem {
 	private static int handleSkyblockCommand(FabricClientCommandSource source, CommandPlayerData playerData, MethodHandle dispatchHandle) {
 		CompletableFuture.supplyAsync(() -> {
 			try {
-				return Http.sendAuthorizedHypixelRequest("skyblock/profiles", "?uuid=" + playerData.uuid());
+				//TODO remove this legacy profiles v1 thing when the networth api updates
+				return Http.sendAuthorizedHypixelRequest(dispatchHandle == NetworthCommand.DISPATCH_HANDLE ? "skyblock/profiles" : "v2/skyblock/profiles", "?uuid=" + playerData.uuid());
 			} catch (Throwable t) {
 				source.sendError(Messages.SKYBLOCK_PROFILES_FETCH_ERROR);
 				LOGGER.error("[Aaron's Mod] Encountered an exception while fetching a player's skyblock profiles!", t);
