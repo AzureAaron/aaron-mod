@@ -8,37 +8,42 @@ import net.azureaaron.mod.mixins.ChatAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.toast.SystemToast;
+import net.minecraft.client.toast.ToastManager;
+import net.minecraft.client.util.Window;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class MouseListener {
-	private static final MinecraftClient minecraftClient = MinecraftClient.getInstance();
-	private static final Text successToastTitle = Text.literal("Success!");
-	private static final Text successToastDescription = Text.literal("The message was copied to your clipboard!");
-	private static final Text notFoundToastTitle = Text.literal("Not Found!");
-	private static final Text notFoundToastDescription = Text.literal("No message was hovered over!");
+	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
+	private static final Text SUCCESS_TITLE = Text.literal("Success!");
+	private static final Text SUCCESS_DESCRIPTION = Text.literal("The message was copied to your clipboard!");
+	private static final Text NOT_FOUND_TITLE = Text.literal("Not Found!");
+	private static final Text NOT_FOUND_DESCRIPTION = Text.literal("No message was hovered over!");
 	
 	private static int getMessageIndex(double chatLineX, double chatLineY) {
-		int lineIndex = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).getMessageLineIndex(chatLineX, chatLineY);
-		if(lineIndex == -1) return -1;
+		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.inGameHud.getChatHud());
 		
-		List<ChatHudLine> messages = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).getMessages();
-		List<ChatHudLine.Visible> visibleMessages = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).getVisibleMessages();
+		int lineIndex = chatAccessor.getMessageLineIndex(chatLineX, chatLineY);
+		if (lineIndex == -1) return -1;
+		
+		List<ChatHudLine> messages = chatAccessor.getMessages();
+		List<ChatHudLine.Visible> visibleMessages = chatAccessor.getVisibleMessages();
 		int upperbound = 0; //Upper-bound value of range (position of start top of entry)
-		int lowerbound = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).getMessageEndLineIndex(chatLineX, chatLineY); //Lower-bound value of range (position of end of entry)
+		int lowerbound = chatAccessor.getMessageEndLineIndex(chatLineX, chatLineY); //Lower-bound value of range (position of end of entry)
 		
-		for(int i = lowerbound + 1; i < visibleMessages.size(); i++) { //Iterate until we encounter the end of the next message
-			if(visibleMessages.get(i).endOfEntry()) {
+		for (int i = lowerbound + 1; i < visibleMessages.size(); i++) { //Iterate until we encounter the end of the next message
+			if (visibleMessages.get(i).endOfEntry()) {
 				upperbound = i - 1;
 				break;
 			}
-			if(i == visibleMessages.size() - 1) upperbound = i; //If another entry end wasn't found
+			
+			if (i == visibleMessages.size() - 1) upperbound = i; //If another entry end wasn't found
 		}
 		
 		StringBuilder hoveredMessage = new StringBuilder();
 		
-		for(int i = upperbound; i >= lowerbound; i--) { //Iterate over the entries apart of this message and build the messages content
+		for (int i = upperbound; i >= lowerbound; i--) { //Iterate over the entries apart of this message and build the messages content
 			ChatHudLine.Visible currentEntry = visibleMessages.get(i);
 			currentEntry.content().accept((index, style, codePoint) -> {
 				hoveredMessage.appendCodePoint(codePoint);
@@ -46,10 +51,10 @@ public class MouseListener {
 			});
 		}
 		
-		for(int i = 0; i < messages.size(); i++) { //Iterate over all stored messages
+		for (int i = 0; i < messages.size(); i++) { //Iterate over all stored messages
 			ChatHudLine currentMessage = messages.get(i);
 			String messageContent = Formatting.strip(currentMessage.content().getString()).replaceAll("\n", "").replaceAll(" ", "");
-			if(messageContent.equals(hoveredMessage.toString().replaceAll(" ", ""))) return i;
+			if (messageContent.equals(hoveredMessage.toString().replaceAll(" ", ""))) return i;
 		}
 		
 		return -1;
@@ -59,16 +64,23 @@ public class MouseListener {
 		MouseInputEvent.EVENT.register((button, action, mods) -> {
 			//Button 0 = left click, Button 1 = right click, Button 2 = middle click & others are fancy mouse buttons
 			int configuredButton = Config.copyChatMouseButton == Config.MouseButton.MIDDLE ? 2 : 1;
-			boolean isChatOpen = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).isChatFocused();
-			if(button == configuredButton && action == 1 && isChatOpen && Config.copyChatMessages) {
-				int mouseX = (int)(minecraftClient.mouse.getX() * minecraftClient.getWindow().getScaledWidth() / minecraftClient.getWindow().getWidth());
-				int mouseY = (int)(minecraftClient.mouse.getY() * minecraftClient.getWindow().getScaledHeight() / minecraftClient.getWindow().getHeight());
-				double chatLineX = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).toChatLineX(mouseX);
-				double chatLineY = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).toChatLineY(mouseY);
+			
+			ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.inGameHud.getChatHud());
+			boolean isChatOpen = chatAccessor.isChatFocused();
+			
+			if (button == configuredButton && action == 1 && isChatOpen && Config.copyChatMessages) {
+				Window window = CLIENT.getWindow();
+				int mouseX = (int) (CLIENT.mouse.getX() * window.getScaledWidth() / window.getWidth());
+				int mouseY = (int) (CLIENT.mouse.getY() * window.getScaledHeight() / window.getHeight());
+				
+				double chatLineX = chatAccessor.toChatLineX(mouseX);
+				double chatLineY = chatAccessor.toChatLineY(mouseY);
+				
+				ToastManager toastManager = CLIENT.getToastManager();
 								
-				if(Config.copyChatMode == Config.CopyChatMode.SINGLE_LINE) {
-					int messageLineIndex = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).getMessageLineIndex(chatLineX, chatLineY);
-					List<ChatHudLine.Visible> visibleMessages = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).getVisibleMessages();
+				if (Config.copyChatMode == Config.CopyChatMode.SINGLE_LINE) {
+					int messageLineIndex = chatAccessor.getMessageLineIndex(chatLineX, chatLineY);
+					List<ChatHudLine.Visible> visibleMessages = chatAccessor.getVisibleMessages();
 					
 					if (messageLineIndex >= 0 && messageLineIndex < visibleMessages.size()) {
 						OrderedText orderedText = visibleMessages.get(messageLineIndex).content();
@@ -79,24 +91,24 @@ public class MouseListener {
 							return true;
 						});
 						
-						minecraftClient.keyboard.setClipboard(message.toString());
-		    			SystemToast.add(minecraftClient.getToastManager(), SystemToast.Type.PERIODIC_NOTIFICATION, successToastTitle, successToastDescription);
+						CLIENT.keyboard.setClipboard(message.toString());
+		    			SystemToast.add(toastManager, SystemToast.Type.PERIODIC_NOTIFICATION, SUCCESS_TITLE, SUCCESS_DESCRIPTION);
 					} else {
-						SystemToast.add(minecraftClient.getToastManager(), SystemToast.Type.PERIODIC_NOTIFICATION, notFoundToastTitle, notFoundToastDescription);
+						SystemToast.add(toastManager, SystemToast.Type.PERIODIC_NOTIFICATION, NOT_FOUND_TITLE, NOT_FOUND_DESCRIPTION);
 					}
 				}
 				
-				if(Config.copyChatMode == Config.CopyChatMode.ENTIRE_MESSAGE) {
+				if (Config.copyChatMode == Config.CopyChatMode.ENTIRE_MESSAGE) {
 					int messageIndex = getMessageIndex(chatLineX, chatLineY);
-					List<ChatHudLine> messages = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).getMessages();
+					List<ChatHudLine> messages = chatAccessor.getMessages();
 					
 					if (messageIndex >= 0 && messageIndex < messages.size()) {
 						String message = Formatting.strip(messages.get(messageIndex).content().getString());
 						
-						minecraftClient.keyboard.setClipboard(message);
-		    			SystemToast.add(minecraftClient.getToastManager(), SystemToast.Type.PERIODIC_NOTIFICATION, successToastTitle, successToastDescription);
+						CLIENT.keyboard.setClipboard(message);
+		    			SystemToast.add(toastManager, SystemToast.Type.PERIODIC_NOTIFICATION, SUCCESS_TITLE, SUCCESS_DESCRIPTION);
 					} else {
-						SystemToast.add(minecraftClient.getToastManager(), SystemToast.Type.PERIODIC_NOTIFICATION, notFoundToastTitle, notFoundToastDescription);
+						SystemToast.add(toastManager, SystemToast.Type.PERIODIC_NOTIFICATION, NOT_FOUND_TITLE, NOT_FOUND_DESCRIPTION);
 					}
 				}
 			}

@@ -29,22 +29,22 @@ public class TeamUpdateListener {
 
 	public static void listen() {
 		TeamUpdateEvent.EVENT.register((packet) -> {
-			if(Functions.isOnHypixel() && packet.getTeam().isPresent()) {
+			if (Functions.isOnHypixel() && packet.getTeam().isPresent()) {
 				SerializableTeam team = packet.getTeam().get();
 				String display = (team.getPrefix().getString() + team.getSuffix().getString()).trim();
 				Matcher scoreMatcher = SCORE_PATTERN.matcher(display);
 								
-				if(scoreMatcher.matches() && Config.dungeonScoreMessage) {
+				if (scoreMatcher.matches() && Config.dungeonScoreMessage) {
 					int score = fastApproxScore(Integer.parseInt(scoreMatcher.group("score")));
 					Cache.currentScore = score;
 					
-					if(score >= 270 && score < 300 && Cache.lastTwoHundredSeventyScore == 0L) {
+					if (score >= 270 && score < 300 && Cache.lastTwoHundredSeventyScore == 0L) {
 						Cache.lastTwoHundredSeventyScore = System.currentTimeMillis();
 						String S270 = Config.twoHundredSeventyScore.trim();
 						CLIENT.player.networkHandler.sendChatMessage("270 Score → " + S270.substring(0, Math.min(S270.length(), 244)));
 					}
 					
-					if(score >= 300 && Cache.lastThreeHundredScore == 0L) {
+					if (score >= 300 && Cache.lastThreeHundredScore == 0L) {
 						Cache.lastThreeHundredScore = System.currentTimeMillis();
 						String S300 = Config.threeHundredScore.trim();
 						CLIENT.player.networkHandler.sendChatMessage("300 Score → " + S300.substring(0, Math.min(S300.length(), 244)));
