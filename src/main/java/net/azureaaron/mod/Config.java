@@ -146,19 +146,6 @@ public class Config {
 		}
 	}
 	
-	public enum LatencyFetchMode {
-		PLAYER_LIST,
-		QUERY;
-		
-		@Override
-		public String toString() {
-			return switch (this) {
-				case PLAYER_LIST -> "Player List";
-				case QUERY -> "Query";
-			};
-		}
-	}
-	
 	@ConfigEntry public static boolean shadowedScoreboard = true;
 	@ConfigEntry public static boolean dungeonFinderPersonStats = true;
 	@ConfigEntry(isEnum = true) public static DayAverage dayAverage = DayAverage.THREE_DAY;
