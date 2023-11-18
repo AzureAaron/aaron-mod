@@ -1,8 +1,6 @@
 package net.azureaaron.mod;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Calendar;
@@ -42,11 +40,12 @@ import net.minecraft.util.Util;
 public class Config {
 	protected static void load() {
 		try {
-			if(!Files.exists(Main.CONFIG_PATH)) {
+			if (!Files.exists(Main.CONFIG_PATH)) {
 				Files.createDirectories(Main.CONFIG_PATH.getParent());
 				Files.createFile(Main.CONFIG_PATH);
 				Files.write(Main.CONFIG_PATH, "{}".getBytes(StandardCharsets.UTF_8));
 				save();
+				
 				return;
 			}
 			
@@ -54,37 +53,37 @@ public class Config {
 			Class<?> cls = Class.forName("net.azureaaron.mod.Config");
 			Field[] fields = cls.getDeclaredFields();
         	
-        	for(int i = 0; i < fields.length; i++) {
+        	for (int i = 0; i < fields.length; i++) {
         		Field currentField = fields[i];
         		String fieldName = currentField.getName();
         		ConfigEntry annotation = currentField.getAnnotation(ConfigEntry.class);
         		
-        		if(annotation != null) {
-        			if(!annotation.isEnum()) {
-        				switch(currentField.getType().getName()) {
-        				case "boolean":
-        					if(config.get(fieldName) != null) currentField.setBoolean(null, config.get(fieldName).getAsBoolean());
-        					break;
-        				case "int":
-        					if(config.get(fieldName) != null) currentField.setInt(null, config.get(fieldName).getAsInt());
-        					break;
-        				case "float":
-        					if(config.get(fieldName) != null) currentField.setFloat(null, config.get(fieldName).getAsFloat());
-        					break;
-        				case "double":
-        					if(config.get(fieldName) != null) currentField.setDouble(null, config.get(fieldName).getAsDouble());
-        					break;
-        				case "java.lang.String":
-        					if(config.get(fieldName) != null) currentField.set(null, config.get(fieldName).getAsString());
-        					break;
-        				default:
-        					Main.LOGGER.warn("[Aaron's Mod] Encountered an unknown field type!");
-        					break;
+        		if (annotation != null) {
+        			if (!annotation.isEnum()) {
+        				switch (currentField.getType().getName()) {
+        					case "boolean":
+        						if (config.get(fieldName) != null) currentField.setBoolean(null, config.get(fieldName).getAsBoolean());
+        						break;
+        					case "int":
+        						if (config.get(fieldName) != null) currentField.setInt(null, config.get(fieldName).getAsInt());
+        						break;
+        					case "float":
+        						if (config.get(fieldName) != null) currentField.setFloat(null, config.get(fieldName).getAsFloat());
+        						break;
+        					case "double":
+        						if (config.get(fieldName) != null) currentField.setDouble(null, config.get(fieldName).getAsDouble());
+        						break;
+        					case "java.lang.String":
+        						if (config.get(fieldName) != null) currentField.set(null, config.get(fieldName).getAsString());
+        						break;
+        					default:
+        						Main.LOGGER.warn("[Aaron's Mod] Encountered an unknown field type!");
+        						break;
         				}
-        			} else if(config.get(fieldName) != null) {
-        				//https://stackoverflow.com/questions/3735927/java-instantiating-an-enum-using-reflection
-        				Method valueOf = currentField.getType().getMethod("valueOf", String.class);
-        				Object value = valueOf.invoke(null, config.get(fieldName).getAsString());
+        			} else if (config.get(fieldName) != null) {
+        				@SuppressWarnings({ "unchecked", "rawtypes" })
+						Enum value = Enum.valueOf((Class<Enum>) currentField.getType(), config.get(fieldName).getAsString());
+        				
         				currentField.set(null, value);
         			}
         		}
@@ -97,9 +96,8 @@ public class Config {
         	
         	Particles.init(config);
         	Colour.init(config);
-		} catch (IOException | ReflectiveOperationException e) {
-			Main.LOGGER.error("[Aaron's Mod] Failed to load config!");
-			e.printStackTrace();
+		} catch (Exception e) {
+			Main.LOGGER.error("[Aaron's Mod] Failed to load config!", e);
 		}
 	}
 	
@@ -214,32 +212,32 @@ public class Config {
 			Class<?> cls = Class.forName("net.azureaaron.mod.Config");
         	Field[] fields = cls.getDeclaredFields();
         	
-        	for(int i = 0; i < fields.length; i++) {
+        	for (int i = 0; i < fields.length; i++) {
         		Field currentField = fields[i];
         		String fieldName = currentField.getName();
         		ConfigEntry annotation = currentField.getAnnotation(ConfigEntry.class);
         		
-        		if(annotation != null) {
-        			if(!annotation.isEnum()) {
-        				switch(currentField.getType().getName()) {
-        				case "boolean":
-        					config.addProperty(fieldName, currentField.getBoolean(null));
-        					break;
-        				case "int":
-        					config.addProperty(fieldName, currentField.getInt(null));
-        					break;
-        				case "float":
-        					config.addProperty(fieldName, currentField.getFloat(null));
-        					break;
-        				case "double":
-        					config.addProperty(fieldName, currentField.getDouble(null));
-        					break;
-        				case "java.lang.String":
-        					 config.addProperty(fieldName, currentField.get(null).toString());
-        					break;
-        				default:
-        					Main.LOGGER.warn("[Aaron's Mod] Encountered an unknown field type!");
-        					break;
+        		if (annotation != null) {
+        			if (!annotation.isEnum()) {
+        				switch (currentField.getType().getName()) {
+        					case "boolean":
+        						config.addProperty(fieldName, currentField.getBoolean(null));
+        						break;
+        					case "int":
+        						config.addProperty(fieldName, currentField.getInt(null));
+        						break;
+        					case "float":
+        						config.addProperty(fieldName, currentField.getFloat(null));
+        						break;
+        					case "double":
+        						config.addProperty(fieldName, currentField.getDouble(null));
+        						break;
+        					case "java.lang.String":
+        						config.addProperty(fieldName, currentField.get(null).toString());
+        						break;
+        					default:
+        						Main.LOGGER.warn("[Aaron's Mod] Encountered an unknown field type!");
+        						break;
         				}
         			} else {
         				String enumName = ((Enum<?>) currentField.get(null)).name();
@@ -271,9 +269,8 @@ public class Config {
     		}));
     		
 			Files.write(Main.CONFIG_PATH, gson.toJson(config).getBytes(StandardCharsets.UTF_8));
-		} catch (IOException | ReflectiveOperationException e) {
-			Main.LOGGER.error("[Aaron's Mod] Failed to save config!");
-			e.printStackTrace();
+		} catch (Exception e) {
+			Main.LOGGER.error("[Aaron's Mod] Failed to save config!", e);
 		}
 	}
 	
