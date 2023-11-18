@@ -164,7 +164,7 @@ public class CroesusCommand {
 		for (RunData run : runs.values()) {
 			if (count <= 10) {
 				String floorShorthand = String.valueOf(Character.toUpperCase(run.dungeon().charAt(0))).replace('C', 'F') + run.floor();
-				String timeAgo = Functions.toRelative(System.currentTimeMillis() - run.timestamp()).split(",")[0].replaceAll(" ago", "") + " ago";
+				String timeAgo = Functions.toMostRelative(System.currentTimeMillis() - run.timestamp());
 				long expiresAt = run.timestamp() + TWO_DAYS;
 				long expiresIn = (run.timestamp() + TWO_DAYS) - System.currentTimeMillis();
 				

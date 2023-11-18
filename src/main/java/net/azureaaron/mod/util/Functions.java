@@ -97,6 +97,10 @@ public class Functions {
         return toRelative(duration, TIMES.size());
     }
     
+    public static String toMostRelative(long duration) {
+    	return toRelative(duration).split(",")[0].replace(" ago", "") + " ago";
+    }
+    
 	public static String titleCase(String string) {
 		String[] split = string.toLowerCase().split(" ");
 		for(int i = 0; i < split.length; i++) {

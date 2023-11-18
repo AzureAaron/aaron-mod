@@ -24,7 +24,7 @@ public class WardenWarningLevelCommand {
     private static int printWardenWarningLevel(FabricClientCommandSource source) {
     	int warningLevel = Cache.relativeWarningLevel();
     	int warningsLeft = (warningLevel == 0) ? 3 : 3 - warningLevel;
-    	String lastTriggered = (Cache.lastShriekTime == 0) ? "Unknown" : Functions.toRelative(System.currentTimeMillis() - Cache.lastShriekTime).split(",")[0].replaceAll(" ago", "") + " ago";
+    	String lastTriggered = (Cache.lastShriekTime == 0) ? "Unknown" : Functions.toMostRelative(System.currentTimeMillis() - Cache.lastShriekTime);
     	String spacing = "                              ";
     	
         source.sendFeedback(Text.literal(spacing).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));

@@ -85,7 +85,7 @@ public class ProfileCommand {
 		source.sendFeedback(startText);
 		
 		source.sendFeedback(Text.literal("Profile » " + Functions.titleCase(body.get("cute_name").getAsString())).styled(style -> style.withColor(colourProfile.infoColour)));
-		source.sendFeedback(Text.literal("Joined » " + Functions.toRelative(firstJoinRelative).split(",")[0].replaceAll(" ago", "") + " ago")
+		source.sendFeedback(Text.literal("Joined » " + Functions.toMostRelative(firstJoinRelative))
 				.styled(style -> style.withColor(colourProfile.infoColour).withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal(Functions.DATE_FORMATTER.format(Instant.ofEpochMilli(firstJoinTimestamp))).styled(style1 -> style1.withColor(colourProfile.infoColour))))));
 		source.sendFeedback(Text.literal("Level » " + level).styled(style -> style.withColor(colourProfile.infoColour)));
 		
