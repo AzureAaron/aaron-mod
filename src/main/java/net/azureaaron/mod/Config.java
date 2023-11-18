@@ -5,6 +5,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Calendar;
 import java.util.Map;
+
+import org.apache.commons.lang3.SystemUtils;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -29,7 +32,6 @@ import net.azureaaron.mod.features.TextReplacer;
 import net.azureaaron.mod.util.Constants;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.TextTransformer;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
@@ -149,7 +151,7 @@ public class Config {
 	@ConfigEntry public static boolean shadowedScoreboard = true;
 	@ConfigEntry public static boolean dungeonFinderPersonStats = true;
 	@ConfigEntry(isEnum = true) public static DayAverage dayAverage = DayAverage.THREE_DAY;
-	@ConfigEntry public static boolean alternateF3PlusNKey = MinecraftClient.IS_SYSTEM_MAC;
+	@ConfigEntry public static boolean alternateF3PlusNKey = SystemUtils.IS_OS_MAC;
 	@ConfigEntry public static boolean dungeonScoreMessage = true;
 	@ConfigEntry public static String twoHundredSeventyScore = "270 Score Reached!";
 	@ConfigEntry public static String threeHundredScore = "300 Score Reached!";
@@ -584,11 +586,11 @@ public class Config {
 								.description(OptionDescription.createBuilder()
 										.text(Text.literal("Adds FN+F3+J as an alternate keybind for FN+F3+N"))
 										.build())
-								.binding(false,
+								.binding(SystemUtils.IS_OS_MAC,
 										() -> alternateF3PlusNKey,
 										newValue -> alternateF3PlusNKey = newValue)
 								.controller(Config::createBooleanController)
-								.available(MinecraftClient.IS_SYSTEM_MAC)
+								.available(SystemUtils.IS_OS_MAC)
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("December Christmas Chests"))

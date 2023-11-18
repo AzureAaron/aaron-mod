@@ -14,13 +14,13 @@ import net.minecraft.text.HoverEvent.Action;
 import net.minecraft.text.Text;
 
 public class WardenWarningLevelCommand {
+	private static final Text DISCLAIMER = Text.literal("It isn't possible to find out the\nexact player who triggered the shrieker.\n\nThis may not be 100% accurate.").styled(style -> style.withColor(colourProfile.infoColour));
+
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("wardenwarninglevel")
 				.executes(context -> printWardenWarningLevel(context.getSource())));
 	}
-	
-	private static final Text DISCLAIMER = Text.literal("It isn't possible to find out the\nexact player who triggered the shrieker.\n\nThis may not be 100% accurate.").styled(style -> style.withColor(colourProfile.infoColour));
-		
+			
     private static int printWardenWarningLevel(FabricClientCommandSource source) {
     	int warningLevel = Cache.relativeWarningLevel();
     	int warningsLeft = (warningLevel == 0) ? 3 : 3 - warningLevel;

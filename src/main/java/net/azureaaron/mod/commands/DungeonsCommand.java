@@ -33,6 +33,7 @@ import net.minecraft.util.Formatting;
 public class DungeonsCommand {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printDungeons");
+	private static final Text NEVER_PLAYED_DUNGEONS_ERROR = Text.literal("This player hasn't entered the catacombs yet!").styled(style -> style.withColor(Formatting.RED));
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("dungeons")
@@ -53,9 +54,7 @@ public class DungeonsCommand {
 						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
 						.executes(context -> CommandSystem.handlePlayer4Skyblock(context.getSource(), getString(context, "player"), DISPATCH_HANDLE))));
 	}
-	
-	private static final Text NEVER_PLAYED_DUNGEONS_ERROR = Text.literal("This player hasn't entered the catacombs yet!").styled(style -> style.withColor(Formatting.RED));
-		
+			
 	protected static void printDungeons(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
 		if (body.getAsJsonObject("members").getAsJsonObject(uuid).getAsJsonObject("dungeons").getAsJsonObject("dungeon_types").getAsJsonObject("catacombs").get("times_played") == null) {
 			source.sendError(NEVER_PLAYED_DUNGEONS_ERROR);

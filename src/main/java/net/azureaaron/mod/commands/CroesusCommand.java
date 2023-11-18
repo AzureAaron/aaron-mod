@@ -37,6 +37,11 @@ import net.minecraft.util.Formatting;
 public class CroesusCommand {
 	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printCroesus");
 	private static final long TWO_DAYS = 172_800_000;
+	private static final Text NO_TREASURES = Text.literal("This player doesn't have any dungeon treasures to claim!").styled(style -> style.withColor(Formatting.RED));
+	private static final String[] RARE_LOOT = {/*M7*/ "dark_claymore", "necron_handle", "wither_shield_scroll",
+			"implosion_scroll", "shadow_warp_scroll", "fifth_master_star", "necron_dye", "thunderlord_7", "master_skull_tier_5",
+			/*M6*/ "giants_sword", "fourth_master_star", /*M5*/ "shadow_fury", "shadow_assassin_chestplate", "third_master_star", 
+			/*M4*/ "spirit_wing", "item_spirit_bow", "second_master_star", /*M3*/ "first_master_star", /*All Floors*/ "recombobulator_3000"};
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("croesus")
@@ -45,13 +50,6 @@ public class CroesusCommand {
 						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
 						.executes(context -> CommandSystem.handlePlayer4Skyblock(context.getSource(), getString(context, "player"), DISPATCH_HANDLE))));
 	}
-	
-	private static final String[] RARE_LOOT = {/*M7*/ "dark_claymore", "necron_handle", "wither_shield_scroll",
-			"implosion_scroll", "shadow_warp_scroll", "fifth_master_star", "necron_dye", "thunderlord_7", "master_skull_tier_5",
-			/*M6*/ "giants_sword", "fourth_master_star", /*M5*/ "shadow_fury", "shadow_assassin_chestplate", "third_master_star", 
-			/*M4*/ "spirit_wing", "item_spirit_bow", "second_master_star", /*M3*/ "first_master_star", /*All Floors*/ "recombobulator_3000"};
-	
-	private static final Text NO_TREASURES = Text.literal("This player doesn't have any dungeon treasures to claim!").styled(style -> style.withColor(Formatting.RED));
 	
 	private record ChestData(String runId, String type, JsonArray rewards) {}
 	private record RunData(long timestamp, int floor, String dungeon, List<ChestData> chests) {}

@@ -8,11 +8,14 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 
 import java.util.concurrent.CompletableFuture;
 
+import org.slf4j.Logger;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import com.mojang.logging.LogUtils;
 
 import net.azureaaron.mod.util.Cache;
 import net.azureaaron.mod.util.Functions;
@@ -24,6 +27,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class BazaarCommand {
+	private static final Logger LOGGER = LogUtils.getLogger();
+	private static final Text NON_EXISTENT_PRODUCT_ERROR = Text.literal("The product you've provided is non existent!").styled(style -> style.withColor(Formatting.RED));
+	private static final Text BAZAAR_FETCH_ERROR = Text.literal("There was an error while fetching information from the bazaar!").styled(style -> style.withColor(Formatting.RED));
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		final LiteralCommandNode<FabricClientCommandSource> bazaarCommand = dispatcher.register(literal("bazaarprice")
@@ -34,13 +40,12 @@ public class BazaarCommand {
 		dispatcher.register(literal("bzprice").redirect(bazaarCommand));
 	}
 	
-	private static final Text NON_EXISTENT_PRODUCT_ERROR = Text.literal("The product you've provided is non existent!").styled(style -> style.withColor(Formatting.RED));
-	private static final Text BAZAAR_FETCH_ERROR = Text.literal("There was an error while fetching information from the bazaar!").styled(style -> style.withColor(Formatting.RED));
-	
 	private static int handleCommand(FabricClientCommandSource source, String product) {
 		
-		if(!Cache.PRODUCTS_LIST.contains(product)) {
+		//TODO lazy load this shit
+		if (!Cache.PRODUCTS_LIST.contains(product)) {
 			source.sendError(NON_EXISTENT_PRODUCT_ERROR);
+			
 			return Command.SINGLE_SUCCESS;
 		}
 		
@@ -52,7 +57,7 @@ public class BazaarCommand {
 				return data.get("products").getAsJsonObject().get(Cache.PRODUCTS_MAP.get(product)).getAsJsonObject().get("quick_status").getAsJsonObject();
 			} catch (Exception e) {
 				source.sendError(BAZAAR_FETCH_ERROR);
-				e.printStackTrace();
+				LOGGER.error("[Aaron's Mod] Failed to load bazaar price data!", e);
 			}
 			return null;
 		})
@@ -62,7 +67,7 @@ public class BazaarCommand {
 					printBazaar(source, productData, product);
 				} catch (Throwable t) {
 					source.sendError(Messages.UNKNOWN_ERROR);
-					t.printStackTrace();
+					LOGGER.error("[Aaron's Mod] Encountered an unknown error while executing the /bazaar command!", t);
 				}
 			}
 		});
@@ -90,6 +95,5 @@ public class BazaarCommand {
 		source.sendFeedback(Text.literal(Functions.NUMBER_FORMATTER_S.format(productData.get("sellMovingWeek").getAsInt()) + " insta-sells in 7 days").styled(style -> style.withColor(colourProfile.supportingInfoColour)));
 		
 		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
-		return;
 	}
 }

@@ -48,10 +48,10 @@ public class BlessingsCommand {
     		Cache.resetBlessings();
 			source.sendFeedback(Text.literal("Blessings » ").styled(style -> style.withColor(colourProfile.primaryColour))
 					.append(Text.literal("Successfully reset the counter!").styled(style -> style.withColor(colourProfile.secondaryColour))));
-			return Command.SINGLE_SUCCESS;
     	} else {
     		source.sendError(Text.literal("Invalid option!").styled(style -> style.withColor(Formatting.RED)));
-    		return Command.SINGLE_SUCCESS;
     	}
+    	
+    	return Command.SINGLE_SUCCESS;
     }
 }

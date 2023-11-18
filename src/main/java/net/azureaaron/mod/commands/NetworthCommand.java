@@ -27,6 +27,7 @@ import net.minecraft.util.Formatting;
 public class NetworthCommand {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printNetworth");
+	private static final Text NETWORTH_FETCH_ERROR = Text.literal("There was an error while fetching a player's networth!").styled(style -> style.withColor(Formatting.RED));
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("networth")
@@ -41,9 +42,7 @@ public class NetworthCommand {
 						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
 						.executes(context -> CommandSystem.handlePlayer4Skyblock(context.getSource(), getString(context, "player"), DISPATCH_HANDLE))));
 	}
-	
-	private static final Text NETWORTH_FETCH_ERROR = Text.literal("There was an error while fetching a player's networth!").styled(style -> style.withColor(Formatting.RED));
-	
+		
 	public record Networth(long accessoriesValue, long armourValue, long bankValue, long enderchestValue, long inventoryValue, long overallValue, long petsValue, long purseValue, long sacksValue, long storageValue, long wardrobeValue) {}
 		
 	protected static void printNetworth(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
@@ -98,6 +97,5 @@ public class NetworthCommand {
 		source.sendFeedback(Text.literal("Purse » " + Functions.NUMBER_FORMATTER.format(networth.purseValue())).styled(style -> style.withColor(colourProfile.infoColour)));
 		
 		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
-		return;
 	}
 }

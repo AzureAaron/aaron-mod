@@ -38,6 +38,5 @@ public class DefaultSkinCommand {
 				
 		source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Default Skin » ").styled(style -> style.withColor(colourProfile.primaryColour))
 				.append(Text.literal(skinName + " (" + skinModel + ")").styled(style -> style.withColor(colourProfile.secondaryColour))));
-		return;
 	}
 }
