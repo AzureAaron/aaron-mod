@@ -86,7 +86,7 @@ public class Main implements ClientModInitializer {
 		Particles.registerSyntheticParticles();
 		
 		//Colour Profiles!
-		Colour.init();
+		//Colour.init();
 	};
 	
 	private static void registerCommands(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {		

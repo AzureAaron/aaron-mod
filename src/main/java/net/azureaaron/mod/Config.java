@@ -96,7 +96,7 @@ public class Config {
         	}
         	
         	Particles.init(config);
-			
+        	Colour.init(config);
 		} catch (IOException | ReflectiveOperationException e) {
 			Main.LOGGER.error("[Aaron's Mod] Failed to load config!");
 			e.printStackTrace();

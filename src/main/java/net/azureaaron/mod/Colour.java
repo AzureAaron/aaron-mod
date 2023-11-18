@@ -38,11 +38,9 @@ public class Colour {
 	 */
 	public static volatile Colours colourProfile = Colours.Original;
 	
-	protected static void init() {
+	protected static void init(JsonObject config) {
 		try {
-			JsonObject config = JsonParser.parseString(Files.readString(Main.CONFIG_PATH)).getAsJsonObject();
-			if(config != null) colourProfile = Colours.valueOf(config.get("colourProfile").getAsString());
-
+			colourProfile = Colours.valueOf(config.get("colourProfile").getAsString());
 		} catch (Throwable t) {
 			Main.LOGGER.error("[Aaron's Mod] Failed to load colour profile!");
 			t.printStackTrace();
