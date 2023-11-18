@@ -33,13 +33,10 @@ public class Functions {
 	public static final Object2LongLinkedOpenHashMap<String> TIMES = new Object2LongLinkedOpenHashMap<>();
 	
 	/** Format with 2 decimals of precision. */
-    public static final DecimalFormat NUMBER_FORMATTER = new DecimalFormat("#,###.00");
+    public static final DecimalFormat NUMBER_FORMATTER = new DecimalFormat("#,###.##");
     
     /** Format with 1 decimal of precision. */
-    public static final DecimalFormat NUMBER_FORMATTER_OD = new DecimalFormat("#,###.0");
-    
-    /** Format with 1 decimal of precision except that the decimal won't show if its a zero. */
-    public static final DecimalFormat NUMBER_FORMATTER_OPT_DEC = new DecimalFormat("#,###.#");
+    public static final DecimalFormat NUMBER_FORMATTER_OD = new DecimalFormat("#,###.#");
 
 	/** Format with no decimals. */
     public static final DecimalFormat NUMBER_FORMATTER_ND = new DecimalFormat("#,###");

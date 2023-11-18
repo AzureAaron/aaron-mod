@@ -217,7 +217,7 @@ public class MagicalPowerCommand {
 	}
 	
 	private static Text getStatText(String stat, int tuningAmount) {
-		String base = "+" + Functions.NUMBER_FORMATTER_OPT_DEC.format(scaleTuningStat(stat, tuningAmount));
+		String base = "+" + Functions.NUMBER_FORMATTER_OD.format(scaleTuningStat(stat, tuningAmount));
 		
 		return switch (stat) {
 			case "healh" -> Text.literal(base + "\u2764 Health").formatted(Formatting.RED);
