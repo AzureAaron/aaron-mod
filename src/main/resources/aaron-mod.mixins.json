@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "net.azureaaron.mod.mixins",
-  "plugin": "net.azureaaron.mod.MixinPlugin",
+  "plugin": "net.azureaaron.mod.compatibility.MixinPlugin",
   "compatibilityLevel": "JAVA_17",
   "client": [
     "ChatHudMixin",

@@ -1,4 +1,4 @@
-package net.azureaaron.mod;
+package net.azureaaron.mod.compatibility;
 
 import java.util.List;
 import java.util.Set;
