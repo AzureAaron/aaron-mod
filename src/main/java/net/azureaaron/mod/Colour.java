@@ -1,9 +1,6 @@
 package net.azureaaron.mod;
 
-import java.nio.file.Files;
-
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 public class Colour {
 	//google search: good colour combinations
