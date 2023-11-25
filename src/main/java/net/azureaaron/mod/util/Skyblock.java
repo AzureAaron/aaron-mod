@@ -17,7 +17,7 @@ import net.minecraft.nbt.StringNbtReader;
 public class Skyblock {
 	public static final String[] MAX_LEVEL_SKYBLOCK_ENCHANTMENTS = {/* Armour */ "Aqua Affinity I", "Big Brain V", "Blast Protection VII", 
 			"Counter-Strike V", "Depth Strider III", "Feather Falling X", "Feather Falling XX", "Ferocious Mana X", "Fire Protection VII",
-			"Frost Walker II", "Growth VII", "Hardened Mana X", "Hecatomb X", "Mana Vampire X", "Projectile Protection VII", "Protection VII",
+			"Frost Walker II", "Growth VII", "Hardened Mana X", "Hecatomb X", "Mana Vampire X", "Pesterminator V", "Projectile Protection VII", "Protection VII",
 			"Reflection V", "Rejuvenate V", "Respiration III", "Respiration IV", "Respite V", "Smarty Pants V", "Strong Mana X", "Sugar Rush III", "Thorns III", 
 			"True Protection I", /* Weapons */ "Bane of Arthropods VII", "Champion X", "Chance V", "Cleave VI", "Critical VII", "Cubism VI",
 			"Divine Gift III", "Dragon Hunter V", "Dragon Tracer V", "Ender Slayer VII", "Execute VI", "Fire Aspect III", "First Strike V",
