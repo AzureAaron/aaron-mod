@@ -25,7 +25,7 @@ public class ItemUtils {
 		//Create lore and add it to a list
 		NbtCompound display = new NbtCompound();
 		NbtList loreList = new NbtList();	
-		Arrays.stream(lore).forEach(text -> loreList.add(NbtString.of(Text.Serializer.toJson(text))));
+		Arrays.stream(lore).forEach(text -> loreList.add(NbtString.of(Text.Serialization.toJsonString(text))));
 		
 		//Add the lore and name to the item stack
 		display.put(ItemStack.LORE_KEY, loreList);

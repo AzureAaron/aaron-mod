@@ -6,13 +6,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.azureaaron.mod.Config;
-import net.minecraft.world.MobSpawnerLogic;
+import net.minecraft.block.spawner.MobSpawnerLogic;
 
 @Mixin(MobSpawnerLogic.class)
 public class MobSpawnerLogicMixin {
 
 	@Inject(method = "clientTick", at = @At("HEAD"), cancellable = true)
 	private void aaronMod$dontTickClientLogic(CallbackInfo ci) {
-		if(Config.hideSpinningMobInMobSpawner) ci.cancel();
+		if (Config.hideSpinningMobInMobSpawner) ci.cancel();
 	}
 }

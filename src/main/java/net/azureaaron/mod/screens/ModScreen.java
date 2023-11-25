@@ -36,9 +36,9 @@ public class ModScreen extends Screen {
 		gridWidget.getMainPositioner().alignHorizontalCenter();
 		GridWidget.Adder adder = gridWidget.createAdder(2);
 		adder.add(ButtonWidget.builder(CONFIGURATION_TEXT, button -> this.openConfig()).width(BUTTON_WIDTH).build(), 2);
-		adder.add(ButtonWidget.builder(SOURCE_TEXT, ConfirmLinkScreen.opening("https://github.com/AzureAaron/aaron-mod", this, true)).width(HALF_BUTTON_WIDTH).build());
-		adder.add(ButtonWidget.builder(REPORT_BUGS_TEXT, ConfirmLinkScreen.opening("https://github.com/AzureAaron/aaron-mod/issues", this, true)).width(HALF_BUTTON_WIDTH).build());
-		adder.add(ButtonWidget.builder(MODRINTH_TEXT, ConfirmLinkScreen.opening("https://modrinth.com/mod/aaron-mod", this, true)).width(HALF_BUTTON_WIDTH).build());
+		adder.add(ButtonWidget.builder(SOURCE_TEXT, ConfirmLinkScreen.opening(this, "https://github.com/AzureAaron/aaron-mod")).width(HALF_BUTTON_WIDTH).build());
+		adder.add(ButtonWidget.builder(REPORT_BUGS_TEXT, ConfirmLinkScreen.opening(this, "https://github.com/AzureAaron/aaron-mod/issues")).width(HALF_BUTTON_WIDTH).build());
+		adder.add(ButtonWidget.builder(MODRINTH_TEXT, ConfirmLinkScreen.opening(this, "https://modrinth.com/mod/aaron-mod")).width(HALF_BUTTON_WIDTH).build());
 		this.layout.addFooter(ButtonWidget.builder(ScreenTexts.DONE, button -> this.close()).build());
 		this.layout.refreshPositions();
 		this.layout.forEachChild(this::addDrawableChild);

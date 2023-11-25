@@ -67,7 +67,7 @@ public class DragonTimers {
 				String dragonName = dragon.name();
 				int xShrinkFactor = (dragon.pos1.getX() == 41) ? 11 : 0;
 				int zShrinkFactor = (dragon.pos1.getZ() == 112) ? 0 : 11;
-				Box box = new Box(dragon.pos1.add(0, 14, 0), dragon.pos2).contract(xShrinkFactor, 0, zShrinkFactor);
+				Box box = Box.enclosing(dragon.pos1.add(0, 14, 0), dragon.pos2).contract(xShrinkFactor, 0, zShrinkFactor);
 				
 				if(box.contains(packet.getX(), packet.getY(), packet.getZ())) {
 					if(dragonName.equals("POWER") && Cache.powerSpawnStart + 5000 < System.currentTimeMillis()) Cache.powerSpawnStart = System.currentTimeMillis();

@@ -831,7 +831,7 @@ public class Config {
 						.name(Text.literal("Text Component Generator Website"))
 						.description(OptionDescription.of(Text.literal("Click to open a link to the website!")))
 						.text(Text.literal("\u29C9"))
-						.action((screen, opt) -> ConfirmLinkScreen.open("https://minecraft.tools/en/json_text.php", screen, false))
+						.action((screen, opt) -> ConfirmLinkScreen.open(screen, "https://minecraft.tools/en/json_text.php"))
 						.build())
 				.build())
 		.save(Config::save)

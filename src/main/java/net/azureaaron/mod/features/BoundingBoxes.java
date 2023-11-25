@@ -30,7 +30,7 @@ public class BoundingBoxes {
 		private Dragons(BlockPos pos1, BlockPos pos2, int colour) {
 			this.pos1 = pos1;
 			this.pos2 = pos2;
-			this.box = new Box(pos1, pos2);
+			this.box = Box.enclosing(pos1, pos2);
 			
 			this.colour = colour;
 			this.red = (colour >> 16) & 0xFF;

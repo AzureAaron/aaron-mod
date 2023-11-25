@@ -44,7 +44,7 @@ public class TextReplacer {
 		JsonObject serializedMap = new JsonObject();
 		
 		for (Entry<String, Text> entry : TextReplacer.TEXT_REPLACEMENTS.entrySet()) {
-			JsonElement serializedText = Text.Serializer.toJsonTree(entry.getValue());
+			JsonElement serializedText = Text.Serialization.toJsonTree(entry.getValue());
 			
 			serializedMap.add(entry.getKey(), serializedText);
 		}
@@ -54,7 +54,7 @@ public class TextReplacer {
 	
 	public static void deserializeAndLoad(JsonObject serializedMap) {
 		for (String key : serializedMap.keySet()) {
-			Text deserializedText = Text.Serializer.fromJson(serializedMap.get(key));
+			Text deserializedText = Text.Serialization.fromJsonTree(serializedMap.get(key));
 			
 			TEXT_REPLACEMENTS.put(key, deserializedText);
 		}
