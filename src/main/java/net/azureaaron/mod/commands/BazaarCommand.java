@@ -28,8 +28,8 @@ import net.minecraft.util.Formatting;
 
 public class BazaarCommand {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	private static final Text NON_EXISTENT_PRODUCT_ERROR = Text.literal("The product you've provided is non existent!").styled(style -> style.withColor(Formatting.RED));
-	private static final Text BAZAAR_FETCH_ERROR = Text.literal("There was an error while fetching information from the bazaar!").styled(style -> style.withColor(Formatting.RED));
+	private static final Text NON_EXISTENT_PRODUCT_ERROR = Text.literal("The product you've provided is non existent!").formatted(Formatting.RED);
+	private static final Text BAZAAR_FETCH_ERROR = Text.literal("There was an error while fetching information from the bazaar!").formatted(Formatting.RED);
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		final LiteralCommandNode<FabricClientCommandSource> bazaarCommand = dispatcher.register(literal("bazaarprice")
@@ -84,15 +84,15 @@ public class BazaarCommand {
 		
 		source.sendFeedback(startText);
 		
-		source.sendFeedback(Text.literal("Buy Price » " + Functions.NUMBER_FORMATTER.format(productData.get("buyPrice").getAsDouble())).styled(style -> style.withColor(colourProfile.infoColour)));
-		source.sendFeedback(Text.literal(Functions.NUMBER_FORMATTER_S.format(productData.get("buyVolume").getAsInt()) + " in " + Functions.NUMBER_FORMATTER_S.format(productData.get("buyOrders").getAsInt()) + " offers").styled(style -> style.withColor(colourProfile.supportingInfoColour)));
-		source.sendFeedback(Text.literal(Functions.NUMBER_FORMATTER_S.format(productData.get("buyMovingWeek").getAsInt()) + " insta-buys in 7 days").styled(style -> style.withColor(colourProfile.supportingInfoColour)));
+		source.sendFeedback(Text.literal("Buy Price » " + Functions.NUMBER_FORMATTER.format(productData.get("buyPrice").getAsDouble())).withColor(colourProfile.infoColour));
+		source.sendFeedback(Text.literal(Functions.NUMBER_FORMATTER_S.format(productData.get("buyVolume").getAsInt()) + " in " + Functions.NUMBER_FORMATTER_S.format(productData.get("buyOrders").getAsInt()) + " offers").withColor(colourProfile.supportingInfoColour));
+		source.sendFeedback(Text.literal(Functions.NUMBER_FORMATTER_S.format(productData.get("buyMovingWeek").getAsInt()) + " insta-buys in 7 days").withColor(colourProfile.supportingInfoColour));
 		
 		source.sendFeedback(Text.literal(""));
 		
-		source.sendFeedback(Text.literal("Sell Price » " + Functions.NUMBER_FORMATTER.format(productData.get("sellPrice").getAsDouble())).styled(style -> style.withColor(colourProfile.infoColour)));
-		source.sendFeedback(Text.literal(Functions.NUMBER_FORMATTER_S.format(productData.get("sellVolume").getAsInt()) + " in " + Functions.NUMBER_FORMATTER_S.format(productData.get("sellOrders").getAsInt()) + " orders").styled(style -> style.withColor(colourProfile.supportingInfoColour)));
-		source.sendFeedback(Text.literal(Functions.NUMBER_FORMATTER_S.format(productData.get("sellMovingWeek").getAsInt()) + " insta-sells in 7 days").styled(style -> style.withColor(colourProfile.supportingInfoColour)));
+		source.sendFeedback(Text.literal("Sell Price » " + Functions.NUMBER_FORMATTER.format(productData.get("sellPrice").getAsDouble())).withColor(colourProfile.infoColour));
+		source.sendFeedback(Text.literal(Functions.NUMBER_FORMATTER_S.format(productData.get("sellVolume").getAsInt()) + " in " + Functions.NUMBER_FORMATTER_S.format(productData.get("sellOrders").getAsInt()) + " orders").withColor(colourProfile.supportingInfoColour));
+		source.sendFeedback(Text.literal(Functions.NUMBER_FORMATTER_S.format(productData.get("sellMovingWeek").getAsInt()) + " insta-sells in 7 days").withColor(colourProfile.supportingInfoColour));
 		
 		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
 	}

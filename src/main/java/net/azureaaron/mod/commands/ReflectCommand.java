@@ -36,10 +36,10 @@ public class ReflectCommand implements UnsafeAccess {
 												.executes(context -> reflectionExecutor(context.getSource(), getString(context, "opcode"), getString(context, "target class"), getString(context, "target field"), getString(context, "type"), getString(context, "new value")))))))));
 	}
 	
-	private static final Text INVALID_OPCODE = Text.literal("Invalid Opcode!").styled(style -> style.withColor(Formatting.RED));
-	private static final Text INVALID_TYPE = Text.literal("Invalid Type!").styled(style -> style.withColor(Formatting.RED));
-	private static final Text TYPE_MISMATCH = Text.literal("Type Mismatch!").styled(style -> style.withColor(Formatting.RED));
-	private static final Text TYPE_MISSING = Text.literal("Missing 'type' parameter!").styled(style -> style.withColor(Formatting.RED));
+	private static final Text INVALID_OPCODE = Text.literal("Invalid Opcode!").formatted(Formatting.RED);
+	private static final Text INVALID_TYPE = Text.literal("Invalid Type!").formatted(Formatting.RED);
+	private static final Text TYPE_MISMATCH = Text.literal("Type Mismatch!").formatted(Formatting.RED);
+	private static final Text TYPE_MISSING = Text.literal("Missing 'type' parameter!").formatted(Formatting.RED);
 	private static final List<String> OPCODES = Arrays.asList("GETFIELD", "PUTFIELD");
 	private static final List<String> TYPES = Arrays.asList("byte", "char", "double", "float", "int", "long", "short", "boolean", "string");
 	
@@ -64,9 +64,9 @@ public class ReflectCommand implements UnsafeAccess {
         		field.setAccessible(true);
         		String fieldValue = field.get(null).toString();
         		
-        		source.sendFeedback(Text.literal("Field Get » ").styled(style -> style.withColor(colourProfile.primaryColour))
-        				.append(Text.literal("[" + field.getType().getName() + "] " + field.getName() + ": ").styled(style -> style.withColor(colourProfile.secondaryColour))
-        						.append(Text.literal(fieldValue).styled(style -> style.withColor(colourProfile.infoColour)))));
+        		source.sendFeedback(Text.literal("Field Get » ").withColor(colourProfile.primaryColour)
+        				.append(Text.literal("[" + field.getType().getName() + "] " + field.getName() + ": ").withColor(colourProfile.secondaryColour)
+        						.append(Text.literal(fieldValue).withColor(colourProfile.infoColour))));
         	}
         	
         	if(opcode.equals("PUTFIELD")) {
@@ -127,14 +127,14 @@ public class ReflectCommand implements UnsafeAccess {
         		}
         		String fieldValue = field.get(null).toString();
         		        		
-        		source.sendFeedback(Text.literal("Field Set » ").styled(style -> style.withColor(colourProfile.primaryColour))
-        				.append(Text.literal("[" + field.getType().getName() + "] " + field.getName() + ": ").styled(style -> style.withColor(colourProfile.secondaryColour))
-        						.append(Text.literal(fieldValue).styled(style -> style.withColor(colourProfile.infoColour)))));
+        		source.sendFeedback(Text.literal("Field Set » ").withColor(colourProfile.primaryColour)
+        				.append(Text.literal("[" + field.getType().getName() + "] " + field.getName() + ": ").withColor(colourProfile.secondaryColour)
+        						.append(Text.literal(fieldValue).withColor(colourProfile.infoColour))));
         	}
         	
     	} catch(ReflectiveOperationException e) {
-    		if(e instanceof ClassNotFoundException) source.sendError(Text.literal("The requested class wasn't found!").styled(style -> style.withColor(Formatting.RED)));
-    		if(e instanceof NoSuchFieldException) source.sendError(Text.literal("The requested field wasn't found!").styled(style -> style.withColor(Formatting.RED)));
+    		if(e instanceof ClassNotFoundException) source.sendError(Text.literal("The requested class wasn't found!").formatted(Formatting.RED));
+    		if(e instanceof NoSuchFieldException) source.sendError(Text.literal("The requested field wasn't found!").formatted(Formatting.RED));
     		e.printStackTrace();
     	}
     	

@@ -84,26 +84,26 @@ public class ProfileCommand {
 		
 		source.sendFeedback(startText);
 		
-		source.sendFeedback(Text.literal("Profile » " + Functions.titleCase(body.get("cute_name").getAsString())).styled(style -> style.withColor(colourProfile.infoColour)));
+		source.sendFeedback(Text.literal("Profile » " + Functions.titleCase(body.get("cute_name").getAsString())).withColor(colourProfile.infoColour));
 		source.sendFeedback(Text.literal("Joined » " + Functions.toMostRelative(firstJoinRelative))
 				.styled(style -> style.withColor(colourProfile.infoColour).withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal(Functions.DATE_FORMATTER.format(Instant.ofEpochMilli(firstJoinTimestamp))).styled(style1 -> style1.withColor(colourProfile.infoColour))))));
-		source.sendFeedback(Text.literal("Level » " + level).styled(style -> style.withColor(colourProfile.infoColour)));
+		source.sendFeedback(Text.literal("Level » " + level).withColor(colourProfile.infoColour));
 		
 		source.sendFeedback(Text.literal(""));
 		
 		if (bankingEnabled) {
-			source.sendFeedback(Text.literal("Bank » " + bank).styled(style -> style.withColor(colourProfile.infoColour)));
+			source.sendFeedback(Text.literal("Bank » " + bank).withColor(colourProfile.infoColour));
 		} else {
-			source.sendFeedback(Text.literal("Bank » ").styled(style -> style.withColor(colourProfile.infoColour))
+			source.sendFeedback(Text.literal("Bank » ").withColor(colourProfile.infoColour)
 					.append(Text.literal("Api Disabled!")));
 		}
-		source.sendFeedback(Text.literal("Purse » " + purse).styled(style -> style.withColor(colourProfile.infoColour)));
+		source.sendFeedback(Text.literal("Purse » " + purse).withColor(colourProfile.infoColour));
 				
 		source.sendFeedback(Text.literal(""));
 		
 		if (skillsEnabled) {
 			source.sendFeedback(Text.literal("Skill Average » " + Functions.NUMBER_FORMATTER_OD.format(skillAverage)).styled(style -> style.withColor(colourProfile.infoColour)
-					.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Alchemy » " + String.valueOf(alchemyLevel) + "\n").styled(style1 -> style1.withColor(colourProfile.infoColour))
+					.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Alchemy » " + String.valueOf(alchemyLevel) + "\n").withColor(colourProfile.infoColour)
 							.append("Carpentry » " + String.valueOf(carpentryLevel) + "\n")
 							.append("Combat » " + String.valueOf(combatLevel) + "\n")
 							.append("Enchanting » " + String.valueOf(enchantingLevel) + "\n")
@@ -117,7 +117,7 @@ public class ProfileCommand {
 					.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Runecrafting » " + String.valueOf(runecraftingLevel) + "\n").styled(style1 -> style1.withColor(colourProfile.infoColour).withItalic(false))
 							.append("Social » " + String.valueOf(socialLevel))))));
 		} else {
-			source.sendFeedback(Text.literal("Skill Average » ").styled(style -> style.withColor(colourProfile.infoColour))
+			source.sendFeedback(Text.literal("Skill Average » ").withColor(colourProfile.infoColour)
 					.append(Text.literal("Api Disabled!")));
 			
 			source.sendFeedback(Text.literal("(Cosmetic Skills)").styled(style -> style.withColor(colourProfile.hoverColour).withItalic(true)
@@ -128,7 +128,7 @@ public class ProfileCommand {
 		
 		source.sendFeedback(Text.literal("Slayers » " + String.valueOf(revenantHorrorLevel) + " • " + String.valueOf(tarantulaBroodfatherLevel) + 
 				" • " + String.valueOf(svenPackmasterLevel) + " • " + String.valueOf(voidgloomSeraphLevel) + " • " + String.valueOf(infernoDemonlordLevel) + " • " + String.valueOf(riftstalkerBloodfiendLevel)).styled(style -> style.withColor(colourProfile.infoColour)
-						.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Revenant Horror » " + String.valueOf(revenantHorrorLevel) + "\n").styled(style1 -> style1.withColor(colourProfile.infoColour))
+						.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Revenant Horror » " + String.valueOf(revenantHorrorLevel) + "\n").withColor(colourProfile.infoColour)
 								.append("Tarantula Broodfather » " + String.valueOf(tarantulaBroodfatherLevel) + "\n")
 								.append("Sven Packmaster » " + String.valueOf(svenPackmasterLevel) + "\n")
 								.append("Voidgloom Seraph » " + String.valueOf(voidgloomSeraphLevel) + "\n")

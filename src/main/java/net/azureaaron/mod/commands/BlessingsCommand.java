@@ -32,11 +32,11 @@ public class BlessingsCommand {
     	
     	source.sendFeedback(Text.literal("               ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
     	
-    	source.sendFeedback(Text.literal("Power » " + powerBlessing).styled(style -> style.withColor(colourProfile.infoColour)));
-    	source.sendFeedback(Text.literal("Wisdom » " + wisdomBlessing).styled(style -> style.withColor(colourProfile.infoColour)));
-    	source.sendFeedback(Text.literal("Life » " + lifeBlessing).styled(style -> style.withColor(colourProfile.infoColour)));
-    	source.sendFeedback(Text.literal("Stone » " + stoneBlessing).styled(style -> style.withColor(colourProfile.infoColour)));
-    	source.sendFeedback(Text.literal("Time » " +  timeBlessing).styled(style -> style.withColor(colourProfile.infoColour)));
+    	source.sendFeedback(Text.literal("Power » " + powerBlessing).withColor(colourProfile.infoColour));
+    	source.sendFeedback(Text.literal("Wisdom » " + wisdomBlessing).withColor(colourProfile.infoColour));
+    	source.sendFeedback(Text.literal("Life » " + lifeBlessing).withColor(colourProfile.infoColour));
+    	source.sendFeedback(Text.literal("Stone » " + stoneBlessing).withColor(colourProfile.infoColour));
+    	source.sendFeedback(Text.literal("Time » " +  timeBlessing).withColor(colourProfile.infoColour));
     	
     	source.sendFeedback(Text.literal("               ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
 
@@ -46,10 +46,10 @@ public class BlessingsCommand {
     private static int printBlessings(FabricClientCommandSource source, String option) {
     	if("reset".equals(option)) {
     		Cache.resetBlessings();
-			source.sendFeedback(Text.literal("Blessings » ").styled(style -> style.withColor(colourProfile.primaryColour))
-					.append(Text.literal("Successfully reset the counter!").styled(style -> style.withColor(colourProfile.secondaryColour))));
+			source.sendFeedback(Text.literal("Blessings » ").withColor(colourProfile.primaryColour)
+					.append(Text.literal("Successfully reset the counter!").withColor(colourProfile.secondaryColour)));
     	} else {
-    		source.sendError(Text.literal("Invalid option!").styled(style -> style.withColor(Formatting.RED)));
+    		source.sendError(Text.literal("Invalid option!").formatted(Formatting.RED));
     	}
     	
     	return Command.SINGLE_SUCCESS;

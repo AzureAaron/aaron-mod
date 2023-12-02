@@ -30,10 +30,9 @@ public class UuidCommand {
 	}
 	
 	protected static void printUuid(FabricClientCommandSource source, String name, String uuid) {
-		source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Uuid » ").styled(style -> style.withColor(colourProfile.primaryColour))
-				.append(Text.literal(uuid).styled(style -> style.withColor(colourProfile.secondaryColour)))
+		source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Uuid » ").withColor(colourProfile.primaryColour)
+				.append(Text.literal(uuid).withColor(colourProfile.secondaryColour))
 				.append("").styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.translatable("chat.copy.click")))
 						.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid))));
-		return;
 	}
 }

@@ -3,7 +3,6 @@ package net.azureaaron.mod.commands;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static net.azureaaron.mod.Colour.colourProfile;
-import static net.azureaaron.mod.util.Constants.WITH_COLOUR;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
@@ -46,8 +45,8 @@ import net.minecraft.util.Formatting;
 public class MagicalPowerCommand {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printMP");
-	private static final Text NO_ACCESSORY_BAG_DATA = Text.literal("This profile doesn't have any accessory bag data!");
-	private static final Text NBT_PARSING_ERROR = Text.literal("There was an error while trying to parse NBT!").styled(style -> style.withColor(Formatting.RED)); //TODO make constant
+	private static final Text NO_ACCESSORY_BAG_DATA = Text.literal("This profile doesn't have any accessory bag data!").formatted(Formatting.RED);
+	private static final Text NBT_PARSING_ERROR = Text.literal("There was an error while trying to parse NBT!").formatted(Formatting.RED); //TODO make constant
 	private static final Pattern ACCESSORY_RARITY_PATTERN = Pattern.compile("(?:a )?(?<rarity>(?:VERY )?[A-Za-z]+) (?:DUNGEON )?(?:A|HAT)CCESSORY(?: a)?");
 	@SuppressWarnings("unused")
 	private static final IntToDoubleFunction STATS_MULT = magicalPower -> 29.97d * Math.pow(Math.log(0.0019d * magicalPower + 1d), 1.2d);
@@ -205,9 +204,9 @@ public class MagicalPowerCommand {
 		
 		source.sendFeedback(startText);
 		
-		source.sendFeedback(Text.literal("Magical Power » ").styled(WITH_COLOUR.apply(colourProfile.infoColour))
-				.append(Text.literal(Functions.NUMBER_FORMATTER_ND.format(magicalPower)).styled(WITH_COLOUR.apply(colourProfile.highlightColour))));
-		source.sendFeedback(Text.literal("Selected Power » " + Functions.titleCase(selectedPower)).styled(WITH_COLOUR.apply(colourProfile.infoColour)));
+		source.sendFeedback(Text.literal("Magical Power » ").withColor(colourProfile.infoColour)
+				.append(Text.literal(Functions.NUMBER_FORMATTER_ND.format(magicalPower)).withColor(colourProfile.highlightColour)));
+		source.sendFeedback(Text.literal("Selected Power » " + Functions.titleCase(selectedPower)).withColor(colourProfile.infoColour));
 		
 		source.sendFeedback(Text.literal(""));
 		

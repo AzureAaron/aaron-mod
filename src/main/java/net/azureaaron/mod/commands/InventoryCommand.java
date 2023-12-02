@@ -38,7 +38,7 @@ import net.minecraft.util.Formatting;
 public class InventoryCommand {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printInventory");
-	private static final Text NBT_PARSING_ERROR = Text.literal("There was an error while trying to parse NBT!").styled(style -> style.withColor(Formatting.RED));
+	private static final Text NBT_PARSING_ERROR = Text.literal("There was an error while trying to parse NBT!").formatted(Formatting.RED);
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("inventory")
@@ -184,7 +184,7 @@ public class InventoryCommand {
 		
 		source.sendFeedback(startText);
 		
-		source.sendFeedback(Text.literal("Inventory API » " + ((inventoryEnabled) ? "✓" : "✗")).styled(style -> style.withColor(colourProfile.infoColour)));
+		source.sendFeedback(Text.literal("Inventory API » " + ((inventoryEnabled) ? "✓" : "✗")).withColor(colourProfile.infoColour));
 		source.sendFeedback(Text.literal(""));
 		source.sendFeedback(helmet.feedbackMessage());
 		source.sendFeedback(chestplate.feedbackMessage());

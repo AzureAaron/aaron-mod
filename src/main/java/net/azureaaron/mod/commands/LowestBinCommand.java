@@ -39,10 +39,10 @@ public class LowestBinCommand {
 		dispatcher.register(literal("lbin").redirect(lowestBinCommand));
 	}
 	
-	private static final Text LOWEST_BIN_FETCH_ERROR = Text.literal("There was an error while fetching information for the lowest bin prices!").styled(style -> style.withColor(Formatting.RED));
-	private static final Text DAY_AVERAGE_FETCH_ERROR = Text.literal("There was an error while fetching information for the average day price!").styled(style -> style.withColor(Formatting.RED));
-	private static final Text NON_EXISTENT_ITEM_ERROR = Text.literal("The item you've provided is non existent!").styled(style -> style.withColor(Formatting.RED));
-	private static final Text NO_AVERAGE_PRICE_FOR_ITEM_ERROR = Text.literal("No average price was found! (Most likely because this item hasn't been on the auction house recently!)").styled(style -> style.withColor(Formatting.RED));
+	private static final Text LOWEST_BIN_FETCH_ERROR = Text.literal("There was an error while fetching information for the lowest bin prices!").formatted(Formatting.RED);
+	private static final Text DAY_AVERAGE_FETCH_ERROR = Text.literal("There was an error while fetching information for the average day price!").formatted(Formatting.RED);
+	private static final Text NON_EXISTENT_ITEM_ERROR = Text.literal("The item you've provided is non existent!").formatted(Formatting.RED);
+	private static final Text NO_AVERAGE_PRICE_FOR_ITEM_ERROR = Text.literal("No average price was found! (Most likely because this item hasn't been on the auction house recently!)").formatted(Formatting.RED);
 	
 	private static int handleCommand(FabricClientCommandSource source, String item) {
 		String itemId = Cache.ITEM_NAMES.get(item);
@@ -139,9 +139,9 @@ public class LowestBinCommand {
 		
 		source.sendFeedback(startText);
 		
-		source.sendFeedback(Text.literal("Lowest BIN Price » " + Functions.NUMBER_FORMATTER_ND.format(data.get("price").getAsLong())).styled(style -> style.withColor(colourProfile.infoColour)));
+		source.sendFeedback(Text.literal("Lowest BIN Price » " + Functions.NUMBER_FORMATTER_ND.format(data.get("price").getAsLong())).withColor(colourProfile.infoColour));
 		source.sendFeedback(Text.literal(""));
-		source.sendFeedback(Text.literal(desc + " Price » " + Functions.NUMBER_FORMATTER_ND.format(data.get("dayAverage").getAsLong())).styled(style -> style.withColor(colourProfile.infoColour)));
+		source.sendFeedback(Text.literal(desc + " Price » " + Functions.NUMBER_FORMATTER_ND.format(data.get("dayAverage").getAsLong())).withColor(colourProfile.infoColour));
 		
 		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
 		return;

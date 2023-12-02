@@ -79,19 +79,19 @@ public class CrimsonCommand {
 		
 		source.sendFeedback(startText);
 		
-		source.sendFeedback(Text.literal("Faction » ").styled(style -> style.withColor(colourProfile.infoColour))
-				.append(Text.literal(Functions.titleCase(selectedFaction)).styled(style -> style.withColor(colourProfile.highlightColour))));
+		source.sendFeedback(Text.literal("Faction » ").withColor(colourProfile.infoColour)
+				.append(Text.literal(Functions.titleCase(selectedFaction)).withColor(colourProfile.highlightColour)));
 		
-		source.sendFeedback(Text.literal("[ B » ").styled(style -> style.withColor(colourProfile.infoColour))
-				.append(Text.literal(Functions.NUMBER_FORMATTER_ND.format(barbarianReputation)).styled(style -> style.withColor(barbarianColour)))
-				.append(Text.literal(" • M » ").styled(style -> style.withColor(colourProfile.infoColour)))
-				.append(Text.literal(Functions.NUMBER_FORMATTER_ND.format(mageReputation)).styled(style -> style.withColor(mageColour)))
+		source.sendFeedback(Text.literal("[ B » ").withColor(colourProfile.infoColour)
+				.append(Text.literal(Functions.NUMBER_FORMATTER_ND.format(barbarianReputation)).withColor(barbarianColour))
+				.append(Text.literal(" • M » ").withColor(colourProfile.infoColour))
+				.append(Text.literal(Functions.NUMBER_FORMATTER_ND.format(mageReputation)).withColor(mageColour))
 				.append(Text.literal(" ]")));
 		
 		source.sendFeedback(Text.literal(""));
 		source.sendFeedback(Text.literal("(Kuudra Completions)").styled(style -> style.withColor(colourProfile.hoverColour)
 				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, 
-						Text.literal("Total Completions » " + Functions.NUMBER_FORMATTER_ND.format(totalKuudraCompletions) + "\n").styled(style1 -> style1.withColor(colourProfile.infoColour))
+						Text.literal("Total Completions » " + Functions.NUMBER_FORMATTER_ND.format(totalKuudraCompletions) + "\n").withColor(colourProfile.infoColour)
 						.append(Text.literal("Basic » " + Functions.NUMBER_FORMATTER_ND.format(basicCompletions) + "\n" ))
 						.append(Text.literal("Hot » " + Functions.NUMBER_FORMATTER_ND.format(hotCompletions) + "\n" ))
 						.append(Text.literal("Burning » " + Functions.NUMBER_FORMATTER_ND.format(burningCompletions) + "\n" ))
@@ -101,7 +101,7 @@ public class CrimsonCommand {
 		//Colour the dojo score eventually - maybe!
 		source.sendFeedback(Text.literal("(Dojo Tests)").styled(style -> style.withColor(colourProfile.hoverColour)
 				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, 
-						Text.literal("Total Score » " + Functions.NUMBER_FORMATTER_ND.format(totalDojoScore) + "\n").styled(style1 -> style.withColor(colourProfile.infoColour))
+						Text.literal("Total Score » " + Functions.NUMBER_FORMATTER_ND.format(totalDojoScore) + "\n").withColor(colourProfile.infoColour)
 						.append(Text.literal("Force » " + forceGrade + " (" + Functions.NUMBER_FORMATTER_ND.format(forceScore) + ") \n" ))
 						.append(Text.literal("Stamina » " + staminaGrade + " (" + Functions.NUMBER_FORMATTER_ND.format(staminaScore) + ") \n" ))
 						.append(Text.literal("Mastery » " + masteryGrade + " (" + Functions.NUMBER_FORMATTER_ND.format(masteryScore) + ") \n" ))

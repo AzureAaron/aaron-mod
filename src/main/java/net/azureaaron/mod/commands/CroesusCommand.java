@@ -37,7 +37,7 @@ import net.minecraft.util.Formatting;
 public class CroesusCommand {
 	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printCroesus");
 	private static final long TWO_DAYS = 172_800_000;
-	private static final Text NO_TREASURES = Text.literal("This player doesn't have any dungeon treasures to claim!").styled(style -> style.withColor(Formatting.RED));
+	private static final Text NO_TREASURES = Text.literal("This player doesn't have any dungeon treasures to claim!").formatted(Formatting.RED);
 	private static final String[] RARE_LOOT = {/*M7*/ "dark_claymore", "necron_handle", "wither_shield_scroll",
 			"implosion_scroll", "shadow_warp_scroll", "fifth_master_star", "necron_dye", "thunderlord_7", "master_skull_tier_5",
 			/*M6*/ "giants_sword", "fourth_master_star", /*M5*/ "shadow_fury", "shadow_assassin_chestplate", "third_master_star", 
@@ -151,7 +151,7 @@ public class CroesusCommand {
 		
 		source.sendFeedback(startText);
 		
-		source.sendFeedback(Text.literal("Unclaimed Chests » " + runs.size()).styled(style -> style.withColor(colourProfile.infoColour)));
+		source.sendFeedback(Text.literal("Unclaimed Chests » " + runs.size()).withColor(colourProfile.infoColour));
 		source.sendFeedback(Text.literal("Rare Loot Awaits » " + ((rareLootAwaits) ? "✓" : "✗"))
 				.styled(style -> style.withColor(colourProfile.infoColour).withHoverEvent(new HoverEvent(Action.SHOW_ITEM, new ItemStackContent(bundle)))));
 		source.sendFeedback(Text.literal(""));
@@ -169,7 +169,7 @@ public class CroesusCommand {
 				source.sendFeedback(Text.literal("(" + floorShorthand + " • " + timeAgo + ")")
 						.styled(style -> style.withColor(colourProfile.hoverColour)
 								.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Expires:\n" + Functions.DATE_FORMATTER.format(Instant.ofEpochMilli(expiresAt)) + "\n(In " + TimeUnit.MILLISECONDS.toHours(expiresIn) + " hours)")
-										.styled(style1 -> style1.withColor(colourProfile.infoColour))))));
+										.withColor(colourProfile.infoColour)))));
 				count++;
 			}
 		}

@@ -27,7 +27,7 @@ import net.minecraft.util.Formatting;
 public class NetworthCommand {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printNetworth");
-	private static final Text NETWORTH_FETCH_ERROR = Text.literal("There was an error while fetching a player's networth!").styled(style -> style.withColor(Formatting.RED));
+	private static final Text NETWORTH_FETCH_ERROR = Text.literal("There was an error while fetching a player's networth!").formatted(Formatting.RED);
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("networth")
@@ -82,19 +82,19 @@ public class NetworthCommand {
 		
 		source.sendFeedback(startText);
 		
-		source.sendFeedback(Text.literal("Networth » " + Functions.NUMBER_FORMATTER.format(networth.overallValue())).styled(style -> style.withColor(colourProfile.infoColour)));
+		source.sendFeedback(Text.literal("Networth » " + Functions.NUMBER_FORMATTER.format(networth.overallValue())).withColor(colourProfile.infoColour));
 		source.sendFeedback(Text.literal(""));
-		source.sendFeedback(Text.literal("Armour » " + Functions.NUMBER_FORMATTER.format(networth.armourValue())).styled(style -> style.withColor(colourProfile.infoColour)));
-		source.sendFeedback(Text.literal("Inventory » " + Functions.NUMBER_FORMATTER.format(networth.inventoryValue())).styled(style -> style.withColor(colourProfile.infoColour)));
-		source.sendFeedback(Text.literal("Enderchest » " + Functions.NUMBER_FORMATTER.format(networth.enderchestValue())).styled(style -> style.withColor(colourProfile.infoColour)));
-		source.sendFeedback(Text.literal("Storage » " + Functions.NUMBER_FORMATTER.format(networth.storageValue())).styled(style -> style.withColor(colourProfile.infoColour)));
-		source.sendFeedback(Text.literal("Accessories » " + Functions.NUMBER_FORMATTER.format(networth.accessoriesValue())).styled(style -> style.withColor(colourProfile.infoColour)));
-		source.sendFeedback(Text.literal("Pets » " + Functions.NUMBER_FORMATTER.format(networth.petsValue())).styled(style -> style.withColor(colourProfile.infoColour)));
-		source.sendFeedback(Text.literal("Wardrobe » " + Functions.NUMBER_FORMATTER.format(networth.wardrobeValue())).styled(style -> style.withColor(colourProfile.infoColour)));
-		source.sendFeedback(Text.literal("Sacks » " + Functions.NUMBER_FORMATTER.format(networth.sacksValue())).styled(style -> style.withColor(colourProfile.infoColour)));
+		source.sendFeedback(Text.literal("Armour » " + Functions.NUMBER_FORMATTER.format(networth.armourValue())).withColor(colourProfile.infoColour));
+		source.sendFeedback(Text.literal("Inventory » " + Functions.NUMBER_FORMATTER.format(networth.inventoryValue())).withColor(colourProfile.infoColour));
+		source.sendFeedback(Text.literal("Enderchest » " + Functions.NUMBER_FORMATTER.format(networth.enderchestValue())).withColor(colourProfile.infoColour));
+		source.sendFeedback(Text.literal("Storage » " + Functions.NUMBER_FORMATTER.format(networth.storageValue())).withColor(colourProfile.infoColour));
+		source.sendFeedback(Text.literal("Accessories » " + Functions.NUMBER_FORMATTER.format(networth.accessoriesValue())).withColor(colourProfile.infoColour));
+		source.sendFeedback(Text.literal("Pets » " + Functions.NUMBER_FORMATTER.format(networth.petsValue())).withColor(colourProfile.infoColour));
+		source.sendFeedback(Text.literal("Wardrobe » " + Functions.NUMBER_FORMATTER.format(networth.wardrobeValue())).withColor(colourProfile.infoColour));
+		source.sendFeedback(Text.literal("Sacks » " + Functions.NUMBER_FORMATTER.format(networth.sacksValue())).withColor(colourProfile.infoColour));
 		source.sendFeedback(Text.literal(""));
-		source.sendFeedback(Text.literal("Bank » " + Functions.NUMBER_FORMATTER.format(networth.bankValue())).styled(style -> style.withColor(colourProfile.infoColour)));
-		source.sendFeedback(Text.literal("Purse » " + Functions.NUMBER_FORMATTER.format(networth.purseValue())).styled(style -> style.withColor(colourProfile.infoColour)));
+		source.sendFeedback(Text.literal("Bank » " + Functions.NUMBER_FORMATTER.format(networth.bankValue())).withColor(colourProfile.infoColour));
+		source.sendFeedback(Text.literal("Purse » " + Functions.NUMBER_FORMATTER.format(networth.purseValue())).withColor(colourProfile.infoColour));
 		
 		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
 	}

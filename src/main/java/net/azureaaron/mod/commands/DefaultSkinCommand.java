@@ -36,7 +36,7 @@ public class DefaultSkinCommand {
 		String skinName = Functions.titleCase(skinTexture.texture().toString().replaceAll("minecraft:textures\\/entity\\/player\\/(wide|slim)\\/", "").replace(".png", ""));
 		String skinModel = Functions.titleCase(DefaultSkinHelper.getSkinTextures(formattedUuid).model().getName());
 				
-		source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Default Skin » ").styled(style -> style.withColor(colourProfile.primaryColour))
-				.append(Text.literal(skinName + " (" + skinModel + ")").styled(style -> style.withColor(colourProfile.secondaryColour))));
+		source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Default Skin » ").withColor(colourProfile.primaryColour)
+				.append(Text.literal(skinName + " (" + skinModel + ")").withColor(colourProfile.secondaryColour)));
 	}
 }

@@ -29,7 +29,7 @@ public class PingCommand {
 		ClientPlayNetworkHandler networkHandler = client.getNetworkHandler();
 
 		if (source.getClient().isInSingleplayer() || networkHandler == null) {
-			source.sendFeedback(Text.literal("You're on a local server!").styled(style -> style.withColor(colourProfile.primaryColour)));
+			source.sendFeedback(Text.literal("You're on a local server!").withColor(colourProfile.primaryColour));
 		} else {
 			sendPingPacket(client, networkHandler);
 		}
@@ -38,8 +38,8 @@ public class PingCommand {
 	}
 
 	private static int printPing(MinecraftClient client, long ping) {
-		client.player.sendMessage(Text.literal("Ping » ").styled(style -> style.withColor(colourProfile.primaryColour))
-				.append(Text.literal(String.valueOf(ping) + " ms").styled(style -> style.withColor(colourProfile.secondaryColour))));
+		client.player.sendMessage(Text.literal("Ping » ").withColor(colourProfile.primaryColour)
+				.append(Text.literal(String.valueOf(ping) + " ms").withColor(colourProfile.secondaryColour)));
 
 		return Command.SINGLE_SUCCESS;
 	}
