@@ -23,17 +23,17 @@ public interface ChatAccessor {
     List<ChatHudLine.Visible> getVisibleMessages();
     
     @Invoker("isChatFocused")
-    boolean isChatFocused();
+    boolean invokeIsChatFocused();
     
     @Invoker("toChatLineX")
-    double toChatLineX(double x);
+    double invokeToChatLineX(double x);
     
     @Invoker("toChatLineY")
-    double toChatLineY(double y);
+    double invokeToChatLineY(double y);
     
     @Invoker("getMessageLineIndex")
-    int getMessageLineIndex(double chatLineX, double chatLineY);
+    int invokeGetMessageLineIndex(double chatLineX, double chatLineY);
         
     @Invoker("getMessageIndex")
-    int getMessageEndLineIndex(double chatLineX, double chatLineY);
+    int invokeGetMessageEndLineIndex(double chatLineX, double chatLineY);
 }

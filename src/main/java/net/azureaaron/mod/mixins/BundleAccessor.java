@@ -14,17 +14,17 @@ import net.minecraft.nbt.NbtList;
 public interface BundleAccessor {
 	
 	@Invoker("getBundleOccupancy")
-	static int getBundleOccupancy(ItemStack stack) {
+	static int invokeGetBundleOccupancy(ItemStack stack) {
 		return 0;
 	}
 	
 	@Invoker("getItemOccupancy")
-	static int getItemOccupancy(ItemStack stack) {
+	static int invokeGetItemOccupancy(ItemStack stack) {
 		return 0;
 	}
 
 	@Invoker("canMergeStack")
-	static Optional<NbtCompound> canMergeStack(ItemStack stack, NbtList items) {
+	static Optional<NbtCompound> invokeCanMergeStack(ItemStack stack, NbtList items) {
 		return null;
 	}
 }

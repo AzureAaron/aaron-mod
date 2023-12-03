@@ -160,12 +160,12 @@ public class Functions {
 		NbtCompound nbtCompound = bundle.getOrCreateNbt();
 		if(!nbtCompound.contains(BUNDLE_ITEMS_NBT_KEY)) nbtCompound.put(BUNDLE_ITEMS_NBT_KEY, new NbtList());
 		
-		int i = BundleAccessor.getBundleOccupancy(bundle);
-		int j = BundleAccessor.getItemOccupancy(stack);
+		int i = BundleAccessor.invokeGetBundleOccupancy(bundle);
+		int j = BundleAccessor.invokeGetItemOccupancy(stack);
 		int k = Math.min(stack.getCount(), (64 - i) / j);
 		
 		NbtList nbtList = nbtCompound.getList(BUNDLE_ITEMS_NBT_KEY, NbtElement.COMPOUND_TYPE);
-		Optional<NbtCompound> optional = BundleAccessor.canMergeStack(stack, nbtList);
+		Optional<NbtCompound> optional = BundleAccessor.invokeCanMergeStack(stack, nbtList);
 		
 		if(optional.isPresent()) {
 			NbtCompound nbtCompound2 = optional.get();

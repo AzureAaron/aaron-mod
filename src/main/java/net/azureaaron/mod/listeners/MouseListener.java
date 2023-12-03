@@ -24,13 +24,13 @@ public class MouseListener {
 	private static int getMessageIndex(double chatLineX, double chatLineY) {
 		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.inGameHud.getChatHud());
 		
-		int lineIndex = chatAccessor.getMessageLineIndex(chatLineX, chatLineY);
+		int lineIndex = chatAccessor.invokeGetMessageLineIndex(chatLineX, chatLineY);
 		if (lineIndex == -1) return -1;
 		
 		List<ChatHudLine> messages = chatAccessor.getMessages();
 		List<ChatHudLine.Visible> visibleMessages = chatAccessor.getVisibleMessages();
 		int upperbound = 0; //Upper-bound value of range (position of start top of entry)
-		int lowerbound = chatAccessor.getMessageEndLineIndex(chatLineX, chatLineY); //Lower-bound value of range (position of end of entry)
+		int lowerbound = chatAccessor.invokeGetMessageEndLineIndex(chatLineX, chatLineY); //Lower-bound value of range (position of end of entry)
 		
 		for (int i = lowerbound + 1; i < visibleMessages.size(); i++) { //Iterate until we encounter the end of the next message
 			if (visibleMessages.get(i).endOfEntry()) {
@@ -66,20 +66,20 @@ public class MouseListener {
 			int configuredButton = Config.copyChatMouseButton == Config.MouseButton.MIDDLE ? 2 : 1;
 			
 			ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.inGameHud.getChatHud());
-			boolean isChatOpen = chatAccessor.isChatFocused();
+			boolean isChatOpen = chatAccessor.invokeIsChatFocused();
 			
 			if (button == configuredButton && action == 1 && isChatOpen && Config.copyChatMessages) {
 				Window window = CLIENT.getWindow();
 				int mouseX = (int) (CLIENT.mouse.getX() * window.getScaledWidth() / window.getWidth());
 				int mouseY = (int) (CLIENT.mouse.getY() * window.getScaledHeight() / window.getHeight());
 				
-				double chatLineX = chatAccessor.toChatLineX(mouseX);
-				double chatLineY = chatAccessor.toChatLineY(mouseY);
+				double chatLineX = chatAccessor.invokeToChatLineX(mouseX);
+				double chatLineY = chatAccessor.invokeToChatLineY(mouseY);
 				
 				ToastManager toastManager = CLIENT.getToastManager();
 								
 				if (Config.copyChatMode == Config.CopyChatMode.SINGLE_LINE) {
-					int messageLineIndex = chatAccessor.getMessageLineIndex(chatLineX, chatLineY);
+					int messageLineIndex = chatAccessor.invokeGetMessageLineIndex(chatLineX, chatLineY);
 					List<ChatHudLine.Visible> visibleMessages = chatAccessor.getVisibleMessages();
 					
 					if (messageLineIndex >= 0 && messageLineIndex < visibleMessages.size()) {
