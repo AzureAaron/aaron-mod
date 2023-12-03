@@ -65,7 +65,7 @@ public class DungeonsCommand {
 		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);
 		JsonObject playerJson = null;
 		try {
-			String playerData = Http.sendAuthorizedHypixelRequest("player", "?uuid=" + uuid);
+			String playerData = Http.sendAuthorizedHypixelRequest("v2/player", "?uuid=" + uuid);
 			playerJson = JsonParser.parseString(playerData).getAsJsonObject();
 		} catch (Exception e) {
 			source.sendError(Messages.HYPIXEL_PROFILE_FETCH_ERROR);
