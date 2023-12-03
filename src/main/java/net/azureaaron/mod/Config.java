@@ -29,7 +29,6 @@ import dev.isxander.yacl3.api.controller.StringControllerBuilder;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import net.azureaaron.mod.annotations.ConfigEntry;
 import net.azureaaron.mod.features.TextReplacer;
-import net.azureaaron.mod.util.Constants;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.TextTransformer;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
@@ -293,12 +292,13 @@ public class Config {
 						.name(Text.literal("Colour Profile"))
 						.description(OptionDescription.createBuilder()
 								.text(Text.literal("Changes the colour of text used in commands!\n\nYou can choose from:\n")
-										.append(Text.literal("Original\n").styled(Constants.WITH_COLOUR.apply(Colour.Colours.Original.primaryColour)))
-										.append(Text.literal("Midnight\n").styled(Constants.WITH_COLOUR.apply(Colour.Colours.Midnight.primaryColour)))
-										.append(Text.literal("Earth\n").styled(Constants.WITH_COLOUR.apply(Colour.Colours.Earth.primaryColour)))
-										.append(Text.literal("Sakura\n").styled(Constants.WITH_COLOUR.apply(Colour.Colours.Sakura.primaryColour)))
-										.append(Text.literal("Cloudy\n").styled(Constants.WITH_COLOUR.apply(Colour.Colours.Cloudy.primaryColour)))
-										.append(Text.literal("and Halloween").styled(Constants.WITH_COLOUR.apply(Colour.Colours.Halloween.primaryColour))))
+										.append(Text.literal("Original\n").withColor(Colour.Colours.Original.primaryColour))
+										.append(Text.literal("Midnight\n").withColor(Colour.Colours.Midnight.primaryColour))
+										.append(Text.literal("Earth\n").withColor(Colour.Colours.Earth.primaryColour))
+										.append(Text.literal("Sakura\n").withColor(Colour.Colours.Sakura.primaryColour))
+										.append(Text.literal("Cloudy\n").withColor(Colour.Colours.Cloudy.primaryColour))
+										.append(Text.literal("Halloween\n").withColor(Colour.Colours.Halloween.primaryColour))
+										.append(Text.literal("and Christmas").withColor(Colour.Colours.Christmas.primaryColour)))
 								.build())
 						.binding(Colour.Colours.Original,
 								() -> Colour.colourProfile,
