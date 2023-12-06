@@ -4,7 +4,7 @@ import java.util.List;
 
 import net.azureaaron.mod.Config;
 import net.azureaaron.mod.events.MouseInputEvent;
-import net.azureaaron.mod.mixins.ChatAccessor;
+import net.azureaaron.mod.mixins.accessors.ChatAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.toast.SystemToast;

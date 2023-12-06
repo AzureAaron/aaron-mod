@@ -7,7 +7,7 @@
   "client": [
     "ChatHudMixin",
     "InGameHudMixin",
-    "ChatAccessor",
+    "accessors.ChatAccessor",
     "KeyboardMixin",
     "MinecraftClientMixin",
     "ItemStackMixin",
@@ -33,7 +33,7 @@
     "EnderDragonEntityMixin",
     "ShaderProgramMixin",
     "VertexBufferMixin",
-    "BundleAccessor",
+    "accessors.BundleAccessor",
     "MusicTrackerMixin",
     "PlayerListHudMixin",
     "TextVisitFactoryMixin",

@@ -1,4 +1,4 @@
-package net.azureaaron.mod.mixins;
+package net.azureaaron.mod.mixins.accessors;
 
 import java.util.List;
 

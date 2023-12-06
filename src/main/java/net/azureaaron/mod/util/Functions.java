@@ -15,7 +15,7 @@ import com.sun.management.HotSpotDiagnosticMXBean;
 
 import it.unimi.dsi.fastutil.objects.Object2LongLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
-import net.azureaaron.mod.mixins.BundleAccessor;
+import net.azureaaron.mod.mixins.accessors.BundleAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
