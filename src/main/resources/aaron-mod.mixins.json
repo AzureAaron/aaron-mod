@@ -40,7 +40,8 @@
     "PingMeasurerMixin",
     "GameRenderer$1Mixin",
     "ScreenshotRecorderMixin",
-    "DirectoryResourcePackMixin"
+    "DirectoryResourcePackMixin",
+    "NativeImageMixin"
   ],
   "injectors": {
     "defaultRequire": 1

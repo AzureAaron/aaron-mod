@@ -86,7 +86,7 @@ public class ImagePreview {
 					
 					IMAGE_CACHE.put(url, new CachedImage(System.currentTimeMillis(), texture, image.getWidth(), image.getHeight()));
 				} catch (Exception e) {
-					Main.LOGGER.error("[Aaron's Mod Image Preivew] Failed to cache image! URL: {}, {}", url, e);
+					Main.LOGGER.error("[Aaron's Mod Image Preivew] Failed to cache image! URL: {}", url, e);
 					
 					IMAGE_URLS_CACHED.remove(url);
 				}
