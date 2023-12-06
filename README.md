@@ -62,7 +62,7 @@ Skyblock:
 Continue reading below for a list of commands the mod offers!
 
 ## Commands
-Inside of  the configuration you can choose a colour profile! There is currently 6 available; Original, Midnight, Earth, Sakura, Cloudy and Halloween. This setting will change the colours used to display command feedback.
+Inside of  the configuration you can choose a colour profile! There is currently 7 available; Original, Midnight, Earth, Sakura, Cloudy, Halloween and Christmas. This setting will change the colours used to display command feedback.
 
 Vanilla:
 
