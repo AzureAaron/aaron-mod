@@ -29,7 +29,7 @@ public class InGameHudMixin {
     
     @Inject(method = "render", at = @At("HEAD"))
     public void aaronMod$fpsDisplay(@Arg DrawContext context) {
-    	if(Config.fpsDisplay) FpsDisplay.render(context);
+    	if (Config.fpsDisplay) FpsDisplay.render(context);
     }
     
     @Redirect(method = "renderHeldItemTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;getWidth(Lnet/minecraft/text/StringVisitable;)I"))

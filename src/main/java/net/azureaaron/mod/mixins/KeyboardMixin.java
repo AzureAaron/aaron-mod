@@ -5,7 +5,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.Redirect;
+
+import com.llamalad7.mixinextras.injector.WrapWithCondition;
 
 import dev.cbyrne.betterinject.annotations.Inject;
 import net.azureaaron.mod.Config;
@@ -31,8 +32,8 @@ public class KeyboardMixin {
 		if(Config.alternateF3PlusNKey) client.inGameHud.getChatHud().addMessage(Text.literal("F3 + J = Cycle previous gamemode <-> spectator"));
 	}
 	
-	@Redirect(method = "processF3", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ChatHud;addMessage(Lnet/minecraft/text/Text;)V", ordinal = 8))
-	private void aaronMod$removeF3PlusNMessage(ChatHud chatHud, Text text) {
-		if(!Config.alternateF3PlusNKey) chatHud.addMessage(text);
+	@WrapWithCondition(method = "processF3", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ChatHud;addMessage(Lnet/minecraft/text/Text;)V", ordinal = 8))
+	private boolean aaronMod$removeF3PlusNMessage(ChatHud chatHud, Text text) {
+		return !Config.alternateF3PlusNKey;
 	}
 }

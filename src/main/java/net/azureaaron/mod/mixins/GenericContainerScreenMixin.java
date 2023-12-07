@@ -2,7 +2,8 @@ package net.azureaaron.mod.mixins;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+
+import com.llamalad7.mixinextras.injector.WrapWithCondition;
 
 import net.azureaaron.mod.Config;
 import net.azureaaron.mod.features.MouseGuiPositioner;
@@ -24,9 +25,9 @@ implements ScreenHandlerProvider<GenericContainerScreenHandler> {
 		super(handler, inventory, title);
 	}
 
-	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/GenericContainerScreen;drawMouseoverTooltip(Lnet/minecraft/client/gui/DrawContext;II)V", ordinal = 0))
-	private void aaronMod$hideScreenToolips(GenericContainerScreen container, DrawContext context, int mouseX, int mouseY) {
-		if(!(Functions.isOnHypixel() && Config.hideClickOnTimeTooltips && this.title.getString().equals("Click the button on time!"))) this.drawMouseoverTooltip(context, mouseX, mouseY);
+	@WrapWithCondition(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/GenericContainerScreen;drawMouseoverTooltip(Lnet/minecraft/client/gui/DrawContext;II)V", ordinal = 0))
+	private boolean aaronMod$hideScreenToolips(GenericContainerScreen container, DrawContext context, int mouseX, int mouseY) {
+		return !(Functions.isOnHypixel() && Config.hideClickOnTimeTooltips && this.title.getString().equals("Click the button on time!"));
 	}
 	
 	@Override

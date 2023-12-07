@@ -2,7 +2,8 @@ package net.azureaaron.mod.mixins;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+
+import com.llamalad7.mixinextras.injector.WrapWithCondition;
 
 import dev.cbyrne.betterinject.annotations.Arg;
 import dev.cbyrne.betterinject.annotations.Inject;
@@ -19,9 +20,9 @@ import net.minecraft.network.packet.s2c.play.TeamS2CPacket;
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientPlayNetworkHandlerMixin {
 	
-	@Redirect(method = "onPlayerRespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/MusicTracker;stop()V", ordinal = 0))
-	private void aaronMod$onWorldChange(MusicTracker musicTracker) {
-		if(!Config.stopSoundsOnWorldChange) musicTracker.stop();
+	@WrapWithCondition(method = "onPlayerRespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/MusicTracker;stop()V", ordinal = 0))
+	private boolean aaronMod$onWorldChange(MusicTracker musicTracker) {
+		return !Config.stopSoundsOnWorldChange;
 	}
 	
 	@Inject(method = "onPlaySound", at = @At("HEAD"))

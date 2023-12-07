@@ -22,15 +22,15 @@ public class GameRendererMixin {
 	
 	@ModifyReturnValue(method = "getFov", at = @At("RETURN"))
 	private double aaronMod$zoom(double fov) {
-		if(Keybinds.zoomKeybind.isPressed()) {
-			if(this.aaronMod$cameraSmoothed == false) { 
+		if (Keybinds.zoomKeybind.isPressed()) {
+			if (!this.aaronMod$cameraSmoothed) { 
 				this.aaronMod$cameraSmoothed = true; 
 				this.client.options.smoothCameraEnabled = true; 
 			}
 			
 			return fov * Config.zoomMultiplier;
 		} else {
-			if(this.aaronMod$cameraSmoothed == true) {
+			if (this.aaronMod$cameraSmoothed) {
 				this.aaronMod$cameraSmoothed = false;
 				this.client.options.smoothCameraEnabled = false;
 			}
