@@ -1,6 +1,6 @@
 package net.azureaaron.mod.features;
 
-import net.azureaaron.mod.Config;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.ParticleSpawnEvent;
 import net.azureaaron.mod.features.BoundingBoxes.Dragons;
 import net.azureaaron.mod.util.Cache;
@@ -28,7 +28,7 @@ public class DragonTimers {
 	}
 	
 	private static void renderSpawnTimers(WorldRenderContext wrc) {
-		if(Functions.isOnHypixel() && Config.m7DragonSpawnTimers && Cache.inM7Phase5) {
+		if(Functions.isOnHypixel() && AaronModConfigManager.get().m7DragonSpawnTimers && Cache.inM7Phase5) {
 			if(Cache.powerSpawnStart != 0L && Cache.powerSpawnStart + 5000 > System.currentTimeMillis()) {
 				int timeUntilSpawn = (int) (Cache.powerSpawnStart + 5000 - System.currentTimeMillis());
 				OrderedText spawnText = Text.literal(timeUntilSpawn + " ms").asOrderedText();

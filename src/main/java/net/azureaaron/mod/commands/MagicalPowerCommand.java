@@ -2,7 +2,6 @@ package net.azureaaron.mod.commands;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
-import static net.azureaaron.mod.Colour.colourProfile;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
@@ -26,6 +25,8 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.logging.LogUtils;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.JsonHelper;
 import net.azureaaron.mod.util.Messages;
@@ -68,6 +69,8 @@ public class MagicalPowerCommand {
 	//TODO maybe make this account for when you can't use an accessory
 	//TODO also display the stats you get from your power
 	protected static void printMP(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
+		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
+		
 		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);	
 		
 		JsonObject inventoryData = profile.getAsJsonObject("inventory");
@@ -196,24 +199,24 @@ public class MagicalPowerCommand {
 		//Item Rarity Counts - Maybe I'll make this happen later (I'd really need an ItemRarity enum to reduce code duplication/hackiness)
 		//List<Text> rarities = collectedAccessories.entrySet().stream().map(entry -> getRarityBreakdownText(entry.getValue(), collectedAccessories)).collect(Collectors.toList());
 				
-		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
-				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))
-				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour).withBold(true).withStrikethrough(false))
-				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour).withBold(false).withStrikethrough(false)))
-				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true))));
+		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
+				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
+				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
+				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
+				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
 		
 		source.sendFeedback(startText);
 		
-		source.sendFeedback(Text.literal("Magical Power » ").withColor(colourProfile.infoColour)
-				.append(Text.literal(Functions.NUMBER_FORMATTER_ND.format(magicalPower)).withColor(colourProfile.highlightColour)));
-		source.sendFeedback(Text.literal("Selected Power » " + Functions.titleCase(selectedPower)).withColor(colourProfile.infoColour));
+		source.sendFeedback(Text.literal("Magical Power » ").withColor(colourProfile.infoColour.getAsInt())
+				.append(Text.literal(Functions.NUMBER_FORMATTER_ND.format(magicalPower)).withColor(colourProfile.highlightColour.getAsInt())));
+		source.sendFeedback(Text.literal("Selected Power » " + Functions.titleCase(selectedPower)).withColor(colourProfile.infoColour.getAsInt()));
 		
 		source.sendFeedback(Text.literal(""));
 		
-		source.sendFeedback(Text.literal("(Tunings)").styled(style -> style.withColor(colourProfile.hoverColour).withHoverEvent(
+		source.sendFeedback(Text.literal("(Tunings)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt()).withHoverEvent(
 				new HoverEvent(HoverEvent.Action.SHOW_TEXT, getStatsBreakdown(tunings)))));
 		
-		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
+		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 	}
 	
 	private static Text getStatText(String stat, int tuningAmount) {

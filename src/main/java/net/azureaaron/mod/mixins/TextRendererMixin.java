@@ -12,7 +12,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
 import dev.cbyrne.betterinject.annotations.Arg;
 import dev.cbyrne.betterinject.annotations.Inject;
-import net.azureaaron.mod.Config;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.NametagDrawer;
 import net.azureaaron.mod.features.TextReplacer;
 import net.minecraft.client.font.TextRenderer;
@@ -41,7 +41,7 @@ public class TextRendererMixin implements NametagDrawer {
 	
 	@Override
 	public int drawNametag(OrderedText text, float x, float y, int colour, boolean shadow, Matrix4f matrix, VertexConsumerProvider vertexConsumerProvider, TextLayerType layerType, int backgroundColour, int light) {
-		if (Config.visualTextReplacer) {
+		if (AaronModConfigManager.get().visualTextReplacer) {
 			text = TextReplacer.visuallyReplaceText(text);
 			x = -getWidth(text) / 2; //Fix x offset
 		}
@@ -58,11 +58,11 @@ public class TextRendererMixin implements NametagDrawer {
 	
 	@Inject(method = "drawInternal(Lnet/minecraft/text/OrderedText;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;II)I", at = @At("HEAD"))
 	private void aaronMod$visuallyReplaceOrderedText(@Arg OrderedText text, @Share("newText") LocalRef<OrderedText> newText) {
-		if (Config.visualTextReplacer) newText.set(TextReplacer.visuallyReplaceText(text));
+		if (AaronModConfigManager.get().visualTextReplacer) newText.set(TextReplacer.visuallyReplaceText(text));
 	}
 	
 	@ModifyVariable(method = "drawInternal(Lnet/minecraft/text/OrderedText;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;II)I", at = @At("LOAD"))
 	private OrderedText aaronMod$actuallyChangeTheText(OrderedText text, @Share("newText") LocalRef<OrderedText> newText) {
-		return Config.visualTextReplacer ? newText.get() : text;
+		return AaronModConfigManager.get().visualTextReplacer ? newText.get() : text;
 	}
 }

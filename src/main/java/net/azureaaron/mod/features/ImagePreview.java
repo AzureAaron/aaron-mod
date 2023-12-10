@@ -11,8 +11,8 @@ import com.google.common.collect.ImmutableSet;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.azureaaron.mod.Config;
 import net.azureaaron.mod.Main;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.ReceiveChatMessageEvent;
 import net.azureaaron.mod.util.Http;
 import net.azureaaron.mod.util.TextTransformer;
@@ -47,7 +47,7 @@ public class ImagePreview {
 	}
 	
 	private static void inspectMessageForImageLinks(Text text, boolean overlay, boolean cancelled) {
-		if (Config.imagePreview && !overlay && !cancelled) {
+		if (AaronModConfigManager.get().imagePreview && !overlay && !cancelled) {
 			ObjectOpenHashSet<String> foundImages = new ObjectOpenHashSet<>();
 			Text deconstructedText = TextTransformer.deconstructAllComponents(text); 
 			List<Text> components = deconstructedText.getSiblings();
@@ -95,7 +95,7 @@ public class ImagePreview {
 	}
 	
 	private static void afterScreenRendered(Screen screen, DrawContext context, int mouseX, int mouseY) {
-		if (screen instanceof ChatScreen && Config.imagePreview) {
+		if (screen instanceof ChatScreen && AaronModConfigManager.get().imagePreview) {
 			MinecraftClient client = MinecraftClient.getInstance();
 			Style style = client.inGameHud.getChatHud().getTextStyleAt(mouseX, mouseY);
 			
@@ -151,11 +151,11 @@ public class ImagePreview {
 	}
 	
 	private static float getPrevHeightDiv() {
-		return (6.75f * 15f) * Config.imagePreviewScale;
+		return (6.75f * 15f) * AaronModConfigManager.get().imagePreviewScale;
 	}
 	
 	private static float getPrevWidthDiv() {
-		return (12f * 15f) * Config.imagePreviewScale;
+		return (12f * 15f) * AaronModConfigManager.get().imagePreviewScale;
 	}
 	
 	private static record CachedImage(long creationTime, Identifier texture, int width, int height) {}

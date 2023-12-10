@@ -1,7 +1,7 @@
 package net.azureaaron.mod.screens;
 
-import net.azureaaron.mod.Config;
 import net.azureaaron.mod.Main;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -50,7 +50,7 @@ public class ModScreen extends Screen {
 	}
 	
 	private void openConfig() {
-		this.client.setScreen(Config.createGui(this));
+		this.client.setScreen(AaronModConfigManager.createGui(this));
 	}
 	
 	@Override

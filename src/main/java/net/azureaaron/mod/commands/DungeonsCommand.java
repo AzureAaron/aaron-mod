@@ -2,7 +2,6 @@ package net.azureaaron.mod.commands;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
-import static net.azureaaron.mod.Colour.colourProfile;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
@@ -18,6 +17,8 @@ import com.google.gson.JsonParser;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.logging.LogUtils;
 
+import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Http;
 import net.azureaaron.mod.util.JsonHelper;
@@ -56,6 +57,8 @@ public class DungeonsCommand {
 	}
 			
 	protected static void printDungeons(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
+		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
+		
 		if (body.getAsJsonObject("members").getAsJsonObject(uuid).getAsJsonObject("dungeons").getAsJsonObject("dungeon_types").getAsJsonObject("catacombs").get("times_played") == null) {
 			source.sendError(NEVER_PLAYED_DUNGEONS_ERROR);
 			
@@ -90,11 +93,11 @@ public class DungeonsCommand {
 		int secrets = JsonHelper.getInt(playerJson, "player.achievements.skyblock_treasure_hunter").orElse(0);
 		String selectedClass = JsonHelper.getString(dungeonsStats, "selected_dungeon_class").orElse("None"); //The fallback value used to be null which was a great choice until it threw an NPE!
 		
-		int healerColour = ("healer".equals(selectedClass)) ? colourProfile.highlightColour : colourProfile.infoColour;
-		int mageColour = ("mage".equals(selectedClass)) ? colourProfile.highlightColour : colourProfile.infoColour;
-		int berserkColour = ("berserk".equals(selectedClass)) ? colourProfile.highlightColour : colourProfile.infoColour;
-		int archerColour = ("archer".equals(selectedClass)) ? colourProfile.highlightColour : colourProfile.infoColour;
-		int tankColour = ("tank".equals(selectedClass)) ? colourProfile.highlightColour : colourProfile.infoColour;
+		int healerColour = ("healer".equals(selectedClass)) ? colourProfile.highlightColour.getAsInt() : colourProfile.infoColour.getAsInt();
+		int mageColour = ("mage".equals(selectedClass)) ? colourProfile.highlightColour.getAsInt() : colourProfile.infoColour.getAsInt();
+		int berserkColour = ("berserk".equals(selectedClass)) ? colourProfile.highlightColour.getAsInt() : colourProfile.infoColour.getAsInt();
+		int archerColour = ("archer".equals(selectedClass)) ? colourProfile.highlightColour.getAsInt() : colourProfile.infoColour.getAsInt();
+		int tankColour = ("tank".equals(selectedClass)) ? colourProfile.highlightColour.getAsInt() : colourProfile.infoColour.getAsInt();
 		
 		//TODO rework this slightly?
 		JsonElement dailyRuns = dungeonsStats.get("daily_runs");
@@ -124,38 +127,38 @@ public class DungeonsCommand {
 		int masterFloor6s = JsonHelper.getInt(masterTierCompletions, "6").orElse(0);
 		int masterFloor7s = JsonHelper.getInt(masterTierCompletions, "7").orElse(0);
 		
-		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
-				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))
-				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour).withBold(true).withStrikethrough(false))
-				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour).withBold(false).withStrikethrough(false)))
-				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true))));
+		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
+				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
+				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
+				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
+				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
 		
 		source.sendFeedback(startText);
 		
-		source.sendFeedback(Text.literal("Level » " + String.valueOf(catacombsLevel)).styled(style -> style.withColor(colourProfile.infoColour)
-				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Total XP: " + Functions.NUMBER_FORMATTER_ND.format(catacombsXp)).withColor(colourProfile.infoColour)))));
-		source.sendFeedback(Text.literal("Dailies » " + ((onDailies) ? "✓" : "✗") + dailiesLeft).withColor(colourProfile.infoColour));
-		source.sendFeedback(Text.literal("Secrets » " + Functions.NUMBER_FORMATTER_ND.format(secrets)).withColor(colourProfile.infoColour));
-		source.sendFeedback(Text.literal("Selected Class » ").withColor(colourProfile.infoColour)
-				.append(Text.literal(Functions.titleCase(selectedClass)).withColor(colourProfile.highlightColour)));
+		source.sendFeedback(Text.literal("Level » " + String.valueOf(catacombsLevel)).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())
+				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Total XP: " + Functions.NUMBER_FORMATTER_ND.format(catacombsXp)).withColor(colourProfile.infoColour.getAsInt())))));
+		source.sendFeedback(Text.literal("Dailies » " + ((onDailies) ? "✓" : "✗") + dailiesLeft).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Text.literal("Secrets » " + Functions.NUMBER_FORMATTER_ND.format(secrets)).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Text.literal("Selected Class » ").withColor(colourProfile.infoColour.getAsInt())
+				.append(Text.literal(Functions.titleCase(selectedClass)).withColor(colourProfile.highlightColour.getAsInt())));
 		
-		source.sendFeedback(Text.literal("[ H » ").withColor(colourProfile.infoColour)
+		source.sendFeedback(Text.literal("[ H » ").withColor(colourProfile.infoColour.getAsInt())
 				.append(Text.literal(String.valueOf(healerLevel)).withColor(healerColour))
-				.append(Text.literal(" • M » ").withColor(colourProfile.infoColour))
+				.append(Text.literal(" • M » ").withColor(colourProfile.infoColour.getAsInt()))
 				.append(Text.literal(String.valueOf(mageLevel)).withColor(mageColour))
-				.append(Text.literal(" • B » ").withColor(colourProfile.infoColour))
+				.append(Text.literal(" • B » ").withColor(colourProfile.infoColour.getAsInt()))
 				.append(Text.literal(String.valueOf(berserkLevel)).withColor(berserkColour))
-				.append(Text.literal(" • A » ").withColor(colourProfile.infoColour))
+				.append(Text.literal(" • A » ").withColor(colourProfile.infoColour.getAsInt()))
 				.append(Text.literal(String.valueOf(archerLevel)).withColor(archerColour))
-				.append(Text.literal(" • T » ").withColor(colourProfile.infoColour))
+				.append(Text.literal(" • T » ").withColor(colourProfile.infoColour.getAsInt()))
 				.append(Text.literal(String.valueOf(tankLevel)).withColor(tankColour))
-				.append(Text.literal(" ]").withColor(colourProfile.infoColour))
-				.styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Class Avg. » " + String.valueOf(classAverage)).withColor(colourProfile.infoColour)))));
+				.append(Text.literal(" ]").withColor(colourProfile.infoColour.getAsInt()))
+				.styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Class Avg. » " + String.valueOf(classAverage)).withColor(colourProfile.infoColour.getAsInt())))));
 		
 		source.sendFeedback(Text.literal(""));
 		
-		source.sendFeedback(Text.literal("(Catacombs Completions)").styled(style -> style.withColor(colourProfile.hoverColour)
-				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Entrance » " + Functions.NUMBER_FORMATTER_ND.format(entrances) + "\n").withColor(colourProfile.infoColour)
+		source.sendFeedback(Text.literal("(Catacombs Completions)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt())
+				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Entrance » " + Functions.NUMBER_FORMATTER_ND.format(entrances) + "\n").withColor(colourProfile.infoColour.getAsInt())
 						.append(Text.literal("F1 » " + Functions.NUMBER_FORMATTER_ND.format(floor1s) + "\n"))
 						.append(Text.literal("F2 » " + Functions.NUMBER_FORMATTER_ND.format(floor2s) + "\n"))
 						.append(Text.literal("F3 » " + Functions.NUMBER_FORMATTER_ND.format(floor3s) + "\n"))
@@ -163,8 +166,8 @@ public class DungeonsCommand {
 						.append(Text.literal("F5 » " + Functions.NUMBER_FORMATTER_ND.format(floor5s) + "\n"))
 						.append(Text.literal("F6 » " + Functions.NUMBER_FORMATTER_ND.format(floor6s) + "\n"))
 						.append(Text.literal("F7 » " + Functions.NUMBER_FORMATTER_ND.format(floor7s)))))));
-		source.sendFeedback(Text.literal("(Master Catacombs Completions)").styled(style -> style.withColor(colourProfile.hoverColour)
-				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("M1 » " + Functions.NUMBER_FORMATTER_ND.format(masterFloor1s) + "\n").withColor(colourProfile.infoColour)
+		source.sendFeedback(Text.literal("(Master Catacombs Completions)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt())
+				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("M1 » " + Functions.NUMBER_FORMATTER_ND.format(masterFloor1s) + "\n").withColor(colourProfile.infoColour.getAsInt())
 						.append(Text.literal("M2 » " + Functions.NUMBER_FORMATTER_ND.format(masterFloor2s) + "\n"))
 						.append(Text.literal("M3 » " + Functions.NUMBER_FORMATTER_ND.format(masterFloor3s) + "\n"))
 						.append(Text.literal("M4 » " + Functions.NUMBER_FORMATTER_ND.format(masterFloor4s) + "\n"))
@@ -172,6 +175,6 @@ public class DungeonsCommand {
 						.append(Text.literal("M6 » " + Functions.NUMBER_FORMATTER_ND.format(masterFloor6s) + "\n"))
 						.append(Text.literal("M7 » " + Functions.NUMBER_FORMATTER_ND.format(masterFloor7s)))))));
 		
-		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
+		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 	}
 }

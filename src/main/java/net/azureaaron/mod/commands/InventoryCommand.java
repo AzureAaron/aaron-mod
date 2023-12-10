@@ -2,7 +2,6 @@ package net.azureaaron.mod.commands;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
-import static net.azureaaron.mod.Colour.colourProfile;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
@@ -20,6 +19,8 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import me.nullicorn.nedit.NBTReader;
 import me.nullicorn.nedit.type.NBTCompound;
 import me.nullicorn.nedit.type.NBTList;
+import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.util.ItemUtils;
 import net.azureaaron.mod.util.JsonHelper;
 import net.azureaaron.mod.util.Skyblock;
@@ -100,6 +101,8 @@ public class InventoryCommand {
 	};
 	
 	protected static void printInventory(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
+		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
+		
 		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);
 		
 		JsonObject inventoryData = profile.getAsJsonObject("inventory");
@@ -176,15 +179,15 @@ public class InventoryCommand {
 		//Sort key items by name
 		keyItems.sort((o1, o2) -> o1.formattedName().getString().compareTo(o2.formattedName().getString()));
 		
-		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
-				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))
-				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour).withBold(true).withStrikethrough(false))
-				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour).withBold(false).withStrikethrough(false)))
-				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true))));
+		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
+				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
+				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
+				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
+				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
 		
 		source.sendFeedback(startText);
 		
-		source.sendFeedback(Text.literal("Inventory API » " + ((inventoryEnabled) ? "✓" : "✗")).withColor(colourProfile.infoColour));
+		source.sendFeedback(Text.literal("Inventory API » " + ((inventoryEnabled) ? "✓" : "✗")).withColor(colourProfile.infoColour.getAsInt()));
 		source.sendFeedback(Text.literal(""));
 		source.sendFeedback(helmet.feedbackMessage());
 		source.sendFeedback(chestplate.feedbackMessage());
@@ -209,7 +212,7 @@ public class InventoryCommand {
 			}
 		}
 		
-		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
+		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 		return;
 	}
 }

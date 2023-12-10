@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 import dev.cbyrne.betterinject.annotations.Inject;
-import net.azureaaron.mod.Config;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.ImagePreview;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
@@ -22,8 +22,8 @@ public class ChatHudMixin {
     
     @ModifyExpressionValue(method = "addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;ILnet/minecraft/client/gui/hud/MessageIndicator;Z)V", at = @At(value = "CONSTANT", args = "intValue=100"))
     private int aaronMod$longerChatHistory(int maxMessages) {
-    	MAX_MESSAGES = Math.max(100, Config.chatHistoryLength);
-    	return Math.max(100, Config.chatHistoryLength);
+    	MAX_MESSAGES = Math.max(100, AaronModConfigManager.get().chatHistoryLength);
+    	return Math.max(100, AaronModConfigManager.get().chatHistoryLength);
     }
     
     @Inject(method = "clear", at = @At("TAIL"))

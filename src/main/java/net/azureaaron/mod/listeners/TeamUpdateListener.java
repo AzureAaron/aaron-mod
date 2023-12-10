@@ -3,7 +3,7 @@ package net.azureaaron.mod.listeners;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.azureaaron.mod.Config;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.TeamUpdateEvent;
 import net.azureaaron.mod.util.Cache;
 import net.azureaaron.mod.util.Functions;
@@ -34,19 +34,19 @@ public class TeamUpdateListener {
 				String display = (team.getPrefix().getString() + team.getSuffix().getString()).trim();
 				Matcher scoreMatcher = SCORE_PATTERN.matcher(display);
 								
-				if (scoreMatcher.matches() && Config.dungeonScoreMessage) {
+				if (scoreMatcher.matches() && AaronModConfigManager.get().dungeonScoreMessage) {
 					int score = fastApproxScore(Integer.parseInt(scoreMatcher.group("score")));
 					Cache.currentScore = score;
 					
 					if (score >= 270 && score < 300 && Cache.lastTwoHundredSeventyScore == 0L) {
 						Cache.lastTwoHundredSeventyScore = System.currentTimeMillis();
-						String S270 = Config.twoHundredSeventyScore.trim();
+						String S270 = AaronModConfigManager.get().twoHundredSeventyScore.trim();
 						CLIENT.player.networkHandler.sendChatMessage("270 Score → " + S270.substring(0, Math.min(S270.length(), 244)));
 					}
 					
 					if (score >= 300 && Cache.lastThreeHundredScore == 0L) {
 						Cache.lastThreeHundredScore = System.currentTimeMillis();
-						String S300 = Config.threeHundredScore.trim();
+						String S300 = AaronModConfigManager.get().threeHundredScore.trim();
 						CLIENT.player.networkHandler.sendChatMessage("300 Score → " + S300.substring(0, Math.min(S300.length(), 244)));
 					};
 				};

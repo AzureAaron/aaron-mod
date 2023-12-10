@@ -1,6 +1,6 @@
 package net.azureaaron.mod.features;
 
-import net.azureaaron.mod.Config;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.BoundingBoxes.Dragons;
 import net.azureaaron.mod.util.Cache;
 import net.azureaaron.mod.util.Functions;
@@ -41,7 +41,7 @@ public class M7Waypoints {
 				renderFilled(wrc, GREEN_GYRO, 252f * 255f, 211f * 255f, 3 * 255f);
 			}*/
 			
-			if (Config.m7ShootWaypoints) {
+			if (AaronModConfigManager.get().m7ShootWaypoints) {
 				Renderer.renderFilledBox(wrc, BLUE_SHOOT, Dragons.ICE.red, Dragons.ICE.green, Dragons.ICE.blue, ALPHA);
 				Renderer.renderFilledBox(wrc, GREEN_SHOOT, Dragons.APEX.red, Dragons.APEX.green, Dragons.APEX.blue, ALPHA);
 				Renderer.renderFilledBox(wrc, ORANGE_SHOOT, Dragons.FLAME.red, Dragons.FLAME.green, Dragons.FLAME.blue, ALPHA);
@@ -49,7 +49,7 @@ public class M7Waypoints {
 				Renderer.renderFilledBox(wrc, RED_SHOOT, Dragons.POWER.red, Dragons.POWER.green, Dragons.POWER.blue, ALPHA);
 			}
 			
-			if (Config.m7StackWaypoints) {
+			if (AaronModConfigManager.get().m7StackWaypoints) {
 				Renderer.renderHalfFilledBox(wrc, ORANGE_STACK, Dragons.FLAME.red, Dragons.FLAME.green, Dragons.FLAME.blue, ALPHA, false);
 				Renderer.renderHalfFilledBox(wrc, BLUE_STACK, Dragons.ICE.red, Dragons.ICE.green, Dragons.ICE.blue, ALPHA, true);
 				Renderer.renderFilledBox(wrc, BLUE_STACK_ALT, Dragons.ICE.red, Dragons.ICE.green, Dragons.ICE.blue, ALPHA);

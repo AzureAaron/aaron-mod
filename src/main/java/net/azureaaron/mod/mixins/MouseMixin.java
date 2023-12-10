@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import dev.cbyrne.betterinject.annotations.Arg;
 import dev.cbyrne.betterinject.annotations.Inject;
-import net.azureaaron.mod.Config;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.MouseInputEvent;
 import net.azureaaron.mod.features.MouseGuiPositioner;
 import net.minecraft.client.MinecraftClient;
@@ -43,7 +43,7 @@ public class MouseMixin implements MouseGuiPositioner {
 		
 	@Redirect(method = "unlockCursor", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Mouse;x:D", opcode = Opcodes.PUTFIELD, ordinal = 0))
 	private void aaronMod$unlockXPos(Mouse mouse, double centreX) {
-		if(Config.resetCursorPosition && client.currentScreen instanceof GenericContainerScreen) {
+		if(AaronModConfigManager.get().resetCursorPosition && client.currentScreen instanceof GenericContainerScreen) {
 			this.x = this.aaronMod$guiX;
 		} else {
 			this.x = centreX;
@@ -52,7 +52,7 @@ public class MouseMixin implements MouseGuiPositioner {
 	
 	@Redirect(method = "unlockCursor", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Mouse;y:D", opcode = Opcodes.PUTFIELD, ordinal = 0))
 	private void aaronMod$unlockYPos(Mouse mouse, double centreY) {
-		if(Config.resetCursorPosition && client.currentScreen instanceof GenericContainerScreen) {
+		if(AaronModConfigManager.get().resetCursorPosition && client.currentScreen instanceof GenericContainerScreen) {
 			this.y = this.aaronMod$guiY;
 		} else {
 			this.y = centreY;
@@ -61,7 +61,7 @@ public class MouseMixin implements MouseGuiPositioner {
 	
 	@Inject(method = "unlockCursor", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/InputUtil;setCursorParameters(JIDD)V", ordinal = 0, shift = At.Shift.AFTER))
 	private void aaronMod$correctCursorPosition() {
-		if(Config.resetCursorPosition && client.currentScreen instanceof GenericContainerScreen) GLFW.glfwSetCursorPos(this.client.getWindow().getHandle(), this.aaronMod$guiX, this.aaronMod$guiY);
+		if(AaronModConfigManager.get().resetCursorPosition && client.currentScreen instanceof GenericContainerScreen) GLFW.glfwSetCursorPos(this.client.getWindow().getHandle(), this.aaronMod$guiX, this.aaronMod$guiY);
 	}
 
 	@Override

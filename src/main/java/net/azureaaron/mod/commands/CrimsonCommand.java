@@ -2,7 +2,6 @@ package net.azureaaron.mod.commands;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
-import static net.azureaaron.mod.Colour.colourProfile;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
@@ -11,6 +10,8 @@ import java.lang.invoke.MethodHandle;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
 
+import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.JsonHelper;
 import net.azureaaron.mod.util.Skyblock;
@@ -32,13 +33,15 @@ public class CrimsonCommand {
 	}
 	
 	protected static void printCrimson(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
+		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
+		
 		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);
 		JsonObject crimsonIsleStats = profile.getAsJsonObject("nether_island_player_data");
 		
 		String selectedFaction = JsonHelper.getString(crimsonIsleStats, "selected_faction").orElse("None");
 		
-		int barbarianColour = (selectedFaction.equals("barbarians")) ? colourProfile.highlightColour : colourProfile.infoColour;
-		int mageColour = (selectedFaction.equals("mages")) ? colourProfile.highlightColour : colourProfile.infoColour;
+		int barbarianColour = (selectedFaction.equals("barbarians")) ? colourProfile.highlightColour.getAsInt() : colourProfile.infoColour.getAsInt();
+		int mageColour = (selectedFaction.equals("mages")) ? colourProfile.highlightColour.getAsInt() : colourProfile.infoColour.getAsInt();
 		
 		int barbarianReputation = JsonHelper.getInt(crimsonIsleStats, "barbarians_reputation").orElse(0);
 		int mageReputation = JsonHelper.getInt(crimsonIsleStats, "mages_reputation").orElse(0);
@@ -71,27 +74,27 @@ public class CrimsonCommand {
 		String controlGrade = Skyblock.getDojoGrade(controlScore);
 		String tenacityGrade = Skyblock.getDojoGrade(tenacityScore);
 		
-		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
-				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))
-				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour).withBold(true).withStrikethrough(false))
-				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour).withBold(false).withStrikethrough(false)))
-				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true))));
+		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
+				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
+				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
+				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
+				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
 		
 		source.sendFeedback(startText);
 		
-		source.sendFeedback(Text.literal("Faction » ").withColor(colourProfile.infoColour)
-				.append(Text.literal(Functions.titleCase(selectedFaction)).withColor(colourProfile.highlightColour)));
+		source.sendFeedback(Text.literal("Faction » ").withColor(colourProfile.infoColour.getAsInt())
+				.append(Text.literal(Functions.titleCase(selectedFaction)).withColor(colourProfile.highlightColour.getAsInt())));
 		
-		source.sendFeedback(Text.literal("[ B » ").withColor(colourProfile.infoColour)
+		source.sendFeedback(Text.literal("[ B » ").withColor(colourProfile.infoColour.getAsInt())
 				.append(Text.literal(Functions.NUMBER_FORMATTER_ND.format(barbarianReputation)).withColor(barbarianColour))
-				.append(Text.literal(" • M » ").withColor(colourProfile.infoColour))
+				.append(Text.literal(" • M » ").withColor(colourProfile.infoColour.getAsInt()))
 				.append(Text.literal(Functions.NUMBER_FORMATTER_ND.format(mageReputation)).withColor(mageColour))
 				.append(Text.literal(" ]")));
 		
 		source.sendFeedback(Text.literal(""));
-		source.sendFeedback(Text.literal("(Kuudra Completions)").styled(style -> style.withColor(colourProfile.hoverColour)
+		source.sendFeedback(Text.literal("(Kuudra Completions)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt())
 				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, 
-						Text.literal("Total Completions » " + Functions.NUMBER_FORMATTER_ND.format(totalKuudraCompletions) + "\n").withColor(colourProfile.infoColour)
+						Text.literal("Total Completions » " + Functions.NUMBER_FORMATTER_ND.format(totalKuudraCompletions) + "\n").withColor(colourProfile.infoColour.getAsInt())
 						.append(Text.literal("Basic » " + Functions.NUMBER_FORMATTER_ND.format(basicCompletions) + "\n" ))
 						.append(Text.literal("Hot » " + Functions.NUMBER_FORMATTER_ND.format(hotCompletions) + "\n" ))
 						.append(Text.literal("Burning » " + Functions.NUMBER_FORMATTER_ND.format(burningCompletions) + "\n" ))
@@ -99,9 +102,9 @@ public class CrimsonCommand {
 						.append(Text.literal("Infernal » " + Functions.NUMBER_FORMATTER_ND.format(infernalCompletions)))))));
 		
 		//Colour the dojo score eventually - maybe!
-		source.sendFeedback(Text.literal("(Dojo Tests)").styled(style -> style.withColor(colourProfile.hoverColour)
+		source.sendFeedback(Text.literal("(Dojo Tests)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt())
 				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, 
-						Text.literal("Total Score » " + Functions.NUMBER_FORMATTER_ND.format(totalDojoScore) + "\n").withColor(colourProfile.infoColour)
+						Text.literal("Total Score » " + Functions.NUMBER_FORMATTER_ND.format(totalDojoScore) + "\n").withColor(colourProfile.infoColour.getAsInt())
 						.append(Text.literal("Force » " + forceGrade + " (" + Functions.NUMBER_FORMATTER_ND.format(forceScore) + ") \n" ))
 						.append(Text.literal("Stamina » " + staminaGrade + " (" + Functions.NUMBER_FORMATTER_ND.format(staminaScore) + ") \n" ))
 						.append(Text.literal("Mastery » " + masteryGrade + " (" + Functions.NUMBER_FORMATTER_ND.format(masteryScore) + ") \n" ))
@@ -110,6 +113,6 @@ public class CrimsonCommand {
 						.append(Text.literal("Control » " + controlGrade + " (" + Functions.NUMBER_FORMATTER_ND.format(controlScore) + ") \n" ))
 						.append(Text.literal("Tenacity » " + tenacityGrade + " (" + Functions.NUMBER_FORMATTER_ND.format(tenacityScore) + ")" ))))));
 		
-		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
+		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 	}
 }

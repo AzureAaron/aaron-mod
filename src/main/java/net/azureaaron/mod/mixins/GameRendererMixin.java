@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
 import dev.cbyrne.betterinject.annotations.Inject;
-import net.azureaaron.mod.Config;
 import net.azureaaron.mod.Keybinds;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.TimeUniform;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
@@ -28,7 +28,7 @@ public class GameRendererMixin {
 				this.client.options.smoothCameraEnabled = true; 
 			}
 			
-			return fov * Config.zoomMultiplier;
+			return fov * AaronModConfigManager.get().zoomMultiplier;
 		} else {
 			if (this.aaronMod$cameraSmoothed) {
 				this.aaronMod$cameraSmoothed = false;

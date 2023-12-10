@@ -3,7 +3,6 @@ package net.azureaaron.mod.commands;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
-import static net.azureaaron.mod.Colour.colourProfile;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
@@ -15,6 +14,8 @@ import java.util.List;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 
+import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.util.UnsafeAccess;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
@@ -44,6 +45,8 @@ public class ReflectCommand implements UnsafeAccess {
 	private static final List<String> TYPES = Arrays.asList("byte", "char", "double", "float", "int", "long", "short", "boolean", "string");
 	
     private static int reflectionExecutor(FabricClientCommandSource source, String opcode, String targetClass, String target, String type, String newValue) {
+    	ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
+    	
     	if(!OPCODES.contains(opcode)) {
     		source.sendError(INVALID_OPCODE);
     		return Command.SINGLE_SUCCESS;
@@ -64,9 +67,9 @@ public class ReflectCommand implements UnsafeAccess {
         		field.setAccessible(true);
         		String fieldValue = field.get(null).toString();
         		
-        		source.sendFeedback(Text.literal("Field Get » ").withColor(colourProfile.primaryColour)
-        				.append(Text.literal("[" + field.getType().getName() + "] " + field.getName() + ": ").withColor(colourProfile.secondaryColour)
-        						.append(Text.literal(fieldValue).withColor(colourProfile.infoColour))));
+        		source.sendFeedback(Text.literal("Field Get » ").withColor(colourProfile.primaryColour.getAsInt())
+        				.append(Text.literal("[" + field.getType().getName() + "] " + field.getName() + ": ").withColor(colourProfile.secondaryColour.getAsInt())
+        						.append(Text.literal(fieldValue).withColor(colourProfile.infoColour.getAsInt()))));
         	}
         	
         	if(opcode.equals("PUTFIELD")) {
@@ -127,9 +130,9 @@ public class ReflectCommand implements UnsafeAccess {
         		}
         		String fieldValue = field.get(null).toString();
         		        		
-        		source.sendFeedback(Text.literal("Field Set » ").withColor(colourProfile.primaryColour)
-        				.append(Text.literal("[" + field.getType().getName() + "] " + field.getName() + ": ").withColor(colourProfile.secondaryColour)
-        						.append(Text.literal(fieldValue).withColor(colourProfile.infoColour))));
+        		source.sendFeedback(Text.literal("Field Set » ").withColor(colourProfile.primaryColour.getAsInt())
+        				.append(Text.literal("[" + field.getType().getName() + "] " + field.getName() + ": ").withColor(colourProfile.secondaryColour.getAsInt())
+        						.append(Text.literal(fieldValue).withColor(colourProfile.infoColour.getAsInt()))));
         	}
         	
     	} catch(ReflectiveOperationException e) {

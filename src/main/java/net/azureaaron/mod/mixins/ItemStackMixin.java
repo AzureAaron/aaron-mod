@@ -8,7 +8,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-import net.azureaaron.mod.Config;
+import net.azureaaron.mod.config.AaronModConfig;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Skyblock;
 import net.azureaaron.mod.util.TextTransformer;
@@ -33,10 +34,10 @@ public abstract class ItemStackMixin {
 	
 	@ModifyVariable(method = "getName", at = @At("STORE"))
 	private Text aaronMod$customItemName(Text text) {
-		if((Functions.isOnHypixel() && Functions.isInSkyblock()) || aaronMod$shouldApplyEffect() && (Config.oldMasterStars || Config.fancyDiamondHeads)) {
+		if((Functions.isOnHypixel() && Functions.isInSkyblock()) || aaronMod$shouldApplyEffect() && (AaronModConfigManager.get().oldMasterStars || AaronModConfigManager.get().fancyDiamondHeads)) {
 			String itemName = text.getString();
 			
-			if(Config.fancyDiamondHeads && itemName.contains("Diamond") && itemName.contains("Head")) {
+			if(AaronModConfigManager.get().fancyDiamondHeads && itemName.contains("Diamond") && itemName.contains("Head")) {
 				Style nameStyle = Style.EMPTY.withColor(0x84dadd);
 				Style starStyle = Style.EMPTY.withColor(Formatting.AQUA);
 				Style masterStarStyle = Style.EMPTY.withColor(Formatting.DARK_AQUA);
@@ -53,7 +54,7 @@ public abstract class ItemStackMixin {
 				return TextTransformer.stylizeAndReplace(styledStars, AARONMOD$BASE_STYLE, "✪", masterStarStyle, AARONMOD$MASTER_STARS, AARONMOD$MASTER_STAR_REGEX, "", masterStarsApplied);
 			}
 			
-			if(Config.oldMasterStars) {
+			if(AaronModConfigManager.get().oldMasterStars) {
 				Style masterStarStyle = Style.EMPTY.withColor(Formatting.RED);
 				int masterStarsApplied = 0;
 				
@@ -85,11 +86,11 @@ public abstract class ItemStackMixin {
 	
 	@ModifyVariable(method = "getTooltip", at = @At("STORE"), ordinal = 1)
 	private MutableText aaronMod$rainbowifyMaxSkyblockEnchantments(MutableText text) {
-		if(Config.rainbowifyMaxSkyblockEnchantments && ((Functions.isOnHypixel() && Functions.isInSkyblock()) || aaronMod$shouldApplyEffect()) && Arrays.stream(Skyblock.MAX_LEVEL_SKYBLOCK_ENCHANTMENTS).anyMatch(text.getString()::contains)) {
+		if(AaronModConfigManager.get().rainbowifyMaxSkyblockEnchantments && ((Functions.isOnHypixel() && Functions.isInSkyblock()) || aaronMod$shouldApplyEffect()) && Arrays.stream(Skyblock.MAX_LEVEL_SKYBLOCK_ENCHANTMENTS).anyMatch(text.getString()::contains)) {
 			MutableText newText = Text.empty().styled(style -> style.withItalic(false));
 			List<Text> textComponents = text.getSiblings();
 			
-			if(Config.rainbowifyMode == Config.RainbowifyMode.STATIC) {
+			if(AaronModConfigManager.get().rainbowifyMode == AaronModConfig.RainbowifyMode.STATIC) {
 				int totalLength = 0;
 				int positionLeftOffAt = 0;
 				
@@ -112,7 +113,7 @@ public abstract class ItemStackMixin {
 				}
 			}
 			
-			if(Config.rainbowifyMode == Config.RainbowifyMode.DYNAMIC) {
+			if(AaronModConfigManager.get().rainbowifyMode == AaronModConfig.RainbowifyMode.DYNAMIC) {
 				for(int i = 0; i < textComponents.size(); i ++) {
 					String componentString = textComponents.get(i).getString();
 					if(Arrays.stream(Skyblock.MAX_LEVEL_SKYBLOCK_ENCHANTMENTS).anyMatch(componentString::contains)) {

@@ -1,11 +1,12 @@
 package net.azureaaron.mod.commands;
 
-import static net.azureaaron.mod.Colour.colourProfile;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 
+import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.PingResultEvent;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
@@ -25,11 +26,13 @@ public class PingCommand {
 	}
 
 	private static int handleCommand(FabricClientCommandSource source) {
+		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
+		
 		MinecraftClient client = source.getClient();
 		ClientPlayNetworkHandler networkHandler = client.getNetworkHandler();
 
 		if (source.getClient().isInSingleplayer() || networkHandler == null) {
-			source.sendFeedback(Text.literal("You're on a local server!").withColor(colourProfile.primaryColour));
+			source.sendFeedback(Text.literal("You're on a local server!").withColor(colourProfile.primaryColour.getAsInt()));
 		} else {
 			sendPingPacket(client, networkHandler);
 		}
@@ -38,8 +41,10 @@ public class PingCommand {
 	}
 
 	private static int printPing(MinecraftClient client, long ping) {
-		client.player.sendMessage(Text.literal("Ping » ").withColor(colourProfile.primaryColour)
-				.append(Text.literal(String.valueOf(ping) + " ms").withColor(colourProfile.secondaryColour)));
+		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
+		
+		client.player.sendMessage(Text.literal("Ping » ").withColor(colourProfile.primaryColour.getAsInt())
+				.append(Text.literal(String.valueOf(ping) + " ms").withColor(colourProfile.secondaryColour.getAsInt())));
 
 		return Command.SINGLE_SUCCESS;
 	}

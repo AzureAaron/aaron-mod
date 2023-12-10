@@ -2,7 +2,6 @@ package net.azureaaron.mod.commands;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
-import static net.azureaaron.mod.Colour.colourProfile;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
@@ -10,6 +9,8 @@ import java.lang.invoke.MethodHandle;
 
 import com.mojang.brigadier.CommandDispatcher;
 
+import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.util.Functions;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
@@ -30,8 +31,10 @@ public class UuidCommand {
 	}
 	
 	protected static void printUuid(FabricClientCommandSource source, String name, String uuid) {
-		source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Uuid » ").withColor(colourProfile.primaryColour)
-				.append(Text.literal(uuid).withColor(colourProfile.secondaryColour))
+		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
+		
+		source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Uuid » ").withColor(colourProfile.primaryColour.getAsInt())
+				.append(Text.literal(uuid).withColor(colourProfile.secondaryColour.getAsInt()))
 				.append("").styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.translatable("chat.copy.click")))
 						.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid))));
 	}

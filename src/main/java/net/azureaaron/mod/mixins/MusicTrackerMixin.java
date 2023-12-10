@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
-import net.azureaaron.mod.Config;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.minecraft.client.sound.MusicTracker;
 import net.minecraft.sound.MusicSound;
 
@@ -29,6 +29,6 @@ public class MusicTrackerMixin {
 		String[] callerMethods = StackWalker.getInstance().walk(this::findCallerMethods);
 		boolean calledScreenTick = Arrays.stream(callerMethods).anyMatch("method_25393"::equals);
 		
-		return Config.stopSoundsOnWorldChange && !calledScreenTick ? false : operation.call(sound);
+		return AaronModConfigManager.get().stopSoundsOnWorldChange && !calledScreenTick ? false : operation.call(sound);
 	}
 }

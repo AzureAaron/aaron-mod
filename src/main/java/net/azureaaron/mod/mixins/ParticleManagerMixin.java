@@ -14,6 +14,7 @@ import dev.cbyrne.betterinject.annotations.Arg;
 import dev.cbyrne.betterinject.annotations.Inject;
 import net.azureaaron.mod.Particles;
 import net.azureaaron.mod.Particles.State;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.particle.BlockDustParticle;
 import net.minecraft.client.particle.Particle;
@@ -31,17 +32,17 @@ public class ParticleManagerMixin {
 	private void aaronMod$modifyParticles(@Arg ParticleEffect parameters, CallbackInfoReturnable<Particle> cir) {
 		Identifier particleId = Registries.PARTICLE_TYPE.getId(parameters.getType());
 		
-		if (Particles.PARTICLE_STATES.getOrDefault(particleId, State.FULL) == State.NONE) cir.cancel();
+		if (AaronModConfigManager.get().particles.getOrDefault(particleId, State.FULL) == State.NONE) cir.cancel();
 	}
 	
 	@Inject(method = "addBlockBreakParticles", at = @At("HEAD"), cancellable = true)
 	private void aaronMod$hideBlockBreakParticles(CallbackInfo ci) {
-		if (Particles.PARTICLE_STATES.getOrDefault(Registries.PARTICLE_TYPE.getId(Particles.BLOCK_BREAKING), State.FULL) == State.NONE) ci.cancel();
+		if (AaronModConfigManager.get().particles.getOrDefault(Registries.PARTICLE_TYPE.getId(Particles.BLOCK_BREAKING), State.FULL) == State.NONE) ci.cancel();
 	}
 	
 	@Inject(method = "addBlockBreakingParticles", at = @At("HEAD"), cancellable = true)
 	private void aaronMod$hideBlockBreakingParticles(CallbackInfo ci) {
-		if (Particles.PARTICLE_STATES.getOrDefault(Registries.PARTICLE_TYPE.getId(Particles.BLOCK_BREAKING), State.FULL) == State.NONE) ci.cancel();
+		if (AaronModConfigManager.get().particles.getOrDefault(Registries.PARTICLE_TYPE.getId(Particles.BLOCK_BREAKING), State.FULL) == State.NONE) ci.cancel();
 	}
 	
 	//Particle Scale stuff
@@ -50,17 +51,17 @@ public class ParticleManagerMixin {
 	private void aaronMod$modifyParticleScale(@Arg ParticleEffect parameters, @Local Particle particle) {
 		Identifier particleId = Registries.PARTICLE_TYPE.getId(parameters.getType());
 		
-		aaronMod$scaleParticle(particle, Particles.PARTICLE_SCALES.getOrDefault(particleId, 1f));
+		aaronMod$scaleParticle(particle, AaronModConfigManager.get().particleScaling.getOrDefault(particleId, 1f));
 	}
 	
 	@Redirect(method = "method_34020", at = @At(value = "NEW", target = "Lnet/minecraft/client/particle/BlockDustParticle;"))
 	private BlockDustParticle aaronMod$changeBlockBreakScale(ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ, BlockState state, BlockPos blockPos) {
-		return (BlockDustParticle) aaronMod$scaleParticle(new BlockDustParticle(world, x, y, z, velocityX, velocityY, velocityZ, state, blockPos), Particles.PARTICLE_SCALES.getOrDefault(Registries.PARTICLE_TYPE.getId(Particles.BLOCK_BREAKING), 1f));
+		return (BlockDustParticle) aaronMod$scaleParticle(new BlockDustParticle(world, x, y, z, velocityX, velocityY, velocityZ, state, blockPos), AaronModConfigManager.get().particleScaling.getOrDefault(Registries.PARTICLE_TYPE.getId(Particles.BLOCK_BREAKING), 1f));
 	}
 	
 	@WrapOperation(method = "addBlockBreakingParticles", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/particle/Particle;scale(F)Lnet/minecraft/client/particle/Particle;"))
 	private Particle aaronMod$changeBlockBreakingScale(Particle particle, float originalScale, Operation<Particle> operation) {
-		return aaronMod$scaleParticle(operation.call(particle, originalScale), Particles.PARTICLE_SCALES.getOrDefault(Registries.PARTICLE_TYPE.getId(Particles.BLOCK_BREAKING), 1f));
+		return aaronMod$scaleParticle(operation.call(particle, originalScale), AaronModConfigManager.get().particleScaling.getOrDefault(Registries.PARTICLE_TYPE.getId(Particles.BLOCK_BREAKING), 1f));
 	}
 	
 	private static Particle aaronMod$scaleParticle(Particle particle, float scale) {

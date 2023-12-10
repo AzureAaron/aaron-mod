@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import net.azureaaron.mod.Config;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.minecraft.client.gui.hud.MessageIndicator;
 import net.minecraft.text.Text;
 
@@ -20,11 +20,11 @@ public class MessageIndicatorMixin {
 
 	@Redirect(method = "notSecure", at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/hud/MessageIndicator;NOT_SECURE:Lnet/minecraft/client/gui/hud/MessageIndicator;", opcode = Opcodes.GETSTATIC))
 	private static MessageIndicator aaronMod$changeNotSecureColour() {
-		return (Config.oldMessageIndicatorColours) ? new MessageIndicator(AARONMOD$OLD_NOT_SECURE_COLOUR, NOT_SECURE.icon(), NOT_SECURE.text(), NOT_SECURE.loggedName()) : NOT_SECURE;
+		return (AaronModConfigManager.get().oldMessageIndicatorColours) ? new MessageIndicator(AARONMOD$OLD_NOT_SECURE_COLOUR, NOT_SECURE.icon(), NOT_SECURE.text(), NOT_SECURE.loggedName()) : NOT_SECURE;
 	}
 
 	@Redirect(method = "modified", at = @At(value = "NEW", target = "Lnet/minecraft/client/gui/hud/MessageIndicator;"))
 	private static MessageIndicator aaronMod$changeModifiedColour(int colour, MessageIndicator.Icon icon, Text text, String logName) {
-		return (Config.oldMessageIndicatorColours) ? new MessageIndicator(AARONMOD$OLD_MODIFIED_COLOUR, icon, text, logName) : new MessageIndicator(colour, icon, text, logName);
+		return (AaronModConfigManager.get().oldMessageIndicatorColours) ? new MessageIndicator(AARONMOD$OLD_MODIFIED_COLOUR, icon, text, logName) : new MessageIndicator(colour, icon, text, logName);
 	}
 }

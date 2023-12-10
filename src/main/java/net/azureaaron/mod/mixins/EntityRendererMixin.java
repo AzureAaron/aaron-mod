@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import net.azureaaron.mod.Config;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.NametagDrawer;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.font.TextRenderer.TextLayerType;
@@ -18,7 +18,7 @@ public class EntityRendererMixin {
 
 	@Redirect(method = "renderLabelIfPresent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/text/Text;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;II)I"))
 	private int aaronMod$shadowedNametags(TextRenderer textRenderer, Text text, float x, float y, int colour, boolean shadow, Matrix4f matrix, VertexConsumerProvider vertexConsumers, TextLayerType layerType, int backgroundColour, int light) {
-		backgroundColour = (Config.hideNametagBackground) ? 0 : backgroundColour;
-		return ((NametagDrawer) textRenderer).drawNametag(text.asOrderedText(), x, y, colour, Config.shadowedNametags, matrix, vertexConsumers, layerType, backgroundColour, light);
+		backgroundColour = (AaronModConfigManager.get().hideNametagBackground) ? 0 : backgroundColour;
+		return ((NametagDrawer) textRenderer).drawNametag(text.asOrderedText(), x, y, colour, AaronModConfigManager.get().shadowedNametags, matrix, vertexConsumers, layerType, backgroundColour, light);
 	}
 }

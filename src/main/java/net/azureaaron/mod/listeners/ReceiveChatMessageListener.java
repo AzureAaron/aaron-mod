@@ -3,7 +3,7 @@ package net.azureaaron.mod.listeners;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.azureaaron.mod.Config;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.ReceiveChatMessageEvent;
 import net.azureaaron.mod.util.Cache;
 import net.azureaaron.mod.util.Functions;
@@ -27,7 +27,7 @@ public class ReceiveChatMessageListener {
 				Matcher autoBlessingMatcher = AUTO_PICKUP_BLESSING_PATTERN.matcher(stringForm);
 				Matcher teamScoreMatcher = TEAM_SCORE_PATTERN.matcher(stringForm);
 				
-				if (Config.dungeonFinderPersonStats && partyMatcher.matches()) CLIENT.player.networkHandler.sendCommand("dungeons " + partyMatcher.group("name"));
+				if (AaronModConfigManager.get().dungeonFinderPersonStats && partyMatcher.matches()) CLIENT.player.networkHandler.sendCommand("dungeons " + partyMatcher.group("name"));
 				
 				if (playerBlessingMatcher.matches()) Cache.incrementBlessing(playerBlessingMatcher.group("blessing"), playerBlessingMatcher.group("level"));
 

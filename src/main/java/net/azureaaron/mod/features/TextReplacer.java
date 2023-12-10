@@ -1,31 +1,28 @@
 package net.azureaaron.mod.features;
 
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Supplier;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
-import net.azureaaron.mod.Config;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.util.TextTransformer;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 
 public class TextReplacer {
-	private static final Object2ObjectLinkedOpenHashMap<String, Text> TEXT_REPLACEMENTS = new Object2ObjectLinkedOpenHashMap<>();
+	private static final Supplier<Object2ObjectOpenHashMap<String, Text>> TEXT_REPLACEMENTS = () -> AaronModConfigManager.get().textReplacer.textReplacements;
 	
 	public static void addTextReplacement(String textToReplace, Text replacementText) {		
-		TEXT_REPLACEMENTS.put(textToReplace, replacementText);
-		Config.save();
+		TEXT_REPLACEMENTS.get().put(textToReplace, replacementText);
+		AaronModConfigManager.save();
 	}
 	
 	public static boolean removeTextReplacement(String textToReplace) {
-		if (!TEXT_REPLACEMENTS.containsKey(textToReplace)) return false;
+		if (!TEXT_REPLACEMENTS.get().containsKey(textToReplace)) return false;
 		
-		TEXT_REPLACEMENTS.remove(textToReplace);
-		Config.save();
+		TEXT_REPLACEMENTS.get().remove(textToReplace);
+		AaronModConfigManager.save();
 		
 		return true;
 	}
@@ -33,34 +30,14 @@ public class TextReplacer {
 	public static Set<String> getTextReplacements() {
 		ObjectLinkedOpenHashSet<String> suggestions = new ObjectLinkedOpenHashSet<>();
 		
-		for (String replacementText : TEXT_REPLACEMENTS.keySet()) {
+		for (String replacementText : TEXT_REPLACEMENTS.get().keySet()) {
 			suggestions.add("\"" + replacementText + "\"");
 		}
 		
 		return suggestions;
 	}
 	
-	public static JsonObject serialize() {
-		JsonObject serializedMap = new JsonObject();
-		
-		for (Entry<String, Text> entry : TextReplacer.TEXT_REPLACEMENTS.entrySet()) {
-			JsonElement serializedText = Text.Serialization.toJsonTree(entry.getValue());
-			
-			serializedMap.add(entry.getKey(), serializedText);
-		}
-		
-		return serializedMap;
-	}
-	
-	public static void deserializeAndLoad(JsonObject serializedMap) {
-		for (String key : serializedMap.keySet()) {
-			Text deserializedText = Text.Serialization.fromJsonTree(serializedMap.get(key));
-			
-			TEXT_REPLACEMENTS.put(key, deserializedText);
-		}
-	}
-	
 	public static OrderedText visuallyReplaceText(OrderedText text) {
-		return TextTransformer.replaceMultipleEntriesInOrdered(text, TEXT_REPLACEMENTS);
+		return TextTransformer.replaceMultipleEntriesInOrdered(text, TEXT_REPLACEMENTS.get());
 	}
 }

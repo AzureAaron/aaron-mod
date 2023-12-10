@@ -7,7 +7,7 @@ import com.llamalad7.mixinextras.injector.WrapWithCondition;
 
 import dev.cbyrne.betterinject.annotations.Arg;
 import dev.cbyrne.betterinject.annotations.Inject;
-import net.azureaaron.mod.Config;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.ParticleSpawnEvent;
 import net.azureaaron.mod.events.PlaySoundEvent;
 import net.azureaaron.mod.events.TeamUpdateEvent;
@@ -22,7 +22,7 @@ public class ClientPlayNetworkHandlerMixin {
 	
 	@WrapWithCondition(method = "onPlayerRespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/MusicTracker;stop()V", ordinal = 0))
 	private boolean aaronMod$onWorldChange(MusicTracker musicTracker) {
-		return !Config.stopSoundsOnWorldChange;
+		return !AaronModConfigManager.get().stopSoundsOnWorldChange;
 	}
 	
 	@Inject(method = "onPlaySound", at = @At("HEAD"))

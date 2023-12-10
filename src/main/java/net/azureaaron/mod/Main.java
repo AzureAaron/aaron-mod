@@ -1,7 +1,5 @@
 package net.azureaaron.mod;
 
-import java.nio.file.Path;
-
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +25,7 @@ import net.azureaaron.mod.commands.ReflectCommand;
 import net.azureaaron.mod.commands.TextReplacerCommand;
 import net.azureaaron.mod.commands.UuidCommand;
 import net.azureaaron.mod.commands.WardenWarningLevelCommand;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.ReceiveChatMessageEvent;
 import net.azureaaron.mod.features.BoundingBoxes;
 import net.azureaaron.mod.features.DragonHealth;
@@ -50,13 +49,15 @@ import net.minecraft.command.CommandRegistryAccess;
 
 public class Main implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("aaron-mod");
-	protected static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("aaron-mod.json");
 	public static final boolean OPTIFABRIC_LOADED = FabricLoader.getInstance().isModLoaded("optifabric");
 	public static final String MOD_VERSION = FabricLoader.getInstance().getModContainer("aaron-mod").get().getMetadata().getVersion().getFriendlyString();
 	private static final boolean ENABLE_REFLECT_COMMAND = Boolean.parseBoolean(System.getProperty("aaronmod.enableReflectCommand", "false"));
 		
 	@Override
 	public void onInitializeClient() {
+		//Load configuration
+		AaronModConfigManager.init();
+		
 		//Register listeneres and commands
 		ClientCommandRegistrationCallback.EVENT.register(Main::registerCommands);
 		ClientPlayConnectionEvents.JOIN.register(ClientPlayConnectionListener::onJoin);
@@ -78,15 +79,9 @@ public class Main implements ClientModInitializer {
 		MouseListener.listen();
 		PlaySoundListener.listen();
 		TeamUpdateListener.listen();
-						
-		//Load configuration
-		Config.load();
 		
 		//Particle Stuff :)
 		Particles.registerSyntheticParticles();
-		
-		//Colour Profiles!
-		//Colour.init();
 	};
 	
 	private static void registerCommands(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {		

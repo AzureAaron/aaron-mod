@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 import dev.cbyrne.betterinject.annotations.Inject;
-import net.azureaaron.mod.Config;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
@@ -42,7 +42,7 @@ implements RecipeBookProvider {
 	public List<Text> getTooltipFromItem(ItemStack stack) {
 		List<Text> tooltip = super.getTooltipFromItem(stack);
 		
-		if(Config.showItemGroupsOutsideOfCreative && !stack.hasCustomName() && !stack.hasEnchantments() && !stack.hasNbt()) {
+		if(AaronModConfigManager.get().showItemGroupsOutsideOfCreative && !stack.hasCustomName() && !stack.hasEnchantments() && !stack.hasNbt()) {
 			int count = 1;
 			for(ItemGroup group : ItemGroups.getGroupsToDisplay()) {
 				if(group.getType() == ItemGroup.Type.SEARCH || !group.contains(stack)) continue;

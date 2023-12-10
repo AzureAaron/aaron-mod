@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.azureaaron.mod.Config;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.minecraft.client.gui.hud.DebugHud;
 
 @Mixin(DebugHud.class)
@@ -16,7 +16,7 @@ public class DebugHudMixin {
 
 	@Inject(method = "getRightText", at = @At("RETURN"), cancellable = true)
 	private void aaronMod$addDebugInfo(CallbackInfoReturnable<List<String>> cir) {
-		if (Config.extraDebugInfo) {
+		if (AaronModConfigManager.get().extraDebugInfo) {
 			List<String> strings = cir.getReturnValue();
 			for (int i = 0; i < strings.size(); i++) {
 				String str = strings.get(i);

@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import com.google.gson.JsonObject;
-
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.OptionGroup;
 import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
-import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+import net.azureaaron.mod.config.AaronModConfig;
+import net.azureaaron.mod.config.ConfigUtils;
 import net.azureaaron.mod.util.Functions;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.particle.ParticleType;
@@ -25,9 +23,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
 public class Particles {
-	//TODO Eventually transform this into a map of records or something to deduplicate the data
-	public static final Object2ObjectOpenHashMap<Identifier, State> PARTICLE_STATES = new Object2ObjectOpenHashMap<>();
-	public static final Object2FloatOpenHashMap<Identifier> PARTICLE_SCALES = new Object2FloatOpenHashMap<>();
 	private static final Reference2ObjectOpenHashMap<ParticleType<?>, String> PARTICLE_DESCRIPTIONS = Util.make(new Reference2ObjectOpenHashMap<>(), descriptions -> {
 		descriptions.put(ParticleTypes.ASH, "Ash particles naturally generate in soul sand valleys.");
 		descriptions.put(ParticleTypes.BLOCK_MARKER, "Block Marker particles are the particles you see for the light and barrier blocks for example.");
@@ -52,35 +47,6 @@ public class Particles {
 		NONE;
 	}
 	
-	static void init(JsonObject config) {
-		try {
-			//Particle States
-			JsonObject particleStates = config.has("particles") ? config.get("particles").getAsJsonObject() : null;
-			
-			if (particleStates != null) {
-				for (String particleKey : particleStates.keySet()) {
-					PARTICLE_STATES.put(new Identifier(migrateIdentifierFormat(particleKey)), State.valueOf(particleStates.get(particleKey).getAsString()));
-				}
-			}
-			
-			//Particle Scales
-			JsonObject particleScales = config.has("particleScaling") ? config.get("particleScaling").getAsJsonObject() : null;
-			
-			if (particleScales != null) {
-				for (String particleKey : particleScales.keySet()) {
-					PARTICLE_SCALES.put(new Identifier(migrateIdentifierFormat(particleKey)), particleScales.get(particleKey).getAsFloat());
-				}
-			}
-		} catch (Throwable t) {
-			Main.LOGGER.error("[Aaron's Mod] Failed to load particle config!");
-			t.printStackTrace();
-		}
-	}
-	
-	private static String migrateIdentifierFormat(String key) {
-		return key.replace("minecraft_", "minecraft:");
-	}
-	
 	private static String getParticleDisplayName(String id) {
 		return Functions.titleCase(id.toString().replace("_", " "));
 	}
@@ -97,7 +63,7 @@ public class Particles {
 		Registry.register(Registries.PARTICLE_TYPE, new Identifier("minecraft", "block_breaking"), BLOCK_BREAKING);
 	}
 	
-	static List<OptionGroup> getOptionGroups() {
+	public static List<OptionGroup> getOptionGroups(AaronModConfig config) {
 		List<OptionGroup> list = new ArrayList<>();
 		List<Entry<RegistryKey<ParticleType<?>>, ParticleType<?>>> entryList = new ArrayList<>(Registries.PARTICLE_TYPE.getEntrySet());
 		
@@ -126,18 +92,18 @@ public class Particles {
 					.option(Option.<State>createBuilder()
 							.name(Text.literal(name + " State"))
 							.binding(State.FULL,
-									() -> PARTICLE_STATES.getOrDefault(id, State.FULL),
-									newValue -> PARTICLE_STATES.put(id, newValue))
+									() -> config.particles.getOrDefault(id, State.FULL),
+									newValue -> config.particles.put(id, newValue))
 							.available(!Main.OPTIFABRIC_LOADED)
-							.controller(Config::createCyclingListController4Enum)
+							.controller(ConfigUtils::createEnumController)
 							.build())
 					
 					//Scale Multiplier
 					.option(Option.<Float>createBuilder()
 							.name(Text.literal(name + " Scale Multiplier"))
 							.binding(1f,
-									() -> PARTICLE_SCALES.getOrDefault(id, 1f),
-									newValue -> PARTICLE_SCALES.put(id, newValue.floatValue()))
+									() -> config.particleScaling.getOrDefault(id, 1f),
+									newValue -> config.particleScaling.put(id, newValue.floatValue()))
 							.available(!Main.OPTIFABRIC_LOADED)
 							.controller(opt -> FloatFieldControllerBuilder.create(opt).range(0f, 2f))
 							.build())

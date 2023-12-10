@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 import dev.cbyrne.betterinject.annotations.Inject;
-import net.azureaaron.mod.Config;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.RegistryKey;
@@ -29,6 +29,6 @@ public abstract class ClientWorldMixin extends World {
 
 	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;tickTime()V", shift = At.Shift.BEFORE))
 	private void aaronMod$correctAmbientDarkness() {
-		if(Config.correctAmbientDarkness) this.calculateAmbientDarkness();
+		if(AaronModConfigManager.get().correctAmbientDarkness) this.calculateAmbientDarkness();
 	}
 }

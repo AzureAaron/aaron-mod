@@ -3,8 +3,8 @@ package net.azureaaron.mod.features;
 import java.awt.Color;
 import java.util.List;
 
-import net.azureaaron.mod.Config;
 import net.azureaaron.mod.Main;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.util.Cache;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Renderer;
@@ -28,7 +28,7 @@ public class DragonHealth {
 	@SuppressWarnings("resource")
 	private static void render(WorldRenderContext wrc) {
 		try {
-			if (Cache.inM7Phase5 && Config.m7DragonHealth) {
+			if (Cache.inM7Phase5 && AaronModConfigManager.get().m7DragonHealth) {
 				ClientWorld world = MinecraftClient.getInstance().world;
 				
 				if (world != null) {

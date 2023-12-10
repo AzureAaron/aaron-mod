@@ -2,7 +2,8 @@ package net.azureaaron.mod.listeners;
 
 import java.util.List;
 
-import net.azureaaron.mod.Config;
+import net.azureaaron.mod.config.AaronModConfig;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.MouseInputEvent;
 import net.azureaaron.mod.mixins.accessors.ChatAccessor;
 import net.minecraft.client.MinecraftClient;
@@ -63,12 +64,12 @@ public class MouseListener {
 	public static void listen() {
 		MouseInputEvent.EVENT.register((button, action, mods) -> {
 			//Button 0 = left click, Button 1 = right click, Button 2 = middle click & others are fancy mouse buttons
-			int configuredButton = Config.copyChatMouseButton == Config.MouseButton.MIDDLE ? 2 : 1;
+			int configuredButton = AaronModConfigManager.get().copyChatMouseButton == AaronModConfig.MouseButton.MIDDLE ? 2 : 1;
 			
 			ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.inGameHud.getChatHud());
 			boolean isChatOpen = chatAccessor.invokeIsChatFocused();
 			
-			if (button == configuredButton && action == 1 && isChatOpen && Config.copyChatMessages) {
+			if (button == configuredButton && action == 1 && isChatOpen && AaronModConfigManager.get().copyChatMessages) {
 				Window window = CLIENT.getWindow();
 				int mouseX = (int) (CLIENT.mouse.getX() * window.getScaledWidth() / window.getWidth());
 				int mouseY = (int) (CLIENT.mouse.getY() * window.getScaledHeight() / window.getHeight());
@@ -78,7 +79,7 @@ public class MouseListener {
 				
 				ToastManager toastManager = CLIENT.getToastManager();
 								
-				if (Config.copyChatMode == Config.CopyChatMode.SINGLE_LINE) {
+				if (AaronModConfigManager.get().copyChatMode == AaronModConfig.CopyChatMode.SINGLE_LINE) {
 					int messageLineIndex = chatAccessor.invokeGetMessageLineIndex(chatLineX, chatLineY);
 					List<ChatHudLine.Visible> visibleMessages = chatAccessor.getVisibleMessages();
 					
@@ -98,7 +99,7 @@ public class MouseListener {
 					}
 				}
 				
-				if (Config.copyChatMode == Config.CopyChatMode.ENTIRE_MESSAGE) {
+				if (AaronModConfigManager.get().copyChatMode == AaronModConfig.CopyChatMode.ENTIRE_MESSAGE) {
 					int messageIndex = getMessageIndex(chatLineX, chatLineY);
 					List<ChatHudLine> messages = chatAccessor.getMessages();
 					

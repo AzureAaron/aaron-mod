@@ -8,7 +8,7 @@ import java.util.TimerTask;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 
-import net.azureaaron.mod.Config;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.screens.ModScreen;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
@@ -48,7 +48,7 @@ public class ModScreenCommand {
 			@Override
 			public void run() {
 				client.send(() -> {
-					client.setScreen(Config.createGui(null));
+					client.setScreen(AaronModConfigManager.createGui(null));
 				});
 			}
 		};

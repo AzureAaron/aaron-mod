@@ -2,7 +2,6 @@ package net.azureaaron.mod.commands;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
-import static net.azureaaron.mod.Colour.colourProfile;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
@@ -22,6 +21,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
 
+import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Skyblock;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -55,6 +56,8 @@ public class CroesusCommand {
 	private record RunData(long timestamp, int floor, String dungeon, List<ChestData> chests) {}
 	
 	protected static void printCroesus(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
+		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
+		
 		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);
 		
 		//The Croesus api is a complete NIGHTMARE! you have been warned!!
@@ -137,23 +140,23 @@ public class CroesusCommand {
 		Function<String, Boolean> containsRareLoot = s -> Arrays.stream(RARE_LOOT).anyMatch(s::equals);
 		String[] rareLoot = rewards.stream().filter(e -> containsRareLoot.apply(e)).toArray(String[]::new);
 		
-		ItemStack bundle = Items.BUNDLE.getDefaultStack().setCustomName(Text.literal("✦ Rare Loot Preview ✦").styled(style -> style.withItalic(false).withColor(colourProfile.infoColour)));
+		ItemStack bundle = Items.BUNDLE.getDefaultStack().setCustomName(Text.literal("✦ Rare Loot Preview ✦").styled(style -> style.withItalic(false).withColor(colourProfile.infoColour.getAsInt())));
 		
 		for (int i = 0; i < rareLoot.length; i++) {
 			Functions.addToBundle(bundle, Skyblock.RARE_LOOT_ITEMS.get(rareLoot[i]));
 		}
 				
-		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true))
-				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(false)))
-				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour).withBold(true).withStrikethrough(false))
-				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour).withBold(false).withStrikethrough(false)))
-				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour)).styled(style -> style.withStrikethrough(true))));
+		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
+				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
+				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
+				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
+				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
 		
 		source.sendFeedback(startText);
 		
-		source.sendFeedback(Text.literal("Unclaimed Chests » " + runs.size()).withColor(colourProfile.infoColour));
+		source.sendFeedback(Text.literal("Unclaimed Chests » " + runs.size()).withColor(colourProfile.infoColour.getAsInt()));
 		source.sendFeedback(Text.literal("Rare Loot Awaits » " + ((rareLootAwaits) ? "✓" : "✗"))
-				.styled(style -> style.withColor(colourProfile.infoColour).withHoverEvent(new HoverEvent(Action.SHOW_ITEM, new ItemStackContent(bundle)))));
+				.styled(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent(Action.SHOW_ITEM, new ItemStackContent(bundle)))));
 		source.sendFeedback(Text.literal(""));
 		
 		int count = 0;
@@ -167,16 +170,16 @@ public class CroesusCommand {
 				long expiresIn = (run.timestamp() + TWO_DAYS) - System.currentTimeMillis();
 				
 				source.sendFeedback(Text.literal("(" + floorShorthand + " • " + timeAgo + ")")
-						.styled(style -> style.withColor(colourProfile.hoverColour)
+						.styled(style -> style.withColor(colourProfile.hoverColour.getAsInt())
 								.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Expires:\n" + Functions.DATE_FORMATTER.format(Instant.ofEpochMilli(expiresAt)) + "\n(In " + TimeUnit.MILLISECONDS.toHours(expiresIn) + " hours)")
-										.withColor(colourProfile.infoColour)))));
+										.withColor(colourProfile.infoColour.getAsInt())))));
 				count++;
 			}
 		}
 		
-		if (count > 10) source.sendFeedback(Text.literal("and " + (runs.size() - 10) + " more...").styled(style -> style.withColor(colourProfile.supportingInfoColour).withItalic(true)));
+		if (count > 10) source.sendFeedback(Text.literal("and " + (runs.size() - 10) + " more...").styled(style -> style.withColor(colourProfile.supportingInfoColour.getAsInt()).withItalic(true)));
 		
-		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour).withStrikethrough(true)));
+		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 		
 		return;
 	}

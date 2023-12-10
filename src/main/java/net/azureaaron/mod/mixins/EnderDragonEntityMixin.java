@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import net.azureaaron.mod.Config;
 import net.azureaaron.mod.Main;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.BoundingBoxes.Dragons;
 import net.azureaaron.mod.util.Cache;
 import net.minecraft.client.MinecraftClient;
@@ -98,6 +98,6 @@ public class EnderDragonEntityMixin extends MobEntity implements Monster {
 	
 	@Override
 	public boolean isGlowing() {
-		return (Cache.inM7Phase5 && Config.glowingM7Dragons) ? true : super.isGlowing();
+		return (Cache.inM7Phase5 && AaronModConfigManager.get().glowingM7Dragons) ? true : super.isGlowing();
 	}
 }
