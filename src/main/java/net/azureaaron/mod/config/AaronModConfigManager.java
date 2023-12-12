@@ -325,7 +325,7 @@ public class AaronModConfigManager {
 								.option(Option.<Boolean>createBuilder()
 										.name(Text.literal("Image Preview"))
 										.description(OptionDescription.of(Text.literal("When hovering over a clickable image link in chat, a preview of that image will be displayed!")
-												.append(Text.literal("\n\nOnly images from these hosts can be previewed: cdn.discordapp.com, media.discordapp.net and i.imgur.com"))))
+												.append(Text.literal("\n\nOnly PNG and JPEG images from these hosts can be previewed: cdn.discordapp.com, media.discordapp.net and i.imgur.com"))))
 										.binding(defaults.imagePreview,
 												() -> config.imagePreview,
 												newValue -> config.imagePreview = newValue)

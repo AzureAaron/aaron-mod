@@ -1,5 +1,6 @@
 package net.azureaaron.mod.mixins;
 
+import java.io.IOException;
 import java.lang.StackWalker.Option;
 import java.lang.StackWalker.StackFrame;
 import java.nio.ByteBuffer;
@@ -11,9 +12,11 @@ import java.util.stream.Stream;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-import com.llamalad7.mixinextras.injector.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import net.azureaaron.mod.features.ImagePreview;
+import net.azureaaron.mod.util.ImageMetadata;
 import net.minecraft.client.texture.NativeImage;
 
 @Mixin(NativeImage.class)
@@ -25,12 +28,21 @@ public class NativeImageMixin {
 		return stackFrames.map(GET_CLASS).toArray(Class<?>[]::new);
 	}
 	
-	//This restriction is the dumbest shit ever - NativeImage works perfectly fine with JPGs and even GIFs
-	@WrapWithCondition(method = "read(Lnet/minecraft/client/texture/NativeImage$Format;Ljava/nio/ByteBuffer;)Lnet/minecraft/client/texture/NativeImage;", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/PngMetadata;validate(Ljava/nio/ByteBuffer;)V"))
-	private static boolean aaronMod$ignoreFileTypeCheckWhenItsFromImagePreview(ByteBuffer buffer) {
+	@WrapOperation(method = "read(Lnet/minecraft/client/texture/NativeImage$Format;Ljava/nio/ByteBuffer;)Lnet/minecraft/client/texture/NativeImage;", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/PngMetadata;validate(Ljava/nio/ByteBuffer;)V"))
+	private static void aaronMod$extendedImageTypeValidationForImagePreview(ByteBuffer buffer, Operation<Void> operation) throws IOException {
 		Class<?>[] callerClasses = StackWalker.getInstance(Option.RETAIN_CLASS_REFERENCE).walk(NativeImageMixin::findCallerClasses);
 		boolean wasCalledByImagePreview = Arrays.stream(callerClasses).anyMatch(IMAGE_PREVIEW_MATCH);
 		
-		return !wasCalledByImagePreview;
+		if (wasCalledByImagePreview) {
+			boolean isGif = ImageMetadata.validateGif(buffer);
+			boolean isPng = ImageMetadata.validatePng(buffer);
+			boolean isJpeg = ImageMetadata.validateJpeg(buffer);
+			
+			if (isGif || !(isPng || isJpeg)) {
+				throw new IOException("Image is either a GIF or isn't a PNG or a JPEG!");
+			}
+		} else {
+			operation.call(buffer);
+		}
 	}
 }

@@ -31,7 +31,7 @@ import net.minecraft.util.Identifier;
 
 public class ImagePreview {
 	private static final Pattern IMAGE_URL_PATTERN = Pattern.compile("(https?:\\/\\/.*\\.(?:png|jpg|jpeg|gif)\\.?(?:\\?.+)?)", Pattern.CASE_INSENSITIVE);
-	private static final ImmutableSet<String> EXPECTED_CONTENT_TYPES = ImmutableSet.of("image/png", "image/jpeg", "image/gif");
+	private static final ImmutableSet<String> EXPECTED_CONTENT_TYPES = ImmutableSet.of("image/png", "image/jpeg");
 	
 	//The actual image caches, we retain a separate set of urls to avoid attempting to cache the same image twice which'd cause a memory leak
 	private static final Object2ObjectOpenHashMap<String, CachedImage> IMAGE_CACHE = new Object2ObjectOpenHashMap<>();
