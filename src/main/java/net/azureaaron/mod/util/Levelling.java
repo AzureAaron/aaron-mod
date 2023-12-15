@@ -72,7 +72,14 @@ public class Levelling {
 				1100000, 1200000, 1300000, 1400000, 1500000, 1600000, 1700000, 1800000, 1900000, 2000000, 2100000,
 				2200000, 2300000, 2400000, 2500000, 2600000, 2750000, 2900000, 3100000, 3400000, 3700000, 4000000,
 				4300000, 4600000, 4900000, 5200000, 5500000, 5800000, 6100000, 6400000, 6700000, 7000000 };
-
+		
+		int[] tamingXpChart = new int[60];
+		int[] tamingXpBeyond50 = { 4300000, 4600000, 4900000, 5200000, 5500000, 5800000, 6100000, 6400000, 6700000, 7000000 };
+		
+		//Copy xp stuff to avoid duplication
+		System.arraycopy(regularXpChart, 0, tamingXpChart, 0, regularXpChart.length);
+		System.arraycopy(tamingXpBeyond50, 0, tamingXpChart, tamingXpChart.length - 11, tamingXpBeyond50.length);
+		
 		int[] runecraftingXpChart = { 50, 100, 125, 160, 200, 250, 315, 400, 500, 625, 785, 1000, 1250, 1600, 2000,
 				2465, 3125, 4000, 5000, 6200, 7800, 9800, 12200, 15300, 19050 };
 
@@ -82,6 +89,7 @@ public class Levelling {
 		int levelCap = skill.cap + capIncrease;
 		
 		int[] xpChart = switch (skill) {
+			case TAMING: yield tamingXpChart;
 			case RUNECRAFTING: yield runecraftingXpChart;
 			case SOCIAL: yield socialXpChart;
 			
