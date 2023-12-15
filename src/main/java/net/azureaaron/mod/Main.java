@@ -85,26 +85,30 @@ public class Main implements ClientModInitializer {
 	};
 	
 	private static void registerCommands(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {		
-		PingCommand.register(dispatcher);
-		ProfileCommand.register(dispatcher);
-		UuidCommand.register(dispatcher);
-		DungeonsCommand.register(dispatcher);
-		BlessingsCommand.register(dispatcher);
-		NetworthCommand.register(dispatcher);
-		InventoryCommand.register(dispatcher);
-		CrimsonCommand.register(dispatcher);
-		BazaarCommand.register(dispatcher);
-		CopyChatCommand.register(dispatcher);
-		LowestBinCommand.register(dispatcher);
-		//TestCommand.register(dispatcher);
-		EssenceCommand.register(dispatcher);
-		if(ENABLE_REFLECT_COMMAND) ReflectCommand.register(dispatcher);
-		CroesusCommand.register(dispatcher);
-		DefaultSkinCommand.register(dispatcher);
-		WardenWarningLevelCommand.register(dispatcher);
-		ModScreenCommand.register(dispatcher);
-		TextReplacerCommand.register(dispatcher);
-		MagicalPowerCommand.register(dispatcher);
+		PingCommand.register(dispatcher); //1
+		UuidCommand.register(dispatcher); //3
+		CopyChatCommand.register(dispatcher); //10
+		DefaultSkinCommand.register(dispatcher); //16
+		WardenWarningLevelCommand.register(dispatcher); //17
+		ModScreenCommand.register(dispatcher); //18
+		TextReplacerCommand.register(dispatcher); //19
+		
+		if (AaronModConfigManager.get().enableSkyblockCommands) {
+			ProfileCommand.register(dispatcher); //2
+			DungeonsCommand.register(dispatcher); //4
+			BlessingsCommand.register(dispatcher); //5
+			NetworthCommand.register(dispatcher); //6
+			InventoryCommand.register(dispatcher); //7
+			CrimsonCommand.register(dispatcher); //8
+			BazaarCommand.register(dispatcher); //9
+			LowestBinCommand.register(dispatcher); //11
+			EssenceCommand.register(dispatcher); //13
+			CroesusCommand.register(dispatcher); //15
+			MagicalPowerCommand.register(dispatcher); //20
+		}
+		
+		//TestCommand.register(dispatcher); //12
+		if (ENABLE_REFLECT_COMMAND) ReflectCommand.register(dispatcher); //14
 	}
 	
 	private static void registerKeybindings() {

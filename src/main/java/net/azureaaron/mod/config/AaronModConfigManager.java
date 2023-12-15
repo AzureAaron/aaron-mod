@@ -412,6 +412,15 @@ public class AaronModConfigManager {
 						.build())
 				.category(ConfigCategory.createBuilder()
 						.name(Text.literal("Hypixel"))
+						.option(Option.<Boolean>createBuilder()
+								.name(Text.literal("Enable Skyblock Commands"))
+								.description(OptionDescription.of(Text.literal("You can enable or disable the registration of the mod's skyblock commands.")))
+								.binding(defaults.enableSkyblockCommands,
+										() -> config.enableSkyblockCommands,
+										newValue -> config.enableSkyblockCommands = newValue)
+								.controller(ConfigUtils::createBooleanController)
+								.flag(OptionFlag.GAME_RESTART)
+								.build())
 						.option(Option.<AaronModConfig.DayAverage>createBuilder()
 								.name(Text.literal("Price Day Average"))
 								.description(OptionDescription.createBuilder()

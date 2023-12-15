@@ -157,6 +157,9 @@ public class AaronModConfig {
 	public boolean silenceResourcePackLogSpam = true;
 	
 	@SerialEntry
+	public boolean enableSkyblockCommands = true;
+	
+	@SerialEntry
 	public Object2ObjectOpenHashMap<Identifier, Particles.State> particles = new Object2ObjectOpenHashMap<>();
 	
 	@SerialEntry 
