@@ -15,6 +15,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.logging.LogUtils;
 
 import net.azureaaron.mod.features.TextReplacer;
+import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Http;
 import net.azureaaron.mod.util.Messages;
 import net.azureaaron.mod.util.Skyblock;
@@ -92,7 +93,9 @@ public class CommandSystem {
 	public static int handlePlayer4Skyblock(FabricClientCommandSource source, String player, MethodHandle dispatchHandle) {
 		CompletableFuture.supplyAsync(() -> {
 			try {
-				String response = Http.sendNameToUuidRequest(player);
+				boolean isName = !Functions.isUuid(player);
+				String response = isName? Http.sendNameToUuidRequest(player) : Http.sendUuidToNameRequest(player);
+				
 				JsonObject json = JsonParser.parseString(response).getAsJsonObject();
 				String name = json.get("name").getAsString();
 				String uuid = json.get("id").getAsString();
@@ -185,7 +188,9 @@ public class CommandSystem {
 	public static int handlePlayer4Vanilla(FabricClientCommandSource source, String player, MethodHandle dispatchHandle) {
 		CompletableFuture.supplyAsync(() -> {
 			try {
-				String response = Http.sendNameToUuidRequest(player);
+				boolean isName = !Functions.isUuid(player);
+				String response = isName? Http.sendNameToUuidRequest(player) : Http.sendUuidToNameRequest(player);
+				
 				JsonObject json = JsonParser.parseString(response).getAsJsonObject();
 				String name = json.get("name").getAsString();
 				String uuid = json.get("id").getAsString();

@@ -30,6 +30,7 @@ public class Http {
 	private static final String HYPIXEL_BASE = "https://api.hypixel.net/";
 	private static final String AARON_BASE = "https://api.azureaaron.net/hypixel/";
 	private static final String NAME_TO_UUID = "https://api.minecraftservices.com/minecraft/profile/lookup/name/";
+	private static final String UUID_TO_NAME = "https://api.minecraftservices.com/minecraft/profile/lookup/";
 	private static final String NETWORTH = "https://maro.skyblockextras.com/api/networth/categories";
 	private static final String MOULBERRY = "https://moulberry.codes/";
 	private static final String USER_AGENT = "Aaron's Mod/" + Main.MOD_VERSION;
@@ -65,6 +66,10 @@ public class Http {
 	
 	public static String sendNameToUuidRequest(String name) throws IOException, InterruptedException, ApiException {
 		return sendGetRequest(NAME_TO_UUID + name, true, true).content();
+	}
+	
+	public static String sendUuidToNameRequest(String uuid) throws IOException, InterruptedException, ApiException {
+		return sendGetRequest(UUID_TO_NAME + uuid, true, true).content();
 	}
 	
 	public static String sendMoulberryRequest(String endpoint) throws IOException, InterruptedException, ApiException {

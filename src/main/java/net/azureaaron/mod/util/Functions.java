@@ -184,4 +184,8 @@ public class Functions {
 		
 		return k;
 	}
+	
+	public static boolean isUuid(String uuid) {
+		return uuid.length() == 36 || uuid.length() == 32;
+	}
 }
