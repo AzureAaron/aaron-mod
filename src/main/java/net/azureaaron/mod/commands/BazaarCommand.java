@@ -6,6 +6,7 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.arg
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 
@@ -19,18 +20,20 @@ import com.mojang.logging.LogUtils;
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.util.Cache;
+import net.azureaaron.mod.util.Constants;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Http;
 import net.azureaaron.mod.util.Messages;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class BazaarCommand {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	private static final Text NON_EXISTENT_PRODUCT_ERROR = Text.literal("The product you've provided is non existent!").formatted(Formatting.RED);
-	private static final Text BAZAAR_FETCH_ERROR = Text.literal("There was an error while fetching information from the bazaar!").formatted(Formatting.RED);
+	private static final Supplier<MutableText> NON_EXISTENT_PRODUCT_ERROR = () -> Constants.PREFIX.get().append(Text.literal("The product you've provided is non existent!").formatted(Formatting.RED));
+	private static final Supplier<MutableText> BAZAAR_FETCH_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while fetching information from the bazaar!").formatted(Formatting.RED));
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		final LiteralCommandNode<FabricClientCommandSource> bazaarCommand = dispatcher.register(literal("bazaarprice")
@@ -45,7 +48,7 @@ public class BazaarCommand {
 		
 		//TODO lazy load this shit
 		if (!Cache.PRODUCTS_LIST.contains(product)) {
-			source.sendError(NON_EXISTENT_PRODUCT_ERROR);
+			source.sendError(NON_EXISTENT_PRODUCT_ERROR.get());
 			
 			return Command.SINGLE_SUCCESS;
 		}
@@ -57,7 +60,7 @@ public class BazaarCommand {
 				
 				return data.get("products").getAsJsonObject().get(Cache.PRODUCTS_MAP.get(product)).getAsJsonObject().get("quick_status").getAsJsonObject();
 			} catch (Exception e) {
-				source.sendError(BAZAAR_FETCH_ERROR);
+				source.sendError(BAZAAR_FETCH_ERROR.get());
 				LOGGER.error("[Aaron's Mod] Failed to load bazaar price data!", e);
 			}
 			return null;
@@ -67,7 +70,7 @@ public class BazaarCommand {
 				try {
 					printBazaar(source, productData, product);
 				} catch (Throwable t) {
-					source.sendError(Messages.UNKNOWN_ERROR);
+					source.sendError(Messages.UNKNOWN_ERROR.get());
 					LOGGER.error("[Aaron's Mod] Encountered an unknown error while executing the /bazaar command!", t);
 				}
 			}

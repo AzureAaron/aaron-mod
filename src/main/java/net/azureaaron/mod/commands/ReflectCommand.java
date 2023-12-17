@@ -10,15 +10,18 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.util.Constants;
 import net.azureaaron.mod.util.UnsafeAccess;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -37,10 +40,10 @@ public class ReflectCommand implements UnsafeAccess {
 												.executes(context -> reflectionExecutor(context.getSource(), getString(context, "opcode"), getString(context, "target class"), getString(context, "target field"), getString(context, "type"), getString(context, "new value")))))))));
 	}
 	
-	private static final Text INVALID_OPCODE = Text.literal("Invalid Opcode!").formatted(Formatting.RED);
-	private static final Text INVALID_TYPE = Text.literal("Invalid Type!").formatted(Formatting.RED);
-	private static final Text TYPE_MISMATCH = Text.literal("Type Mismatch!").formatted(Formatting.RED);
-	private static final Text TYPE_MISSING = Text.literal("Missing 'type' parameter!").formatted(Formatting.RED);
+	private static final Supplier<MutableText> INVALID_OPCODE = () -> Constants.PREFIX.get().append(Text.literal("Invalid Opcode!").formatted(Formatting.RED));
+	private static final Supplier<MutableText> INVALID_TYPE = () -> Constants.PREFIX.get().append(Text.literal("Invalid Type!").formatted(Formatting.RED));
+	private static final Supplier<MutableText> TYPE_MISMATCH = () -> Constants.PREFIX.get().append(Text.literal("Type Mismatch!").formatted(Formatting.RED));
+	private static final Supplier<MutableText> TYPE_MISSING = () -> Constants.PREFIX.get().append(Text.literal("Missing 'type' parameter!").formatted(Formatting.RED));
 	private static final List<String> OPCODES = Arrays.asList("GETFIELD", "PUTFIELD");
 	private static final List<String> TYPES = Arrays.asList("byte", "char", "double", "float", "int", "long", "short", "boolean", "string");
 	
@@ -48,12 +51,12 @@ public class ReflectCommand implements UnsafeAccess {
     	ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
     	
     	if(!OPCODES.contains(opcode)) {
-    		source.sendError(INVALID_OPCODE);
+    		source.sendError(INVALID_OPCODE.get());
     		return Command.SINGLE_SUCCESS;
     	}
     	
     	if(type != null && !TYPES.contains(type)) {
-    		source.sendError(INVALID_TYPE);
+    		source.sendError(INVALID_TYPE.get());
     		return Command.SINGLE_SUCCESS;
     	}
     	
@@ -74,7 +77,7 @@ public class ReflectCommand implements UnsafeAccess {
         	
         	if(opcode.equals("PUTFIELD")) {
         		if(type == null) {
-        			source.sendError(TYPE_MISSING);
+        			source.sendError(TYPE_MISSING.get());
         			return Command.SINGLE_SUCCESS;
         		}
         		
@@ -83,7 +86,7 @@ public class ReflectCommand implements UnsafeAccess {
         		long offset = (Modifier.isStatic(field.getModifiers())) ? UNSAFE.staticFieldOffset(field) : UNSAFE.objectFieldOffset(field);
         		
         		if(!field.getType().getName().equals(type.replace("string", "java.lang.String"))) {
-            		source.sendError(TYPE_MISMATCH);
+            		source.sendError(TYPE_MISMATCH.get());
             		return Command.SINGLE_SUCCESS;
         		}
         		        		
@@ -136,8 +139,8 @@ public class ReflectCommand implements UnsafeAccess {
         	}
         	
     	} catch(ReflectiveOperationException e) {
-    		if(e instanceof ClassNotFoundException) source.sendError(Text.literal("The requested class wasn't found!").formatted(Formatting.RED));
-    		if(e instanceof NoSuchFieldException) source.sendError(Text.literal("The requested field wasn't found!").formatted(Formatting.RED));
+    		if(e instanceof ClassNotFoundException) source.sendError(Constants.PREFIX.get().append(Text.literal("The requested class wasn't found!").formatted(Formatting.RED)));
+    		if(e instanceof NoSuchFieldException) source.sendError(Constants.PREFIX.get().append(Text.literal("The requested field wasn't found!").formatted(Formatting.RED)));
     		e.printStackTrace();
     	}
     	

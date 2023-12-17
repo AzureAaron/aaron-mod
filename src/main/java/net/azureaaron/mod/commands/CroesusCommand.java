@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.google.gson.JsonArray;
@@ -23,6 +24,7 @@ import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.util.Constants;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Skyblock;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -32,13 +34,14 @@ import net.minecraft.item.Items;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.HoverEvent.Action;
 import net.minecraft.text.HoverEvent.ItemStackContent;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class CroesusCommand {
 	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printCroesus");
 	private static final long TWO_DAYS = 172_800_000;
-	private static final Text NO_TREASURES = Text.literal("This player doesn't have any dungeon treasures to claim!").formatted(Formatting.RED);
+	private static final Supplier<MutableText> NO_TREASURES = () -> Constants.PREFIX.get().append(Text.literal("This player doesn't have any dungeon treasures to claim!").formatted(Formatting.RED));
 	private static final String[] RARE_LOOT = {/*M7*/ "dark_claymore", "necron_handle", "wither_shield_scroll",
 			"implosion_scroll", "shadow_warp_scroll", "fifth_master_star", "necron_dye", "thunderlord_7", "master_skull_tier_5",
 			/*M6*/ "giants_sword", "fourth_master_star", /*M5*/ "shadow_fury", "shadow_assassin_chestplate", "third_master_star", 
@@ -65,7 +68,7 @@ public class CroesusCommand {
 		JsonObject treasures = profile.getAsJsonObject("dungeons").getAsJsonObject("treasures");
 		
 		if (treasures.get("runs") == null) {
-			source.sendError(NO_TREASURES);
+			source.sendError(NO_TREASURES.get());
 			
 			return;
 		}
@@ -86,7 +89,7 @@ public class CroesusCommand {
 		}
 		
 		if (runs.size() == 0) {
-			source.sendError(NO_TREASURES);
+			source.sendError(NO_TREASURES.get());
 			return;
 		}
 
@@ -130,7 +133,7 @@ public class CroesusCommand {
 		});
 		
 		if (runs.size() == 0) {
-			source.sendError(NO_TREASURES);
+			source.sendError(NO_TREASURES.get());
 			
 			return;
 		}

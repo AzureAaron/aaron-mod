@@ -11,6 +11,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.util.Cache;
+import net.azureaaron.mod.util.Constants;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -51,10 +52,10 @@ public class BlessingsCommand {
     	
     	if("reset".equals(option)) {
     		Cache.resetBlessings();
-			source.sendFeedback(Text.literal("Blessings » ").withColor(colourProfile.primaryColour.getAsInt())
-					.append(Text.literal("Successfully reset the counter!").withColor(colourProfile.secondaryColour.getAsInt())));
+			source.sendFeedback(Constants.PREFIX.get().append(Text.literal("Blessings » ").withColor(colourProfile.primaryColour.getAsInt())
+					.append(Text.literal("Successfully reset the counter!").withColor(colourProfile.secondaryColour.getAsInt()))));
     	} else {
-    		source.sendError(Text.literal("Invalid option!").formatted(Formatting.RED));
+    		source.sendError(Constants.PREFIX.get().append(Text.literal("Invalid option!").formatted(Formatting.RED)));
     	}
     	
     	return Command.SINGLE_SUCCESS;

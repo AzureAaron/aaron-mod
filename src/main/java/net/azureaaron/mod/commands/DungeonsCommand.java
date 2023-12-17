@@ -8,6 +8,7 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 import java.lang.invoke.MethodHandle;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 
@@ -19,6 +20,7 @@ import com.mojang.logging.LogUtils;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.util.Constants;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Http;
 import net.azureaaron.mod.util.JsonHelper;
@@ -28,13 +30,14 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.HoverEvent.Action;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class DungeonsCommand {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printDungeons");
-	private static final Text NEVER_PLAYED_DUNGEONS_ERROR = Text.literal("This player hasn't entered the catacombs yet!").formatted(Formatting.RED);
+	private static final Supplier<MutableText> NEVER_PLAYED_DUNGEONS_ERROR = () -> Constants.PREFIX.get().append(Text.literal("This player hasn't entered the catacombs yet!").formatted(Formatting.RED));
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("dungeons")
@@ -60,7 +63,7 @@ public class DungeonsCommand {
 		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
 		
 		if (body.getAsJsonObject("members").getAsJsonObject(uuid).getAsJsonObject("dungeons").getAsJsonObject("dungeon_types").getAsJsonObject("catacombs").get("times_played") == null) {
-			source.sendError(NEVER_PLAYED_DUNGEONS_ERROR);
+			source.sendError(NEVER_PLAYED_DUNGEONS_ERROR.get());
 			
 			return;
 		}
@@ -71,7 +74,7 @@ public class DungeonsCommand {
 			String playerData = Http.sendAuthorizedHypixelRequest("v2/player", "?uuid=" + uuid);
 			playerJson = JsonParser.parseString(playerData).getAsJsonObject();
 		} catch (Exception e) {
-			source.sendError(Messages.HYPIXEL_PROFILE_FETCH_ERROR);
+			source.sendError(Messages.HYPIXEL_PROFILE_FETCH_ERROR.get());
 			LOGGER.error("[Aaron's Mod] Failed to request " + Functions.possessiveEnding(name) + " Hypixel profile!", e);
 			
 			return;

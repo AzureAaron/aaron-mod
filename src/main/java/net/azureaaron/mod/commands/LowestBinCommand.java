@@ -6,6 +6,7 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.arg
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 
@@ -19,11 +20,13 @@ import com.mojang.logging.LogUtils;
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.util.Cache;
+import net.azureaaron.mod.util.Constants;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Http;
 import net.azureaaron.mod.util.Messages;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -39,16 +42,16 @@ public class LowestBinCommand {
 		dispatcher.register(literal("lbin").redirect(lowestBinCommand));
 	}
 	
-	private static final Text LOWEST_BIN_FETCH_ERROR = Text.literal("There was an error while fetching information for the lowest bin prices!").formatted(Formatting.RED);
-	private static final Text DAY_AVERAGE_FETCH_ERROR = Text.literal("There was an error while fetching information for the average day price!").formatted(Formatting.RED);
-	private static final Text NON_EXISTENT_ITEM_ERROR = Text.literal("The item you've provided is non existent!").formatted(Formatting.RED);
-	private static final Text NO_AVERAGE_PRICE_FOR_ITEM_ERROR = Text.literal("No average price was found! (Most likely because this item hasn't been on the auction house recently!)").formatted(Formatting.RED);
+	private static final Supplier<MutableText> LOWEST_BIN_FETCH_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while fetching information for the lowest bin prices!").formatted(Formatting.RED));
+	private static final Supplier<MutableText> DAY_AVERAGE_FETCH_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while fetching information for the average day price!").formatted(Formatting.RED));
+	private static final Supplier<MutableText> NON_EXISTENT_ITEM_ERROR = () -> Constants.PREFIX.get().append(Text.literal("The item you've provided is non existent!").formatted(Formatting.RED));
+	private static final Supplier<MutableText> NO_AVERAGE_PRICE_FOR_ITEM_ERROR = () -> Constants.PREFIX.get().append(Text.literal("No average price was found! (Most likely because this item hasn't been on the auction house recently!)").formatted(Formatting.RED));
 	
 	private static int handleCommand(FabricClientCommandSource source, String item) {
 		String itemId = Cache.ITEM_NAMES.get(item);
 		
 		if (!Cache.ITEMS_LIST.contains(item)) {
-			source.sendError(NON_EXISTENT_ITEM_ERROR);
+			source.sendError(NON_EXISTENT_ITEM_ERROR.get());
 			
 			return Command.SINGLE_SUCCESS;
 		}
@@ -84,7 +87,7 @@ public class LowestBinCommand {
 				
 				return priceObject;
 			} catch (Exception e) {
-				source.sendError(LOWEST_BIN_FETCH_ERROR);
+				source.sendError(LOWEST_BIN_FETCH_ERROR.get());
 				LOGGER.error("[Aaron's Mod] Encountered an exception while fetching lbin prices!", e);
 			}
 			
@@ -99,7 +102,7 @@ public class LowestBinCommand {
 				JsonObject dayAverage = JsonParser.parseString(dayAverageResponse).getAsJsonObject();
 				
 				if (dayAverage.get(itemId) == null) { //Does this even work?
-					source.sendError(NO_AVERAGE_PRICE_FOR_ITEM_ERROR);
+					source.sendError(NO_AVERAGE_PRICE_FOR_ITEM_ERROR.get());
 					
 					return null;
 				}
@@ -110,7 +113,7 @@ public class LowestBinCommand {
 				
 				return response;
 			} catch (Exception e) {
-				source.sendError(DAY_AVERAGE_FETCH_ERROR);
+				source.sendError(DAY_AVERAGE_FETCH_ERROR.get());
 				LOGGER.error("[Aaron's Mod] Encountered an exception while fetching lbin day average prices!", e);
 			}
 			
@@ -121,7 +124,7 @@ public class LowestBinCommand {
 				try {
 					printLowestBin(source, data, item, averageDescription);
 				} catch (Exception e) {
-					source.sendError(Messages.UNKNOWN_ERROR);
+					source.sendError(Messages.UNKNOWN_ERROR.get());
 					LOGGER.error("[Aaron's Mod] Encountered an exception while printing lbin feedback messages!", e);
 				}
 			}

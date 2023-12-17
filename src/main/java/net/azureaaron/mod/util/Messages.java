@@ -1,5 +1,8 @@
 package net.azureaaron.mod.util;
 
+import java.util.function.Supplier;
+
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -14,34 +17,31 @@ public interface Messages {
 	 * Global/Multipurpose messages
 	 */
 	
-	Text UNKNOWN_ERROR = Text.literal("An unknown error occured!")
-			.styled(style -> style.withColor(Formatting.RED));
+	Supplier<MutableText> UNKNOWN_ERROR = () -> Constants.PREFIX.get().append(Text.literal("An unknown error occured!")
+			.formatted(Formatting.RED));
 	
-	Text NAME_TO_UUID_ERROR = Text.literal("There was an error while converting a username to a uuid!\n Make sure the player's name was spelled correctly!")
-			.styled(style -> style.withColor(Formatting.RED));
+	Supplier<MutableText> NAME_TO_UUID_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while converting a username to a uuid! Make sure the player's name was spelled correctly!")
+			.formatted(Formatting.RED));
 	
-	Text SKYBLOCK_PROFILES_FETCH_ERROR = Text.literal("There was an error fetching skyblock profiles!")
-			.styled(style -> style.withColor(Formatting.RED));
+	Supplier<MutableText> SKYBLOCK_PROFILES_FETCH_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error fetching skyblock profiles!")
+			.formatted(Formatting.RED));
 	
-	Text NO_SKYBLOCK_PROFILES_ERROR = Text.literal("This player doesn't have any skyblock profiles!")
-			.styled(style -> style.withColor(Formatting.RED));
+	Supplier<MutableText> NO_SKYBLOCK_PROFILES_ERROR = () -> Constants.PREFIX.get().append(Text.literal("This player doesn't have any skyblock profiles!")
+			.formatted(Formatting.RED));
 	
-	Text JSON_PARSING_ERROR = Text.literal("There was an error while trying to parse JSON!")
-			.styled(style -> style.withColor(Formatting.RED));
+	Supplier<MutableText> JSON_PARSING_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while trying to parse JSON!")
+			.formatted(Formatting.RED));
 	
-	Text NO_API_KEY_ERROR = Text.literal("You haven't set your Hypixel Api Key!")
-			.styled(style -> style.withColor(Formatting.RED));
-	
-	Text PROFILES_NOT_MIGRATED_ERROR = Text.literal("This player hasn't migrated their skyblock profiles!")
-			.styled(style -> style.withColor(Formatting.RED));
+	Supplier<MutableText> PROFILES_NOT_MIGRATED_ERROR = () -> Constants.PREFIX.get().append(Text.literal("This player hasn't migrated their skyblock profiles!")
+			.formatted(Formatting.RED));
 	
 	/*
 	 * Class-specific messages that don't fit well in their dedicated class
 	 */
 	
-	Text HYPIXEL_PROFILE_FETCH_ERROR = Text.literal("There was an error fetching your Hypixel profile!")
-			.styled(style -> style.withColor(Formatting.RED));
+	Supplier<MutableText> HYPIXEL_PROFILE_FETCH_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error fetching your Hypixel profile!")
+			.formatted(Formatting.RED));
 	
-	Text INVENTORY_API_DISABLED_ERROR = Text.literal("This player has their inventory api disabled!")
-			.styled(style -> style.withColor(Formatting.RED));
+	Supplier<MutableText> INVENTORY_API_DISABLED_ERROR = () -> Constants.PREFIX.get().append(Text.literal("This player has their inventory api disabled!")
+			.formatted(Formatting.RED));
 }

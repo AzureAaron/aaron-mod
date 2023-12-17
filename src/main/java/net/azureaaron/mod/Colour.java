@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 
 import net.azureaaron.mod.config.AaronModConfig.CustomColourProfile;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.minecraft.util.math.MathHelper;
 
 public class Colour {
 	private static final Supplier<CustomColourProfile> CUSTOM = () -> AaronModConfigManager.get().customColourProfile;
@@ -40,5 +41,28 @@ public class Colour {
 			this.hoverColour = hoverColour;
 			this.supportingInfoColour = supportingInfoColour;
 		}
+		
+		public int gradient(double percentage) {
+			return Colour.interpolate(primaryColour.getAsInt(), secondaryColour.getAsInt(), percentage);
+		}
+	}
+	
+	//Credit to https://codepen.io/OliverBalfour/post/programmatically-making-gradients
+	private static int interpolate(int firstColour, int secondColour, double percentage) {
+		int r1 = MathHelper.square((firstColour >> 16) & 0xFF);
+		int g1 = MathHelper.square((firstColour >> 8) & 0xFF);
+		int b1 = MathHelper.square(firstColour & 0xFF);
+		
+		int r2 = MathHelper.square((secondColour >> 16) & 0xFF);
+		int g2 = MathHelper.square((secondColour >> 8) & 0xFF);
+		int b2 = MathHelper.square(secondColour & 0xFF);
+		
+		double inverse = 1d - percentage;
+		
+		int r3 = (int) Math.floor(Math.sqrt(r1 * inverse + r2 * percentage));
+		int g3 = (int) Math.floor(Math.sqrt(g1 * inverse + g2 * percentage));
+		int b3 = (int) Math.floor(Math.sqrt(b1 * inverse + b2 * percentage));
+		
+		return (r3 << 16) | (g3 << 8 ) | b3;
 	}
 }

@@ -102,7 +102,7 @@ public class CommandSystem {
 				
 				return new CommandPlayerData(name, uuid);
 			} catch (Throwable t) {
-				source.sendError(Messages.NAME_TO_UUID_ERROR);
+				source.sendError(Messages.NAME_TO_UUID_ERROR.get());
 				LOGGER.error("[Aaron's Mod] Encountered an exception while resolving a player's uuid!", t);
 				
 				return null;
@@ -121,7 +121,7 @@ public class CommandSystem {
 				//TODO remove this legacy profiles v1 thing when the networth api updates
 				return Http.sendAuthorizedHypixelRequest(dispatchHandle == NetworthCommand.DISPATCH_HANDLE ? "skyblock/profiles" : "v2/skyblock/profiles", "?uuid=" + playerData.uuid());
 			} catch (Throwable t) {
-				source.sendError(Messages.SKYBLOCK_PROFILES_FETCH_ERROR);
+				source.sendError(Messages.SKYBLOCK_PROFILES_FETCH_ERROR.get());
 				LOGGER.error("[Aaron's Mod] Encountered an exception while fetching a player's skyblock profiles!", t);
 				
 				return null;
@@ -131,7 +131,7 @@ public class CommandSystem {
 			try {
 				return Skyblock.getSelectedProfile2(body);
 			} catch (Throwable t) {
-				if (t instanceof IllegalStateException) source.sendError(Messages.PROFILES_NOT_MIGRATED_ERROR); else source.sendError(Messages.JSON_PARSING_ERROR);
+				if (t instanceof IllegalStateException) source.sendError(Messages.PROFILES_NOT_MIGRATED_ERROR.get()); else source.sendError(Messages.JSON_PARSING_ERROR.get());
 				LOGGER.error("[Aaron's Mod] Encountered an exception while determining a player's selected skyblock profile!", t);
 				
 				return null;
@@ -142,7 +142,7 @@ public class CommandSystem {
 				try {
 					dispatchHandle.invokeExact(source, profileData, playerData.name(), playerData.uuid());
 				} catch (Throwable t) {
-					source.sendError(Messages.UNKNOWN_ERROR);
+					source.sendError(Messages.UNKNOWN_ERROR.get());
 					LOGGER.error("[Aaron's Mod] Encountered an exception while dispatching a skyblock command! Handle: {}", dispatchHandle.describeConstable(), t);
 				}
 			}
@@ -178,7 +178,7 @@ public class CommandSystem {
 		try {
 			dispatchHandle.invokeExact(source, session.getUsername(), session.getUuidOrNull().toString().replaceAll("-", ""));
 		} catch (Throwable t) {
-			source.sendError(Messages.UNKNOWN_ERROR);
+			source.sendError(Messages.UNKNOWN_ERROR.get());
 			LOGGER.error("[Aaron's Mod] Encountered an exception while dispatching a vanilla command! Handle: {}", dispatchHandle.describeConstable(), t);
 		}
 		
@@ -197,7 +197,7 @@ public class CommandSystem {
 				
 				return new CommandPlayerData(name, uuid);
 			} catch (Throwable t) {
-				source.sendError(Messages.NAME_TO_UUID_ERROR);
+				source.sendError(Messages.NAME_TO_UUID_ERROR.get());
 				LOGGER.error("[Aaron's Mod] Encountered an exception while resolving a player's uuid!", t);
 				
 				return null;
@@ -208,7 +208,7 @@ public class CommandSystem {
 				try {
 					dispatchHandle.invokeExact(source, playerData.name(), playerData.uuid());
 				} catch (Throwable t) {
-					source.sendError(Messages.UNKNOWN_ERROR);
+					source.sendError(Messages.UNKNOWN_ERROR.get());
 					LOGGER.error("[Aaron's Mod] Encountered an exception while dispatching a vanilla command! Handle: {}", dispatchHandle.describeConstable(), t);
 				}
 			}

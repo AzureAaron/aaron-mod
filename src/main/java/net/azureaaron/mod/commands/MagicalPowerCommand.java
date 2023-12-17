@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.IntToDoubleFunction;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -27,6 +28,7 @@ import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.util.Constants;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.JsonHelper;
 import net.azureaaron.mod.util.Messages;
@@ -46,8 +48,8 @@ import net.minecraft.util.Formatting;
 public class MagicalPowerCommand {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printMP");
-	private static final Text NO_ACCESSORY_BAG_DATA = Text.literal("This profile doesn't have any accessory bag data!").formatted(Formatting.RED);
-	private static final Text NBT_PARSING_ERROR = Text.literal("There was an error while trying to parse NBT!").formatted(Formatting.RED); //TODO make constant
+	private static final Supplier<MutableText> NO_ACCESSORY_BAG_DATA = () -> Constants.PREFIX.get().append(Text.literal("This profile doesn't have any accessory bag data!").formatted(Formatting.RED));
+	private static final Supplier<MutableText> NBT_PARSING_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while trying to parse NBT!").formatted(Formatting.RED)); //TODO make constant
 	private static final Pattern ACCESSORY_RARITY_PATTERN = Pattern.compile("(?:a )?(?<rarity>(?:VERY )?[A-Za-z]+) (?:DUNGEON )?(?:A|HAT)CCESSORY(?: a)?");
 	@SuppressWarnings("unused")
 	private static final IntToDoubleFunction STATS_MULT = magicalPower -> 29.97d * Math.pow(Math.log(0.0019d * magicalPower + 1d), 1.2d);
@@ -77,7 +79,7 @@ public class MagicalPowerCommand {
 		boolean inventoryEnabled = Skyblock.isInventoryApiEnabled(inventoryData);
 		
 		if (!inventoryEnabled) {
-			source.sendError(Messages.INVENTORY_API_DISABLED_ERROR);
+			source.sendError(Messages.INVENTORY_API_DISABLED_ERROR.get());
 			
 			return;
 		}
@@ -85,7 +87,7 @@ public class MagicalPowerCommand {
 		JsonObject accessoryBagStorage = profile.getAsJsonObject("accessory_bag_storage");
 		
 		if (accessoryBagStorage == null) {
-			source.sendError(NO_ACCESSORY_BAG_DATA);
+			source.sendError(NO_ACCESSORY_BAG_DATA.get());
 			
 			return;
 		}
@@ -96,7 +98,7 @@ public class MagicalPowerCommand {
 		try {
 			accessories = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(accessoriesItemData)), NbtTagSizeTracker.ofUnlimitedBytes()).getList("i", NbtElement.COMPOUND_TYPE);
 		} catch (IOException e) {
-			source.sendError(NBT_PARSING_ERROR);
+			source.sendError(NBT_PARSING_ERROR.get());
 			LOGGER.error("[Aaron's Mod] Encountered an exception while parsing NBT!", e);
 			
 			return;

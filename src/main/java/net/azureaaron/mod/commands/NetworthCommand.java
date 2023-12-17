@@ -6,6 +6,7 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.arg
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 import java.lang.invoke.MethodHandle;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 
@@ -15,6 +16,7 @@ import com.mojang.logging.LogUtils;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.util.Constants;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Http;
 import net.azureaaron.mod.util.JsonHelper;
@@ -22,13 +24,14 @@ import net.azureaaron.mod.util.Messages;
 import net.azureaaron.mod.util.Skyblock;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class NetworthCommand {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printNetworth");
-	private static final Text NETWORTH_FETCH_ERROR = Text.literal("There was an error while fetching a player's networth!").formatted(Formatting.RED);
+	private static final Supplier<MutableText> NETWORTH_FETCH_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while fetching a player's networth!").formatted(Formatting.RED));
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("networth")
@@ -66,13 +69,13 @@ public class NetworthCommand {
 				networthData = Http.sendNetworthRequest(networthPostBody);
 				networth = Skyblock.readNetworthData(networthData, bank, purse);
 			} catch (Throwable t) {
-				source.sendError(NETWORTH_FETCH_ERROR);
+				source.sendError(NETWORTH_FETCH_ERROR.get());
 				LOGGER.error("[Aaron's Mod] Encountered an exception while requesting networth data!", t);
 				
 				return;
 			}
 		} else {
-			source.sendError(Messages.INVENTORY_API_DISABLED_ERROR);
+			source.sendError(Messages.INVENTORY_API_DISABLED_ERROR.get());
 			
 			return;
 		}

@@ -99,14 +99,14 @@ public class Skyblock {
 		JsonObject skyblockData = JsonParser.parseString(profiles).getAsJsonObject();
 		JsonArray profilesArray = skyblockData.getAsJsonArray("profiles");
 		
-		if (profilesArray == null) throw new IllegalStateException(Messages.PROFILES_NOT_MIGRATED_ERROR.getString()); //If the player's profile hasn't been migrated
+		if (profilesArray == null) throw new IllegalStateException(Messages.PROFILES_NOT_MIGRATED_ERROR.get().getString()); //If the player's profile hasn't been migrated
 		
 		for (JsonElement profile : profilesArray) {
 			JsonObject iteratedProfile = profile.getAsJsonObject();
 			if (iteratedProfile.get("selected").getAsBoolean() == true) return iteratedProfile;
 		}
 		
-		throw new IllegalStateException(Messages.PROFILES_NOT_MIGRATED_ERROR.getString()); //After the migration players can apparently have no selected profile
+		throw new IllegalStateException(Messages.PROFILES_NOT_MIGRATED_ERROR.get().getString()); //After the migration players can apparently have no selected profile
 	}
 	
 	public static boolean isInventoryApiEnabled(JsonObject inventoryData) {

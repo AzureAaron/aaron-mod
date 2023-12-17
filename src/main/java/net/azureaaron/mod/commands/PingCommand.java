@@ -8,6 +8,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.PingResultEvent;
+import net.azureaaron.mod.util.Constants;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -32,7 +33,7 @@ public class PingCommand {
 		ClientPlayNetworkHandler networkHandler = client.getNetworkHandler();
 
 		if (source.getClient().isInSingleplayer() || networkHandler == null) {
-			source.sendFeedback(Text.literal("You're on a local server!").withColor(colourProfile.primaryColour.getAsInt()));
+			source.sendFeedback(Constants.PREFIX.get().append(Text.literal("You're on a local server!").withColor(colourProfile.primaryColour.getAsInt())));
 		} else {
 			sendPingPacket(client, networkHandler);
 		}

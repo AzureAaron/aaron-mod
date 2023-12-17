@@ -7,6 +7,7 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 
@@ -21,6 +22,7 @@ import me.nullicorn.nedit.type.NBTCompound;
 import me.nullicorn.nedit.type.NBTList;
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.util.Constants;
 import net.azureaaron.mod.util.ItemUtils;
 import net.azureaaron.mod.util.JsonHelper;
 import net.azureaaron.mod.util.Skyblock;
@@ -39,7 +41,7 @@ import net.minecraft.util.Formatting;
 public class InventoryCommand {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printInventory");
-	private static final Text NBT_PARSING_ERROR = Text.literal("There was an error while trying to parse NBT!").formatted(Formatting.RED);
+	private static final Supplier<MutableText> NBT_PARSING_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while trying to parse NBT!").formatted(Formatting.RED));
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("inventory")
@@ -124,7 +126,7 @@ public class InventoryCommand {
 				equipment = NBTReader.readBase64(equipmentContents).getList("i");
 			}
 		} catch (IOException | NullPointerException e) {
-			source.sendError(NBT_PARSING_ERROR);
+			source.sendError(NBT_PARSING_ERROR.get());
 			LOGGER.error("[Aaron's Mod] Encountered an exception while parsing NBT!", e);
 			
 			return;
