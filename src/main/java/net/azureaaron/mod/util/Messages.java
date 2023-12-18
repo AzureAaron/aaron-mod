@@ -11,7 +11,7 @@ import net.minecraft.util.Formatting;
  * 
  * @author Aaron
  */
-public interface Messages {	
+public interface Messages {
 	
 	/*
 	 * Global/Multipurpose messages
@@ -21,6 +21,9 @@ public interface Messages {
 			.formatted(Formatting.RED));
 	
 	Supplier<MutableText> NAME_TO_UUID_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while converting a username to a uuid! Make sure the player's name was spelled correctly!")
+			.formatted(Formatting.RED));
+	
+	Supplier<MutableText> UUID_TO_NAME_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while converting a uuid to a username! Make sure the player's uuid is valid!")
 			.formatted(Formatting.RED));
 	
 	Supplier<MutableText> SKYBLOCK_PROFILES_FETCH_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error fetching skyblock profiles!")

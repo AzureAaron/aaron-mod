@@ -94,7 +94,7 @@ public class CommandSystem {
 		CompletableFuture.supplyAsync(() -> {
 			try {
 				boolean isName = !Functions.isUuid(player);
-				String response = isName? Http.sendNameToUuidRequest(player) : Http.sendUuidToNameRequest(player);
+				String response = isName ? Http.sendNameToUuidRequest(player) : Http.sendUuidToNameRequest(player);
 				
 				JsonObject json = JsonParser.parseString(response).getAsJsonObject();
 				String name = json.get("name").getAsString();
@@ -102,8 +102,13 @@ public class CommandSystem {
 				
 				return new CommandPlayerData(name, uuid);
 			} catch (Throwable t) {
-				source.sendError(Messages.NAME_TO_UUID_ERROR.get());
-				LOGGER.error("[Aaron's Mod] Encountered an exception while resolving a player's uuid!", t);
+				if (!Functions.isUuid(player)) {
+					source.sendError(Messages.NAME_TO_UUID_ERROR.get());
+				} else {
+					source.sendError(Messages.UUID_TO_NAME_ERROR.get());
+				}
+				
+				LOGGER.error("[Aaron's Mod] Encountered an exception while resolving a player's uuid/username!", t);
 				
 				return null;
 			}
@@ -189,7 +194,7 @@ public class CommandSystem {
 		CompletableFuture.supplyAsync(() -> {
 			try {
 				boolean isName = !Functions.isUuid(player);
-				String response = isName? Http.sendNameToUuidRequest(player) : Http.sendUuidToNameRequest(player);
+				String response = isName ? Http.sendNameToUuidRequest(player) : Http.sendUuidToNameRequest(player);
 				
 				JsonObject json = JsonParser.parseString(response).getAsJsonObject();
 				String name = json.get("name").getAsString();
@@ -197,8 +202,13 @@ public class CommandSystem {
 				
 				return new CommandPlayerData(name, uuid);
 			} catch (Throwable t) {
-				source.sendError(Messages.NAME_TO_UUID_ERROR.get());
-				LOGGER.error("[Aaron's Mod] Encountered an exception while resolving a player's uuid!", t);
+				if (!Functions.isUuid(player)) {
+					source.sendError(Messages.NAME_TO_UUID_ERROR.get());
+				} else {
+					source.sendError(Messages.UUID_TO_NAME_ERROR.get());
+				}
+				
+				LOGGER.error("[Aaron's Mod] Encountered an exception while resolving a player's uuid/username!", t);
 				
 				return null;
 			}
