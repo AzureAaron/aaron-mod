@@ -11,15 +11,16 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.sound.MusicTracker;
 import net.minecraft.sound.MusicSound;
 
 @Mixin(MusicTracker.class)
 public class MusicTrackerMixin {
+	private static final String SCREEN_TICK = FabricLoader.getInstance().getMappingResolver().mapMethodName("intermediary", "net.minecraft.class_437", "method_25393", "()V");
 	
 	private String[] findCallerMethods(Stream<StackFrame> stackFrameStream) {
-		return stackFrameStream.filter(frame -> frame.getMethodName().contains("method"))
-				.map(f -> f.getMethodName())
+		return stackFrameStream.map(f -> f.getMethodName())
 				.toArray(String[]::new);
 	}
 	
@@ -27,7 +28,7 @@ public class MusicTrackerMixin {
 	private boolean aaronMod$dontReplaceMusicSometimes(MusicSound sound, Operation<Boolean> operation) {
 		//Walking the stack is done to ensure that we only return false when Screen#tick isn't the reason for this method invocation
 		String[] callerMethods = StackWalker.getInstance().walk(this::findCallerMethods);
-		boolean calledScreenTick = Arrays.stream(callerMethods).anyMatch("method_25393"::equals);
+		boolean calledScreenTick = Arrays.stream(callerMethods).anyMatch(SCREEN_TICK::equals);
 		
 		return AaronModConfigManager.get().stopSoundsOnWorldChange && !calledScreenTick ? false : operation.call(sound);
 	}
