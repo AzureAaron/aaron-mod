@@ -25,6 +25,7 @@ import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.util.Constants;
 import net.azureaaron.mod.util.ItemUtils;
 import net.azureaaron.mod.util.JsonHelper;
+import net.azureaaron.mod.util.Messages;
 import net.azureaaron.mod.util.Skyblock;
 import net.azureaaron.mod.util.TextTransformer;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -110,6 +111,12 @@ public class InventoryCommand {
 		JsonObject inventoryData = profile.getAsJsonObject("inventory");
 		boolean inventoryEnabled = Skyblock.isInventoryApiEnabled(inventoryData);
 		
+		if (!inventoryEnabled) {
+			source.sendError(Messages.INVENTORY_API_DISABLED_ERROR.get());
+			
+			return;
+		}
+		
 		NBTList armour = null;
 		NBTList inventory = null;
 		NBTList equipment = null;
@@ -118,13 +125,11 @@ public class InventoryCommand {
 			String armourContents = JsonHelper.getString(inventoryData, "inv_armor.data").orElseThrow();
 			armour = NBTReader.readBase64(armourContents).getList("i");
 			
-			if (inventoryEnabled) {
-				String inventoryContents = JsonHelper.getString(inventoryData, "inv_contents.data").orElseThrow();
-				inventory = NBTReader.readBase64(inventoryContents).getList("i");
-				
-				String equipmentContents = JsonHelper.getString(inventoryData, "equipment_contents.data").orElseThrow();
-				equipment = NBTReader.readBase64(equipmentContents).getList("i");
-			}
+			String inventoryContents = JsonHelper.getString(inventoryData, "inv_contents.data").orElseThrow();
+			inventory = NBTReader.readBase64(inventoryContents).getList("i");
+			
+			String equipmentContents = JsonHelper.getString(inventoryData, "equipment_contents.data").orElseThrow();
+			equipment = NBTReader.readBase64(equipmentContents).getList("i");
 		} catch (IOException | NullPointerException e) {
 			source.sendError(NBT_PARSING_ERROR.get());
 			LOGGER.error("[Aaron's Mod] Encountered an exception while parsing NBT!", e);

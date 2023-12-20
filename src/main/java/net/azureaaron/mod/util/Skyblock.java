@@ -110,7 +110,7 @@ public class Skyblock {
 	}
 	
 	public static boolean isInventoryApiEnabled(JsonObject inventoryData) {
-		return inventoryData.has("inv_contents");
+		return inventoryData != null && inventoryData.has("inv_contents");
 	}
 	
 	public static boolean isSkillsApiEnabled(JsonObject profile) {
