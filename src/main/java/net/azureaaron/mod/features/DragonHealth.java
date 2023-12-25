@@ -2,11 +2,12 @@ package net.azureaaron.mod.features;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.util.Cache;
-import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Renderer;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
@@ -19,7 +20,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 
 public class DragonHealth {
-	private static final int MAX_DRAGON_HP = 1_000_000_000;
+	private static final Pattern DRAGON_HP = Pattern.compile("﴾ Withered Dragon (?:\u16E4 )?(?<health>[0-9kKMB.]+)\\/(?<max>[0-9kKMB.]+)\u2764 ﴿");
 	
 	public static void init() {
 		WorldRenderEvents.END.register(DragonHealth::render);
@@ -38,18 +39,22 @@ public class DragonHealth {
 							
 							for (ArmorStandEntity armourStand : armourStands) {
 								String name = armourStand.getName().getString();
+								Matcher matcher = DRAGON_HP.matcher(name);
 								
-								if (name.contains("Withered Dragon")) {
-									String firstSegment = name.substring(0, name.indexOf('/'));
-									String healthSegment = firstSegment.substring(firstSegment.lastIndexOf(' ') + 1).replaceAll(",", "");
+								if (matcher.matches()) {
+									String healthSegment = matcher.group("health");
+									String maxHealthSegment = matcher.group("max");
 									
-									float health = getHealth(healthSegment);
-									float hp = (health / MAX_DRAGON_HP) * 100f;
+									float health = (float) getHealth(healthSegment);
+									float maxHealth = (float) getHealth(maxHealthSegment);
+									float hp = (health / maxHealth) * 100f;
 									
 									int colour = getHealthColour(hp);
 									Vec3d pos = new Vec3d(dragon.getX(), dragon.getY() - 1, dragon.getZ());
 									
-									Renderer.renderText(wrc, pos, Text.literal(Functions.NUMBER_FORMATTER_S.format(health)).styled(style -> style.withColor(colour)).asOrderedText(), true);
+									Renderer.renderText(wrc, pos, Text.literal(healthSegment).styled(style -> style.withColor(colour)).asOrderedText(), true);
+									
+									break;
 								}
 							}
 						}
@@ -61,18 +66,32 @@ public class DragonHealth {
 		}
 	}
 	
-	private static int getHealth(String health) {
+	private static double getHealth(String health) {
 		try {
-			if (health.endsWith("B")) return Integer.parseInt(health.replace("B", "000000000"));
-			if (health.endsWith("M")) return Integer.parseInt(health.replace("M", "000000"));
-			if (health.endsWith("k")) return Integer.parseInt(health.replace("k", "000"));
+			double multiplier = 1;
+			health = health.toUpperCase();
 			
-			return Integer.parseInt(health);
+			if (health.endsWith("K")) {
+				multiplier = 1e3;
+				health = health.substring(0, health.length() - 1);
+			} else if (health.endsWith("M")) {
+				multiplier = 1e6;
+				health = health.substring(0, health.length() - 1);
+			} else if (health.endsWith("B")) {
+				multiplier = 1e9;
+				health = health.substring(0, health.length() - 1);
+			}
+			
+			if (!health.contains(".")) {
+				health += ".0";
+			}
+			
+			return Double.parseDouble(health) * multiplier;
 		} catch (Exception e) {
-			Main.LOGGER.error("[Aaron's Mod] Failed to parse dragon health! Input: {}, Exception: {}", health, e);
+			Main.LOGGER.error("[Aaron's Mod] Failed to parse dragon health! Input: {}", health, e);
 		}
 		
-		return 0;
+		return 0d;
 	}
 	
 	private static int getHealthColour(float percentage) {

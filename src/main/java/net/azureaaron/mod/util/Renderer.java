@@ -77,38 +77,6 @@ public class Renderer {
 		RenderSystem.enableCull();
 	}
 	
-	public static void renderHalfFilledBox(WorldRenderContext wrc, Vec3d pos, float red, float green, float blue, float alpha, boolean secondHalf) {
-		double x = pos.x;
-		double y = pos.y;
-		double z = pos.z;
-		
-		if (secondHalf) z += 0.5f;
-		
-		MatrixStack matrices = MatrixTransformer.CAMERA_RELATIVE.transform(wrc, null);
-		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		BufferBuilder buffer = tessellator.getBuffer();
-		
-		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-		RenderSystem.polygonOffset(-1f, -10f);
-		RenderSystem.enablePolygonOffset();
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-		RenderSystem.enableDepthTest();
-		RenderSystem.depthFunc(GL11.GL_LEQUAL);
-		RenderSystem.disableCull();
-		
-		buffer.begin(DrawMode.TRIANGLE_STRIP, VertexFormats.POSITION_COLOR);
-		WorldRenderer.renderFilledBox(matrices, buffer, x, y, z, x + 1f, y + 1f, z + 0.5f, red / 255f, green / 255f, blue / 255f, 0.5f);
-		tessellator.draw();
-		
-		matrices.pop();
-		RenderSystem.polygonOffset(0f, 0f);
-		RenderSystem.disablePolygonOffset();
-		RenderSystem.disableBlend();
-		RenderSystem.enableCull();
-	}
-	
 	public static void renderText(WorldRenderContext wrc, Vec3d pos, OrderedText text, boolean seeThrough) {
 		renderText(wrc, pos, text, seeThrough, 8);
 	}
