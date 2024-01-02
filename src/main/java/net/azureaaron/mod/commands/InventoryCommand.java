@@ -68,7 +68,7 @@ public class InventoryCommand {
 		 * Calling this when the item wasn't found will throw an exception
 		 */
 		private Text[] formattedLore() {
-			return nbt.getList("tag.display.Lore").stream().map(element -> TextTransformer.fromLegacy((String) element)).toArray(Text[]::new);
+			return nbt.getList("tag.display.Lore").stream().map(String.class::cast).map(TextTransformer::fromLegacy).toArray(Text[]::new);
 		}
 		
 		private IntIntPair getIdAndDamage() {
