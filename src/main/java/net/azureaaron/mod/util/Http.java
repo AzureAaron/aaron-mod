@@ -73,7 +73,7 @@ public class Http {
 	}
 	
 	public static String sendMoulberryRequest(String endpoint) throws IOException, InterruptedException, ApiException {
-		return sendGetRequest(MOULBERRY + endpoint, true).content();
+		return sendGetRequest(MOULBERRY + endpoint, false).content();
 	}
 	
 	public static String sendNetworthRequest(String body) throws IOException, InterruptedException {		
