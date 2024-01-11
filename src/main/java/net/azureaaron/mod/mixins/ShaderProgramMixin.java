@@ -4,8 +4,9 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import dev.cbyrne.betterinject.annotations.Inject;
 import net.azureaaron.mod.features.TimeUniform;
 import net.minecraft.client.gl.GlUniform;
 import net.minecraft.client.gl.ShaderProgram;
@@ -17,7 +18,7 @@ public abstract class ShaderProgramMixin implements TimeUniform.Getter {
 	@Shadow public abstract GlUniform getUniform(String uniform);
 	
 	@Inject(method = "<init>", at = @At("TAIL"))
-	private void aaronMod$timeInitializer() {
+	private void aaronMod$timeInitializer(CallbackInfo ci) {
 		this.time = getUniform("Time");
 	}
 	

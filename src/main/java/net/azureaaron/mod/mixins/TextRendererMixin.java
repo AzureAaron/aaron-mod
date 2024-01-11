@@ -5,13 +5,14 @@ import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
-import dev.cbyrne.betterinject.annotations.Arg;
-import dev.cbyrne.betterinject.annotations.Inject;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.NametagDrawer;
 import net.azureaaron.mod.features.TextReplacer;
@@ -57,7 +58,7 @@ public class TextRendererMixin implements NametagDrawer {
 	}
 	
 	@Inject(method = "drawInternal(Lnet/minecraft/text/OrderedText;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;II)I", at = @At("HEAD"))
-	private void aaronMod$visuallyReplaceOrderedText(@Arg OrderedText text, @Share("newText") LocalRef<OrderedText> newText) {
+	private void aaronMod$visuallyReplaceOrderedText(CallbackInfoReturnable<Integer> cir, @Local(argsOnly = true) OrderedText text, @Share("newText") LocalRef<OrderedText> newText) {
 		if (AaronModConfigManager.get().visualTextReplacer) newText.set(TextReplacer.visuallyReplaceText(text));
 	}
 	

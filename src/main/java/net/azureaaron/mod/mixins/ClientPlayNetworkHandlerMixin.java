@@ -2,11 +2,11 @@ package net.azureaaron.mod.mixins;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
 
-import dev.cbyrne.betterinject.annotations.Arg;
-import dev.cbyrne.betterinject.annotations.Inject;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.ParticleSpawnEvent;
 import net.azureaaron.mod.events.PlaySoundEvent;
@@ -26,17 +26,17 @@ public class ClientPlayNetworkHandlerMixin {
 	}
 	
 	@Inject(method = "onPlaySound", at = @At("HEAD"))
-	private void aaronMod$onPlaySound(@Arg PlaySoundS2CPacket packet) {
+	private void aaronMod$onPlaySound(PlaySoundS2CPacket packet, CallbackInfo ci) {
 		PlaySoundEvent.EVENT.invoker().onPlaySound(packet);
 	}
 	
 	@Inject(method = "onTeam", at = @At("HEAD"))
-	private void aaronMod$onTeamUpdate(@Arg TeamS2CPacket packet) {
+	private void aaronMod$onTeamUpdate(TeamS2CPacket packet, CallbackInfo ci) {
 		TeamUpdateEvent.EVENT.invoker().onTeamUpdate(packet);
 	}
 	
 	@Inject(method = "onParticle", at = @At("HEAD"))
-	private void aaronMod$onParticleSpawn(@Arg ParticleS2CPacket packet) {
+	private void aaronMod$onParticleSpawn(ParticleS2CPacket packet, CallbackInfo ci) {
 		ParticleSpawnEvent.EVENT.invoker().onParticleSpawn(packet);
 	}
 }

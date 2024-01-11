@@ -2,6 +2,7 @@ package net.azureaaron.mod.mixins;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -10,8 +11,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 
-import dev.cbyrne.betterinject.annotations.Arg;
-import dev.cbyrne.betterinject.annotations.Inject;
 import net.azureaaron.mod.Particles;
 import net.azureaaron.mod.Particles.State;
 import net.azureaaron.mod.config.AaronModConfigManager;
@@ -29,7 +28,7 @@ import net.minecraft.util.math.BlockPos;
 public class ParticleManagerMixin {
 		
 	@Inject(method = "addParticle(Lnet/minecraft/particle/ParticleEffect;DDDDDD)Lnet/minecraft/client/particle/Particle;", at = @At("HEAD"), cancellable = true) 
-	private void aaronMod$modifyParticles(@Arg ParticleEffect parameters, CallbackInfoReturnable<Particle> cir) {
+	private void aaronMod$modifyParticles(CallbackInfoReturnable<Particle> cir, @Local(argsOnly = true) ParticleEffect parameters) {
 		Identifier particleId = Registries.PARTICLE_TYPE.getId(parameters.getType());
 		
 		if (AaronModConfigManager.get().particles.getOrDefault(particleId, State.FULL) == State.NONE) cir.cancel();
@@ -48,7 +47,7 @@ public class ParticleManagerMixin {
 	//Particle Scale stuff
 	
 	@Inject(method = "addParticle(Lnet/minecraft/particle/ParticleEffect;DDDDDD)Lnet/minecraft/client/particle/Particle;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/particle/ParticleManager;addParticle(Lnet/minecraft/client/particle/Particle;)V", shift = At.Shift.BEFORE))
-	private void aaronMod$modifyParticleScale(@Arg ParticleEffect parameters, @Local Particle particle) {
+	private void aaronMod$modifyParticleScale(CallbackInfoReturnable<Particle> cir, @Local(argsOnly = true) ParticleEffect parameters, @Local Particle particle) {
 		Identifier particleId = Registries.PARTICLE_TYPE.getId(parameters.getType());
 		
 		aaronMod$scaleParticle(particle, AaronModConfigManager.get().particleScaling.getOrDefault(particleId, 1f));

@@ -4,8 +4,9 @@ import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import dev.cbyrne.betterinject.annotations.Inject;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
@@ -30,7 +31,7 @@ implements RecipeBookProvider {
 	
 	@SuppressWarnings("resource")
 	@Inject(method = "<init>", at = @At("TAIL"))
-	private void aaronMod$initDisplayGroups(PlayerEntity player) {
+	private void aaronMod$initDisplayGroups(PlayerEntity player, CallbackInfo ci) {
 		ItemGroups.updateDisplayContext(MinecraftClient.getInstance().player.networkHandler.getEnabledFeatures(), shouldShowOperatorTab(player), player.getWorld().getRegistryManager());
 	}
 	

@@ -21,9 +21,6 @@
     ],
     "modmenu": [
       "net.azureaaron.mod.compatibility.ModMenu"
-    ],
-    "preLaunch": [
-      "dev.cbyrne.betterinject.BetterInject::initialize"
     ]
   },
   "mixins": [

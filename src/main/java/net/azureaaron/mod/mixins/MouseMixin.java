@@ -6,10 +6,12 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import dev.cbyrne.betterinject.annotations.Arg;
-import dev.cbyrne.betterinject.annotations.Inject;
+import com.llamalad7.mixinextras.sugar.Local;
+
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.MouseInputEvent;
 import net.azureaaron.mod.features.MouseGuiPositioner;
@@ -27,17 +29,17 @@ public class MouseMixin implements MouseGuiPositioner {
 	private double aaronMod$guiY;
 
 	@Inject(method = "onMouseButton", at = @At("HEAD"))
-	private void aaronMod$onMouseButton(@Arg(ordinal = 0) int button, @Arg(ordinal = 1) int action, @Arg(ordinal = 2) int mods) {
+	private void aaronMod$onMouseButton(CallbackInfo ci, @Local(argsOnly = true, ordinal = 0) int button, @Local(argsOnly = true, ordinal = 1) int action, @Local(argsOnly = true, ordinal = 2) int mods) {
         MouseInputEvent.EVENT.invoker().onMouseInput(button, action, mods);
     }
 	
 	@Inject(method = "lockCursor", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Mouse;x:D", ordinal = 0, shift = At.Shift.BEFORE))
-	private void aaronMod$lockXPos() {
+	private void aaronMod$lockXPos(CallbackInfo ci) {
 		this.aaronMod$guiX = this.x;
 	}
 	
 	@Inject(method = "lockCursor", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Mouse;y:D", ordinal = 0, shift = At.Shift.BEFORE))
-	private void aaronMod$lockYPos() {
+	private void aaronMod$lockYPos(CallbackInfo ci) {
 		this.aaronMod$guiY = this.y;		
 	}
 		
@@ -60,7 +62,7 @@ public class MouseMixin implements MouseGuiPositioner {
 	}
 	
 	@Inject(method = "unlockCursor", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/InputUtil;setCursorParameters(JIDD)V", ordinal = 0, shift = At.Shift.AFTER))
-	private void aaronMod$correctCursorPosition() {
+	private void aaronMod$correctCursorPosition(CallbackInfo ci) {
 		if(AaronModConfigManager.get().resetCursorPosition && client.currentScreen instanceof GenericContainerScreen) GLFW.glfwSetCursorPos(this.client.getWindow().getHandle(), this.aaronMod$guiX, this.aaronMod$guiY);
 	}
 

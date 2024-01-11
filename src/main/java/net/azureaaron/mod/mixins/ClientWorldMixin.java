@@ -4,8 +4,9 @@ import java.util.function.Supplier;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import dev.cbyrne.betterinject.annotations.Inject;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.registry.DynamicRegistryManager;
@@ -28,7 +29,7 @@ public abstract class ClientWorldMixin extends World {
 	}
 
 	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;tickTime()V", shift = At.Shift.BEFORE))
-	private void aaronMod$correctAmbientDarkness() {
+	private void aaronMod$correctAmbientDarkness(CallbackInfo ci) {
 		if(AaronModConfigManager.get().correctAmbientDarkness) this.calculateAmbientDarkness();
 	}
 }

@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.4-SNAPSHOT'
+	id 'fabric-loom' version '1.5-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -45,10 +45,12 @@ dependencies {
 	include "dev.isxander.yacl:yet-another-config-lib-fabric:${yacl_version}"
 	
 	modImplementation "com.terraformersmc:modmenu:${modmenu_version}"
-	
-	implementation "com.github.cbyrneee:BetterInject:${betterinject_version}"
-	include "com.github.cbyrneee:BetterInject:${betterinject_version}"
-	annotationProcessor "com.github.cbyrneee:BetterInject:${betterinject_version}"
+}
+
+loom {
+	mixin {
+		useLegacyMixinAp = false
+	}
 }
 
 base {
