@@ -35,13 +35,13 @@ public class Http {
 	private static final String MOULBERRY = "https://moulberry.codes/";
 	private static final String USER_AGENT = "Aaron's Mod/" + Main.MOD_VERSION;
 	
-	private static ApiResponse sendGetRequest(String url, boolean h2, boolean throwOnNonOk) throws IOException, InterruptedException, ApiException {
+	private static ApiResponse sendGetRequest(String url, boolean throwOnNonOk) throws IOException, InterruptedException, ApiException {
 		HttpRequest request = HttpRequest.newBuilder()
 				.GET()
 				.header("Accept", "application/json")
 				.header("Accept-Encoding", "gzip, deflate")
 				.header("User-Agent", USER_AGENT)
-				.version(h2 ? Version.HTTP_2 : Version.HTTP_1_1)
+				.version(Version.HTTP_2)
 				.uri(URI.create(url))
 				.build();
 		
@@ -57,23 +57,23 @@ public class Http {
 	}
 			
 	public static String sendUnauthorizedHypixelRequest(String endpoint, @NotNull String parameters) throws IOException, InterruptedException, ApiException {
-		return sendGetRequest(HYPIXEL_BASE + endpoint + parameters, true, true).content();
+		return sendGetRequest(HYPIXEL_BASE + endpoint + parameters, true).content();
 	}
 	
 	public static String sendAuthorizedHypixelRequest(String endpoint, @NotNull String parameters) throws IOException, InterruptedException, ApiException {
-		return sendGetRequest(AARON_BASE + endpoint + parameters, true, true).content();
+		return sendGetRequest(AARON_BASE + endpoint + parameters, true).content();
 	}
 	
 	public static String sendNameToUuidRequest(String name) throws IOException, InterruptedException, ApiException {
-		return sendGetRequest(NAME_TO_UUID + name, true, true).content();
+		return sendGetRequest(NAME_TO_UUID + name, true).content();
 	}
 	
 	public static String sendUuidToNameRequest(String uuid) throws IOException, InterruptedException, ApiException {
-		return sendGetRequest(UUID_TO_NAME + uuid, true, true).content();
+		return sendGetRequest(UUID_TO_NAME + uuid, true).content();
 	}
 	
 	public static String sendMoulberryRequest(String endpoint) throws IOException, InterruptedException, ApiException {
-		return sendGetRequest(MOULBERRY + endpoint, true, false).content();
+		return sendGetRequest(MOULBERRY + endpoint, true).content();
 	}
 	
 	public static String sendNetworthRequest(String body) throws IOException, InterruptedException {		
