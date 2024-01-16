@@ -82,13 +82,18 @@ public class InventoryCommand {
 		private ItemStack getStack() {
 			IntIntPair idAndDmg = getIdAndDamage();
 			String sbId = getItemId();
-			String timestamp = nbt.getString("tag.ExtraAttributes.timestamp", "1/1/70 12:00 AM");
+			Object timestamp = nbt.getOrDefault("tag.ExtraAttributes.timestamp", null);
 			String uuid = nbt.getString("tag.ExtraAttributes.uuid", "UNKNOWN");
 			
 			NbtCompound extraAttributes = new NbtCompound();
 			extraAttributes.putString("id", sbId);
-			extraAttributes.putString("timestamp", timestamp);
 			extraAttributes.putString("uuid", uuid);
+			
+			if (timestamp instanceof Long l) {
+				extraAttributes.putLong("timestamp", l);
+			} else if (timestamp instanceof String str) {
+				extraAttributes.putString("timestamp", str);
+			}
 			
 			return ItemUtils.createStack(ItemUtils.identifierFromOldId(idAndDmg.leftInt(), idAndDmg.rightInt()), formattedName(), formattedLore(), extraAttributes);
 		}
