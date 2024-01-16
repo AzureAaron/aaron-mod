@@ -386,6 +386,14 @@ public class AaronModConfigManager {
 										.controller(ConfigUtils::createBooleanController)
 										.build())
 								.option(Option.<Boolean>createBuilder()
+										.name(Text.literal("Secure Skin Downloads"))
+										.description(OptionDescription.of(Text.literal("By default Minecraft downloads skins over insecure http, with this enabled skins are instead downloaded over https.")))
+										.binding(defaults.secureSkinDownloads,
+												() -> config.secureSkinDownloads,
+												newValue -> config.secureSkinDownloads = newValue)
+										.controller(ConfigUtils::createBooleanController)
+										.build())
+								.option(Option.<Boolean>createBuilder()
 										.name(Text.literal("Mac Only - Alt. FN+F3+N Keybind"))
 										.description(OptionDescription.createBuilder()
 												.text(Text.literal("Adds FN+F3+J as an alternate keybind for FN+F3+N"))

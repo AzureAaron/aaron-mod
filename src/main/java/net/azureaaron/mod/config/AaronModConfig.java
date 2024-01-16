@@ -160,6 +160,9 @@ public class AaronModConfig {
 	public boolean enableSkyblockCommands = true;
 	
 	@SerialEntry
+	public boolean secureSkinDownloads = false;
+	
+	@SerialEntry
 	public Object2ObjectOpenHashMap<Identifier, Particles.State> particles = new Object2ObjectOpenHashMap<>();
 	
 	@SerialEntry 
