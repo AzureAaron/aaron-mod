@@ -13,6 +13,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.Command;
 import com.mojang.logging.LogUtils;
+import com.mojang.serialization.JsonOps;
 
 import net.azureaaron.mod.features.TextReplacer;
 import net.azureaaron.mod.util.Functions;
@@ -96,11 +97,7 @@ public class CommandSystem {
 				boolean isName = !Functions.isUuid(player);
 				String response = isName ? Http.sendNameToUuidRequest(player) : Http.sendUuidToNameRequest(player);
 				
-				JsonObject json = JsonParser.parseString(response).getAsJsonObject();
-				String name = json.get("name").getAsString();
-				String uuid = json.get("id").getAsString();
-				
-				return new CommandPlayerData(name, uuid);
+				return CommandPlayerData.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response)).get().orThrow();
 			} catch (Throwable t) {
 				if (!Functions.isUuid(player)) {
 					source.sendError(Messages.NAME_TO_UUID_ERROR.get());
@@ -124,7 +121,7 @@ public class CommandSystem {
 		CompletableFuture.supplyAsync(() -> {
 			try {
 				//TODO remove this legacy profiles v1 thing when the networth api updates
-				return Http.sendAuthorizedHypixelRequest(dispatchHandle == NetworthCommand.DISPATCH_HANDLE ? "skyblock/profiles" : "v2/skyblock/profiles", "?uuid=" + playerData.uuid());
+				return Http.sendAuthorizedHypixelRequest(dispatchHandle == NetworthCommand.DISPATCH_HANDLE ? "skyblock/profiles" : "v2/skyblock/profiles", "?uuid=" + playerData.id());
 			} catch (Throwable t) {
 				source.sendError(Messages.SKYBLOCK_PROFILES_FETCH_ERROR.get());
 				LOGGER.error("[Aaron's Mod] Encountered an exception while fetching a player's skyblock profiles!", t);
@@ -145,7 +142,7 @@ public class CommandSystem {
 		.thenAccept(profileData -> {
 			if (profileData != null) {
 				try {
-					dispatchHandle.invokeExact(source, profileData, playerData.name(), playerData.uuid());
+					dispatchHandle.invokeExact(source, profileData, playerData.name(), playerData.id());
 				} catch (Throwable t) {
 					source.sendError(Messages.UNKNOWN_ERROR.get());
 					LOGGER.error("[Aaron's Mod] Encountered an exception while dispatching a skyblock command! Handle: {}", dispatchHandle.describeConstable(), t);
@@ -196,11 +193,7 @@ public class CommandSystem {
 				boolean isName = !Functions.isUuid(player);
 				String response = isName ? Http.sendNameToUuidRequest(player) : Http.sendUuidToNameRequest(player);
 				
-				JsonObject json = JsonParser.parseString(response).getAsJsonObject();
-				String name = json.get("name").getAsString();
-				String uuid = json.get("id").getAsString();
-				
-				return new CommandPlayerData(name, uuid);
+				return CommandPlayerData.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response)).get().orThrow();
 			} catch (Throwable t) {
 				if (!Functions.isUuid(player)) {
 					source.sendError(Messages.NAME_TO_UUID_ERROR.get());
@@ -216,7 +209,7 @@ public class CommandSystem {
 		.thenAccept(playerData -> {
 			if (playerData != null) {
 				try {
-					dispatchHandle.invokeExact(source, playerData.name(), playerData.uuid());
+					dispatchHandle.invokeExact(source, playerData.name(), playerData.id());
 				} catch (Throwable t) {
 					source.sendError(Messages.UNKNOWN_ERROR.get());
 					LOGGER.error("[Aaron's Mod] Encountered an exception while dispatching a vanilla command! Handle: {}", dispatchHandle.describeConstable(), t);

@@ -9,9 +9,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
  * 
  * @author Aaron
  */
-record CommandPlayerData(String name, String uuid) {
+record CommandPlayerData(String name, String id) {
 	static final Codec<CommandPlayerData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.STRING.fieldOf("name").forGetter(CommandPlayerData::name),
-			Codec.STRING.fieldOf("uuid").forGetter(CommandPlayerData::uuid))
+			Codec.STRING.fieldOf("id").forGetter(CommandPlayerData::id))
 			.apply(instance, CommandPlayerData::new));
 }
