@@ -53,7 +53,7 @@ public class Http {
 		
 		if (throwOnNonOk && statusCode != 200) throw new ApiException("[Aaron's Mod] API Error! URL: " + url + ", Code: " + statusCode + ", Body: " + body);
 		
-		return new ApiResponse(body, statusCode, response.headers());
+		return new ApiResponse(body, statusCode, url, response.headers());
 	}
 			
 	public static String sendUnauthorizedHypixelRequest(String endpoint, @NotNull String parameters) throws IOException, InterruptedException, ApiException {
@@ -64,12 +64,12 @@ public class Http {
 		return sendGetRequest(AARON_BASE + endpoint + parameters, true).content();
 	}
 	
-	public static String sendNameToUuidRequest(String name) throws IOException, InterruptedException, ApiException {
-		return sendGetRequest(NAME_TO_UUID + name, true).content();
+	public static ApiResponse sendNameToUuidRequest(String name) throws IOException, InterruptedException, ApiException {
+		return sendGetRequest(NAME_TO_UUID + name, false);
 	}
 	
-	public static String sendUuidToNameRequest(String uuid) throws IOException, InterruptedException, ApiException {
-		return sendGetRequest(UUID_TO_NAME + uuid, true).content();
+	public static ApiResponse sendUuidToNameRequest(String uuid) throws IOException, InterruptedException, ApiException {
+		return sendGetRequest(UUID_TO_NAME + uuid, false);
 	}
 	
 	public static String sendMoulberryRequest(String endpoint) throws IOException, InterruptedException, ApiException {
@@ -137,10 +137,18 @@ public class Http {
 		return response.headers().firstValue("Content-Type").orElse("");
 	}
 	
-	public record ApiResponse(String content, int statusCode, HttpHeaders headers) {
+	public record ApiResponse(String content, int statusCode, String url, HttpHeaders headers) {
 		
 		public boolean ok() {
 			return statusCode == 200;
+		}
+		
+		public boolean ratelimited() {
+			return statusCode == 429;
+		}
+		
+		public ApiException createException() {
+			return new ApiException("[Aaron's Mod] API Error! URL: " + url + ", Code: " + statusCode + ", Body: " + content);
 		}
 	}
 	

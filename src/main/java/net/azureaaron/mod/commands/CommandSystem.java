@@ -18,6 +18,7 @@ import com.mojang.serialization.JsonOps;
 import net.azureaaron.mod.features.TextReplacer;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Http;
+import net.azureaaron.mod.util.Http.ApiResponse;
 import net.azureaaron.mod.util.Messages;
 import net.azureaaron.mod.util.Skyblock;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -95,9 +96,8 @@ public class CommandSystem {
 		CompletableFuture.supplyAsync(() -> {
 			try {
 				boolean isName = !Functions.isUuid(player);
-				String response = isName ? Http.sendNameToUuidRequest(player) : Http.sendUuidToNameRequest(player);
 				
-				return CommandPlayerData.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response)).get().orThrow();
+				return nameToUuid(player, isName, 0);
 			} catch (Throwable t) {
 				if (!Functions.isUuid(player)) {
 					source.sendError(Messages.NAME_TO_UUID_ERROR.get());
@@ -191,9 +191,8 @@ public class CommandSystem {
 		CompletableFuture.supplyAsync(() -> {
 			try {
 				boolean isName = !Functions.isUuid(player);
-				String response = isName ? Http.sendNameToUuidRequest(player) : Http.sendUuidToNameRequest(player);
 				
-				return CommandPlayerData.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response)).get().orThrow();
+				return nameToUuid(player, isName, 0);
 			} catch (Throwable t) {
 				if (!Functions.isUuid(player)) {
 					source.sendError(Messages.NAME_TO_UUID_ERROR.get());
@@ -218,5 +217,19 @@ public class CommandSystem {
 		});
 		
 		return Command.SINGLE_SUCCESS;
+	}
+	
+	private static CommandPlayerData nameToUuid(String player, boolean isName, int retries) throws Exception {
+		ApiResponse response = isName ? Http.sendNameToUuidRequest(player) : Http.sendUuidToNameRequest(player);
+		
+		if (response.ok()) {
+			return CommandPlayerData.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).get().orThrow();
+		} else if (response.ratelimited() && retries < 3) {
+			Thread.sleep(800);
+			
+			return nameToUuid(player, isName, ++retries);
+		} else {
+			throw response.createException();
+		}
 	}
 }
