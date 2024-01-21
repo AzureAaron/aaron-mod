@@ -1,7 +1,9 @@
 package net.azureaaron.mod.util;
 
 import java.io.BufferedReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -15,6 +17,7 @@ import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 
+import net.azureaaron.mod.Main;
 import net.azureaaron.mod.commands.NetworthCommand;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.MinecraftClient;
@@ -23,30 +26,18 @@ import net.minecraft.util.Identifier;
 
 public class Skyblock {
 	private static final Logger LOGGER = LogUtils.getLogger();
+	
 	private static final Codec<Map<String, ItemStack>> RARE_LOOT_CODEC = Codec.unboundedMap(Codec.STRING, ItemStack.CODEC);
-	private static final Identifier RARE_LOOT = new Identifier("aaron-mod", "skyblock/rare_loot_items.json");
-	
-	public static final String[] MAX_LEVEL_SKYBLOCK_ENCHANTMENTS = {/* Armour */ "Aqua Affinity I", "Big Brain V", "Blast Protection VII", 
-			"Counter-Strike V", "Depth Strider III", "Feather Falling X", "Feather Falling XX", "Ferocious Mana X", "Fire Protection VII",
-			"Frost Walker II", "Growth VII", "Hardened Mana X", "Hecatomb X", "Mana Vampire X", "Pesterminator V", "Projectile Protection VII", "Protection VII",
-			"Reflection V", "Rejuvenate V", "Respiration III", "Respiration IV", "Respite V", "Smarty Pants V", "Strong Mana X", "Sugar Rush III", "Thorns III", 
-			"True Protection I", /* Weapons */ "Bane of Arthropods VII", "Champion X", "Chance V", "Cleave VI", "Critical VII", "Cubism VI",
-			"Divine Gift III", "Dragon Hunter V", "Dragon Tracer V", "Ender Slayer VII", "Execute VI", "Fire Aspect III", "First Strike V",
-			"Flame II", "Giant Killer VII", "Impaling III", "Infinite Quiver X", "Knockback II", "Lethality VI", "Life Steal V", "Looting V",
-			"Luck VII", "Mana Steal III", "Overload V", "Piercing I", "Power VII", "Prosecute VI", "Punch II", "Scavenger V",
-			"Sharpness X", "Sharpness VII", "Smite VII", "Smoldering V", "Snipe IV", "Syphon V", "Tabasco III", "Thunderbolt VI", "Thunderlord VII",
-			"Titan Killer VII", "Transylvanian V", "Triple-Strike V", "Vampirism VI", "Venomous VI", "Vicious V", /* Fishing */ "Angler VI", "Blessing VI",
-			"Caster VI", "Charm V", "Corruption V", "Expertise X", "Frail VI", "Luck of the Sea VI", "Lure VI", "Magnet VI", "Piscary VI",
-			"Spiked Hook VI", /* Farming Specific */ "Cultivating X", "Dedication IV", "Delicate V", "Green Thumb V", "Harvesting VI", 
-			"Replenish I", "Sunder VI", "Turbo-Cacti V", "Turbo-Cane V", "Turbo-Carrot V", "Turbo-Cocoa V", "Turbo-Melon V", 
-			"Turbo-Mushrooms V", "Turbo-Potato V", "Turbo-Pumpkin V", "Turbo-Warts V", "Turbo-Wheat V", 
-			/* Axes/Pickaxes */ "Compact X", "Efficiency VI", "Efficiency X", "Fortune IV", "Pristine V", "Silk Touch I", "Smelting Touch I", 
-			/* Equipment */ "Cayenne V", "Prosperity V", "Quantum V", /* Misc/Multipurpose */ "Experience V", "Rainbow III" };
-	
+	private static final Identifier RARE_LOOT = new Identifier(Main.NAMESPACE, "skyblock/rare_loot_items.json");
 	public static final Map<String, ItemStack> RARE_LOOT_ITEMS = new HashMap<>();
 	
+	private static final Codec<List<String>> MAX_ENCHANTMENTS_CODEC = Codec.list(Codec.STRING);
+	private static final Identifier MAX_ENCHANTMENTS = new Identifier(Main.NAMESPACE, "skyblock/max_enchantments.json");
+	public static final List<String> MAX_LEVEL_ENCHANTMENTS = new ArrayList<>();
+		
 	public static void init() {
 		ClientLifecycleEvents.CLIENT_STARTED.register(Skyblock::loadRareLootItems);
+		ClientLifecycleEvents.CLIENT_STARTED.register(Skyblock::loadMaxEnchants);
 	}
 	
 	private static void loadRareLootItems(MinecraftClient client) {
@@ -59,6 +50,18 @@ public class Skyblock {
 				return Map.<String, ItemStack>of();
 			}
 		}).thenAccept(RARE_LOOT_ITEMS::putAll);
+	}
+	
+	private static void loadMaxEnchants(MinecraftClient client) {
+		CompletableFuture.supplyAsync(() -> {
+			try (BufferedReader reader = client.getResourceManager().openAsReader(MAX_ENCHANTMENTS)) {
+				return MAX_ENCHANTMENTS_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseReader(reader)).result().orElseThrow();
+			} catch (Exception e) {
+				LOGGER.error("[Aaron's Mod] Failed to load max enchantments file!", e);
+				
+				return List.<String>of();
+			}
+		}).thenAccept(MAX_LEVEL_ENCHANTMENTS::addAll);
 	}
 	
 	public static JsonObject getSelectedProfile2(String profiles) throws IllegalStateException {
