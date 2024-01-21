@@ -41,7 +41,7 @@ public class Skyblock {
 			"Replenish I", "Sunder VI", "Turbo-Cacti V", "Turbo-Cane V", "Turbo-Carrot V", "Turbo-Cocoa V", "Turbo-Melon V", 
 			"Turbo-Mushrooms V", "Turbo-Potato V", "Turbo-Pumpkin V", "Turbo-Warts V", "Turbo-Wheat V", 
 			/* Axes/Pickaxes */ "Compact X", "Efficiency VI", "Efficiency X", "Fortune IV", "Pristine V", "Silk Touch I", "Smelting Touch I", 
-			/* Equipment */ "Cayenne V", "Prosperity V", "Quantum V", /* Misc/Multipurpose */ "Experience V", "Rainbow I", "Rainbow III" };
+			/* Equipment */ "Cayenne V", "Prosperity V", "Quantum V", /* Misc/Multipurpose */ "Experience V", "Rainbow III" };
 	
 	public static final Map<String, ItemStack> RARE_LOOT_ITEMS = new HashMap<>();
 	
