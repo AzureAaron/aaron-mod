@@ -37,6 +37,7 @@ import net.azureaaron.mod.listeners.MouseListener;
 import net.azureaaron.mod.listeners.PlaySoundListener;
 import net.azureaaron.mod.listeners.ReceiveChatMessageListener;
 import net.azureaaron.mod.listeners.TeamUpdateListener;
+import net.azureaaron.mod.util.Skyblock;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -70,6 +71,7 @@ public class Main implements ClientModInitializer {
 		M7Waypoints.init();
 		ImagePreview.init();
 		DragonHealth.init();
+		Skyblock.init();
 		
 		//Register Keybinds
 		registerKeybindings();

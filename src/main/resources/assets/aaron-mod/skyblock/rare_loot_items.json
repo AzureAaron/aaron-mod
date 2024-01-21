@@ -1,0 +1,272 @@
+{
+  "shadow_assassin_chestplate": {
+    "id": "minecraft:leather_chestplate",
+    "Count": 1,
+    "tag": {
+      "display": {
+        "color": 0
+      },
+      "Damage": 0
+    }
+  },
+  "recombobulator_3000": {
+    "id": "minecraft:player_head",
+    "Count": 1,
+    "tag": {
+      "SkullOwner": {
+        "Properties": {
+          "textures": [
+            {
+              "Value": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTdjY2QzNmRjOGY3MmFkY2IxZjhjOGU2MWVlODJjZDk2ZWFkMTQwY2YyYTE2YTEzNjZiZTliNWE4ZTNjYzNmYyJ9fX0\u003d"
+            }
+          ]
+        },
+        "Id": [
+          1092254528,
+          74860659,
+          -1787555806,
+          -1796476432
+        ]
+      }
+    }
+  },
+  "thunderlord_7": {
+    "id": "minecraft:enchanted_book",
+    "Count": 1,
+    "tag": {
+      "Enchantments": [
+        {
+          "lvl": 1,
+          "id": "minecraft:protection"
+        }
+      ]
+    }
+  },
+  "necron_handle": {
+    "id": "minecraft:stick",
+    "Count": 1,
+    "tag": {
+      "Enchantments": [
+        {
+          "lvl": 1,
+          "id": "minecraft:protection"
+        }
+      ]
+    }
+  },
+  "giants_sword": {
+    "id": "minecraft:iron_sword",
+    "Count": 1,
+    "tag": {
+      "Damage": 0
+    }
+  },
+  "second_master_star": {
+    "id": "minecraft:player_head",
+    "Count": 1,
+    "tag": {
+      "SkullOwner": {
+        "Properties": {
+          "textures": [
+            {
+              "Value": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWQ5OTEzYTY2MWMzOGY1ZjcwMGI4MDc5OGE4YzQ4NWQzMzJkNzgzNDViNzY3MWQwYTI0OGE4NGIyMDk5YmY0ZSJ9fX0\u003d"
+            }
+          ]
+        },
+        "Id": [
+          1070490748,
+          815350713,
+          -1408694809,
+          -1514690304
+        ]
+      }
+    }
+  },
+  "first_master_star": {
+    "id": "minecraft:player_head",
+    "Count": 1,
+    "tag": {
+      "SkullOwner": {
+        "Properties": {
+          "textures": [
+            {
+              "Value": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjEzNjcyNDc0NWM4YzlhYmM3NWNkZjIyMDVmMmNkMWQzM2U2YmZlZmE0MTVmOTk1YmU3NjkyMjkxMjE2OWVjOSJ9fX0\u003d"
+            }
+          ]
+        },
+        "Id": [
+          1889180270,
+          718883230,
+          -1870722231,
+          1189924325
+        ]
+      }
+    }
+  },
+  "master_skull_tier_5": {
+    "id": "minecraft:player_head",
+    "Count": 1,
+    "tag": {
+      "SkullOwner": {
+        "Properties": {
+          "textures": [
+            {
+              "Value": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTEwZjlmMTA4NWQ0MDcxNDFlYjc3NjE3YTRhYmRhYWEwOGQ4YWYzM2I5NjAyMDBmZThjMTI2YzFkMTQ0NTY4MiJ9fX0\u003d"
+            }
+          ]
+        },
+        "Id": [
+          -1613868903,
+          -527154034,
+          -1445577520,
+          748807544
+        ]
+      }
+    }
+  },
+  "shadow_fury": {
+    "id": "minecraft:diamond_sword",
+    "Count": 1,
+    "tag": {
+      "Damage": 0
+    }
+  },
+  "spirit_wing": {
+    "id": "minecraft:player_head",
+    "Count": 1,
+    "tag": {
+      "SkullOwner": {
+        "Properties": {
+          "textures": [
+            {
+              "Value": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTI5YWQ3NmMyNDU5OTExYzJiYmFjZGNkMGE3YjgyZTA4MzU1NjdlM2U1MTM0YjA1YTZmNWFmNjY5ZGQ4OGI4MyJ9fX0\u003d"
+            }
+          ]
+        },
+        "Id": [
+          2122603902,
+          193414073,
+          -1522636624,
+          168522212
+        ]
+      }
+    }
+  },
+  "item_spirit_bow": {
+    "id": "minecraft:bow",
+    "Count": 1,
+    "tag": {
+      "Damage": 0
+    }
+  },
+  "wither_shield_scroll": {
+    "id": "minecraft:writable_book",
+    "Count": 1,
+    "tag": {
+      "Enchantments": [
+        {
+          "lvl": 1,
+          "id": "minecraft:protection"
+        }
+      ]
+    }
+  },
+  "third_master_star": {
+    "id": "minecraft:player_head",
+    "Count": 1,
+    "tag": {
+      "SkullOwner": {
+        "Properties": {
+          "textures": [
+            {
+              "Value": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDcxYjk1NGU4OWFlZDE1NmY5MGZhZmNlNmRjNzc4OGFjNzZiNjQ2NmNlY2NhM2E0ZjRlYzFlNDYzZWI5MTRhMSJ9fX0\u003d"
+            }
+          ]
+        },
+        "Id": [
+          -1095679644,
+          -806403158,
+          -1833969157,
+          2104192293
+        ]
+      }
+    }
+  },
+  "dark_claymore": {
+    "id": "minecraft:stone_sword",
+    "Count": 1,
+    "tag": {
+      "Damage": 0
+    }
+  },
+  "fifth_master_star": {
+    "id": "minecraft:player_head",
+    "Count": 1,
+    "tag": {
+      "SkullOwner": {
+        "Properties": {
+          "textures": [
+            {
+              "Value": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzFjODA0MjUyN2Y4MWM4ZTI5M2UyODEwMTEzNDg5ZjQzOTRjYzZlZmUxNWQxYWZhYzQzMTU3MWM3M2I2MmRjNCJ9fX0\u003d"
+            }
+          ]
+        },
+        "Id": [
+          1904417095,
+          756174249,
+          -1302927470,
+          1407004198
+        ]
+      }
+    }
+  },
+  "necron_dye": {
+    "id": "minecraft:orange_dye",
+    "Count": 1
+  },
+  "implosion_scroll": {
+    "id": "minecraft:writable_book",
+    "Count": 1,
+    "tag": {
+      "Enchantments": [
+        {
+          "lvl": 1,
+          "id": "minecraft:protection"
+        }
+      ]
+    }
+  },
+  "fourth_master_star": {
+    "id": "minecraft:player_head",
+    "Count": 1,
+    "tag": {
+      "SkullOwner": {
+        "Properties": {
+          "textures": [
+            {
+              "Value": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDM3YTE1OTY4N2JlMzY4NzdkNGUzYjA1ZjYxYmI1OThkODMzMWM3OTEwOGFjYzNjMWFmODBmMjI1Mzg5MmJiMiJ9fX0\u003d"
+            }
+          ]
+        },
+        "Id": [
+          -91962356,
+          985286078,
+          -1601144504,
+          1140606810
+        ]
+      }
+    }
+  },
+  "shadow_warp_scroll": {
+    "id": "minecraft:writable_book",
+    "Count": 1,
+    "tag": {
+      "Enchantments": [
+        {
+          "lvl": 1,
+          "id": "minecraft:protection"
+        }
+      ]
+    }
+  }
+}
