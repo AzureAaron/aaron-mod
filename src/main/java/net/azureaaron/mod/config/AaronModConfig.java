@@ -34,7 +34,7 @@ public class AaronModConfig {
 	public boolean alternateF3PlusNKey = false;
 	
 	@SerialEntry
-	public boolean dungeonScoreMessage = true;
+	public boolean dungeonScoreMessage = false;
 	
 	@SerialEntry
 	public String twoHundredSeventyScore = "270 Score Reached!";
