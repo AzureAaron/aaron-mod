@@ -76,7 +76,7 @@ public class Skyblock {
 		
 		JsonObject skyblockData = JsonParser.parseString(profiles).getAsJsonObject();
 		
-		if (!skyblockData.has(profiles)) throw new IllegalStateException(Messages.NO_SKYBLOCK_PROFILES_ERROR.get().getString()); //If the player's profile hasn't been migrated or they got wiped
+		if (skyblockData.get("profiles").isJsonNull()) throw new IllegalStateException(Messages.NO_SKYBLOCK_PROFILES_ERROR.get().getString()); //If the player's profile hasn't been migrated or they got wiped
 		
 		JsonArray profilesArray = skyblockData.getAsJsonArray("profiles");
 				
