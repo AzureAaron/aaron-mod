@@ -75,10 +75,11 @@ public class Skyblock {
 		if (profiles == null) return null;
 		
 		JsonObject skyblockData = JsonParser.parseString(profiles).getAsJsonObject();
+		
+		if (!skyblockData.has(profiles)) throw new IllegalStateException(Messages.NO_SKYBLOCK_PROFILES_ERROR.get().getString()); //If the player's profile hasn't been migrated or they got wiped
+		
 		JsonArray profilesArray = skyblockData.getAsJsonArray("profiles");
-		
-		if (profilesArray == null) throw new IllegalStateException(Messages.PROFILES_NOT_MIGRATED_ERROR.get().getString()); //If the player's profile hasn't been migrated
-		
+				
 		for (JsonElement profile : profilesArray) {
 			JsonObject iteratedProfile = profile.getAsJsonObject();
 			if (iteratedProfile.get("selected").getAsBoolean() == true) return iteratedProfile;

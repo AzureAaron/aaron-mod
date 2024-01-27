@@ -133,7 +133,7 @@ public class CommandSystem {
 			try {
 				return Skyblock.getSelectedProfile2(body);
 			} catch (Throwable t) {
-				if (t instanceof IllegalStateException) source.sendError(Messages.PROFILES_NOT_MIGRATED_ERROR.get()); else source.sendError(Messages.JSON_PARSING_ERROR.get());
+				if (t instanceof IllegalStateException) source.sendError(Messages.NO_SKYBLOCK_PROFILES_ERROR.get()); else source.sendError(Messages.JSON_PARSING_ERROR.get());
 				LOGGER.error("[Aaron's Mod] Encountered an exception while determining a player's selected skyblock profile!", t);
 				
 				return null;
