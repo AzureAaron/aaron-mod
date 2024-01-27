@@ -163,6 +163,9 @@ public class AaronModConfig {
 	public boolean secureSkinDownloads = true;
 	
 	@SerialEntry
+	public boolean hideScoreboardScore = false;
+	
+	@SerialEntry
 	public Object2ObjectOpenHashMap<Identifier, Particles.State> particles = new Object2ObjectOpenHashMap<>();
 	
 	@SerialEntry 

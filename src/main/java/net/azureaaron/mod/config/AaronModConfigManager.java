@@ -149,6 +149,14 @@ public class AaronModConfigManager {
 										.controller(ConfigUtils::createBooleanController)
 										.build())
 								.option(Option.<Boolean>createBuilder()
+										.name(Text.literal("Hide Scoreboard Score"))
+										.description(OptionDescription.of(Text.literal("Hides the numbers on the far right of the scoreboard.")))
+										.binding(defaults.hideScoreboardScore,
+												() -> config.hideScoreboardScore,
+												newValue -> config.hideScoreboardScore = newValue)
+										.controller(ConfigUtils::createBooleanController)
+										.build())
+								.option(Option.<Boolean>createBuilder()
 										.name(Text.literal("Shadowed Name Tag Text"))
 										.description(OptionDescription.createBuilder()
 												.text(Text.literal("Adds text shadowing to name tags!"))
