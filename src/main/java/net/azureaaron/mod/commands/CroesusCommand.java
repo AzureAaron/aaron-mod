@@ -146,7 +146,7 @@ public class CroesusCommand {
 		ItemStack bundle = Items.BUNDLE.getDefaultStack().setCustomName(Text.literal("✦ Rare Loot Preview ✦").styled(style -> style.withItalic(false).withColor(colourProfile.infoColour.getAsInt())));
 		
 		for (int i = 0; i < rareLoot.length; i++) {
-			Functions.addToBundle(bundle, Skyblock.RARE_LOOT_ITEMS.get(rareLoot[i]));
+			Functions.addToBundle(bundle, Skyblock.getRareLootItems().get(rareLoot[i]));
 		}
 				
 		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))

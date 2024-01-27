@@ -85,7 +85,7 @@ public abstract class ItemStackMixin {
 	
 	@ModifyVariable(method = "getTooltip", at = @At("STORE"), ordinal = 1)
 	private MutableText aaronMod$rainbowifyMaxSkyblockEnchantments(MutableText text) {
-		if(AaronModConfigManager.get().rainbowifyMaxSkyblockEnchantments && ((Functions.isOnHypixel() && Functions.isInSkyblock()) || aaronMod$shouldApplyEffect()) && Skyblock.MAX_LEVEL_ENCHANTMENTS.stream().anyMatch(text.getString()::contains)) {
+		if(AaronModConfigManager.get().rainbowifyMaxSkyblockEnchantments && ((Functions.isOnHypixel() && Functions.isInSkyblock()) || aaronMod$shouldApplyEffect()) && Skyblock.getMaxEnchants().stream().anyMatch(text.getString()::contains)) {
 			MutableText newText = Text.empty().styled(style -> style.withItalic(false));
 			List<Text> textComponents = text.getSiblings();
 			
@@ -96,13 +96,13 @@ public abstract class ItemStackMixin {
 				//Exclude non-max enchants from counting towards total length since it looks weird & incomplete otherwise
 				for(int i = 0; i < textComponents.size(); i++) {
 					String componentString = textComponents.get(i).getString();
-					if(Skyblock.MAX_LEVEL_ENCHANTMENTS.stream().anyMatch(componentString::contains)) totalLength += componentString.length();
+					if(Skyblock.getMaxEnchants().stream().anyMatch(componentString::contains)) totalLength += componentString.length();
 				}
 							
 				for(int i = 0; i < textComponents.size(); i++) {
 					Text currentComponent = textComponents.get(i);
 					String componentString = currentComponent.getString();
-					if(Skyblock.MAX_LEVEL_ENCHANTMENTS.stream().anyMatch(componentString::contains)) {
+					if(Skyblock.getMaxEnchants().stream().anyMatch(componentString::contains)) {
 						newText.append(TextTransformer.progressivelyRainbowify(componentString, totalLength, positionLeftOffAt));
 						positionLeftOffAt += componentString.length();
 						continue;
@@ -115,7 +115,7 @@ public abstract class ItemStackMixin {
 			if(AaronModConfigManager.get().rainbowifyMode == AaronModConfig.RainbowifyMode.DYNAMIC) {
 				for(int i = 0; i < textComponents.size(); i ++) {
 					String componentString = textComponents.get(i).getString();
-					if(Skyblock.MAX_LEVEL_ENCHANTMENTS.stream().anyMatch(componentString::contains)) {
+					if(Skyblock.getMaxEnchants().stream().anyMatch(componentString::contains)) {
 						newText.append(Text.literal(componentString).styled(style -> style.withColor(0xAA5500)));
 						continue;
 					}

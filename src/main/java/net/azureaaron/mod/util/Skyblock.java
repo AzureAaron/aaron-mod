@@ -26,23 +26,22 @@ import net.minecraft.util.Identifier;
 
 public class Skyblock {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	
 	private static final Codec<Map<String, ItemStack>> RARE_LOOT_CODEC = Codec.unboundedMap(Codec.STRING, ItemStack.CODEC);
-	private static final Identifier RARE_LOOT = new Identifier(Main.NAMESPACE, "skyblock/rare_loot_items.json");
-	public static final Map<String, ItemStack> RARE_LOOT_ITEMS = new HashMap<>();
+	private static final Map<String, ItemStack> RARE_LOOT_ITEMS = new HashMap<>();
 	
 	private static final Codec<List<String>> MAX_ENCHANTMENTS_CODEC = Codec.list(Codec.STRING);
-	private static final Identifier MAX_ENCHANTMENTS = new Identifier(Main.NAMESPACE, "skyblock/max_enchantments.json");
-	public static final List<String> MAX_LEVEL_ENCHANTMENTS = new ArrayList<>();
+	private static final List<String> MAX_LEVEL_ENCHANTMENTS = new ArrayList<>();
+	
+	private static boolean loaded;
 		
 	public static void init() {
-		ClientLifecycleEvents.CLIENT_STARTED.register(Skyblock::loadRareLootItems);
-		ClientLifecycleEvents.CLIENT_STARTED.register(Skyblock::loadMaxEnchants);
+		ClientLifecycleEvents.CLIENT_STARTED.register(client -> CompletableFuture.allOf(loadRareLootItems(client), loadMaxEnchants(client)).whenComplete((_result, _throwable) -> loaded = true));
 	}
 	
-	private static void loadRareLootItems(MinecraftClient client) {
-		CompletableFuture.supplyAsync(() -> {
-			try (BufferedReader reader = client.getResourceManager().openAsReader(RARE_LOOT)) {
+	//TODO concurrent modification handling through getters
+	private static CompletableFuture<Void> loadRareLootItems(MinecraftClient client) {
+		return CompletableFuture.supplyAsync(() -> {
+			try (BufferedReader reader = client.getResourceManager().openAsReader(new Identifier(Main.NAMESPACE, "skyblock/rare_loot_items.json"))) {
 				return RARE_LOOT_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseReader(reader)).result().orElseThrow();
 			} catch (Exception e) {
 				LOGGER.error("[Aaron's Mod] Failed to load rare loot items file!", e);
@@ -52,9 +51,9 @@ public class Skyblock {
 		}).thenAccept(RARE_LOOT_ITEMS::putAll);
 	}
 	
-	private static void loadMaxEnchants(MinecraftClient client) {
-		CompletableFuture.supplyAsync(() -> {
-			try (BufferedReader reader = client.getResourceManager().openAsReader(MAX_ENCHANTMENTS)) {
+	private static CompletableFuture<Void> loadMaxEnchants(MinecraftClient client) {
+		return CompletableFuture.supplyAsync(() -> {
+			try (BufferedReader reader = client.getResourceManager().openAsReader(new Identifier(Main.NAMESPACE, "skyblock/max_enchantments.json"))) {
 				return MAX_ENCHANTMENTS_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseReader(reader)).result().orElseThrow();
 			} catch (Exception e) {
 				LOGGER.error("[Aaron's Mod] Failed to load max enchantments file!", e);
@@ -62,6 +61,14 @@ public class Skyblock {
 				return List.<String>of();
 			}
 		}).thenAccept(MAX_LEVEL_ENCHANTMENTS::addAll);
+	}
+	
+	public static Map<String, ItemStack> getRareLootItems() {
+		return loaded ? RARE_LOOT_ITEMS : Map.of();
+	}
+	
+	public static List<String> getMaxEnchants() {
+		return loaded ? MAX_LEVEL_ENCHANTMENTS : List.of();
 	}
 	
 	public static JsonObject getSelectedProfile2(String profiles) throws IllegalStateException {
