@@ -28,12 +28,7 @@ public interface ReceiveChatMessageEvent {
 	void onMessage(Text message, boolean overlay, boolean cancelled);
 	
 	static void init() {
-		ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
-			EVENT.invoker().onMessage(message, overlay, false);
-		});
-		
-		ClientReceiveMessageEvents.GAME_CANCELED.register((message, overlay) -> {
-			EVENT.invoker().onMessage(message, overlay, true);
-		});
+		ClientReceiveMessageEvents.GAME.register((message, overlay) -> EVENT.invoker().onMessage(message, overlay, false));
+		ClientReceiveMessageEvents.GAME_CANCELED.register((message, overlay) -> EVENT.invoker().onMessage(message, overlay, true));
 	}
 }
