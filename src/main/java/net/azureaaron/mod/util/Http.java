@@ -32,7 +32,7 @@ public class Http {
 			.followRedirects(Redirect.NORMAL)
 			.build();
 	private static final String HYPIXEL_BASE = "https://api.hypixel.net/";
-	private static final String AARON_BASE = "https://api.azureaaron.net/hypixel/";
+	private static final String AARON_BASE = "https://api.azureaaron.net/";
 	private static final String NAME_TO_UUID = "https://api.minecraftservices.com/minecraft/profile/lookup/name/";
 	private static final String UUID_TO_NAME = "https://api.minecraftservices.com/minecraft/profile/lookup/";
 	private static final String NETWORTH = "https://maro.skyblockextras.com/api/networth/categories";
@@ -65,7 +65,7 @@ public class Http {
 	}
 	
 	public static String sendAuthorizedHypixelRequest(String endpoint, @NotNull String parameters) throws IOException, InterruptedException, ApiException {
-		return sendGetRequest(AARON_BASE + endpoint + parameters, true).content();
+		return sendGetRequest(AARON_BASE + "hypixel/" + endpoint + parameters, true).content();
 	}
 	
 	public static ApiResponse sendNameToUuidRequest(String name) throws IOException, InterruptedException, ApiException {
@@ -74,6 +74,11 @@ public class Http {
 	
 	public static ApiResponse sendUuidToNameRequest(String uuid) throws IOException, InterruptedException, ApiException {
 		return sendGetRequest(UUID_TO_NAME + uuid, false);
+	}
+	
+	//TODO give this a better name?
+	public static ApiResponse sendApiRequest(String path) throws IOException, InterruptedException, ApiException {
+		return sendGetRequest(AARON_BASE + path, true);
 	}
 	
 	public static String sendMoulberryRequest(String endpoint) throws IOException, InterruptedException, ApiException {

@@ -19,6 +19,7 @@ import com.mojang.serialization.JsonOps;
 
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.commands.NetworthCommand;
+import net.azureaaron.mod.util.Http.ApiResponse;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
@@ -38,7 +39,6 @@ public class Skyblock {
 		ClientLifecycleEvents.CLIENT_STARTED.register(client -> CompletableFuture.allOf(loadRareLootItems(client), loadMaxEnchants(client)).whenComplete((_result, _throwable) -> loaded = true));
 	}
 	
-	//TODO concurrent modification handling through getters
 	private static CompletableFuture<Void> loadRareLootItems(MinecraftClient client) {
 		return CompletableFuture.supplyAsync(() -> {
 			try (BufferedReader reader = client.getResourceManager().openAsReader(new Identifier(Main.NAMESPACE, "skyblock/rare_loot_items.json"))) {
@@ -51,10 +51,12 @@ public class Skyblock {
 		}).thenAccept(RARE_LOOT_ITEMS::putAll);
 	}
 	
+	//Maybe load the enchants from file as backup?
 	private static CompletableFuture<Void> loadMaxEnchants(MinecraftClient client) {
 		return CompletableFuture.supplyAsync(() -> {
-			try (BufferedReader reader = client.getResourceManager().openAsReader(new Identifier(Main.NAMESPACE, "skyblock/max_enchantments.json"))) {
-				return MAX_ENCHANTMENTS_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseReader(reader)).result().orElseThrow();
+			try {
+				ApiResponse response = Http.sendApiRequest("skyblock/maxenchantments");
+				return MAX_ENCHANTMENTS_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).result().orElseThrow();
 			} catch (Exception e) {
 				LOGGER.error("[Aaron's Mod] Failed to load max enchantments file!", e);
 				
