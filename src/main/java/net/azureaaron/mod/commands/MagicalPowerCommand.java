@@ -9,9 +9,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.util.Base64;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.IntToDoubleFunction;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -21,10 +23,15 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.logging.LogUtils;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import it.unimi.dsi.fastutil.objects.Object2FloatMap;
+import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
@@ -44,6 +51,9 @@ import net.minecraft.text.HoverEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Util;
+import net.minecraft.util.dynamic.Codecs;
+import net.minecraft.util.dynamic.Codecs.StrictUnboundedMapCodec;
 
 public class MagicalPowerCommand {
 	private static final Logger LOGGER = LogUtils.getLogger();
@@ -51,7 +61,7 @@ public class MagicalPowerCommand {
 	private static final Supplier<MutableText> NO_ACCESSORY_BAG_DATA = () -> Constants.PREFIX.get().append(Text.literal("This profile doesn't have any accessory bag data!").formatted(Formatting.RED));
 	private static final Supplier<MutableText> NBT_PARSING_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while trying to parse NBT!").formatted(Formatting.RED)); //TODO make constant
 	private static final Pattern ACCESSORY_RARITY_PATTERN = Pattern.compile("(?:a )?(?<rarity>(?:VERY )?[A-Za-z]+) (?:DUNGEON )?(?:A|HAT)CCESSORY(?: a)?");
-	@SuppressWarnings("unused")
+	
 	private static final IntToDoubleFunction STATS_MULT = magicalPower -> 29.97d * Math.pow(Math.log(0.0019d * magicalPower + 1d), 1.2d);
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
@@ -189,13 +199,28 @@ public class MagicalPowerCommand {
 			if (JsonHelper.getBoolean(riftAccess, "consumed_prism").orElse(false)) magicalPower += 11;
 		}
 		
-		//Selected power & tunings
+		//Selected power
 		String selectedPower = JsonHelper.getString(accessoryBagStorage, "selected_power").orElse("None");
 		
+		//Get the selected magical power's data and calculate the stat boosts
+		Map<String, MagicalPowerData> magicalPowers = Skyblock.getMagicalPowers();
+		MagicalPowerData powerData = magicalPowers.getOrDefault(selectedPower, null);
+		
+		Object2FloatOpenHashMap<String> stats = null;
+		Object2FloatOpenHashMap<String> bonus = null;
+		
+		if (powerData != null) {
+			double statsMult = STATS_MULT.applyAsDouble(magicalPower);
+			
+			stats = Util.make(powerData.stats().clone(), m -> m.object2FloatEntrySet().stream().forEach(e -> e.setValue((float) Math.round(e.getFloatValue() * statsMult))));
+			bonus = powerData.bonus();
+		}
+		
 		//Tunings
-		var tuningData = accessoryBagStorage.getAsJsonObject("tuning").getAsJsonObject("slot_0").asMap(); //Having Map<String, JsonElement> be the type broke command+click inspection for some reason
+		//Having Map<String, JsonElement> be the type used to break command+click inspection for some reason
+		Map<String, JsonElement> tuningData = accessoryBagStorage.getAsJsonObject("tuning").getAsJsonObject("slot_0").asMap();
 		List<Text> tunings = tuningData.entrySet().stream().filter(entry -> entry.getValue().getAsInt() != 0)
-				.map(entry -> getStatText(entry.getKey(), entry.getValue().getAsInt()))
+				.map(entry -> formatTuningStat(entry.getKey(), entry.getValue().getAsInt()))
 				.collect(Collectors.toList());
 		
 		//Item Rarity Counts - Maybe I'll make this happen later (I'd really need an ItemRarity enum to reduce code duplication/hackiness)
@@ -213,7 +238,26 @@ public class MagicalPowerCommand {
 				.append(Text.literal(Functions.NUMBER_FORMATTER_ND.format(magicalPower)).withColor(colourProfile.highlightColour.getAsInt())));
 		source.sendFeedback(Text.literal("Selected Power » " + Functions.titleCase(selectedPower)).withColor(colourProfile.infoColour.getAsInt()));
 		
-		source.sendFeedback(Text.literal(""));
+		//If the power data isn't null then print out the stats
+		if (powerData != null) {
+			source.sendFeedback(Text.literal(""));
+			
+			stats.object2FloatEntrySet().stream()
+					.sorted(MagicalPowerCommand::compareStats)
+					.map(e -> formatStatText(e.getKey(), e.getFloatValue()))
+					.forEachOrdered(source::sendFeedback);
+			
+			source.sendFeedback(Text.literal(""));
+			
+			if (bonus.size() > 0) {
+				List<Text> bonuses = bonus.clone().object2FloatEntrySet().stream().map(e -> formatStatText(e.getKey(), e.getFloatValue())).collect(Collectors.toList());
+				
+				source.sendFeedback(Text.literal("(Unique Power Bonus)").withColor(colourProfile.hoverColour.getAsInt()).styled(style -> style.withHoverEvent(
+						new HoverEvent(HoverEvent.Action.SHOW_TEXT, getStatsBreakdown(bonuses)))));
+			}
+		} else {
+			source.sendFeedback(Text.literal(""));
+		}
 		
 		source.sendFeedback(Text.literal("(Tunings)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt()).withHoverEvent(
 				new HoverEvent(HoverEvent.Action.SHOW_TEXT, getStatsBreakdown(tunings)))));
@@ -221,23 +265,36 @@ public class MagicalPowerCommand {
 		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 	}
 	
-	private static Text getStatText(String stat, int tuningAmount) {
-		String base = "+" + Functions.NUMBER_FORMATTER_OD.format(scaleTuningStat(stat, tuningAmount));
+	private static Text formatTuningStat(String stat, int tuningAmount) {
+		return formatStatText(stat, scaleTuningStat(stat, tuningAmount));
+	}
+	
+	private static Text formatStatText(String stat, float amount) {
+		String base = (Math.signum(amount) == 1f ? "+" : "") + Functions.NUMBER_FORMATTER_OD.format(amount);
 		
 		return switch (stat) {
-			case "healh" -> Text.literal(base + "\u2764 Health").formatted(Formatting.RED);
-			case "defense" -> Text.literal(base + "\u2748 Defence").formatted(Formatting.GREEN);
+			case "health" -> Text.literal(base + "\u2764 Health").formatted(Formatting.RED);
+			case "defence", "defense" -> Text.literal(base + "\u2748 Defence").formatted(Formatting.GREEN);
 			case "walk_speed" -> Text.literal(base + "\u2726 Speed").formatted(Formatting.WHITE);
 			case "strength" -> Text.literal(base + "\u2741 Strength").formatted(Formatting.RED);
 			case "critical_damage" -> Text.literal(base + "\u2620 Crit Damage").formatted(Formatting.BLUE);
 			case "critical_chance" -> Text.literal(base + "\u2623 Crit Chance").formatted(Formatting.BLUE);
 			case "attack_speed" -> Text.literal(base + "\u2694 Bonus Attack Speed").formatted(Formatting.YELLOW);
 			case "intelligence" -> Text.literal(base + "\u270E Intelligence").formatted(Formatting.AQUA);
-			
-			default -> Text.empty();
+			case "ferocity" -> Text.literal(base + "\u2AFD Ferocity").formatted(Formatting.RED);
+			case "ability_damage" -> Text.literal(base + "\u0E51 Ability Damage").formatted(Formatting.RED);
+			case "true_defence", "true_defense" -> Text.literal(base + "\u2742 True Defence").formatted(Formatting.WHITE);
+			case "combat_wisdom"-> Text.literal(base + "\u262F Combat Wisdom").formatted(Formatting.DARK_AQUA);
+			case "vitality" -> Text.literal(base + "\u2668 Vitality").formatted(Formatting.DARK_RED);
+			case "mending" -> Text.literal(base + "\u2604 Mending").formatted(Formatting.GREEN);
+		
+			default -> Text.literal(base + " " + Functions.titleCase(stat.replace('_', ' '))).formatted(Formatting.GRAY);
 		};
 	}
 	
+	/**
+	 * Used to scale tuning point stats to what the amount of the {@code stat} they actually give per point.
+	 */
 	private static float scaleTuningStat(String stat, int amount) {
 		return switch (stat) {
 			case "health" -> amount * 5;
@@ -266,6 +323,14 @@ public class MagicalPowerCommand {
 		return breakdown;
 	}
 	
+	private static int compareStats(Object o1, Object o2) {
+		List<String> order = List.of("health", "defence", "defense", "walk_speed", "strength", "intelligence", "critical_chance", "critical_damage", "attack_speed",
+				"ability_damage", "true_defence", "true_defense", "ferocity", "vitality", "mending", "combat_wisdom");
+		Comparator<String> comparator = (s1, s2) -> Integer.compare(order.indexOf(s1), order.indexOf(s2));
+		
+		return comparator.compare((String) Object2FloatMap.Entry.class.cast(o1).getKey(), (String) Object2FloatMap.Entry.class.cast(o2).getKey());
+	}
+	
 	@SuppressWarnings("unused")
 	private static Text getRarityBreakdownText(String rarity, Object2ObjectOpenHashMap<String, String> accessoryMap) {
 		int count = countOfRarity(accessoryMap, rarity);		
@@ -287,5 +352,21 @@ public class MagicalPowerCommand {
 	
 	private static int countOfRarity(Object2ObjectOpenHashMap<String, String> map, String rarity) {
 		return (int) map.entrySet().stream().filter(entry -> entry.getValue().equals(rarity)).count();
+	}
+	
+	public record MagicalPowerData(Object2FloatOpenHashMap<String> stats, Object2FloatOpenHashMap<String> bonus) {
+		private static final Codec<MagicalPowerData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Codecs.strictUnboundedMap(Codec.STRING, Codec.FLOAT).fieldOf("stats").forGetter(MagicalPowerData::stats),
+				Codecs.strictUnboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("bonus").forGetter(MagicalPowerData::bonusOptional))
+				.apply(instance, MagicalPowerData::new));
+		public static final StrictUnboundedMapCodec<String, MagicalPowerData> MAP_CODEC = Codecs.strictUnboundedMap(Codec.STRING, MagicalPowerData.CODEC);
+		
+		private MagicalPowerData(Map<String, Float> stats, Optional<Map<String, Float>> bonus) {
+			this(new Object2FloatOpenHashMap<>(stats), new Object2FloatOpenHashMap<String>(bonus.orElse(Map.of())));
+		}
+		
+		private Optional<Map<String, Float>> bonusOptional() {
+			return Optional.of(bonus);
+		}
 	}
 }

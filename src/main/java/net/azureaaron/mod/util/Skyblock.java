@@ -18,7 +18,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 
 import net.azureaaron.mod.Main;
+import net.azureaaron.mod.commands.MagicalPowerCommand;
 import net.azureaaron.mod.commands.NetworthCommand;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.util.Http.ApiResponse;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.MinecraftClient;
@@ -33,10 +35,13 @@ public class Skyblock {
 	private static final Codec<List<String>> MAX_ENCHANTMENTS_CODEC = Codec.list(Codec.STRING);
 	private static final List<String> MAX_LEVEL_ENCHANTMENTS = new ArrayList<>();
 	
+	private static final Map<String, MagicalPowerCommand.MagicalPowerData> MAGICAL_POWERS = new HashMap<>();
+	
 	private static boolean loaded;
 		
 	public static void init() {
-		ClientLifecycleEvents.CLIENT_STARTED.register(client -> CompletableFuture.allOf(loadRareLootItems(client), loadMaxEnchants(client)).whenComplete((_result, _throwable) -> loaded = true));
+		ClientLifecycleEvents.CLIENT_STARTED.register(client -> CompletableFuture.allOf(loadRareLootItems(client), loadMaxEnchants(), loadMagicalPowers(client))
+				.whenComplete((_result, _throwable) -> loaded = true));
 	}
 	
 	private static CompletableFuture<Void> loadRareLootItems(MinecraftClient client) {
@@ -52,7 +57,8 @@ public class Skyblock {
 	}
 	
 	//Maybe load the enchants from file as backup?
-	private static CompletableFuture<Void> loadMaxEnchants(MinecraftClient client) {
+	//TODO add a listener to the option to trigger this conditionally
+	private static CompletableFuture<Void> loadMaxEnchants() {
 		return CompletableFuture.supplyAsync(() -> {
 			try {
 				ApiResponse response = Http.sendApiRequest("skyblock/maxenchantments");
@@ -65,12 +71,33 @@ public class Skyblock {
 		}).thenAccept(MAX_LEVEL_ENCHANTMENTS::addAll);
 	}
 	
+	private static CompletableFuture<Void> loadMagicalPowers(MinecraftClient client) {
+		return CompletableFuture.supplyAsync(() -> {
+			if (AaronModConfigManager.get().enableSkyblockCommands) {
+				try {
+					ApiResponse response = Http.sendApiRequest("skyblock/magicalpowers");
+					return MagicalPowerCommand.MagicalPowerData.MAP_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).result().orElseThrow();
+				} catch (Exception e) {
+					LOGGER.error("[Aaron's Mod] Failed to load magical powers file!", e);
+					
+					return Map.<String, MagicalPowerCommand.MagicalPowerData>of();
+				}
+			} else {
+				return Map.<String, MagicalPowerCommand.MagicalPowerData>of();
+			}
+		}).thenAccept(MAGICAL_POWERS::putAll);
+	}
+	
 	public static Map<String, ItemStack> getRareLootItems() {
 		return loaded ? RARE_LOOT_ITEMS : Map.of();
 	}
 	
 	public static List<String> getMaxEnchants() {
 		return loaded ? MAX_LEVEL_ENCHANTMENTS : List.of();
+	}
+	
+	public static Map<String, MagicalPowerCommand.MagicalPowerData> getMagicalPowers() {
+		return loaded ? MAGICAL_POWERS : Map.of();
 	}
 	
 	public static JsonObject getSelectedProfile2(String profiles) throws IllegalStateException {
