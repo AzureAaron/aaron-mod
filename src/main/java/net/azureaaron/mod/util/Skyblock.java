@@ -38,9 +38,10 @@ public class Skyblock {
 	private static final Map<String, MagicalPowerCommand.MagicalPowerData> MAGICAL_POWERS = new HashMap<>();
 	
 	private static boolean loaded;
+	private static boolean enchantsLoaded;
 		
 	public static void init() {
-		ClientLifecycleEvents.CLIENT_STARTED.register(client -> CompletableFuture.allOf(loadRareLootItems(client), loadMaxEnchants(), loadMagicalPowers(client))
+		ClientLifecycleEvents.CLIENT_STARTED.register(client -> CompletableFuture.allOf(loadRareLootItems(client), loadMaxEnchants(false), loadMagicalPowers(client))
 				.whenComplete((_result, _throwable) -> loaded = true));
 	}
 	
@@ -57,18 +58,22 @@ public class Skyblock {
 	}
 	
 	//Maybe load the enchants from file as backup?
-	//TODO add a listener to the option to trigger this conditionally
-	private static CompletableFuture<Void> loadMaxEnchants() {
+	public static CompletableFuture<Void> loadMaxEnchants(boolean loadAnyways) {
 		return CompletableFuture.supplyAsync(() -> {
-			try {
-				ApiResponse response = Http.sendApiRequest("skyblock/maxenchantments");
-				return MAX_ENCHANTMENTS_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).result().orElseThrow();
-			} catch (Exception e) {
-				LOGGER.error("[Aaron's Mod] Failed to load max enchantments file!", e);
-				
+			if ((AaronModConfigManager.get().rainbowifyMaxSkyblockEnchantments || AaronModConfigManager.get().enableSkyblockCommands || loadAnyways) && !enchantsLoaded) {
+				try {
+					ApiResponse response = Http.sendApiRequest("skyblock/maxenchantments");
+					return MAX_ENCHANTMENTS_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).result().orElseThrow();
+				} catch (Exception e) {
+					LOGGER.error("[Aaron's Mod] Failed to load max enchantments file!", e);
+					
+					return List.<String>of();
+				}
+			} else {
 				return List.<String>of();
 			}
-		}).thenAccept(MAX_LEVEL_ENCHANTMENTS::addAll);
+		}).thenAccept(MAX_LEVEL_ENCHANTMENTS::addAll)
+				.thenRun(() -> Functions.runIf(() -> enchantsLoaded = true, () -> !MAX_LEVEL_ENCHANTMENTS.isEmpty()));
 	}
 	
 	private static CompletableFuture<Void> loadMagicalPowers(MinecraftClient client) {
@@ -93,7 +98,7 @@ public class Skyblock {
 	}
 	
 	public static List<String> getMaxEnchants() {
-		return loaded ? MAX_LEVEL_ENCHANTMENTS : List.of();
+		return enchantsLoaded ? MAX_LEVEL_ENCHANTMENTS : List.of();
 	}
 	
 	public static Map<String, MagicalPowerCommand.MagicalPowerData> getMagicalPowers() {

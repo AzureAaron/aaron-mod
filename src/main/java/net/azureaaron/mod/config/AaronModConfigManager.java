@@ -24,6 +24,8 @@ import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.azureaaron.mod.Colour;
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.Particles;
+import net.azureaaron.mod.util.Functions;
+import net.azureaaron.mod.util.Skyblock;
 import net.azureaaron.mod.util.TextTransformer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
@@ -456,6 +458,7 @@ public class AaronModConfigManager {
 										() -> config.rainbowifyMaxSkyblockEnchantments,
 										newValue -> config.rainbowifyMaxSkyblockEnchantments = newValue)
 								.controller(ConfigUtils::createBooleanController)
+								.listener((_opt, pendingValue) -> Functions.runIf(() -> Skyblock.loadMaxEnchants(true), () -> pendingValue))
 								.build())
 						.option(Option.<AaronModConfig.RainbowifyMode>createBuilder()
 								.name(Text.literal("Rainbowify Mode"))

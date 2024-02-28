@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BooleanSupplier;
 
 import com.sun.management.HotSpotDiagnosticMXBean;
 
@@ -187,5 +188,9 @@ public class Functions {
 	
 	public static boolean isUuid(String uuid) {
 		return uuid.length() == 36 || uuid.length() == 32;
+	}
+	
+	public static void runIf(Runnable task, BooleanSupplier condition) {
+		if (condition.getAsBoolean()) task.run();
 	}
 }
