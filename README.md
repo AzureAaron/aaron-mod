@@ -14,7 +14,8 @@ All of these are client side and can be toggled & customized inside of the confi
 Vanilla:
 
 * Shadowed Scoreboard Text
-* Shadowed Name tag Text
+* Hide Scoreboard Score
+* Shadowed Name Tag Text
 * Hide Name tag Background
 * Fix Tab Translucency
 * FPS Display
@@ -34,6 +35,7 @@ Vanilla:
 * Not Resetting Cursor Position Between Chest GUIs
 * Optimized Screenshots (11% smaller file sizes with zero quality loss!)
 * Silence Resource Pack Log Spam
+* Secure Skin Downloads
 * Mac Only - Alternate FN+F3+N Keybind
 * Christmas Chests For the Whole Month of December
 
