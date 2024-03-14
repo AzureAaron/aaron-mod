@@ -54,7 +54,7 @@ public class ReceiveChatMessageListener {
 						|| stringForm.equals("[BOSS] Livid: Welcome, you've arrived right on time. I am Livid, the Master of Shadows.") || stringForm.equals("[BOSS] Sadan: So you made it all the way here... Now you wish to defy me? Sadan?!")
 						|| stringForm.equals("[BOSS] Maxor: WELL! WELL! WELL! LOOK WHO'S HERE!")) Cache.inDungeonBossRoom = true;
 				
-				if (stringForm.equals("[BOSS] Wither King: You.. again?") || stringForm.equals("[BOSS] Wither King: Ohhh?")) Cache.inM7Phase5 = true;
+				if (stringForm.equals("[BOSS] Wither King: You... again?") || stringForm.equals("[BOSS] Wither King: Ohhh?")) Cache.inM7Phase5 = true;
 			}
 		});
 	}
