@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.IntToDoubleFunction;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -30,9 +31,12 @@ import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap.Entry;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectObjectImmutablePair;
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.util.Constants;
@@ -60,7 +64,7 @@ public class MagicalPowerCommand {
 	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printMP");
 	private static final Supplier<MutableText> NO_ACCESSORY_BAG_DATA = () -> Constants.PREFIX.get().append(Text.literal("This profile doesn't have any accessory bag data!").formatted(Formatting.RED));
 	private static final Supplier<MutableText> NBT_PARSING_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while trying to parse NBT!").formatted(Formatting.RED)); //TODO make constant
-	private static final Pattern ACCESSORY_RARITY_PATTERN = Pattern.compile("(?:a )?(?<rarity>(?:VERY )?[A-Za-z]+) (?:DUNGEON )?(?:A|HAT)CCESSORY(?: a)?");
+	private static final Pattern ACCESSORY_RARITY_PATTERN = Pattern.compile("(?:a )?(?<rarity>(?:VERY )?[A-Za-z]+) (?:DUNGEON )?(?:AC|HAT)CESSORY(?: a)?");
 	
 	private static final IntToDoubleFunction STATS_MULT = magicalPower -> 29.97d * Math.pow(Math.log(0.0019d * magicalPower + 1d), 1.2d);
 	
@@ -78,8 +82,6 @@ public class MagicalPowerCommand {
 						.executes(context -> CommandSystem.handlePlayer4Skyblock(context.getSource(), getString(context, "player"), DISPATCH_HANDLE))));
 	}
 	
-	//TODO maybe make this account for when you can't use an accessory
-	//TODO also display the stats you get from your power
 	protected static void printMP(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
 		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
 		
@@ -115,7 +117,7 @@ public class MagicalPowerCommand {
 		}
 		
 		//Map accessory id -> rarity
-		Object2ObjectOpenHashMap<String, String> collectedAccessories = new Object2ObjectOpenHashMap<>();
+		Object2ObjectOpenHashMap<String, Pair<Accessory, String>> collectedAccessories = new Object2ObjectOpenHashMap<>();
 				
 		//Loop through the accessories
 		for (int i = 0; i < accessories.size(); i++) {
@@ -139,7 +141,7 @@ public class MagicalPowerCommand {
 				Matcher matcher = ACCESSORY_RARITY_PATTERN.matcher(loreLine);
 				
 				if (!itemId.isBlank() && matcher.matches()) {
-					collectedAccessories.put(itemId, matcher.group("rarity"));
+					collectedAccessories.put(itemId, ObjectObjectImmutablePair.of(Skyblock.getAccessories().getOrDefault(itemId, Accessory.fromId(itemId)), matcher.group("rarity")));
 										
 					break;
 				}
@@ -150,10 +152,28 @@ public class MagicalPowerCommand {
 		int hegeMp = 0;
 		int abicaseMp = 0;
 		
+		//Remove accessories which have higher-tiered siblings in the same family
+		Object2ObjectOpenHashMap<String, Pair<Accessory, String>> validAccessories = collectedAccessories.object2ObjectEntrySet().stream()
+				.map(Entry::getValue)
+				.filter(a -> {
+					Accessory accessory = a.left();					
+					boolean hasGreaterTierOfSameFamily = collectedAccessories.object2ObjectEntrySet().stream()
+							.map(Entry::getValue)
+							.map(Pair::left)
+							.filter(ca -> ca.family().isPresent()) //Filter out accessories with no family - if we don't then if the accessory itself has no family then well...
+							.filter(accessory::hasSameFamily) //If the accessories are apart of the same family
+							.filter(ca -> ca.tier() > accessory.tier()) //If the checked accessory's tier is higher then the one from the main set
+							.findAny().isPresent();
+			
+					//Drop if there is an accessory in the set in the same family with a higher tier
+					return !hasGreaterTierOfSameFamily;
+				})
+				.collect(Collectors.toMap(p -> p.left().id(), Function.identity(), (oldValue, newValue) -> newValue, Object2ObjectOpenHashMap::new));
+		
 		//Calculate the magical power!
-		for (Map.Entry<String, String> accessory : collectedAccessories.entrySet()) {
+		for (Map.Entry<String, Pair<Accessory, String>> accessory : validAccessories.entrySet()) {
 			String id = accessory.getKey();
-			String rarity = accessory.getValue();
+			String rarity = accessory.getValue().right();
 			
 			int mpToAdd = 0;
 			
@@ -191,7 +211,7 @@ public class MagicalPowerCommand {
 		//Sum magical power from bonuses
 		magicalPower += hegeMp;
 		magicalPower += abicaseMp;
-		
+				
 		//Rift Prism MP
 		if (profile.has("rift")) {
 			JsonObject riftAccess = profile.getAsJsonObject("rift").getAsJsonObject("access");
@@ -367,6 +387,23 @@ public class MagicalPowerCommand {
 		
 		private Optional<Map<String, Float>> bonusOptional() {
 			return Optional.of(bonus);
+		}
+	}
+	
+	public record Accessory(String id, Optional<String> family, int tier) {
+		private static final Codec<Accessory> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Codec.STRING.fieldOf("id").forGetter(Accessory::id),
+				Codec.STRING.optionalFieldOf("family").forGetter(Accessory::family),
+				Codec.INT.optionalFieldOf("tier", 0).forGetter(Accessory::tier))
+				.apply(instance, Accessory::new));
+		public static final Codec<Map<String, Accessory>> MAP_CODEC = Codec.unboundedMap(Codec.STRING, CODEC);
+		
+		private boolean hasSameFamily(Accessory other) {
+			return other.family().equals(this.family);
+		}
+		
+		private static Accessory fromId(String id) {
+			return new Accessory(id, Optional.empty(), 0);
 		}
 	}
 }

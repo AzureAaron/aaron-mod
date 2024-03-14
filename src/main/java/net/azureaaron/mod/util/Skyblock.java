@@ -29,6 +29,7 @@ import net.minecraft.util.Identifier;
 
 public class Skyblock {
 	private static final Logger LOGGER = LogUtils.getLogger();
+	//TODO refactor the codecs into their own classes
 	private static final Codec<Map<String, ItemStack>> RARE_LOOT_CODEC = Codec.unboundedMap(Codec.STRING, ItemStack.CODEC);
 	private static final Map<String, ItemStack> RARE_LOOT_ITEMS = new HashMap<>();
 	
@@ -36,12 +37,13 @@ public class Skyblock {
 	private static final List<String> MAX_LEVEL_ENCHANTMENTS = new ArrayList<>();
 	
 	private static final Map<String, MagicalPowerCommand.MagicalPowerData> MAGICAL_POWERS = new HashMap<>();
+	private static final Map<String, MagicalPowerCommand.Accessory> ACCESSORIES = new HashMap<>();
 	
 	private static boolean loaded;
 	private static boolean enchantsLoaded;
 		
 	public static void init() {
-		ClientLifecycleEvents.CLIENT_STARTED.register(client -> CompletableFuture.allOf(loadRareLootItems(client), loadMaxEnchants(false), loadMagicalPowers(client))
+		ClientLifecycleEvents.CLIENT_STARTED.register(client -> CompletableFuture.allOf(loadRareLootItems(client), loadMaxEnchants(false), loadMagicalPowers(), loadAccessories())
 				.whenComplete((_result, _throwable) -> loaded = true));
 	}
 	
@@ -76,7 +78,7 @@ public class Skyblock {
 				.thenRun(() -> Functions.runIf(() -> enchantsLoaded = true, () -> !MAX_LEVEL_ENCHANTMENTS.isEmpty()));
 	}
 	
-	private static CompletableFuture<Void> loadMagicalPowers(MinecraftClient client) {
+	private static CompletableFuture<Void> loadMagicalPowers() {
 		return CompletableFuture.supplyAsync(() -> {
 			if (AaronModConfigManager.get().enableSkyblockCommands) {
 				try {
@@ -93,6 +95,23 @@ public class Skyblock {
 		}).thenAccept(MAGICAL_POWERS::putAll);
 	}
 	
+	private static CompletableFuture<Void> loadAccessories() {
+		return CompletableFuture.supplyAsync(() -> {
+			if (AaronModConfigManager.get().enableSkyblockCommands) {
+				try {
+					ApiResponse response = Http.sendApiRequest("skyblock/accessories");
+					return MagicalPowerCommand.Accessory.MAP_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).result().orElseThrow();
+				} catch (Exception e) {
+					LOGGER.error("[Aaron's Mod] Failed to load accessories!", e);
+					
+					return Map.<String, MagicalPowerCommand.Accessory>of();
+				}
+			} else {
+				return Map.<String, MagicalPowerCommand.Accessory>of();
+			}
+		}).thenAccept(ACCESSORIES::putAll);
+	}
+	
 	public static Map<String, ItemStack> getRareLootItems() {
 		return loaded ? RARE_LOOT_ITEMS : Map.of();
 	}
@@ -103,6 +122,10 @@ public class Skyblock {
 	
 	public static Map<String, MagicalPowerCommand.MagicalPowerData> getMagicalPowers() {
 		return loaded ? MAGICAL_POWERS : Map.of();
+	}
+	
+	public static Map<String, MagicalPowerCommand.Accessory> getAccessories() {
+		return loaded ? ACCESSORIES : Map.of();
 	}
 	
 	public static JsonObject getSelectedProfile2(String profiles) throws IllegalStateException {
