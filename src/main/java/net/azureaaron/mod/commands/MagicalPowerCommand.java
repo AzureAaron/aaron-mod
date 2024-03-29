@@ -10,9 +10,11 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.util.Base64;
 import java.util.Comparator;
+import java.util.IntSummaryStatistics;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.IntToDoubleFunction;
@@ -34,7 +36,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap.Entry;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectObjectImmutablePair;
 import net.azureaaron.mod.Colour.ColourProfiles;
@@ -156,7 +157,8 @@ public class MagicalPowerCommand {
 		Object2ObjectOpenHashMap<String, Pair<Accessory, String>> validAccessories = collectedAccessories.object2ObjectEntrySet().stream()
 				.map(Entry::getValue)
 				.filter(a -> {
-					Accessory accessory = a.left();					
+					Accessory accessory = a.left();
+					
 					boolean hasGreaterTierOfSameFamily = collectedAccessories.object2ObjectEntrySet().stream()
 							.map(Entry::getValue)
 							.map(Pair::left)
@@ -167,6 +169,29 @@ public class MagicalPowerCommand {
 			
 					//Drop if there is an accessory in the set in the same family with a higher tier
 					return !hasGreaterTierOfSameFamily;
+				})
+				.filter(a -> {
+					Accessory accessory = a.left();
+					
+					IntSummaryStatistics accessoryTierSummary = Skyblock.getAccessories().entrySet().stream()
+							.map(Entry::getValue)
+							.filter(ca -> ca.family().isPresent()) //Filter out accessories with no family - if we don't then if the accessory itself has no family then well...
+							.filter(accessory::hasSameFamily) //If the accessories are apart of the same family
+							.mapToInt(Accessory::tier)
+							.summaryStatistics();
+					
+					boolean allAccessoriesFromFamilyAreTheSameTier = accessoryTierSummary.getMin() == accessory.tier() && accessoryTierSummary.getMax() == accessory.tier();
+					
+					int greatestHashCodeInFamily = collectedAccessories.object2ObjectEntrySet().stream()
+							.map(Entry::getValue)
+							.map(Pair::left)
+							.filter(ca -> ca.family().isPresent()) //Filter out accessories with no family - if we don't then if the accessory itself has no family then well...
+							.filter(accessory::hasSameFamily) //If the accessories are apart of the same family
+							.mapToInt(Accessory::hashCode)
+							.max().orElse(0); //Find the highest hash code of all accessories and default to the null hash code
+								
+					//Drop if all the accessories in the family have the same tier and this accessory isn't the one with the greatest hash code
+					return allAccessoriesFromFamilyAreTheSameTier ? accessory.hashCode() == greatestHashCodeInFamily : true;
 				})
 				.collect(Collectors.toMap(p -> p.left().id(), Function.identity(), (oldValue, newValue) -> newValue, Object2ObjectOpenHashMap::new));
 		
@@ -213,6 +238,7 @@ public class MagicalPowerCommand {
 		magicalPower += abicaseMp;
 				
 		//Rift Prism MP
+		//TODO check if the validaccessories has no rift prism
 		if (profile.has("rift")) {
 			JsonObject riftAccess = profile.getAsJsonObject("rift").getAsJsonObject("access");
 			

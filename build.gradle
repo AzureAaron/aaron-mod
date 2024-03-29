@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.5-SNAPSHOT'
+	id 'fabric-loom' version '1.6-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -50,7 +50,7 @@ loom {
 }
 
 base {
-	archivesBaseName = project.archives_base_name
+	archivesName = project.archives_base_name
 }
 
 processResources {
