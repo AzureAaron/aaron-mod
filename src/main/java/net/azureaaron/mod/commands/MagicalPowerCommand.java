@@ -36,7 +36,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectObjectImmutablePair;
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
@@ -66,8 +68,17 @@ public class MagicalPowerCommand {
 	private static final Supplier<MutableText> NO_ACCESSORY_BAG_DATA = () -> Constants.PREFIX.get().append(Text.literal("This profile doesn't have any accessory bag data!").formatted(Formatting.RED));
 	private static final Supplier<MutableText> NBT_PARSING_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while trying to parse NBT!").formatted(Formatting.RED)); //TODO make constant
 	private static final Pattern ACCESSORY_RARITY_PATTERN = Pattern.compile("(?:a )?(?<rarity>(?:VERY )?[A-Za-z]+) (?:DUNGEON )?(?:AC|HAT)CESSORY(?: a)?");
-	
 	private static final IntToDoubleFunction STATS_MULT = magicalPower -> 29.97d * Math.pow(Math.log(0.0019d * magicalPower + 1d), 1.2d);
+	private static final Object2IntOpenHashMap<String> RARITY_TIER_MAP = Util.make(new Object2IntOpenHashMap<>(), map -> {
+		map.put("VERY SPECIAL", 8);
+		map.put("SPECIAL", 7);
+		map.put("MYTHIC", 6);
+		map.put("LEGENDARY", 5);
+		map.put("EPIC", 4);
+		map.put("RARE", 3);
+		map.put("UNCOMMON", 2);
+		map.put("COMMON", 1);
+	});
 	
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
 		dispatcher.register(literal("magicalpower")
@@ -117,8 +128,8 @@ public class MagicalPowerCommand {
 			return;
 		}
 		
-		//Map accessory id -> rarity
-		Object2ObjectOpenHashMap<String, Pair<Accessory, String>> collectedAccessories = new Object2ObjectOpenHashMap<>();
+		//This can contain duplicates, we will deduplicate after collection
+		ObjectArrayList<Pair<Accessory, String>> collectedAccessoriesFromBag = new ObjectArrayList<>();
 				
 		//Loop through the accessories
 		for (int i = 0; i < accessories.size(); i++) {
@@ -135,23 +146,40 @@ public class MagicalPowerCommand {
 			
 			NbtCompound display = tag.getCompound("display");
 			NbtList lore = display.getList("Lore", NbtElement.STRING_TYPE);
-						
+			
 			//Determine the rarity - iterate backwards for efficiency
 			for (int i2 = lore.size(); i2 >= 0; i2--) {
 				String loreLine = Formatting.strip(lore.getString(i2));
 				Matcher matcher = ACCESSORY_RARITY_PATTERN.matcher(loreLine);
 				
 				if (!itemId.isBlank() && matcher.matches()) {
-					collectedAccessories.put(itemId, ObjectObjectImmutablePair.of(Skyblock.getAccessories().getOrDefault(itemId, Accessory.fromId(itemId)), matcher.group("rarity")));
+					collectedAccessoriesFromBag.add(ObjectObjectImmutablePair.of(Skyblock.getAccessories().getOrDefault(itemId, Accessory.fromId(itemId)), matcher.group("rarity")));
 										
 					break;
 				}
 			}
 		}
 		
+		Object2ObjectOpenHashMap<String, Pair<Accessory, String>> collectedAccessories = collectedAccessoriesFromBag.stream()
+				.filter(pair -> {
+					Accessory accessory = pair.left();
+					
+					int highestTierOfSameCollected = collectedAccessoriesFromBag.stream()
+							.filter(c -> c.left().id().equals(accessory.id()))
+							.mapToInt(c -> RARITY_TIER_MAP.getOrDefault(c.right(), 0))
+							.max().orElse(0);
+					
+					//Drop if there is a higher rarity of the same accessory collected
+					return highestTierOfSameCollected != 0 ? !(highestTierOfSameCollected > RARITY_TIER_MAP.getOrDefault(pair.right(), 0)) : true;
+				})
+				.collect(Collectors.toMap(p -> p.left().id(), Function.identity(), (oldValue, newValue) -> newValue, Object2ObjectOpenHashMap::new));
+				
 		int magicalPower = 0;
 		int hegeMp = 0;
 		int abicaseMp = 0;
+		
+		@SuppressWarnings("unused")
+		int verySpecials = 0, specials = 0, mythics = 0, legendaries = 0, epics = 0, rares = 0, uncommons = 0, commons = 0;
 		
 		//Remove accessories which have higher-tiered siblings in the same family
 		Object2ObjectOpenHashMap<String, Pair<Accessory, String>> validAccessories = collectedAccessories.object2ObjectEntrySet().stream()
@@ -203,14 +231,40 @@ public class MagicalPowerCommand {
 			int mpToAdd = 0;
 			
 			switch (rarity) {
-				case "VERY SPECIAL" -> mpToAdd = 5;
-				case "SPECIAL" -> mpToAdd = 3;
-				case "MYTHIC" -> mpToAdd = 22;
-				case "LEGENDARY" -> mpToAdd = 16;
-				case "EPIC" -> mpToAdd = 12;
-				case "RARE" -> mpToAdd = 8;
-				case "UNCOMMON" -> mpToAdd = 5;
-				case "COMMON" -> mpToAdd = 3;
+				case "VERY SPECIAL" -> {
+					mpToAdd = 5;
+					verySpecials++;
+				}
+				case "SPECIAL" -> {
+					mpToAdd = 3;
+					specials++;
+				}
+				case "MYTHIC" -> {
+					mpToAdd = 22;
+					mythics++;
+				}
+				case "LEGENDARY" -> {
+					mpToAdd = 16;
+					legendaries++;
+				}
+				case "EPIC" -> {
+					mpToAdd = 12;
+					epics++;
+				}
+				case "RARE" -> {
+					mpToAdd = 8;
+					rares++;
+				}
+				case "UNCOMMON" -> {
+					mpToAdd = 5;
+					uncommons++;
+				}
+				case "COMMON" -> {
+					mpToAdd = 3;
+					commons++;
+				}
+				
+				default -> LOGGER.warn("[Aaron's Mod] Unrecognized accessory rarity \"{}\", please report this!", rarity);
 			}
 			
 			//Calculate mp to earn from hege
@@ -232,6 +286,8 @@ public class MagicalPowerCommand {
 			
 			magicalPower += mpToAdd;
 		}
+		
+		//LOGGER.info("[Aaron's Mod] Acc Report: {} Very Specials, {} Specials, {} Mythics, {} Legendaries, {} Epics, {} Rares, {} Uncommons, {} Commons", verySpecials, specials, mythics, legendaries, epics, rares, uncommons, commons);
 		
 		//Sum magical power from bonuses
 		magicalPower += hegeMp;
