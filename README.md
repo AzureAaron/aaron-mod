@@ -108,5 +108,3 @@ Skyblock:
 
 ## Contributing & Maintaining
 This mod will be maintained for only the **latest version** of Minecraft. I have no plans to create any ports of this mod either.
-
-I'm not accepting contributions right now, but if you have any suggestions please let me know! :)
