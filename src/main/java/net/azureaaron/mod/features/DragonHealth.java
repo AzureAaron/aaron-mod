@@ -41,7 +41,7 @@ public class DragonHealth {
 							EntityIndex<Entity> entityIndex = ((ClientEntityManagerAccessor<Entity>) ((ClientWorldAccessor) world).getEntityManager()).getIndex();
 
 							for (Entity indexedEntity : entityIndex.iterate()) {
-								if (indexedEntity instanceof ArmorStandEntity armourStand && armourStand.getBoundingBox().intersects(dragon.getBoundingBox())) {
+								if (indexedEntity instanceof ArmorStandEntity armourStand && armourStand.getBoundingBox().intersects(dragon.getBoundingBox()) && armourStand.hasCustomName()) {
 									String name = armourStand.getName().getString();
 									Matcher matcher = DRAGON_HP.matcher(name);
 
