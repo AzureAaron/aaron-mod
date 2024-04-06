@@ -41,7 +41,9 @@
     "GameRenderer$1Mixin",
     "ScreenshotRecorderMixin",
     "DirectoryResourcePackMixin",
-    "NativeImageMixin"
+    "NativeImageMixin",
+    "accessors.ClientEntityManagerAccessor",
+    "accessors.ClientWorldAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
