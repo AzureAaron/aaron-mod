@@ -13,8 +13,8 @@ import net.minecraft.client.gui.hud.ChatHudLine;
 public interface ChatAccessor {
 	@Accessor("MAX_MESSAGES")
 	static int getMaxHistoryLength() {
-		return 0;
-	};
+		throw new UnsupportedOperationException();
+	}
 	
     @Accessor("messages")
     List<ChatHudLine> getMessages();

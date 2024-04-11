@@ -15,16 +15,16 @@ public interface BundleAccessor {
 	
 	@Invoker("getBundleOccupancy")
 	static int invokeGetBundleOccupancy(ItemStack stack) {
-		return 0;
+		throw new UnsupportedOperationException();
 	}
 	
 	@Invoker("getItemOccupancy")
 	static int invokeGetItemOccupancy(ItemStack stack) {
-		return 0;
+		throw new UnsupportedOperationException();
 	}
 
 	@Invoker("canMergeStack")
 	static Optional<NbtCompound> invokeCanMergeStack(ItemStack stack, NbtList items) {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 }
