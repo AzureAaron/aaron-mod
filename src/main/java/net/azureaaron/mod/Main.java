@@ -42,7 +42,6 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
@@ -62,8 +61,7 @@ public class Main implements ClientModInitializer {
 		
 		//Register listeneres and commands
 		ClientCommandRegistrationCallback.EVENT.register(Main::registerCommands);
-		ClientPlayConnectionEvents.JOIN.register(ClientPlayConnectionListener::onJoin);
-		ClientPlayConnectionEvents.DISCONNECT.register(ClientPlayConnectionListener::onDisconnect);
+		ClientPlayConnectionListener.init();
 		ReceiveChatMessageEvent.init();
 		
 		//Initialize Features

@@ -1,22 +1,28 @@
 package net.azureaaron.mod.listeners;
 
 import net.azureaaron.mod.util.Cache;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 
 public class ClientPlayConnectionListener {
 	
-	public static void onJoin(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client) {
+	public static void init() {
+		ClientPlayConnectionEvents.JOIN.register(ClientPlayConnectionListener::onJoin);
+		ClientPlayConnectionEvents.DISCONNECT.register(ClientPlayConnectionListener::onDisconnect);
+	}
+	
+	private static void onJoin(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client) {
 		Cache.currentServerAddress = client.isInSingleplayer() || handler.getServerInfo().address == null ? "localhost" : handler.getServerInfo().address.toLowerCase();
 		
-		if(!Cache.lastServerAddress.equals(Cache.currentServerAddress)) {
+		if (!Cache.lastServerAddress.equals(Cache.currentServerAddress)) {
 			Cache.warningLevel = 0;
 			Cache.lastShriekTime = 0L;
 		}
 	}
 	
-	public static void onDisconnect(ClientPlayNetworkHandler handler, MinecraftClient client) {
+	private static void onDisconnect(ClientPlayNetworkHandler handler, MinecraftClient client) {
 		Cache.lastServerAddress = Cache.currentServerAddress;
 		Cache.currentServerAddress = "";
 	}
