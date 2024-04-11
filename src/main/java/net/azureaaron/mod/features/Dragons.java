@@ -19,6 +19,8 @@ public enum Dragons {
 	public final float green;
 	public final float blue;
 	
+	public volatile long spawnStart = 0L;
+	
 	Dragons(BlockPos pos1, BlockPos pos2, int colour) {
 		this.pos1 = pos1;
 		this.pos2 = pos2;
@@ -28,5 +30,11 @@ public enum Dragons {
 		this.red = (colour >> 16) & 0xFF;
 		this.green = (colour >> 8) & 0xFF;
 		this.blue = colour & 0xFF;
+	}
+	
+	public static void reset() {
+		for (Dragons dragon : Dragons.values()) {
+			dragon.spawnStart = 0L;
+		}
 	}
 }

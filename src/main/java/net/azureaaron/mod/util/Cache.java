@@ -29,12 +29,6 @@ public class Cache {
 	public static boolean inM7Phase5 = false;
 	public static volatile boolean inDungeonBossRoom = false;
 	public static int currentScore = 0;
-	
-	public static volatile long powerSpawnStart;
-	public static volatile long flameSpawnStart;
-	public static volatile long apexSpawnStart;
-	public static volatile long iceSpawnStart;
-	public static volatile long soulSpawnStart;
 		
 	public static String currentServerAddress = "";
 	public static String lastServerAddress = "";

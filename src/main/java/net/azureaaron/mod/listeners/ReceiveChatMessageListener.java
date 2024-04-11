@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.ReceiveChatMessageEvent;
+import net.azureaaron.mod.features.Dragons;
 import net.azureaaron.mod.util.Cache;
 import net.azureaaron.mod.util.Functions;
 import net.minecraft.client.MinecraftClient;
@@ -42,11 +43,7 @@ public class ReceiveChatMessageListener {
 					Cache.inDungeonBossRoom = false;
 					Cache.currentScore = 0;
 					
-					Cache.powerSpawnStart = 0L;
-					Cache.flameSpawnStart = 0L;
-					Cache.apexSpawnStart = 0L;
-					Cache.iceSpawnStart = 0L;
-					Cache.soulSpawnStart = 0L;
+					Dragons.reset();
 				}
 				
 				if (stringForm.equals("[BOSS] Bonzo: Gratz for making it this far, but I'm basically unbeatable.") || stringForm.equals("[BOSS] Scarf: This is where the journey ends for you, Adventurers.")

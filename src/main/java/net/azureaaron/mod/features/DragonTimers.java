@@ -27,33 +27,33 @@ public class DragonTimers {
 	}
 	
 	private static void renderSpawnTimers(WorldRenderContext wrc) {
-		if(Functions.isOnHypixel() && AaronModConfigManager.get().m7DragonSpawnTimers && Cache.inM7Phase5) {
-			if(Cache.powerSpawnStart != 0L && Cache.powerSpawnStart + 5000 > System.currentTimeMillis()) {
-				int timeUntilSpawn = (int) (Cache.powerSpawnStart + 5000 - System.currentTimeMillis());
+		if (Functions.isOnHypixel() && AaronModConfigManager.get().m7DragonSpawnTimers && Cache.inM7Phase5) {
+			if (Dragons.POWER.spawnStart != 0L && Dragons.POWER.spawnStart + 5000 > System.currentTimeMillis()) {
+				int timeUntilSpawn = (int) (Dragons.POWER.spawnStart + 5000 - System.currentTimeMillis());
 				OrderedText spawnText = Text.literal(timeUntilSpawn + " ms").asOrderedText();
 				Renderer.renderText(wrc, POWER_TEXT_LOCATION, spawnText, true);
 			}
 			
-			if(Cache.flameSpawnStart != 0L && Cache.flameSpawnStart + 5000 > System.currentTimeMillis()) {
-				int timeUntilSpawn = (int) (Cache.flameSpawnStart + 5000 - System.currentTimeMillis());
+			if (Dragons.FLAME.spawnStart != 0L && Dragons.FLAME.spawnStart + 5000 > System.currentTimeMillis()) {
+				int timeUntilSpawn = (int) (Dragons.FLAME.spawnStart + 5000 - System.currentTimeMillis());
 				OrderedText spawnText = Text.literal(timeUntilSpawn + " ms").asOrderedText();
 				Renderer.renderText(wrc, FLAME_TEXT_LOCATION, spawnText, true);
 			}
 			
-			if(Cache.apexSpawnStart != 0L && Cache.apexSpawnStart + 5000 > System.currentTimeMillis()) {
-				int timeUntilSpawn = (int) (Cache.apexSpawnStart + 5000 - System.currentTimeMillis());
+			if (Dragons.APEX.spawnStart != 0L && Dragons.APEX.spawnStart + 5000 > System.currentTimeMillis()) {
+				int timeUntilSpawn = (int) (Dragons.APEX.spawnStart + 5000 - System.currentTimeMillis());
 				OrderedText spawnText = Text.literal(timeUntilSpawn + " ms").asOrderedText();
 				Renderer.renderText(wrc, APEX_TEXT_LOCATION, spawnText, true);
 			}
 			
-			if(Cache.iceSpawnStart != 0L && Cache.iceSpawnStart + 5000 > System.currentTimeMillis()) {
-				int timeUntilSpawn = (int) (Cache.iceSpawnStart + 5000 - System.currentTimeMillis());
+			if (Dragons.ICE.spawnStart != 0L && Dragons.ICE.spawnStart + 5000 > System.currentTimeMillis()) {
+				int timeUntilSpawn = (int) (Dragons.ICE.spawnStart + 5000 - System.currentTimeMillis());
 				OrderedText spawnText = Text.literal(timeUntilSpawn + " ms").asOrderedText();
 				Renderer.renderText(wrc, ICE_TEXT_LOCATION, spawnText, true);
 			}
 			
-			if(Cache.soulSpawnStart != 0L && Cache.soulSpawnStart + 5000 > System.currentTimeMillis()) {
-				int timeUntilSpawn = (int) (Cache.soulSpawnStart + 5000 - System.currentTimeMillis());
+			if (Dragons.SOUL.spawnStart != 0L && Dragons.SOUL.spawnStart + 5000 > System.currentTimeMillis()) {
+				int timeUntilSpawn = (int) (Dragons.SOUL.spawnStart + 5000 - System.currentTimeMillis());
 				OrderedText spawnText = Text.literal(timeUntilSpawn + " ms").asOrderedText();
 				Renderer.renderText(wrc, SOUL_TEXT_LOCATION, spawnText, true);
 			}
@@ -61,19 +61,14 @@ public class DragonTimers {
 	}
 	
 	private static void tick(ParticleS2CPacket packet) {
-		if(Functions.isOnHypixel() && Cache.inM7Phase5 && packet.getParameters().getType().equals(ParticleTypes.ENCHANT)) {
-			for(Dragons dragon : Dragons.values()) {
-				String dragonName = dragon.name();
+		if (Functions.isOnHypixel() && Cache.inM7Phase5 && packet.getParameters().getType().equals(ParticleTypes.ENCHANT)) {
+			for (Dragons dragon : Dragons.values()) {
 				int xShrinkFactor = (dragon.pos1.getX() == 41) ? 11 : 0;
 				int zShrinkFactor = (dragon.pos1.getZ() == 112) ? 0 : 11;
 				Box box = Box.enclosing(dragon.pos1.add(0, 14, 0), dragon.pos2).contract(xShrinkFactor, 0, zShrinkFactor);
 				
-				if(box.contains(packet.getX(), packet.getY(), packet.getZ())) {
-					if(dragonName.equals("POWER") && Cache.powerSpawnStart + 5000 < System.currentTimeMillis()) Cache.powerSpawnStart = System.currentTimeMillis();
-					if(dragonName.equals("FLAME") && Cache.flameSpawnStart + 5000 < System.currentTimeMillis()) Cache.flameSpawnStart = System.currentTimeMillis();
-					if(dragonName.equals("APEX") && Cache.apexSpawnStart + 5000 < System.currentTimeMillis()) Cache.apexSpawnStart = System.currentTimeMillis();
-					if(dragonName.equals("ICE") && Cache.iceSpawnStart + 5000 < System.currentTimeMillis()) Cache.iceSpawnStart = System.currentTimeMillis();
-					if(dragonName.equals("SOUL") && Cache.soulSpawnStart + 5000 < System.currentTimeMillis()) Cache.soulSpawnStart = System.currentTimeMillis();
+				if (box.contains(packet.getX(), packet.getY(), packet.getZ())) {
+					if (dragon.spawnStart + 5000 < System.currentTimeMillis()) dragon.spawnStart = System.currentTimeMillis();
 				}
 			}
 		}
