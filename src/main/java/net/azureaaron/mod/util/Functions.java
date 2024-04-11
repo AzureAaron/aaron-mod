@@ -119,14 +119,15 @@ public class Functions {
     }
     
     public static int romanToInt(String numeral) {
-    	switch(numeral) {
-    	case "I": return 1;
-    	case "II": return 2;
-    	case "III": return 3;
-    	case "IV": return 4;
-    	case "V": return 5;
-    	default: return 0;
-    	}
+    	return switch(numeral) {
+    		case "I" -> 1;
+    		case "II" -> 2;
+    		case "III" -> 3;
+    		case "IV" -> 4;
+    		case "V" -> 5;
+    		
+    		default -> 0;
+    	};
     }
 
 	public static boolean supportsFMA() {
