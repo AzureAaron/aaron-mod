@@ -28,8 +28,7 @@ import net.minecraft.nbt.NbtList;
  * 
  * @author Aaron
  */
-public class Functions {
-	
+public class Functions {	
 	/** {@link Object2LongLinkedOpenHashMap} containing time units and their equivalent in milliseconds. */
 	public static final Object2LongLinkedOpenHashMap<String> TIMES = new Object2LongLinkedOpenHashMap<>();
 	
@@ -115,7 +114,11 @@ public class Functions {
     }
 	
 	public static boolean isOnHypixel() {
-		return Cache.currentServerAddress.contains("hypixel.net") || Cache.currentServerAddress.contains("hypixel.io");
+		String serverAddress = Cache.currentServerAddress;
+		MinecraftClient client = MinecraftClient.getInstance();
+		String serverBrand = client.player != null && client.player.networkHandler != null && client.player.networkHandler.getBrand() != null ? client.player.networkHandler.getBrand() : "";
+		
+		return serverAddress.contains("hypixel.net") || serverAddress.contains("hypixel.io") || serverBrand.contains("Hypixel BungeeCord");
     }
     
     public static int romanToInt(String numeral) {
