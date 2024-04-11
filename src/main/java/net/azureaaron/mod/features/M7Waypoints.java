@@ -1,7 +1,6 @@
 package net.azureaaron.mod.features;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.features.BoundingBoxes.Dragons;
 import net.azureaaron.mod.util.Cache;
 import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Renderer;

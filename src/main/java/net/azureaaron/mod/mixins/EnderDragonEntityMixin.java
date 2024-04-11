@@ -10,7 +10,7 @@ import com.google.gson.JsonParser;
 
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.features.BoundingBoxes.Dragons;
+import net.azureaaron.mod.features.Dragons;
 import net.azureaaron.mod.util.Cache;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
