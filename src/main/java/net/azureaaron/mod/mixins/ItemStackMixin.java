@@ -33,35 +33,35 @@ public abstract class ItemStackMixin {
 	
 	@ModifyVariable(method = "getName", at = @At("STORE"))
 	private Text aaronMod$customItemName(Text text) {
-		if((Functions.isOnHypixel() && Functions.isInSkyblock()) || aaronMod$shouldApplyEffect() && (AaronModConfigManager.get().oldMasterStars || AaronModConfigManager.get().fancyDiamondHeads)) {
+		if ((Functions.isOnHypixel() && Functions.isInSkyblock()) || aaronMod$shouldApplyEffect() && (AaronModConfigManager.get().oldMasterStars || AaronModConfigManager.get().fancyDiamondHeads)) {
 			String itemName = text.getString();
 			
-			if(AaronModConfigManager.get().fancyDiamondHeads && itemName.contains("Diamond") && itemName.contains("Head")) {
+			if (AaronModConfigManager.get().fancyDiamondHeads && itemName.contains("Diamond") && itemName.contains("Head")) {
 				Style nameStyle = Style.EMPTY.withColor(0x84dadd);
 				Style starStyle = Style.EMPTY.withColor(Formatting.AQUA);
 				Style masterStarStyle = Style.EMPTY.withColor(Formatting.DARK_AQUA);
 				int masterStarsApplied = 0;
 				
-				if(itemName.contains("➊")) masterStarsApplied = 1;
-				if(itemName.contains("➋")) masterStarsApplied = 2;
-				if(itemName.contains("➌")) masterStarsApplied = 3;
-				if(itemName.contains("➍")) masterStarsApplied = 4;
-				if(itemName.contains("➎")) masterStarsApplied = 5;
+				if (itemName.contains("➊")) masterStarsApplied = 1;
+				if (itemName.contains("➋")) masterStarsApplied = 2;
+				if (itemName.contains("➌")) masterStarsApplied = 3;
+				if (itemName.contains("➍")) masterStarsApplied = 4;
+				if (itemName.contains("➎")) masterStarsApplied = 5;
 				
 				Text styledName = TextTransformer.stylize(text, AARONMOD$BASE_STYLE, "Diamond", nameStyle, 1);
 				Text styledStars = TextTransformer.stylize(styledName, AARONMOD$BASE_STYLE, "✪", starStyle, 5);
 				return TextTransformer.stylizeAndReplace(styledStars, AARONMOD$BASE_STYLE, "✪", masterStarStyle, AARONMOD$MASTER_STARS, AARONMOD$MASTER_STAR_REGEX, "", masterStarsApplied);
 			}
 			
-			if(AaronModConfigManager.get().oldMasterStars) {
+			if (AaronModConfigManager.get().oldMasterStars) {
 				Style masterStarStyle = Style.EMPTY.withColor(Formatting.RED);
 				int masterStarsApplied = 0;
 				
-				if(itemName.contains("➊")) masterStarsApplied = 1;
-				if(itemName.contains("➋")) masterStarsApplied = 2;
-				if(itemName.contains("➌")) masterStarsApplied = 3;
-				if(itemName.contains("➍")) masterStarsApplied = 4;
-				if(itemName.contains("➎")) masterStarsApplied = 5;
+				if (itemName.contains("➊")) masterStarsApplied = 1;
+				if (itemName.contains("➋")) masterStarsApplied = 2;
+				if (itemName.contains("➌")) masterStarsApplied = 3;
+				if (itemName.contains("➍")) masterStarsApplied = 4;
+				if (itemName.contains("➎")) masterStarsApplied = 5;
 				
 				return TextTransformer.stylizeAndReplace(text, AARONMOD$BASE_STYLE, "✪", masterStarStyle, AARONMOD$MASTER_STARS, AARONMOD$MASTER_STAR_REGEX, "", masterStarsApplied);
 			}
@@ -85,24 +85,25 @@ public abstract class ItemStackMixin {
 	
 	@ModifyVariable(method = "getTooltip", at = @At("STORE"), ordinal = 1)
 	private MutableText aaronMod$rainbowifyMaxSkyblockEnchantments(MutableText text) {
-		if(AaronModConfigManager.get().rainbowifyMaxSkyblockEnchantments && ((Functions.isOnHypixel() && Functions.isInSkyblock()) || aaronMod$shouldApplyEffect()) && Skyblock.getMaxEnchants().stream().anyMatch(text.getString()::contains)) {
+		if (AaronModConfigManager.get().rainbowifyMaxSkyblockEnchantments && ((Functions.isOnHypixel() && Functions.isInSkyblock()) || aaronMod$shouldApplyEffect()) && Skyblock.getMaxEnchants().stream().anyMatch(text.getString()::contains)) {
 			MutableText newText = Text.empty().styled(style -> style.withItalic(false));
 			List<Text> textComponents = text.getSiblings();
 			
-			if(AaronModConfigManager.get().rainbowifyMode == AaronModConfig.RainbowifyMode.STATIC) {
+			if (AaronModConfigManager.get().rainbowifyMode == AaronModConfig.RainbowifyMode.STATIC) {
 				int totalLength = 0;
 				int positionLeftOffAt = 0;
 				
 				//Exclude non-max enchants from counting towards total length since it looks weird & incomplete otherwise
-				for(int i = 0; i < textComponents.size(); i++) {
-					String componentString = textComponents.get(i).getString();
-					if(Skyblock.getMaxEnchants().stream().anyMatch(componentString::contains)) totalLength += componentString.length();
+				for (Text currentComponent : textComponents) {
+					String componentString = currentComponent.getString();
+					
+					if (Skyblock.getMaxEnchants().stream().anyMatch(componentString::contains)) totalLength += componentString.length();
 				}
 							
-				for(int i = 0; i < textComponents.size(); i++) {
-					Text currentComponent = textComponents.get(i);
+				for (Text currentComponent : textComponents) {
 					String componentString = currentComponent.getString();
-					if(Skyblock.getMaxEnchants().stream().anyMatch(componentString::contains)) {
+					
+					if (Skyblock.getMaxEnchants().stream().anyMatch(componentString::contains)) {
 						newText.append(TextTransformer.progressivelyRainbowify(componentString, totalLength, positionLeftOffAt));
 						positionLeftOffAt += componentString.length();
 						continue;
@@ -112,15 +113,16 @@ public abstract class ItemStackMixin {
 				}
 			}
 			
-			if(AaronModConfigManager.get().rainbowifyMode == AaronModConfig.RainbowifyMode.DYNAMIC) {
-				for(int i = 0; i < textComponents.size(); i ++) {
-					String componentString = textComponents.get(i).getString();
-					if(Skyblock.getMaxEnchants().stream().anyMatch(componentString::contains)) {
+			if (AaronModConfigManager.get().rainbowifyMode == AaronModConfig.RainbowifyMode.DYNAMIC) {
+				for (Text currentComponent : textComponents) {
+					String componentString = currentComponent.getString();
+
+					if (Skyblock.getMaxEnchants().stream().anyMatch(componentString::contains)) {
 						newText.append(Text.literal(componentString).styled(style -> style.withColor(0xAA5500)));
 						continue;
 					}
 					
-					newText.append(textComponents.get(i));
+					newText.append(currentComponent);
 				}
 			}
 			return newText;
