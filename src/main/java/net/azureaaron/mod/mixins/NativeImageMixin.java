@@ -21,7 +21,7 @@ import net.minecraft.client.texture.NativeImage;
 
 @Mixin(NativeImage.class)
 public class NativeImageMixin {
-	private static final Function<StackFrame, Class<?>> GET_CLASS = frame -> frame.getDeclaringClass();
+	private static final Function<StackFrame, Class<?>> GET_CLASS = StackFrame::getDeclaringClass;
 	private static final Predicate<Class<?>> IMAGE_PREVIEW_MATCH = ImagePreview.class::equals;
 	
 	private static Class<?>[] findCallerClasses(Stream<StackFrame> stackFrames) {
