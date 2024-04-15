@@ -94,7 +94,7 @@ public class Cache {
 		CompletableFuture.supplyAsync(() -> {
 			//Populate skyblock items cache
 			try {
-				String itemsResponse = Http.sendUnauthorizedHypixelRequest("resources/skyblock/items", "");
+				String itemsResponse = Http.sendUnauthorizedHypixelRequest("v2/resources/skyblock/items", "");
 				JsonObject itemsData = JsonParser.parseString(itemsResponse).getAsJsonObject();
 				
 				for(JsonElement item : itemsData.get("items").getAsJsonArray()) {
