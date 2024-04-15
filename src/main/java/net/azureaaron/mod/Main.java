@@ -32,8 +32,8 @@ import net.azureaaron.mod.features.DragonHealth;
 import net.azureaaron.mod.features.DragonTimers;
 import net.azureaaron.mod.features.ImagePreview;
 import net.azureaaron.mod.features.M7Waypoints;
+import net.azureaaron.mod.features.CopyChatMessages;
 import net.azureaaron.mod.listeners.ClientPlayConnectionListener;
-import net.azureaaron.mod.listeners.MouseListener;
 import net.azureaaron.mod.listeners.PlaySoundListener;
 import net.azureaaron.mod.listeners.ReceiveChatMessageListener;
 import net.azureaaron.mod.listeners.TeamUpdateListener;
@@ -77,7 +77,7 @@ public class Main implements ClientModInitializer {
 		
 		//Custom Event Registration
 		ReceiveChatMessageListener.listen();
-		MouseListener.init();
+		CopyChatMessages.init();
 		PlaySoundListener.listen();
 		TeamUpdateListener.listen();
 		

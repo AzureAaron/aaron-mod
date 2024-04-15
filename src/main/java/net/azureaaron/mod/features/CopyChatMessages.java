@@ -1,4 +1,4 @@
-package net.azureaaron.mod.listeners;
+package net.azureaaron.mod.features;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-public class MouseListener {
+public class CopyChatMessages {
 	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
 	private static final Text SUCCESS_TITLE = Text.literal("Success!");
 	private static final Text SUCCESS_DESCRIPTION = Text.literal("The message was copied to your clipboard!");
@@ -23,7 +23,7 @@ public class MouseListener {
 	private static final Text NOT_FOUND_DESCRIPTION = Text.literal("No message was hovered over!");
 
 	public static void init() {
-		MouseInputEvent.EVENT.register(MouseListener::onMouseInput);
+		MouseInputEvent.EVENT.register(CopyChatMessages::onMouseInput);
 	}	
 
 	private static void onMouseInput(int button, int action, int mods) {
