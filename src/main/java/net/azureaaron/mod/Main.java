@@ -77,7 +77,7 @@ public class Main implements ClientModInitializer {
 		
 		//Custom Event Registration
 		ReceiveChatMessageListener.listen();
-		MouseListener.listen();
+		MouseListener.init();
 		PlaySoundListener.listen();
 		TeamUpdateListener.listen();
 		
