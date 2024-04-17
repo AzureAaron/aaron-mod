@@ -9,12 +9,14 @@ import java.lang.invoke.MethodHandle;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.gson.JsonArray;
@@ -29,6 +31,8 @@ import net.azureaaron.mod.util.Functions;
 import net.azureaaron.mod.util.Skyblock;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.HoverEvent;
@@ -37,11 +41,14 @@ import net.minecraft.text.HoverEvent.ItemStackContent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Util;
 
 public class CroesusCommand {
 	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printCroesus");
 	private static final long TWO_DAYS = 172_800_000;
 	private static final Supplier<MutableText> NO_TREASURES = () -> Constants.PREFIX.get().append(Text.literal("This player doesn't have any dungeon treasures to claim!").formatted(Formatting.RED));
+	@Deprecated(forRemoval = true)
+	//TODO replace this with a check on the key set of loaded rare loot items from the file
 	private static final String[] RARE_LOOT = {/*M7*/ "dark_claymore", "necron_handle", "wither_shield_scroll",
 			"implosion_scroll", "shadow_warp_scroll", "fifth_master_star", "necron_dye", "thunderlord_7", "master_skull_tier_5",
 			/*M6*/ "giants_sword", "fourth_master_star", /*M5*/ "shadow_fury", "shadow_assassin_chestplate", "third_master_star", 
@@ -141,13 +148,24 @@ public class CroesusCommand {
 		String rewardsString = rewards.toString();
 		boolean rareLootAwaits = Arrays.stream(RARE_LOOT).anyMatch(rewardsString::contains);
 		Function<String, Boolean> containsRareLoot = s -> Arrays.stream(RARE_LOOT).anyMatch(s::equals);
-		String[] rareLoot = rewards.stream().filter(e -> containsRareLoot.apply(e)).toArray(String[]::new);
+		List<String> rareLoot = rewards.stream().filter(e -> containsRareLoot.apply(e)).collect(Collectors.toList());
 		
-		ItemStack bundle = Items.BUNDLE.getDefaultStack().setCustomName(Text.literal("✦ Rare Loot Preview ✦").styled(style -> style.withItalic(false).withColor(colourProfile.infoColour.getAsInt())));
+		ItemStack bundle = Items.BUNDLE.getDefaultStack();
+		bundle.set(DataComponentTypes.CUSTOM_NAME, Text.literal("✦ Rare Loot Preview ✦").styled(style -> style.withItalic(false).withColor(colourProfile.infoColour.getAsInt())));
 		
-		for (int i = 0; i < rareLoot.length; i++) {
-			Functions.addToBundle(bundle, Skyblock.getRareLootItems().get(rareLoot[i]));
+		//We use a map because ItemStacks have no determinate hash code thus we need a key that to allow for deduplication which will result in the same rare drops being stacked
+		HashMap<String, ItemStack> stacks = new HashMap<>();
+
+		for (String item : rareLoot) {
+			int occurrences = Collections.frequency(rareLoot, item);
+
+			//We need to copy the item stack because you can't share the same stack across different bundles for some reason?
+			if (!stacks.containsKey(item)) {
+				stacks.put(item, Util.make(Skyblock.getRareLootItems().get(item).copy(), stack -> stack.setCount(occurrences)));
+			}
 		}
+
+		bundle.set(DataComponentTypes.BUNDLE_CONTENTS, new BundleContentsComponent(new ArrayList<>(stacks.values())));
 				
 		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
 				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))

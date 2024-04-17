@@ -1,12 +1,14 @@
 package net.azureaaron.mod.mixins;
 
 import java.util.Base64;
+import java.util.Collection;
 import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mojang.authlib.properties.Property;
 
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.config.AaronModConfigManager;
@@ -14,6 +16,8 @@ import net.azureaaron.mod.features.Dragons;
 import net.azureaaron.mod.util.Cache;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
@@ -22,9 +26,6 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PlayerHeadItem;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.world.World;
 
 @Mixin(EnderDragonEntity.class)
@@ -54,13 +55,13 @@ public class EnderDragonEntityMixin extends MobEntity implements Monster {
 										
 					for (ArmorStandEntity armourStand : armourStands) {
 		    			ItemStack head = armourStand.getEquippedStack(EquipmentSlot.HEAD);
-		    			NbtCompound nbt = head.getNbt();
+		    			ProfileComponent profile = head.get(DataComponentTypes.PROFILE);
 		    			
-		    			if (nbt != null && !head.isEmpty()) {
-		    				NbtList nbtList = nbt.getCompound("SkullOwner").getCompound("Properties").getList("textures", NbtElement.COMPOUND_TYPE);
+		    			if (profile != null && !head.isEmpty()) {
+		    				Collection<Property> properties = profile.properties().get("textures");
 		    				
-		    				for (int i = 0; i < nbtList.size(); i++) {
-		    					String value = nbtList.getCompound(i).getString("Value");
+		    				for (Property property : properties) {
+		    					String value = property.value();
 		    					JsonObject texObj = JsonParser.parseString(new String(Base64.getDecoder().decode(value))).getAsJsonObject();
 		    					String tex = texObj.get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").getAsString();
 		    					

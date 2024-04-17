@@ -10,6 +10,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextCodecs;
@@ -37,7 +38,7 @@ public class ClientTextArgumentType implements ArgumentType<Text> {
 		String str = stringReader.getRemaining().replaceAll("&z", "§z").replaceAll("&Z", "§Z");
 		StringReader reader = new StringReader(str);
 		try {
-			MutableText text = (MutableText) JsonReaderUtils.parse(reader, TextCodecs.CODEC);
+			MutableText text = (MutableText) JsonReaderUtils.parse(DynamicRegistryManager.EMPTY, reader, TextCodecs.CODEC);
 			if (text == null) {
 				throw INVALID_COMPONENT_EXCEPTION.createWithContext(reader, "empty");
 			}

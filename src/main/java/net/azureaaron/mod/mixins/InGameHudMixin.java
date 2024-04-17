@@ -25,22 +25,22 @@ import net.minecraft.text.Text;
 
 @Mixin(InGameHud.class)
 public class InGameHudMixin {
-	
-	@ModifyVariable(method = "renderScoreboardSidebar", at = @At("STORE"))
+
+	@ModifyVariable(method = "renderScoreboardSidebar(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/scoreboard/ScoreboardObjective;)V", at = @At("STORE"))
 	private NumberFormat aaronMod$hideScoreText(NumberFormat format) {
 		return AaronModConfigManager.get().hideScoreboardScore ? BlankNumberFormat.INSTANCE : format;
 	}
-    
+
     @WrapOperation(method = "method_55440", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawText(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;IIIZ)I"))
     private int aaronMod$shadowEntryTitleAndScoreText(DrawContext context, TextRenderer textRenderer, Text text, int x, int y, int colour, boolean shadow, Operation<Integer> operation) {
     	return AaronModConfigManager.get().shadowedScoreboard ? context.drawTextWithShadow(textRenderer, text, x, y, colour) : operation.call(context, textRenderer, text, x, y, colour, shadow);
     }
-    
+
     @Inject(method = "render", at = @At("HEAD"))
     public void aaronMod$fpsDisplay(CallbackInfo ci, @Local(argsOnly = true) DrawContext context) {
     	if (AaronModConfigManager.get().fpsDisplay) FpsDisplay.render(context);
     }
-    
+
     @Redirect(method = "renderHeldItemTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;getWidth(Lnet/minecraft/text/StringVisitable;)I"))
     private int aaronMod$correctXValue(TextRenderer textRenderer, StringVisitable text) {
     	return AaronModConfigManager.get().visualTextReplacer ? textRenderer.getWidth(TextReplacer.visuallyReplaceText(((MutableText) text).asOrderedText())) : textRenderer.getWidth(text);

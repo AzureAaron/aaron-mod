@@ -81,21 +81,19 @@ public class Renderer {
 		renderText(wrc, pos, text, seeThrough, 8);
 	}
 
-	/**
-	 * Call from {@link net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents#END} if the text should be rendered infront
-	 * of entities - {@code GL_ALWAYS} isn't enough for some reason
-	 */
 	public static void renderText(WorldRenderContext wrc, Vec3d pos, OrderedText text, boolean seeThrough, float scale) {
-		MatrixStack matrices = MatrixTransformer.POSITION_RELATIVE.transform(wrc, pos);
+		Matrix4f positionMatrix = new Matrix4f();
 		TextRenderer textRenderer = CLIENT.textRenderer;
 		
 		scale *= 0.025f;
 		
-		matrices.peek().getPositionMatrix().mul(RenderSystem.getModelViewMatrix());
-		matrices.multiply(wrc.camera().getRotation());
-		matrices.scale(-scale, -scale, scale);
+		Vec3d cameraPos = wrc.camera().getPos();
 		
-		Matrix4f positionMatrix = matrices.peek().getPositionMatrix();
+		positionMatrix
+		.translate((float) (pos.getX() - cameraPos.getX()), (float) (pos.getY() - cameraPos.getY()), (float) (pos.getZ() - cameraPos.getZ()))
+		.rotate(wrc.camera().getRotation())
+		.scale(-scale, -scale, scale);
+		
 		float xOffset = -textRenderer.getWidth(text) / 2f;
 		
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
@@ -108,7 +106,6 @@ public class Renderer {
 		consumers.draw();
 		
 		RenderSystem.depthFunc(GL11.GL_LEQUAL);
-		matrices.pop();
 	}
 	
 	/**

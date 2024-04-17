@@ -255,7 +255,7 @@ public class TextTransformer {
 	 * 
 	 * @see #rainbowify(String)
 	 */
-	public static Text progressivelyRainbowify(@NotNull String text, int totalTextLength, int positionLeftOffAt) {
+	public static MutableText progressivelyRainbowify(@NotNull String text, int totalTextLength, int positionLeftOffAt) {
 		MutableText newText = Text.empty();
 		float next = Math.nextDown(1.0f) * totalTextLength;
 		

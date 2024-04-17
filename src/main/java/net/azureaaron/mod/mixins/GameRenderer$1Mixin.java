@@ -24,7 +24,7 @@ public class GameRenderer$1Mixin {
 
 	@Redirect(method = "method_45778", at = @At(value = "NEW", target = "Lnet/minecraft/resource/Resource;"))
 	private static Resource aaronMod$dontLoadShaderWhileOnMCCI(ResourcePack pack, InputSupplier<InputStream> supplier, @Local Identifier id) {
-		if (Cache.currentServerAddress.endsWith("mccisland.net") && pack.getName().equals("fabric") && id.equals(RENDER_TYPE_TEXT_FSH_ID)) {
+		if (Cache.currentServerAddress.endsWith("mccisland.net") && pack.getId().equals("fabric") && id.equals(RENDER_TYPE_TEXT_FSH_ID)) {
 			Main.LOGGER.warn("[Aaron's Mod] Loading vanilla rendertype_text.fsh shader due to an incompatibility on MCCI");
 			
 			DefaultResourcePack vanillaPack = MinecraftClient.getInstance().getDefaultResourcePack();

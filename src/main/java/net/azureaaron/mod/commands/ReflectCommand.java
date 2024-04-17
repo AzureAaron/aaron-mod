@@ -47,7 +47,8 @@ public class ReflectCommand implements UnsafeAccess {
 	private static final List<String> OPCODES = Arrays.asList("GETFIELD", "PUTFIELD");
 	private static final List<String> TYPES = Arrays.asList("byte", "char", "double", "float", "int", "long", "short", "boolean", "string");
 	
-    private static int reflectionExecutor(FabricClientCommandSource source, String opcode, String targetClass, String target, String type, String newValue) {
+    @SuppressWarnings("deprecation")
+	private static int reflectionExecutor(FabricClientCommandSource source, String opcode, String targetClass, String target, String type, String newValue) {
     	ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
     	
     	if(!OPCODES.contains(opcode)) {

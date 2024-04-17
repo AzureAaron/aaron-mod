@@ -223,7 +223,7 @@ public class CommandSystem {
 		ApiResponse response = isName ? Http.sendNameToUuidRequest(player) : Http.sendUuidToNameRequest(player);
 		
 		if (response.ok()) {
-			return CommandPlayerData.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).get().orThrow();
+			return CommandPlayerData.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).getOrThrow();
 		} else if (response.ratelimited() && retries < 3) {
 			Thread.sleep(800);
 			
