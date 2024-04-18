@@ -185,15 +185,17 @@ public class Skyblock {
 	}
 	
 	public static String getDojoGrade(int score) {
-		if (score == 0) return "None";
-		if (score >= 1000) return "S";
-		if (score >= 800) return "A";
-		if (score >= 600) return "B";
-		if (score >= 400) return "C";
-		if (score >= 200) return "D";
-		if (score < 200) return "F";
-		
-		return "UNKNOWN";
+		return switch ((Integer) score) {
+			case Integer i when score == 0 -> "None";
+			case Integer i when score >= 1000 -> "S";
+			case Integer i when score >= 800 -> "A";
+			case Integer i when score >= 600 -> "B";
+			case Integer i when score >= 400 -> "C";
+			case Integer i when score >= 200 -> "D";
+			case Integer i when score < 200 -> "F";
+			
+			default -> "UNKNOWN";
+		};
 	}
 	
 	public static int calculateProfileSocialXp(JsonObject profile) {

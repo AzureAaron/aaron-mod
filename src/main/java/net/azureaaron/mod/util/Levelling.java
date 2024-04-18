@@ -89,11 +89,11 @@ public class Levelling {
 		int levelCap = skill.cap + capIncrease;
 		
 		int[] xpChart = switch (skill) {
-			case TAMING: yield tamingXpChart;
-			case RUNECRAFTING: yield runecraftingXpChart;
-			case SOCIAL: yield socialXpChart;
+			case TAMING -> tamingXpChart;
+			case RUNECRAFTING -> runecraftingXpChart;
+			case SOCIAL -> socialXpChart;
 			
-			default: yield regularXpChart;
+			default -> regularXpChart;
 		};
 
 		long xpTotal = 0;
@@ -126,17 +126,19 @@ public class Levelling {
 	
 	public static int getSlayerLevel(int xp, Slayers slayer) {
 		int[] xpChart = slayer.xpChart;
-		
-		if (xpChart.length > 5 && xp >= xpChart[8]) return 9;
-		if (xpChart.length > 5 && xp >= xpChart[7]) return 8;
-		if (xpChart.length > 5 && xp >= xpChart[6]) return 7;
-		if (xpChart.length > 5 && xp >= xpChart[5]) return 6;
-		if (xp >= xpChart[4]) return 5;
-		if (xp >= xpChart[3]) return 4;
-		if (xp >= xpChart[2]) return 3;
-		if (xp >= xpChart[1]) return 2;
-		if (xp >= xpChart[0]) return 1;
-		
-		return 0;
+
+		return switch ((Integer) xp) {
+			case Integer i when xpChart.length > 5 && xp >= xpChart[8] -> 9;
+			case Integer i when xpChart.length > 5 && xp >= xpChart[7] -> 8;
+			case Integer i when xpChart.length > 5 && xp >= xpChart[6] -> 7;
+			case Integer i when xpChart.length > 5 && xp >= xpChart[5] -> 6;
+			case Integer i when xp >= xpChart[4] -> 5;
+			case Integer i when xp >= xpChart[3] -> 4;
+			case Integer i when xp >= xpChart[2] -> 3;
+			case Integer i when xp >= xpChart[1] -> 2;
+			case Integer i when xp >= xpChart[0] -> 1;
+
+			default -> 0;
+		};
 	}
 }

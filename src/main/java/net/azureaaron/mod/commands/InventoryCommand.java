@@ -89,10 +89,11 @@ public class InventoryCommand {
 			extraAttributes.putString("id", sbId);
 			extraAttributes.putString("uuid", uuid);
 			
-			if (timestamp instanceof Long l) {
-				extraAttributes.putLong("timestamp", l);
-			} else if (timestamp instanceof String str) {
-				extraAttributes.putString("timestamp", str);
+			switch (timestamp) {
+				case Long l -> extraAttributes.putLong("timestamp", l);
+				case String str -> extraAttributes.putString("timestamp", str);
+
+				case null, default -> {}
 			}
 			
 			return ItemUtils.createStack(ItemUtils.identifierFromOldId(idAndDmg.leftInt(), idAndDmg.rightInt()), formattedName(), formattedLore(), extraAttributes);

@@ -139,9 +139,14 @@ public class ReflectCommand implements UnsafeAccess {
         						.append(Text.literal(fieldValue).withColor(colourProfile.infoColour.getAsInt()))));
         	}
         	
-    	} catch(ReflectiveOperationException e) {
-    		if(e instanceof ClassNotFoundException) source.sendError(Constants.PREFIX.get().append(Text.literal("The requested class wasn't found!").formatted(Formatting.RED)));
-    		if(e instanceof NoSuchFieldException) source.sendError(Constants.PREFIX.get().append(Text.literal("The requested field wasn't found!").formatted(Formatting.RED)));
+    	} catch (ReflectiveOperationException e) {
+    		switch (e) {
+    			case ClassNotFoundException ex -> source.sendError(Constants.PREFIX.get().append(Text.literal("The requested class wasn't found!").formatted(Formatting.RED)));
+    			case NoSuchFieldException ex -> source.sendError(Constants.PREFIX.get().append(Text.literal("The requested field wasn't found!").formatted(Formatting.RED)));
+
+    			case null, default -> {}
+    		}
+
     		e.printStackTrace();
     	}
     	

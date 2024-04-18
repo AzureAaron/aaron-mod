@@ -69,6 +69,6 @@ public class MouseMixin implements MouseGuiPositioner {
 	@Override
 	public void reset() {
 		this.x = this.client.getWindow().getWidth() / 2;
-		this.y = this.client.getWindow().getHeight() /2;
+		this.y = this.client.getWindow().getHeight() / 2;
 	}
 }
