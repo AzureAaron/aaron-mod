@@ -27,7 +27,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta {
 
 	@ModifyVariable(method = "getName", at = @At("STORE"))
 	private Text aaronMod$customItemName(Text text) {
-		if ((Functions.isOnHypixel() && Functions.isInSkyblock() || getAlwaysDisplaySkyblockInfo()) && (AaronModConfigManager.get().oldMasterStars || AaronModConfigManager.get().fancyDiamondHeads)) {
+		if ((Functions.isOnHypixel() && Functions.isInSkyblock() || getAlwaysDisplaySkyblockInfo()) && (AaronModConfigManager.get().oldMasterStars || AaronModConfigManager.get().fancyDiamondHeads) && text != null) {
 			String itemName = text.getString();
 
 			if (AaronModConfigManager.get().fancyDiamondHeads && itemName.contains("Diamond") && itemName.contains("Head")) {

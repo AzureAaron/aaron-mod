@@ -17,12 +17,10 @@ import net.minecraft.util.Identifier;
 
 public class ItemUtils {
 
-	public static ItemStack createStack(Identifier id, Text name, Text[] lore, NbtCompound extraAttributes) {
+	public static ItemStack createStack(Identifier id, Text name, Text[] lore, NbtCompound customData) {
 		ItemStack stack = new ItemStack(Registries.ITEM.get(id));
-		NbtCompound customData = new NbtCompound();
 
 		//Copy extra attributes
-		customData.put("ExtraAttributes", extraAttributes);
 		stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(customData));
 
 		//Add the lore and name to the item stack
