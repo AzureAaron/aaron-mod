@@ -50,7 +50,7 @@ public class Skyblock {
 	private static CompletableFuture<Void> loadRareLootItems(MinecraftClient client) {
 		return CompletableFuture.supplyAsync(() -> {
 			try (BufferedReader reader = client.getResourceManager().openAsReader(new Identifier(Main.NAMESPACE, "skyblock/rare_loot_items.json"))) {
-				return RARE_LOOT_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseReader(reader)).result().orElseThrow();
+				return RARE_LOOT_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseReader(reader)).getOrThrow();
 			} catch (Exception e) {
 				LOGGER.error("[Aaron's Mod] Failed to load rare loot items file!", e);
 				
@@ -65,7 +65,7 @@ public class Skyblock {
 			if ((AaronModConfigManager.get().rainbowifyMaxSkyblockEnchantments || AaronModConfigManager.get().enableSkyblockCommands || loadAnyways) && !enchantsLoaded) {
 				try {
 					ApiResponse response = Http.sendApiRequest("skyblock/maxenchantments");
-					return MAX_ENCHANTMENTS_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).result().orElseThrow();
+					return MAX_ENCHANTMENTS_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).getOrThrow();
 				} catch (Exception e) {
 					LOGGER.error("[Aaron's Mod] Failed to load max enchantments file!", e);
 					
@@ -83,7 +83,7 @@ public class Skyblock {
 			if (AaronModConfigManager.get().enableSkyblockCommands) {
 				try {
 					ApiResponse response = Http.sendApiRequest("skyblock/magicalpowers");
-					return MagicalPowerCommand.MagicalPowerData.MAP_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).result().orElseThrow();
+					return MagicalPowerCommand.MagicalPowerData.MAP_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).getOrThrow();
 				} catch (Exception e) {
 					LOGGER.error("[Aaron's Mod] Failed to load magical powers file!", e);
 					
@@ -100,7 +100,7 @@ public class Skyblock {
 			if (AaronModConfigManager.get().enableSkyblockCommands) {
 				try {
 					ApiResponse response = Http.sendApiRequest("skyblock/accessories");
-					return MagicalPowerCommand.Accessory.MAP_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).result().orElseThrow();
+					return MagicalPowerCommand.Accessory.MAP_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).getOrThrow();
 				} catch (Exception e) {
 					LOGGER.error("[Aaron's Mod] Failed to load accessories!", e);
 					
