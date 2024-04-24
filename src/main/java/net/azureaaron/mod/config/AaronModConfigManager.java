@@ -179,16 +179,6 @@ public class AaronModConfigManager {
 										.controller(ConfigUtils::createBooleanController)
 										.build())
 								.option(Option.<Boolean>createBuilder()
-										.name(Text.literal("Fix Tab Translucency"))
-										.description(OptionDescription.createBuilder()
-												.text(Text.literal("Fixes an issue introduced in 1.20 where the tab's translucency is broken causing chat messages to render in front of it. (MC-263256)"))
-												.build())
-										.binding(defaults.fixTabTranslucency,
-												() -> config.fixTabTranslucency,
-												newValue -> config.fixTabTranslucency = newValue)
-										.controller(ConfigUtils::createBooleanController)
-										.build())
-								.option(Option.<Boolean>createBuilder()
 										.name(Text.literal("FPS Display"))
 										.description(OptionDescription.createBuilder()
 												.text(Text.literal("Displays your FPS in the top left corner of your screen!"))

@@ -34,7 +34,6 @@
     "ShaderProgramMixin",
     "VertexBufferMixin",
     "MusicTrackerMixin",
-    "PlayerListHudMixin",
     "TextVisitFactoryMixin",
     "PingMeasurerMixin",
     "GameRenderer$1Mixin",
