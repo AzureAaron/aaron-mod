@@ -479,42 +479,6 @@ public class AaronModConfigManager {
 												newValue -> config.dungeonFinderPersonStats = newValue)
 										.controller(ConfigUtils::createBooleanController)
 										.build())
-								/*.option(Option.<Boolean>createBuilder()
-										.name(Text.literal("Colourful Party Finder Notes"))
-										.description(OptionDescription.createBuilder()
-												.text(Text.literal("Allows you to stylize your party finder notes by using colour formatting codes!"))
-												.build())
-										.binding(false,
-												() -> colourfulPartyFinderNotes,
-												newValue -> colourfulPartyFinderNotes = newValue)
-										.controller(Config::createBooleanController)
-										.build())*/
-								.option(Option.<Boolean>createBuilder()
-										.name(Text.literal("[Deprecated] Dungeon Score Message"))
-										.description(OptionDescription.of(Text.literal("Sends a message when 270 or 300 score is reached! Messages can be up to 244 characters in length."), Text.literal("\n\nThis feature is deprecated and will be removed in a future update. Check out the Skyblocker mod for a replacement!").formatted(Formatting.BOLD)))
-										.binding(defaults.dungeonScoreMessage,
-												() -> config.dungeonScoreMessage,
-												newValue -> config.dungeonScoreMessage = newValue)
-										.controller(ConfigUtils::createBooleanController)
-										.build())
-								.option(Option.<String>createBuilder()
-										.name(Text.literal("270 Score Message"))
-										.description(OptionDescription.of(Text.literal("This feature is deprecated and will be removed in a future update. Check out the Skyblocker mod for a replacement!").formatted(Formatting.BOLD)))
-										.binding(defaults.twoHundredSeventyScore,
-												() -> config.twoHundredSeventyScore,
-												newValue -> config.twoHundredSeventyScore = newValue)
-										.controller(opt -> StringControllerBuilder.create(opt))
-										.available(config.dungeonScoreMessage)
-										.build())
-								.option(Option.<String>createBuilder()
-										.name(Text.literal("300 Score Message"))
-										.description(OptionDescription.of(Text.literal("This feature is deprecated and will be removed in a future update. Check out the Skyblocker mod for a replacement!").formatted(Formatting.BOLD)))
-										.binding(defaults.threeHundredScore,
-												() -> config.threeHundredScore,
-												newValue -> config.threeHundredScore = newValue)
-										.controller(opt -> StringControllerBuilder.create(opt))
-										.available(config.dungeonScoreMessage)
-										.build())
 								.option(Option.<Boolean>createBuilder()
 										.name(Text.literal("Old Master Star Display"))
 										.description(OptionDescription.createBuilder()
