@@ -17,7 +17,7 @@ public interface UnsafeAccess {
 
 	Unsafe UNSAFE = unsafeAdventure();
 	
-	static Unsafe unsafeAdventure() {
+	private static Unsafe unsafeAdventure() {
 		try {
 			Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
 			theUnsafe.setAccessible(true);
