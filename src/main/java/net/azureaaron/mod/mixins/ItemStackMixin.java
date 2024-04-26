@@ -2,6 +2,7 @@ package net.azureaaron.mod.mixins;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;

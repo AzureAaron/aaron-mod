@@ -1,4 +1,4 @@
-package net.azureaaron.mod.features;
+package net.azureaaron.mod.utils.render;
 
 import org.joml.Matrix4f;
 

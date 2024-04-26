@@ -9,7 +9,7 @@ import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.mixins.accessors.ClientEntityManagerAccessor;
 import net.azureaaron.mod.mixins.accessors.ClientWorldAccessor;
 import net.azureaaron.mod.utils.Cache;
-import net.azureaaron.mod.utils.Renderer;
+import net.azureaaron.mod.utils.render.Renderer;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;

@@ -14,8 +14,8 @@ import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.features.NametagDrawer;
 import net.azureaaron.mod.features.TextReplacer;
+import net.azureaaron.mod.utils.render.NametagDrawer;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.font.TextRenderer.TextLayerType;
 import net.minecraft.client.render.VertexConsumerProvider;

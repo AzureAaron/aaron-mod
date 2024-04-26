@@ -14,7 +14,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.MouseInputEvent;
-import net.azureaaron.mod.features.MouseGuiPositioner;
+import net.azureaaron.mod.utils.render.MouseGuiPositioner;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;

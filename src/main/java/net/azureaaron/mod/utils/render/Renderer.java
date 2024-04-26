@@ -1,4 +1,4 @@
-package net.azureaaron.mod.utils;
+package net.azureaaron.mod.utils.render;
 
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;

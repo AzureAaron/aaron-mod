@@ -11,7 +11,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
 import net.azureaaron.mod.Keybinds;
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.features.TimeUniform;
+import net.azureaaron.mod.utils.render.TimeUniform;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
 
