@@ -16,11 +16,11 @@ import com.mojang.logging.LogUtils;
 import com.mojang.serialization.JsonOps;
 
 import net.azureaaron.mod.features.TextReplacer;
-import net.azureaaron.mod.util.Functions;
-import net.azureaaron.mod.util.Http;
-import net.azureaaron.mod.util.Http.ApiResponse;
-import net.azureaaron.mod.util.Messages;
-import net.azureaaron.mod.util.Skyblock;
+import net.azureaaron.mod.utils.Functions;
+import net.azureaaron.mod.utils.Http;
+import net.azureaaron.mod.utils.Messages;
+import net.azureaaron.mod.utils.Skyblock;
+import net.azureaaron.mod.utils.Http.ApiResponse;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;

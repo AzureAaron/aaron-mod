@@ -16,7 +16,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import net.azureaaron.mod.features.ImagePreview;
-import net.azureaaron.mod.util.ImageMetadata;
+import net.azureaaron.mod.utils.ImageMetadata;
 import net.minecraft.client.texture.NativeImage;
 
 @Mixin(NativeImage.class)

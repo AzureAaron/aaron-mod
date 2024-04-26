@@ -36,7 +36,7 @@ import net.azureaaron.mod.features.CopyChatMessages;
 import net.azureaaron.mod.listeners.ClientPlayConnectionListener;
 import net.azureaaron.mod.listeners.PlaySoundListener;
 import net.azureaaron.mod.listeners.ReceiveChatMessageListener;
-import net.azureaaron.mod.util.Skyblock;
+import net.azureaaron.mod.utils.Skyblock;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;

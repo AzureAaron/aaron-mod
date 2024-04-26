@@ -1,4 +1,4 @@
-package net.azureaaron.mod.util;
+package net.azureaaron.mod.utils;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import net.azureaaron.mod.Main;
 import net.azureaaron.mod.commands.MagicalPowerCommand;
 import net.azureaaron.mod.commands.NetworthCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.util.Http.ApiResponse;
+import net.azureaaron.mod.utils.Http.ApiResponse;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;

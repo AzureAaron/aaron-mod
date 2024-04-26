@@ -13,7 +13,7 @@ import com.mojang.authlib.properties.Property;
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.Dragons;
-import net.azureaaron.mod.util.Cache;
+import net.azureaaron.mod.utils.Cache;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.component.DataComponentTypes;

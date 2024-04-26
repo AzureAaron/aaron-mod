@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import net.azureaaron.mod.Main;
-import net.azureaaron.mod.util.Cache;
+import net.azureaaron.mod.utils.Cache;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.DefaultResourcePack;
 import net.minecraft.resource.InputSupplier;

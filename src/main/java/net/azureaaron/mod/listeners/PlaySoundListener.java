@@ -3,7 +3,7 @@ package net.azureaaron.mod.listeners;
 import java.util.HashSet;
 
 import net.azureaaron.mod.events.PlaySoundEvent;
-import net.azureaaron.mod.util.Cache;
+import net.azureaaron.mod.utils.Cache;
 import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;

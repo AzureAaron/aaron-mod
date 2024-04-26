@@ -13,12 +13,12 @@ import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.util.Functions;
-import net.azureaaron.mod.util.JsonHelper;
-import net.azureaaron.mod.util.Levelling;
-import net.azureaaron.mod.util.Levelling.Skills;
-import net.azureaaron.mod.util.Levelling.Slayers;
-import net.azureaaron.mod.util.Skyblock;
+import net.azureaaron.mod.utils.Functions;
+import net.azureaaron.mod.utils.JsonHelper;
+import net.azureaaron.mod.utils.Levelling;
+import net.azureaaron.mod.utils.Skyblock;
+import net.azureaaron.mod.utils.Levelling.Skills;
+import net.azureaaron.mod.utils.Levelling.Slayers;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.HoverEvent;

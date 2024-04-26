@@ -7,7 +7,7 @@ import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.azureaaron.mod.Colour;
 import net.azureaaron.mod.Particles;
-import net.azureaaron.mod.util.Functions;
+import net.azureaaron.mod.utils.Functions;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 

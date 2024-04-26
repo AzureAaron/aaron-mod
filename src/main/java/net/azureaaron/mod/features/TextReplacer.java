@@ -6,7 +6,7 @@ import java.util.function.Supplier;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.util.TextTransformer;
+import net.azureaaron.mod.utils.TextTransformer;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 

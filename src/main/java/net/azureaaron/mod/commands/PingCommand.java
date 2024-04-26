@@ -8,7 +8,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.PingResultEvent;
-import net.azureaaron.mod.util.Constants;
+import net.azureaaron.mod.utils.Constants;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;

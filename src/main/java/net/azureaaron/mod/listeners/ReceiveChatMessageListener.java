@@ -6,8 +6,8 @@ import java.util.regex.Pattern;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.ReceiveChatMessageEvent;
 import net.azureaaron.mod.features.Dragons;
-import net.azureaaron.mod.util.Cache;
-import net.azureaaron.mod.util.Functions;
+import net.azureaaron.mod.utils.Cache;
+import net.azureaaron.mod.utils.Functions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Formatting;
 

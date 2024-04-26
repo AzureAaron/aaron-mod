@@ -1,6 +1,6 @@
 package net.azureaaron.mod.listeners;
 
-import net.azureaaron.mod.util.Cache;
+import net.azureaaron.mod.utils.Cache;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;

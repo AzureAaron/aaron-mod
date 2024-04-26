@@ -1,4 +1,4 @@
-package net.azureaaron.mod.util;
+package net.azureaaron.mod.utils;
 
 import java.util.Optional;
 import java.util.OptionalDouble;

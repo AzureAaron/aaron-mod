@@ -7,7 +7,7 @@ import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.MouseGuiPositioner;
-import net.azureaaron.mod.util.Functions;
+import net.azureaaron.mod.utils.Functions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;

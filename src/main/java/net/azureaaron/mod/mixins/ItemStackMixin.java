@@ -8,9 +8,9 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.AaronModItemMeta;
-import net.azureaaron.mod.util.Functions;
-import net.azureaaron.mod.util.Skyblock;
-import net.azureaaron.mod.util.TextTransformer;
+import net.azureaaron.mod.utils.Functions;
+import net.azureaaron.mod.utils.Skyblock;
+import net.azureaaron.mod.utils.TextTransformer;
 import net.minecraft.component.type.LoreComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.TooltipAppender;

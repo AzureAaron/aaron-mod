@@ -11,7 +11,7 @@ import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.util.Functions;
+import net.azureaaron.mod.utils.Functions;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.ClickEvent;

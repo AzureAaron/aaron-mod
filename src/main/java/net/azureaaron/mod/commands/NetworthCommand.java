@@ -16,12 +16,12 @@ import com.mojang.logging.LogUtils;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.util.Constants;
-import net.azureaaron.mod.util.Functions;
-import net.azureaaron.mod.util.Http;
-import net.azureaaron.mod.util.JsonHelper;
-import net.azureaaron.mod.util.Messages;
-import net.azureaaron.mod.util.Skyblock;
+import net.azureaaron.mod.utils.Constants;
+import net.azureaaron.mod.utils.Functions;
+import net.azureaaron.mod.utils.Http;
+import net.azureaaron.mod.utils.JsonHelper;
+import net.azureaaron.mod.utils.Messages;
+import net.azureaaron.mod.utils.Skyblock;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.MutableText;

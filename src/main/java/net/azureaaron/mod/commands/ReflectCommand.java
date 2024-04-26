@@ -17,8 +17,8 @@ import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.util.Constants;
-import net.azureaaron.mod.util.UnsafeAccess;
+import net.azureaaron.mod.utils.Constants;
+import net.azureaaron.mod.utils.UnsafeAccess;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.MutableText;

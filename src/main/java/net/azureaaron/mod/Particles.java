@@ -11,7 +11,7 @@ import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.azureaaron.mod.config.AaronModConfig;
 import net.azureaaron.mod.config.ConfigUtils;
-import net.azureaaron.mod.util.Functions;
+import net.azureaaron.mod.utils.Functions;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.particle.ParticleType;
 import net.minecraft.particle.ParticleTypes;

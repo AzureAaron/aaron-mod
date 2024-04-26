@@ -10,8 +10,8 @@ import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.util.Cache;
-import net.azureaaron.mod.util.Constants;
+import net.azureaaron.mod.utils.Cache;
+import net.azureaaron.mod.utils.Constants;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
