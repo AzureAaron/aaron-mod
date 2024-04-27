@@ -17,7 +17,6 @@ Vanilla:
 * Hide Scoreboard Score
 * Shadowed Name Tag Text
 * Hide Name tag Background
-* Fix Tab Translucency
 * FPS Display
 * Extra Debug Info
 * Hide Fire Overlay
