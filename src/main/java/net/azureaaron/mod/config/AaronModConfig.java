@@ -166,6 +166,9 @@ public class AaronModConfig {
 	public boolean hideScoreboardScore = false;
 	
 	@SerialEntry
+	public boolean m7DragonSpawnNotifications = false;
+	
+	@SerialEntry
 	public Object2ObjectOpenHashMap<Identifier, Particles.State> particles = new Object2ObjectOpenHashMap<>();
 	
 	@SerialEntry 

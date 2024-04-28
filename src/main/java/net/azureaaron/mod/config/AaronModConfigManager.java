@@ -532,6 +532,16 @@ public class AaronModConfigManager {
 										.controller(ConfigUtils::createBooleanController)
 										.build())
 								.option(Option.<Boolean>createBuilder()
+										.name(Text.literal("M7 Dragon Spawn Notifications"))
+										.description(OptionDescription.createBuilder()
+												.text(Text.literal("Displays a title notification and plays a sound to notify you that a dragon will spawn soon."))
+												.build())
+										.binding(defaults.m7DragonSpawnNotifications,
+												() -> config.m7DragonSpawnNotifications,
+												newValue -> config.m7DragonSpawnNotifications = newValue)
+										.controller(ConfigUtils::createBooleanController)
+										.build())
+								.option(Option.<Boolean>createBuilder()
 										.name(Text.literal("M7 Dragon Health Display"))
 										.description(OptionDescription.createBuilder()
 												.text(Text.literal("Displays the health of a dragon underneath it."))

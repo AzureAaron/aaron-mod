@@ -15,7 +15,7 @@ public class BoundingBoxes {
 	
 	private static void renderBoxes(WorldRenderContext wrc) {
 		if (Functions.isOnHypixel() && AaronModConfigManager.get().masterModeF7DragonBoxes && Cache.inM7Phase5) {
-			for (Dragons dragon : Dragons.values()) {
+			for (Dragons dragon : Dragons.VALUES) {
 				Renderer.renderBox(wrc, dragon.box, dragon.red, dragon.green, dragon.blue, 1f);
 			}
 		}
