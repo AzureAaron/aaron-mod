@@ -10,22 +10,16 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.function.Supplier;
 
-import org.slf4j.Logger;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.logging.LogUtils;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.Functions;
-import net.azureaaron.mod.utils.Http;
 import net.azureaaron.mod.utils.JsonHelper;
 import net.azureaaron.mod.utils.Levelling;
-import net.azureaaron.mod.utils.Messages;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.HoverEvent;
@@ -35,7 +29,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class DungeonsCommand {
-	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printDungeons");
 	private static final Supplier<MutableText> NEVER_PLAYED_DUNGEONS_ERROR = () -> Constants.PREFIX.get().append(Text.literal("This player hasn't entered the catacombs yet!").formatted(Formatting.RED));
 	
@@ -69,19 +62,8 @@ public class DungeonsCommand {
 		}
 		
 		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);
-		JsonObject playerJson = null;
-		try {
-			String playerData = Http.sendAuthorizedHypixelRequest("v2/player", "?uuid=" + uuid);
-			playerJson = JsonParser.parseString(playerData).getAsJsonObject();
-		} catch (Exception e) {
-			source.sendError(Messages.HYPIXEL_PROFILE_FETCH_ERROR.get());
-			LOGGER.error("[Aaron's Mod] Failed to request " + Functions.possessiveEnding(name) + " Hypixel profile!", e);
-			
-			return;
-		}
-		
 		JsonObject dungeonsStats = profile.getAsJsonObject("dungeons");
-				
+		
 		int healerLevel = Levelling.getDungeonLevel(JsonHelper.getLong(dungeonsStats, "player_classes.healer.experience").orElse(0L));
 		int mageLevel = Levelling.getDungeonLevel(JsonHelper.getLong(dungeonsStats, "player_classes.mage.experience").orElse(0L));
 		int berserkLevel = Levelling.getDungeonLevel(JsonHelper.getLong(dungeonsStats, "player_classes.berserk.experience").orElse(0L));
@@ -93,7 +75,7 @@ public class DungeonsCommand {
 		
 		long catacombsXp = JsonHelper.getLong(catacombsStats, "experience").orElse(0L);
 		int catacombsLevel = Levelling.getDungeonLevel(catacombsXp);
-		int secrets = JsonHelper.getInt(playerJson, "player.achievements.skyblock_treasure_hunter").orElse(0);
+		int secrets = JsonHelper.getInt(dungeonsStats, "secrets").orElse(0);
 		String selectedClass = JsonHelper.getString(dungeonsStats, "selected_dungeon_class").orElse("None"); //The fallback value used to be null which was a great choice until it threw an NPE!
 		
 		int healerColour = ("healer".equals(selectedClass)) ? colourProfile.highlightColour.getAsInt() : colourProfile.infoColour.getAsInt();
