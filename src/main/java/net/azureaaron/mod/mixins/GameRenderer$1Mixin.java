@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import net.azureaaron.mod.Main;
+import net.azureaaron.mod.features.ChromaText;
 import net.azureaaron.mod.utils.Cache;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.DefaultResourcePack;
@@ -24,7 +25,7 @@ public class GameRenderer$1Mixin {
 
 	@Redirect(method = "method_45778", at = @At(value = "NEW", target = "Lnet/minecraft/resource/Resource;"))
 	private static Resource aaronMod$dontLoadShaderWhileOnMCCI(ResourcePack pack, InputSupplier<InputStream> supplier, @Local Identifier id) {
-		if (Cache.currentServerAddress.endsWith("mccisland.net") && pack.getId().equals("fabric") && id.equals(RENDER_TYPE_TEXT_FSH_ID)) {
+		if (Cache.currentServerAddress.endsWith("mccisland.net") && pack.getId().equals(ChromaText.ID.toString()) && id.equals(RENDER_TYPE_TEXT_FSH_ID)) {
 			Main.LOGGER.warn("[Aaron's Mod] Loading vanilla rendertype_text.fsh shader due to an incompatibility on MCCI");
 			
 			DefaultResourcePack vanillaPack = MinecraftClient.getInstance().getDefaultResourcePack();

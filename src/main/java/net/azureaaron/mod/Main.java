@@ -28,6 +28,7 @@ import net.azureaaron.mod.commands.WardenWarningLevelCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.ReceiveChatMessageEvent;
 import net.azureaaron.mod.features.BoundingBoxes;
+import net.azureaaron.mod.features.ChromaText;
 import net.azureaaron.mod.features.CopyChatMessages;
 import net.azureaaron.mod.features.DragonHealth;
 import net.azureaaron.mod.features.DragonTimers;
@@ -42,6 +43,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
@@ -51,7 +53,8 @@ public class Main implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("aaron-mod");
 	public static final String NAMESPACE = "aaron-mod";
 	public static final boolean OPTIFABRIC_LOADED = FabricLoader.getInstance().isModLoaded("optifabric");
-	public static final String MOD_VERSION = FabricLoader.getInstance().getModContainer("aaron-mod").get().getMetadata().getVersion().getFriendlyString();
+	public static final ModContainer MOD_CONTAINER = FabricLoader.getInstance().getModContainer("aaron-mod").get();
+	public static final String MOD_VERSION = MOD_CONTAINER.getMetadata().getVersion().getFriendlyString();
 	public static final String MINECRAFT_VERSION = SharedConstants.getGameVersion().getName();
 	private static final boolean ENABLE_REFLECT_COMMAND = Boolean.parseBoolean(System.getProperty("aaronmod.enableReflectCommand", "false")) || FabricLoader.getInstance().isDevelopmentEnvironment();
 		
@@ -72,6 +75,7 @@ public class Main implements ClientModInitializer {
 		ImagePreview.init();
 		DragonHealth.init();
 		Skyblock.init();
+		ChromaText.init();
 		
 		//Register Keybinds
 		registerKeybindings();
