@@ -36,7 +36,10 @@ public class InGameHudMixin {
     	return AaronModConfigManager.get().shadowedScoreboard ? context.drawTextWithShadow(textRenderer, text, x, y, colour) : operation.call(context, textRenderer, text, x, y, colour, shadow);
     }
 
-    @Inject(method = "render", at = @At("HEAD"))
+    /**
+     * The first thing thats rendered to the HUD to ensure proper layering.
+     */
+    @Inject(method = "renderMiscOverlays", at = @At("HEAD"))
     public void aaronMod$fpsDisplay(CallbackInfo ci, @Local(argsOnly = true) DrawContext context) {
     	if (AaronModConfigManager.get().fpsDisplay) FpsDisplay.render(context);
     }
