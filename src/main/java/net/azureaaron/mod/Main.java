@@ -42,6 +42,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.SharedConstants;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.command.CommandRegistryAccess;
@@ -51,6 +52,7 @@ public class Main implements ClientModInitializer {
 	public static final String NAMESPACE = "aaron-mod";
 	public static final boolean OPTIFABRIC_LOADED = FabricLoader.getInstance().isModLoaded("optifabric");
 	public static final String MOD_VERSION = FabricLoader.getInstance().getModContainer("aaron-mod").get().getMetadata().getVersion().getFriendlyString();
+	public static final String MINECRAFT_VERSION = SharedConstants.getGameVersion().getName();
 	private static final boolean ENABLE_REFLECT_COMMAND = Boolean.parseBoolean(System.getProperty("aaronmod.enableReflectCommand", "false")) || FabricLoader.getInstance().isDevelopmentEnvironment();
 		
 	@Override

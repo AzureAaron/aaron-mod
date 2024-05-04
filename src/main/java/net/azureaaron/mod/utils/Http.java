@@ -37,7 +37,7 @@ public class Http {
 	private static final String UUID_TO_NAME = "https://api.minecraftservices.com/minecraft/profile/lookup/";
 	private static final String NETWORTH = "https://maro.skyblockextras.com/api/networth/categories";
 	private static final String MOULBERRY = "https://moulberry.codes/";
-	private static final String USER_AGENT = "Aaron's Mod/" + Main.MOD_VERSION;
+	private static final String USER_AGENT = "Aaron's Mod/" + Main.MOD_VERSION + " (" + Main.MINECRAFT_VERSION + ")";
 	
 	private static ApiResponse sendGetRequest(String url, boolean throwOnNonOk) throws IOException, InterruptedException, ApiException {
 		HttpRequest request = HttpRequest.newBuilder()
