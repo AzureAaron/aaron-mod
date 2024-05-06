@@ -86,7 +86,6 @@ public class Main implements ClientModInitializer {
 		PlaySoundListener.listen();
 		
 		//Particle Stuff :)
-		Particles.registerSyntheticParticles();
 	};
 	
 	private static void registerCommands(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {		

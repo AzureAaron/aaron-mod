@@ -2,6 +2,7 @@ package net.azureaaron.mod;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import dev.isxander.yacl3.api.Option;
@@ -16,8 +17,8 @@ import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.particle.ParticleType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
@@ -40,7 +41,10 @@ public class Particles {
 		descriptions.put(ParticleTypes.WHITE_ASH, "White Ash can be frequently found in the Basalt Deltas!");
 	});
 	
-	public static final ParticleType<?> BLOCK_BREAKING = FabricParticleTypes.simple();
+	//Create a "synthetic" particle to work better with registries without registering it
+	public static final Identifier BLOCK_BREAKING = new Identifier("minecraft", "block_breaking");
+	private static final ParticleType<?> BLOCK_BREAKING_TYPE = FabricParticleTypes.simple();
+	private static final RegistryKey<ParticleType<?>> BLOCK_BREAKING_REGISTRY_KEY = RegistryKey.of(RegistryKeys.PARTICLE_TYPE, BLOCK_BREAKING);
 	
 	public enum State {
 		FULL,
@@ -51,33 +55,24 @@ public class Particles {
 		return Functions.titleCase(id.toString().replace("_", " "));
 	}
 	
-	/**
-	 * Registers "synthetic" particles
-	 * 
-	 * Currently only used for registering a fake block breaking particle, since the implementation of that is custom;
-	 * the actual particle itself won't do anything, just in there for config purposes
-	 */
-	static void registerSyntheticParticles() {
-		//Registered under minecraft's name space because they're a vanilla feature
-		//Its also registered with an "empty" particle type so that other stuff won't behave weirdly if its unexpectedly null
-		Registry.register(Registries.PARTICLE_TYPE, new Identifier("minecraft", "block_breaking"), BLOCK_BREAKING);
-	}
-	
 	public static List<OptionGroup> getOptionGroups(AaronModConfig config) {
 		List<OptionGroup> list = new ArrayList<>();
 		List<Entry<RegistryKey<ParticleType<?>>, ParticleType<?>>> entryList = new ArrayList<>(Registries.PARTICLE_TYPE.getEntrySet());
 		
+		//Add the "synthetic" block breaking particle
+		entryList.add(Map.entry(BLOCK_BREAKING_REGISTRY_KEY, BLOCK_BREAKING_TYPE));
+
 		//Alphabetically sort the entries for logical ordering
 		entryList.sort((o1, o2) -> {
-			String o1Name = getParticleDisplayName(Registries.PARTICLE_TYPE.getId(o1.getValue()).toString());
-			String o2Name = getParticleDisplayName(Registries.PARTICLE_TYPE.getId(o2.getValue()).toString());
+			String o1Name = getParticleDisplayName(o1.getKey().getValue().toString());
+			String o2Name = getParticleDisplayName(o2.getKey().getValue().toString());
 			
 			return o1Name.compareTo(o2Name);
 		});
 		
 		for (Entry<RegistryKey<ParticleType<?>>, ParticleType<?>> entry : entryList) {
 			ParticleType<?> particleType = entry.getValue();
-			Identifier id = Registries.PARTICLE_TYPE.getId(particleType);
+			Identifier id = entry.getKey().getValue();
 			
 			String name = getParticleDisplayName(id.getPath());
 			String namespaceName = getParticleDisplayName(id.getNamespace());
