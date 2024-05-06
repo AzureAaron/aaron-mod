@@ -5,8 +5,10 @@ import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
+import java.util.Base64;
 import java.util.function.Supplier;
 
 import org.slf4j.Logger;
@@ -17,9 +19,6 @@ import com.mojang.logging.LogUtils;
 
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import me.nullicorn.nedit.NBTReader;
-import me.nullicorn.nedit.type.NBTCompound;
-import me.nullicorn.nedit.type.NBTList;
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Constants;
@@ -32,6 +31,10 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtSizeTracker;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.HoverEvent.Action;
 import net.minecraft.text.HoverEvent.ItemStackContent;
@@ -58,44 +61,33 @@ public class InventoryCommand {
 						.executes(context -> CommandSystem.handlePlayer4Skyblock(context.getSource(), getString(context, "player"), DISPATCH_HANDLE))));
 	}
 		
-	private record ItemData3(String name, NBTCompound nbt) {
+	private record ItemData3(String name, NbtCompound nbt) {
 		
 		private MutableText formattedName() {
 			return TextTransformer.fromLegacy(name);
 		}
-		
+
 		/**
 		 * Calling this when the item wasn't found will throw an exception
+		 * 
+		 * ^ This may not still be true idk
 		 */
 		private Text[] formattedLore() {
-			return nbt.getList("tag.display.Lore").stream().map(String.class::cast).map(TextTransformer::fromLegacy).toArray(Text[]::new);
+			NbtCompound tag = nbt.getCompound("tag");
+			NbtCompound display = tag.getCompound("display");
+			NbtList lore = tag.contains("display", NbtElement.COMPOUND_TYPE) && display.contains("Lore", NbtElement.LIST_TYPE) ? display.getList("Lore", NbtElement.STRING_TYPE) : null;
+
+			return lore != null ? lore.stream().map(NbtElement::asString).map(TextTransformer::fromLegacy).toArray(Text[]::new) : new Text[0];
 		}
-		
+
 		private IntIntPair getIdAndDamage() {
-			return IntIntPair.of(nbt.getInt("id", 0), nbt.getInt("Damage", 0));
+			return IntIntPair.of(nbt.getInt("id"), nbt.getInt("Damage"));
 		}
-		
-		private String getItemId() {
-			return nbt.getString("tag.ExtraAttributes.id", "UNKNOWN");
-		}
-		
+
 		private ItemStack getStack() {
 			IntIntPair idAndDmg = getIdAndDamage();
-			String sbId = getItemId();
-			Object timestamp = nbt.getOrDefault("tag.ExtraAttributes.timestamp", null);
-			String uuid = nbt.getString("tag.ExtraAttributes.uuid", "UNKNOWN");
-			
-			NbtCompound extraAttributes = new NbtCompound();
-			extraAttributes.putString("id", sbId);
-			extraAttributes.putString("uuid", uuid);
-			
-			switch (timestamp) {
-				case Long l -> extraAttributes.putLong("timestamp", l);
-				case String str -> extraAttributes.putString("timestamp", str);
+			NbtCompound extraAttributes = nbt.getCompound("tag").getCompound("ExtraAttributes");
 
-				case null, default -> {}
-			}
-			
 			return ItemUtils.createStack(ItemUtils.identifierFromOldId(idAndDmg.leftInt(), idAndDmg.rightInt()), formattedName(), formattedLore(), extraAttributes);
 		}
 		
@@ -123,19 +115,19 @@ public class InventoryCommand {
 			return;
 		}
 		
-		NBTList armour = null;
-		NBTList inventory = null;
-		NBTList equipment = null;
+		NbtList armour = null;
+		NbtList inventory = null;
+		NbtList equipment = null;
 		
 		try {
 			String armourContents = JsonHelper.getString(inventoryData, "inv_armor.data").orElseThrow();
-			armour = NBTReader.readBase64(armourContents).getList("i");
+			armour = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(armourContents)), NbtSizeTracker.ofUnlimitedBytes()).getList("i", NbtElement.COMPOUND_TYPE);
 			
 			String inventoryContents = JsonHelper.getString(inventoryData, "inv_contents.data").orElseThrow();
-			inventory = NBTReader.readBase64(inventoryContents).getList("i");
+			inventory = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(inventoryContents)), NbtSizeTracker.ofUnlimitedBytes()).getList("i", NbtElement.COMPOUND_TYPE);
 			
 			String equipmentContents = JsonHelper.getString(inventoryData, "equipment_contents.data").orElseThrow();
-			equipment = NBTReader.readBase64(equipmentContents).getList("i");
+			equipment = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(equipmentContents)), NbtSizeTracker.ofUnlimitedBytes()).getList("i", NbtElement.COMPOUND_TYPE);
 		} catch (IOException | NullPointerException e) {
 			source.sendError(NBT_PARSING_ERROR.get());
 			LOGGER.error("[Aaron's Mod] Encountered an exception while parsing NBT!", e);
@@ -146,46 +138,48 @@ public class InventoryCommand {
 		//TODO eventually support fancy dia heads & old master stars
 		
 		ItemData3 boots = new ItemData3(
-				armour.getCompound(0).getString("tag.display.Name", "§cNo boots equipped!"), 
+				getNameOrElse(armour.getCompound(0).getCompound("tag"), "§cNo boots equipped!"), 
 				armour.getCompound(0));
 		ItemData3 leggings = new ItemData3(
-				armour.getCompound(1).getString("tag.display.Name", "§cNo leggings equipped!"), //I originally misspelled leggings as beggings.
+				getNameOrElse(armour.getCompound(1).getCompound("tag"), "§cNo leggings equipped!"), //I originally misspelled leggings as beggings.
 				armour.getCompound(1));
 		ItemData3 chestplate = new ItemData3(
-				armour.getCompound(2).getString("tag.display.Name", "§cNo chestplate equipped!"), 
+				getNameOrElse(armour.getCompound(2).getCompound("tag"), "§cNo chestplate equipped!"), 
 				armour.getCompound(2));
 		ItemData3 helmet = new ItemData3(
-				armour.getCompound(3).getString("tag.display.Name", "§cNo helmet equipped!"), 
+				getNameOrElse(armour.getCompound(3).getCompound("tag"), "§cNo helmet equipped!"), 
 				armour.getCompound(3));
 		
 		ItemData3[] equipmentPieces = new ItemData3[4];
 		
 		if (equipment != null) {			
 			equipmentPieces[0] = new ItemData3(
-					equipment.getCompound(0).getString("tag.display.Name", "§cNo necklace equipped!"), 
+					getNameOrElse(equipment.getCompound(0).getCompound("tag"), "§cNo necklace equipped!"), 
 					equipment.getCompound(0));
 			equipmentPieces[1] = new ItemData3(
-					equipment.getCompound(1).getString("tag.display.Name", "§cNo cloak equipped!"), 
+					getNameOrElse(equipment.getCompound(1).getCompound("tag"), "§cNo cloak equipped!"), 
 					equipment.getCompound(1));
 			
 			equipmentPieces[2] = new ItemData3(
-					equipment.getCompound(2).getString("tag.display.Name", "§cNo belt equipped!"), 
+					getNameOrElse(equipment.getCompound(2).getCompound("tag"), "§cNo belt equipped!"), 
 					equipment.getCompound(2));
 			
 			equipmentPieces[3] = new ItemData3(
-					equipment.getCompound(3).getString("tag.display.Name", "§cNo gloves or bracelet equipped!"), 
+					getNameOrElse(equipment.getCompound(3).getCompound("tag"), "§cNo gloves or bracelet equipped!"), 
 					equipment.getCompound(3));
 		}
 		
 		ObjectArrayList<ItemData3> keyItems = new ObjectArrayList<>();
-		
+
 		if (inventoryEnabled) {
 			for (int i = 0; i < 36; i++) {
-				NBTCompound item = inventory.getCompound(i);
-				String itemId = item.getString("tag.ExtraAttributes.id", "NONE");
-				
+				NbtCompound item = inventory.getCompound(i);
+				NbtCompound tag = item.getCompound("tag");
+				NbtCompound extraAttributes = tag.getCompound("ExtraAttributes");
+				String itemId = extraAttributes.contains("id", NbtElement.STRING_TYPE) ? extraAttributes.getString("id") : "";
+
 				if (itemId.equals("ASTRAEA") || itemId.equals("HYPERION") || itemId.equals("SCYLLA") || itemId.equals("VALKYRIE")
-						|| itemId.equals("TERMINATOR") || itemId.equals("DARK_CLAYMORE")) keyItems.add(new ItemData3(item.getString("tag.display.Name"), item));
+						|| itemId.equals("TERMINATOR") || itemId.equals("DARK_CLAYMORE")) keyItems.add(new ItemData3(getNameOrElse(tag, ""), item));
 			}
 		}
 		
@@ -227,5 +221,11 @@ public class InventoryCommand {
 		
 		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 		return;
+	}
+
+	private static String getNameOrElse(NbtCompound tag, String orElse) {
+		NbtCompound display = tag.getCompound("display");
+
+		return display.contains("Name", NbtElement.STRING_TYPE) ? display.getString("Name") : orElse;
 	}
 }

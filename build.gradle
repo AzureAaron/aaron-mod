@@ -34,9 +34,7 @@ dependencies {
 	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_api_version}"
 	
 	//Mr. Jackson Json is no more :(
-	
-	include implementation("me.nullicorn:Nedit:${nedit_version}")
-	
+
 	include modImplementation("dev.isxander:yet-another-config-lib:${yacl_version}-fabric")
 	
 	modImplementation "com.terraformersmc:modmenu:${modmenu_version}"
