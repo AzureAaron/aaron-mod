@@ -1,7 +1,12 @@
 package net.azureaaron.mod.utils;
 
+import com.google.common.collect.ImmutableSet;
+import net.azureaaron.mod.Main;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serial;
 import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -14,12 +19,6 @@ import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
-
-import org.jetbrains.annotations.NotNull;
-
-import com.google.common.collect.ImmutableSet;
-
-import net.azureaaron.mod.Main;
 
 /**
  * The name speaks for itself.
@@ -75,9 +74,8 @@ public class Http {
 	public static ApiResponse sendUuidToNameRequest(String uuid) throws IOException, InterruptedException, ApiException {
 		return sendGetRequest(UUID_TO_NAME + uuid, false);
 	}
-	
-	//TODO give this a better name?
-	public static ApiResponse sendApiRequest(String path) throws IOException, InterruptedException, ApiException {
+
+	public static ApiResponse sendAaronRequest(String path) throws IOException, InterruptedException, ApiException {
 		return sendGetRequest(AARON_BASE + path, true);
 	}
 	
@@ -98,7 +96,7 @@ public class Http {
 		return response.body();
 	}
 	
-	public static InputStream sendGenericH2Request(URI uri, ImmutableSet<String> expectedContentTypes) throws IOException, InterruptedException, ApiException {		
+	public static InputStream sendGenericH2Request(URI uri, ImmutableSet<String> expectedContentTypes) throws IOException, InterruptedException {
 		HttpRequest request = HttpRequest.newBuilder()
 				.GET()
 				.header("Accept", "*/*")
@@ -123,16 +121,13 @@ public class Http {
 		String encoding = getContentEncoding(response);
 		
 		try {
-			switch (encoding) {
-				case "":
-					return response.body();
-				case "gzip":
-					return new GZIPInputStream(response.body());
-				case "deflate":
-					return new InflaterInputStream(response.body());
-				default:
-					throw new UnsupportedOperationException("The server sent content in unexpected encoding: " + encoding);
-			}
+			return switch (encoding) {
+				case "" -> response.body();
+				case "gzip" -> new GZIPInputStream(response.body());
+				case "deflate" -> new InflaterInputStream(response.body());
+				default ->
+						throw new UnsupportedOperationException("The server sent content in unexpected encoding: " + encoding);
+			};
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
@@ -162,6 +157,7 @@ public class Http {
 	}
 	
 	public static class ApiException extends Exception {
+		@Serial
 		private static final long serialVersionUID = 2804124614055383667L;
 
 		public ApiException(String errorMessage) {

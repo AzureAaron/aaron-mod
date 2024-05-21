@@ -20,7 +20,10 @@ public class Colour {
 		Cloudy(0x6e7781, 0xeaeef2, 0x8c959f, 0x24292f, 0xd0d7de, 0x424a53),
 		Halloween(0xe45600, 0x57606a, 0x8896a5, 0xd1d7df, 0xeaeef2, 0x8c959f),
 		Christmas(0xcf222e, 0x116329, 0xf6f8fa, 0xfa4549, 0xd0d7de, 0x8c959f),
-		Custom(() -> CUSTOM.get().primaryColour.getRGB(), () -> CUSTOM.get().secondaryColour.getRGB(), () -> CUSTOM.get().infoColour.getRGB(), () -> CUSTOM.get().highlightColour.getRGB(), () -> CUSTOM.get().hoverColour.getRGB(), () -> CUSTOM.get().supportingInfoColour.getRGB());
+		Candyland(0xffb3b3, 0xffec8b, 0x99d9ea, 0xf08080, 0xffe4e1, 0xc2c2f0),
+		Cyberpunk(0x007bff, 0x00cec9, 0x28a745, 0xff9933, 0x343a40, 0xeaecee),
+		Lava(0xff0000, 0xff9933, 0xffd700, 0xf0e68c, 0x696969, 0xf5f5f5),
+		Ocean(0x007bff, 0x3498db, 0x474747, 0x28a745, 0xc2c2f0, 0xe0e0e0),		Custom(() -> CUSTOM.get().primaryColour.getRGB(), () -> CUSTOM.get().secondaryColour.getRGB(), () -> CUSTOM.get().infoColour.getRGB(), () -> CUSTOM.get().highlightColour.getRGB(), () -> CUSTOM.get().hoverColour.getRGB(), () -> CUSTOM.get().supportingInfoColour.getRGB());
 		
 		public final IntSupplier primaryColour;
 		public final IntSupplier secondaryColour;
