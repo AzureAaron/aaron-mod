@@ -75,9 +75,8 @@ public class Http {
 	public static ApiResponse sendUuidToNameRequest(String uuid) throws IOException, InterruptedException, ApiException {
 		return sendGetRequest(UUID_TO_NAME + uuid, false);
 	}
-	
-	//TODO give this a better name?
-	public static ApiResponse sendApiRequest(String path) throws IOException, InterruptedException, ApiException {
+
+	public static ApiResponse sendAaronRequest(String path) throws IOException, InterruptedException, ApiException {
 		return sendGetRequest(AARON_BASE + path, true);
 	}
 	
