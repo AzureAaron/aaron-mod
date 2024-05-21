@@ -1,20 +1,19 @@
 package net.azureaaron.mod.utils;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * This class is used for advanced text transformation such as client-side item renaming.
@@ -178,7 +177,7 @@ public class TextTransformer {
 				}
 				
 				if(Arrays.stream(replaceableText).anyMatch(componentString::contains)) {
-					if(replacementText.equals("")) continue; //Avoid adding components which won't display
+					if(replacementText.isEmpty()) continue; //Avoid adding components which won't display
 					Style componentStyle = textComponents.get(i).getStyle();
 					newText.append(Text.literal(componentString.replaceAll(replacementRegex, replacementText)).setStyle(componentStyle));
 					continue;
@@ -253,8 +252,8 @@ public class TextTransformer {
 	 * @param text The text object to be formatted into a partial rainbow gradient
 	 * @param totalTextLength The length of all the text that will be formatted across different positions
 	 * @param positionLeftOffAt The position left off at after formatting
-	 * @return A text object containing the {@ text} formatted into a partial rainbow gradient.
-	 * 
+	 * @return A text object containing the {@text} formatted into a partial rainbow gradient.
+	 *
 	 * @see #rainbowify(String)
 	 */
 	public static MutableText progressivelyRainbowify(@NotNull String text, int totalTextLength, int positionLeftOffAt) {
