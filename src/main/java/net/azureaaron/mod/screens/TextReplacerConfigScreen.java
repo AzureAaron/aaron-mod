@@ -8,11 +8,7 @@ import net.azureaaron.mod.features.TextReplacer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.GridWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.client.gui.widget.ThreePartsLayoutWidget;
+import net.minecraft.client.gui.widget.*;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 
@@ -75,7 +71,6 @@ public class TextReplacerConfigScreen extends Screen {
 
         replacementTextField.setText(replacementText);
         replacementComponentField.setText(replacementComponent);
-
         ButtonWidget removeButton = ButtonWidget.builder(Text.of("🗑"), (button) -> {
             TextReplacer.removeTextReplacement(replacementText);
             MinecraftClient.getInstance().setScreen(new TextReplacerConfigScreen(null));
