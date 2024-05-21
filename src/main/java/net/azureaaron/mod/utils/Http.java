@@ -78,7 +78,7 @@ public class Http {
 
 	//TODO give this a better name?
 	@Deprecated(forRemoval = true)
-	public static ApiResponse sendApiRequest(@NotNull String path) throws IOException, InterruptedException, ApiException {
+	public static ApiResponse sendAaronRequest(@NotNull String path) throws IOException, InterruptedException, ApiException {
 		ApiResponse response = sendGetRequestInternal(AARON_BASE + path, null);
 		response.tryThrow();
 

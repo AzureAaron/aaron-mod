@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.nio.file.Path;
 import java.util.Calendar;
 
+import net.azureaaron.mod.screens.TextReplacerConfigScreen;
+import net.minecraft.client.MinecraftClient;
 import org.apache.commons.lang3.SystemUtils;
 
 import com.google.gson.FieldNamingPolicy;
@@ -81,7 +83,12 @@ public class AaronModConfigManager {
 												.append(Text.literal("Sakura\n").withColor(Colour.ColourProfiles.Sakura.primaryColour.getAsInt()))
 												.append(Text.literal("Cloudy\n").withColor(Colour.ColourProfiles.Cloudy.primaryColour.getAsInt()))
 												.append(Text.literal("Halloween\n").withColor(Colour.ColourProfiles.Halloween.primaryColour.getAsInt()))
-												.append(Text.literal("and Christmas\n\n").withColor(Colour.ColourProfiles.Christmas.primaryColour.getAsInt()))
+												.append(Text.literal("Christmas\n\n").withColor(Colour.ColourProfiles.Christmas.primaryColour.getAsInt()))
+												.append(Text.literal("Candyland\n\n").withColor(Colour.ColourProfiles.Candyland.primaryColour.getAsInt()))
+												.append(Text.literal("Cyberpunk\n\n").withColor(Colour.ColourProfiles.Cyberpunk.primaryColour.getAsInt()))
+												.append(Text.literal("Lava\n\n").withColor(Colour.ColourProfiles.Lava.primaryColour.getAsInt()))
+												.append(Text.literal("and Ocean\n\n").withColor(Colour.ColourProfiles.Ocean.primaryColour.getAsInt()))
+
 												.append(Text.literal("or you can make a "))
 												.append(Text.literal("Custom").styled(style -> style.withItalic(true)))
 												.append(Text.literal(" colour profile!")))
@@ -664,6 +671,12 @@ public class AaronModConfigManager {
 										() -> config.visualTextReplacer,
 										newValue -> config.visualTextReplacer = newValue)
 								.controller(ConfigUtils::createBooleanController)
+								.build())
+						.option(ButtonOption.createBuilder()
+								.name(Text.literal("Visual Text Replacer"))
+								.text(Text.empty())
+								.description(OptionDescription.of(Text.literal("Click to open the visual text replacer screen!")))
+								.action((screen, opt) -> MinecraftClient.getInstance().send(() -> MinecraftClient.getInstance().setScreen(new TextReplacerConfigScreen(null))))
 								.build())
 						.option(ButtonOption.createBuilder()
 								.name(Text.literal("How to use this! (Hover)"))

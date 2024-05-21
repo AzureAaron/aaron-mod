@@ -1,20 +1,13 @@
 package net.azureaaron.mod.utils;
 
 import java.io.BufferedReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+import com.google.gson.*;
 import org.slf4j.Logger;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.mojang.logging.LogUtils;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 
 import net.azureaaron.mod.Main;
@@ -27,15 +20,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryOps;
 import net.minecraft.util.Identifier;
 
+import static net.azureaaron.mod.codecs.EnchantmentCodec.MAX_ENCHANTMENTS_CODEC;
+import static net.azureaaron.mod.codecs.EnchantmentCodec.MAX_LEVEL_ENCHANTMENTS;
+import static net.azureaaron.mod.codecs.LootCodec.RARE_LOOT_CODEC;
+import static net.azureaaron.mod.codecs.LootCodec.RARE_LOOT_ITEMS;
+
 public class Skyblock {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	//TODO refactor the codecs into their own classes
-	private static final Codec<Map<String, ItemStack>> RARE_LOOT_CODEC = Codec.unboundedMap(Codec.STRING, ItemStack.CODEC);
-	private static final Map<String, ItemStack> RARE_LOOT_ITEMS = new HashMap<>();
-	
-	private static final Codec<List<String>> MAX_ENCHANTMENTS_CODEC = Codec.list(Codec.STRING);
-	private static final List<String> MAX_LEVEL_ENCHANTMENTS = new ArrayList<>();
-	
+
 	private static final Map<String, MagicalPowerCommand.MagicalPowerData> MAGICAL_POWERS = new HashMap<>();
 	private static final Map<String, MagicalPowerCommand.Accessory> ACCESSORIES = new HashMap<>();
 	
@@ -60,23 +53,23 @@ public class Skyblock {
 			}
 		}).thenAccept(RARE_LOOT_ITEMS::putAll);
 	}
-	
+
 	//Maybe load the enchants from file as backup?
 	public static CompletableFuture<Void> loadMaxEnchants(boolean loadAnyways) {
 		return CompletableFuture.supplyAsync(() -> {
-			if ((AaronModConfigManager.get().rainbowifyMaxSkyblockEnchantments || AaronModConfigManager.get().enableSkyblockCommands || loadAnyways) && !enchantsLoaded) {
-				try {
-					ApiResponse response = Http.sendApiRequest("skyblock/maxenchantments");
-					return MAX_ENCHANTMENTS_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).getOrThrow();
-				} catch (Exception e) {
-					LOGGER.error("[Aaron's Mod] Failed to load max enchantments file!", e);
-					
-					return List.<String>of();
-				}
-			} else {
-				return List.<String>of();
-			}
-		}).thenAccept(MAX_LEVEL_ENCHANTMENTS::addAll)
+					if ((AaronModConfigManager.get().rainbowifyMaxSkyblockEnchantments || AaronModConfigManager.get().enableSkyblockCommands || loadAnyways) && !enchantsLoaded) {
+						try {
+							ApiResponse response = Http.sendAaronRequest("skyblock/maxenchantments");
+							return MAX_ENCHANTMENTS_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).getOrThrow();
+						} catch (Exception e) {
+							LOGGER.error("[Aaron's Mod] Failed to load max enchantments file!", e);
+
+							return List.<String>of();
+						}
+					} else {
+						return List.<String>of();
+					}
+				}).thenAccept(MAX_LEVEL_ENCHANTMENTS::addAll)
 				.thenRun(() -> Functions.runIf(() -> enchantsLoaded = true, () -> !MAX_LEVEL_ENCHANTMENTS.isEmpty()));
 	}
 	
@@ -84,7 +77,7 @@ public class Skyblock {
 		return CompletableFuture.supplyAsync(() -> {
 			if (AaronModConfigManager.get().enableSkyblockCommands) {
 				try {
-					ApiResponse response = Http.sendApiRequest("skyblock/magicalpowers");
+					ApiResponse response = Http.sendAaronRequest("skyblock/magicalpowers");
 					return MagicalPowerCommand.MagicalPowerData.MAP_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).getOrThrow();
 				} catch (Exception e) {
 					LOGGER.error("[Aaron's Mod] Failed to load magical powers file!", e);
@@ -101,7 +94,7 @@ public class Skyblock {
 		return CompletableFuture.supplyAsync(() -> {
 			if (AaronModConfigManager.get().enableSkyblockCommands) {
 				try {
-					ApiResponse response = Http.sendApiRequest("skyblock/accessories");
+					ApiResponse response = Http.sendAaronRequest("skyblock/accessories");
 					return MagicalPowerCommand.Accessory.MAP_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).getOrThrow();
 				} catch (Exception e) {
 					LOGGER.error("[Aaron's Mod] Failed to load accessories!", e);
@@ -141,7 +134,7 @@ public class Skyblock {
 				
 		for (JsonElement profile : profilesArray) {
 			JsonObject iteratedProfile = profile.getAsJsonObject();
-			if (iteratedProfile.get("selected").getAsBoolean() == true) return iteratedProfile;
+			if (iteratedProfile.get("selected").getAsBoolean()) return iteratedProfile;
 		}
 		
 		throw new IllegalStateException(Messages.PROFILES_NOT_MIGRATED_ERROR.get().getString()); //After the migration players can apparently have no selected profile
@@ -163,9 +156,7 @@ public class Skyblock {
 			case Integer i when score >= 600 -> "B";
 			case Integer i when score >= 400 -> "C";
 			case Integer i when score >= 200 -> "D";
-			case Integer i when score < 200 -> "F";
-			
-			default -> "UNKNOWN";
+			default -> "F";
 		};
 	}
 	

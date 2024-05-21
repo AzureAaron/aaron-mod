@@ -9,8 +9,10 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.features.TextReplacer;
+import net.azureaaron.mod.screens.TextReplacerConfigScreen;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
 
@@ -18,29 +20,36 @@ public class TextReplacerCommand {
 
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
 		dispatcher.register(literal("textreplacer")
+				.executes(context -> openTextReplacerConfig(context.getSource()))
 				.then(literal("add")
 						.then(argument("replacementText", string())
 								.then(argument("textComponent", ClientTextArgumentType.text())
-										.executes(context -> addReplacement(context.getSource(), getString(context, "replacementText"), context.getArgument("textComponent", Text.class)))))));
-		
-		dispatcher.register(literal("textreplacer")
+										.executes(context -> addReplacement(context.getSource(), getString(context, "replacementText"), context.getArgument("textComponent", Text.class))))))
 				.then(literal("remove")
 						.then(argument("replacementText", string())
 								.suggests((commandSource, builder) -> CommandSource.suggestMatching(TextReplacer.getTextReplacements(), builder))
 								.executes(context -> removeReplacement(context.getSource(), getString(context, "replacementText"))))));
 	}
-	
+
+	private static int openTextReplacerConfig(FabricClientCommandSource source) {
+		MinecraftClient client = source.getClient();
+
+		client.send(() -> client.setScreen(new TextReplacerConfigScreen(null)));
+
+		return Command.SINGLE_SUCCESS;
+	}
+
 	private static int addReplacement(FabricClientCommandSource source, String replacementText, Text textComponent) {
 		/*String tcText = textComponent.getString();
-		
+
 		if (tcText.length() != TextTransformer.deconstructAllComponents(textComponent).getSiblings().size()) {
 			source.sendError(Text.literal("The text component contains unsupported characters!"));
 			return Command.SINGLE_SUCCESS;
 		}*/
-		
+
 		TextReplacer.addTextReplacement(replacementText, textComponent);
 		source.sendFeedback(Text.literal("Successfully added the text replacement \"" + replacementText + "\""));
-		
+
 		return Command.SINGLE_SUCCESS;
 	}
 	

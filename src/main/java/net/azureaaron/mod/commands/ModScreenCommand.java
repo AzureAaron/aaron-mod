@@ -36,9 +36,7 @@ public class ModScreenCommand {
 	private static int handleCommand(FabricClientCommandSource source) {
 		MinecraftClient client = source.getClient();
 		
-		client.send(() -> {
-			client.setScreen(new ModScreen(null));
-		});
+		client.send(() -> client.setScreen(new ModScreen(null)));
 				
 		return Command.SINGLE_SUCCESS;
 	}

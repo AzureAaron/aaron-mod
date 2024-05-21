@@ -11,7 +11,7 @@ import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 
 public class TextReplacer {
-	private static final Supplier<Object2ObjectLinkedOpenHashMap<String, Text>> TEXT_REPLACEMENTS = () -> AaronModConfigManager.get().textReplacer.textReplacements;
+	public static final Supplier<Object2ObjectLinkedOpenHashMap<String, Text>> TEXT_REPLACEMENTS = () -> AaronModConfigManager.get().textReplacer.textReplacements;
 	
 	public static void addTextReplacement(String textToReplace, Text replacementText) {		
 		TEXT_REPLACEMENTS.get().put(textToReplace, replacementText);
