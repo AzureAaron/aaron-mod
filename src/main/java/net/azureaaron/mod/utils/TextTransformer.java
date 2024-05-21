@@ -133,7 +133,7 @@ public class TextTransformer {
 				}
 				
 				if(Arrays.stream(replaceableText).anyMatch(componentString::contains)) {
-					if(replacementText.equals("")) continue; //Avoid adding components which won't display
+					if(replacementText.isEmpty()) continue; //Avoid adding components which won't display
 					Style componentStyle = textComponents.get(i).getStyle();
 					newText.append(Text.literal(componentString.replaceAll(replacementRegex, replacementText)).setStyle(componentStyle));
 					continue;
@@ -208,8 +208,8 @@ public class TextTransformer {
 	 * @param text The text object to be formatted into a partial rainbow gradient
 	 * @param totalTextLength The length of all the text that will be formatted across different positions
 	 * @param positionLeftOffAt The position left off at after formatting
-	 * @return A text object containing the {@ text} formatted into a partial rainbow gradient.
-	 * 
+	 * @return A text object containing the {@text} formatted into a partial rainbow gradient.
+	 *
 	 * @see #rainbowify(String)
 	 */
 	public static MutableText progressivelyRainbowify(@NotNull String text, int totalTextLength, int positionLeftOffAt) {

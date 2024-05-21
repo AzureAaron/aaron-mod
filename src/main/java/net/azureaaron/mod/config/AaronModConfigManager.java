@@ -1,22 +1,7 @@
 package net.azureaaron.mod.config;
 
-import java.awt.Color;
-import java.nio.file.Path;
-import java.util.Calendar;
-
-import net.azureaaron.mod.screens.TextReplacerConfigScreen;
-import net.minecraft.client.MinecraftClient;
-import org.apache.commons.lang3.SystemUtils;
-
 import com.google.gson.FieldNamingPolicy;
-
-import dev.isxander.yacl3.api.ButtonOption;
-import dev.isxander.yacl3.api.ConfigCategory;
-import dev.isxander.yacl3.api.Option;
-import dev.isxander.yacl3.api.OptionDescription;
-import dev.isxander.yacl3.api.OptionFlag;
-import dev.isxander.yacl3.api.OptionGroup;
-import dev.isxander.yacl3.api.YetAnotherConfigLib;
+import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.ColorControllerBuilder;
 import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
@@ -27,6 +12,7 @@ import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.azureaaron.mod.Colour;
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.Particles;
+import net.azureaaron.mod.screens.TextReplacerConfigScreen;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.Skyblock;
 import net.azureaaron.mod.utils.TextTransformer;
@@ -37,6 +23,11 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import org.apache.commons.lang3.SystemUtils;
+
+import java.awt.*;
+import java.nio.file.Path;
+import java.util.Calendar;
 
 public class AaronModConfigManager {
 	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
@@ -365,7 +356,7 @@ public class AaronModConfigManager {
 										.name(Text.literal("Chat History Length"))
 										.description(OptionDescription.createBuilder()
 												.text(Text.literal("Change the maximum length of your chat history so that you don't miss any messages!")
-														.append(Text.literal("\n\n\u26a0 Warning: Significantly higher values will lead to more memory usage.").styled(style -> style.withColor(0xeac864))))
+														.append(Text.literal("\n\n⚠ Warning: Significantly higher values will lead to more memory usage.").styled(style -> style.withColor(0xeac864))))
 												.build())
 										.binding(defaults.chatHistoryLength,
 												() -> config.chatHistoryLength,
@@ -691,7 +682,7 @@ public class AaronModConfigManager {
 						.option(ButtonOption.createBuilder()
 								.name(Text.literal("Text Component Generator Website"))
 								.description(OptionDescription.of(Text.literal("Click to open a link to the website!")))
-								.text(Text.literal("\u29C9"))
+								.text(Text.literal("⧉"))
 								.action((screen, opt) -> ConfirmLinkScreen.open(screen, "https://minecraft.tools/en/json_text.php"))
 								.build())
 						.build()))

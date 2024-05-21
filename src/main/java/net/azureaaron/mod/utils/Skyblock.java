@@ -1,15 +1,11 @@
 package net.azureaaron.mod.utils;
 
-import java.io.BufferedReader;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-
-import com.google.gson.*;
-import org.slf4j.Logger;
-
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.JsonOps;
-
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.commands.skyblock.MagicalPowerCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
@@ -19,6 +15,13 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryOps;
 import net.minecraft.util.Identifier;
+import org.slf4j.Logger;
+
+import java.io.BufferedReader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import static net.azureaaron.mod.codecs.EnchantmentCodec.MAX_ENCHANTMENTS_CODEC;
 import static net.azureaaron.mod.codecs.EnchantmentCodec.MAX_LEVEL_ENCHANTMENTS;
@@ -150,12 +153,12 @@ public class Skyblock {
 	
 	public static String getDojoGrade(int score) {
 		return switch ((Integer) score) {
-			case Integer i when score == 0 -> "None";
-			case Integer i when score >= 1000 -> "S";
-			case Integer i when score >= 800 -> "A";
-			case Integer i when score >= 600 -> "B";
-			case Integer i when score >= 400 -> "C";
-			case Integer i when score >= 200 -> "D";
+			case Integer ignored5 when score == 0 -> "None";
+			case Integer ignored4 when score >= 1000 -> "S";
+			case Integer ignored3 when score >= 800 -> "A";
+			case Integer ignored2 when score >= 600 -> "B";
+			case Integer ignored1 when score >= 400 -> "C";
+			case Integer ignored when score >= 200 -> "D";
 			default -> "F";
 		};
 	}
