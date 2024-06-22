@@ -37,6 +37,6 @@ public class ItemUtils {
 	}
 
 	public static Identifier identifierFromOldId(int id, int damage) {
-		return damage != 0 ? new Identifier(ItemInstanceTheFlatteningFix.getItem(ItemIdFix.fromId(id), damage)) : new Identifier(ItemIdFix.fromId(id));
+		return damage != 0 ? Identifier.of(ItemInstanceTheFlatteningFix.getItem(ItemIdFix.fromId(id), damage)) : Identifier.of(ItemIdFix.fromId(id));
 	}
 }

@@ -21,7 +21,7 @@ import net.minecraft.util.Identifier;
 
 @Mixin(targets = "net.minecraft.client.render.GameRenderer$1")
 public class GameRenderer$1Mixin {
-	private static final Identifier RENDER_TYPE_TEXT_FSH_ID = new Identifier("minecraft", "shaders/core/rendertype_text.fsh");
+	private static final Identifier RENDER_TYPE_TEXT_FSH_ID = Identifier.ofVanilla("shaders/core/rendertype_text.fsh");
 
 	@Redirect(method = "method_45778", at = @At(value = "NEW", target = "Lnet/minecraft/resource/Resource;"))
 	private static Resource aaronMod$dontLoadShaderWhileOnMCCI(ResourcePack pack, InputSupplier<InputStream> supplier, @Local Identifier id) {

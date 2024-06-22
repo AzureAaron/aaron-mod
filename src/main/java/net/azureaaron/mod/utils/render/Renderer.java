@@ -11,6 +11,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.font.TextRenderer.TextLayerType;
 import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.BufferRenderer;
+import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.Tessellator;
@@ -18,6 +20,7 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexFormat.DrawMode;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.WorldRenderer;
+import net.minecraft.client.util.BufferAllocator;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.OrderedText;
 import net.minecraft.util.math.Box;
@@ -25,37 +28,36 @@ import net.minecraft.util.math.Vec3d;
 
 public class Renderer {
 	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
-	
+	private static final BufferAllocator ALLOCATOR = new BufferAllocator(1536);
+
 	public static void renderBox(WorldRenderContext wrc, Box box, float red, float green, float blue, float alpha) {
 		renderBox(wrc, box, 3f, red, green, blue, alpha);
 	}
-	
+
 	public static void renderBox(WorldRenderContext wrc, Box box, float lineWidth, float red, float green, float blue, float alpha) {
 		MatrixStack matrices = MatrixTransformer.CAMERA_RELATIVE.transform(wrc, null);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		BufferBuilder buffer = tessellator.getBuffer();
-		
+
 		RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		RenderSystem.lineWidth(lineWidth);
 		RenderSystem.disableCull();
 		RenderSystem.enableDepthTest();
-		
-		buffer.begin(DrawMode.LINES, VertexFormats.LINES);
+
+		BufferBuilder buffer = tessellator.begin(DrawMode.LINES, VertexFormats.LINES);
 		WorldRenderer.drawBox(matrices, buffer, box, red / 255f, green / 255f, blue / 255f, alpha);
-		tessellator.draw();
-		
+		BufferRenderer.drawWithGlobalProgram(buffer.end());
+
 		matrices.pop();
 		RenderSystem.lineWidth(1f);
 		RenderSystem.enableCull();
 		RenderSystem.disableDepthTest();
 	}
-	
+
 	public static void renderFilledBox(WorldRenderContext wrc, Vec3d pos, float red, float green, float blue, float alpha) {
 		MatrixStack matrices = MatrixTransformer.CAMERA_RELATIVE.transform(wrc, null);		
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		BufferBuilder buffer = tessellator.getBuffer();
-		
+
 		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		RenderSystem.polygonOffset(-1f, -10f);
@@ -65,49 +67,48 @@ public class Renderer {
 		RenderSystem.enableDepthTest();
 		RenderSystem.depthFunc(GL11.GL_LEQUAL);
 		RenderSystem.disableCull();
-		
-		buffer.begin(DrawMode.TRIANGLE_STRIP, VertexFormats.POSITION_COLOR);
+
+		BufferBuilder buffer = tessellator.begin(DrawMode.TRIANGLE_STRIP, VertexFormats.POSITION_COLOR);
 		WorldRenderer.renderFilledBox(matrices, buffer, pos.x, pos.y, pos.z, pos.x + 1, pos.y + 1, pos.z + 1, red / 255f, green / 255f, blue / 255f, alpha);
-		tessellator.draw();
-		
+		BufferRenderer.drawWithGlobalProgram(buffer.end());
+
 		matrices.pop();
 		RenderSystem.polygonOffset(0f, 0f);
 		RenderSystem.disablePolygonOffset();
 		RenderSystem.disableBlend();
 		RenderSystem.enableCull();
 	}
-	
+
 	public static void renderText(WorldRenderContext wrc, Vec3d pos, OrderedText text, boolean seeThrough) {
 		renderText(wrc, pos, text, seeThrough, 8);
 	}
 
 	public static void renderText(WorldRenderContext wrc, Vec3d pos, OrderedText text, boolean seeThrough, float scale) {
 		Matrix4f positionMatrix = new Matrix4f();
+		Camera camera = wrc.camera();
 		TextRenderer textRenderer = CLIENT.textRenderer;
-		
+
 		scale *= 0.025f;
-		
-		Vec3d cameraPos = wrc.camera().getPos();
-		
+
+		Vec3d cameraPos = camera.getPos();
+
 		positionMatrix
 		.translate((float) (pos.getX() - cameraPos.getX()), (float) (pos.getY() - cameraPos.getY()), (float) (pos.getZ() - cameraPos.getZ()))
-		.rotate(wrc.camera().getRotation())
-		.scale(-scale, -scale, scale);
-		
+		.rotate(camera.getRotation())
+		.scale(scale, -scale, scale);
+
 		float xOffset = -textRenderer.getWidth(text) / 2f;
-		
-		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		BufferBuilder buffer = tessellator.getBuffer();
-		VertexConsumerProvider.Immediate consumers = VertexConsumerProvider.immediate(buffer);
-		
+
+		VertexConsumerProvider.Immediate consumers = VertexConsumerProvider.immediate(ALLOCATOR);
+
 		RenderSystem.depthFunc(seeThrough ? GL11.GL_ALWAYS : GL11.GL_LEQUAL);
-		
+
 		textRenderer.draw(text, xOffset, 0, 0xFFFFFFFF, false, positionMatrix, consumers, TextLayerType.SEE_THROUGH, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 		consumers.draw();
-		
+
 		RenderSystem.depthFunc(GL11.GL_LEQUAL);
 	}
-	
+
 	/**
 	 * Matrix Transformation Utility
 	 * 
@@ -123,13 +124,13 @@ public class Renderer {
 		MatrixTransformer CAMERA_RELATIVE = (wrc, pos) -> {
 			Vec3d camera = wrc.camera().getPos();
 			MatrixStack matrices = wrc.matrixStack();
-			
+
 			matrices.push();
 			matrices.translate(-camera.x, -camera.y, -camera.z);
-			
+
 			return matrices;
 		};
-		
+
 		/**
 		 * Transforms the matrices relative to the {@code pos} and camera position
 		 * 
@@ -138,13 +139,13 @@ public class Renderer {
 		MatrixTransformer POSITION_RELATIVE = (wrc, pos) -> {
 			Vec3d camera = wrc.camera().getPos();
 			MatrixStack matrices = wrc.matrixStack();
-			
+
 			matrices.push();
 			matrices.translate(pos.x - camera.x, pos.y - camera.y, pos.z - camera.z);
-			
+
 			return matrices;
 		};
-		
+
 		MatrixStack transform(WorldRenderContext wrc, @Nullable Vec3d pos);
 	}
 }

@@ -27,14 +27,14 @@
     "aaron-mod.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.15.10",
-    "fabric-api": ">=0.97.8+1.20.6",
-    "minecraft": "~1.20.5",
+    "fabricloader": ">=0.15.11",
+    "fabric-api": ">=0.100.3+1.21",
+    "minecraft": "~1.21",
     "java": ">=21",
-    "yet_another_config_lib_v3": ">=3.4.2+1.20.5"
+    "yet_another_config_lib_v3": ">=3.5.0+1.21"
   },
   "suggests": {
-    "modmenu": ">=10.0.0-beta.1"
+    "modmenu": ">=11.0.0"
   },
   "custom": {
     "loom:injected_interfaces": {

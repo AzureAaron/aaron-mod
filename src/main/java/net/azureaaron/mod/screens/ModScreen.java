@@ -22,7 +22,7 @@ public class ModScreen extends Screen {
 	private static final int BUTTON_WIDTH = 210;
 	private static final int HALF_BUTTON_WIDTH = 101; //Same as (210 - 8) / 2
 	private static final Text TITLE = Text.literal("Aaron's Mod " + Main.MOD_VERSION);
-	private static final Identifier ICON = new Identifier(Main.NAMESPACE, "icon.png");
+	private static final Identifier ICON = Identifier.of(Main.NAMESPACE, "icon.png");
 	private static final Text CONFIGURATION_TEXT = Text.literal("Config...");
 	private static final Text SOURCE_TEXT = Text.literal("Source");
 	private static final Text REPORT_BUGS_TEXT = Text.translatable("menu.reportBugs");

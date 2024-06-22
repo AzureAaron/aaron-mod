@@ -32,9 +32,10 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
 	@SuppressWarnings("resource")
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void aaronMod$initDisplayGroups(PlayerEntity player, CallbackInfo ci) {
-		ItemGroups.updateDisplayContext(MinecraftClient.getInstance().player.networkHandler.getEnabledFeatures(), shouldShowOperatorTab(player), player.getWorld().getRegistryManager());
+		if (!MinecraftClient.getInstance().interactionManager.hasCreativeInventory() && AaronModConfigManager.get().showItemGroupsOutsideOfCreative) ItemGroups.updateDisplayContext(MinecraftClient.getInstance().player.networkHandler.getEnabledFeatures(), shouldShowOperatorTab(player), player.getWorld().getRegistryManager());
 	}
 
+	@SuppressWarnings("resource")
 	private boolean shouldShowOperatorTab(PlayerEntity player) {
 		return player.isCreativeLevelTwoOp() && MinecraftClient.getInstance().options.getOperatorItemsTab().getValue().booleanValue();
 	}

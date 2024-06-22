@@ -32,7 +32,6 @@
     "InventoryScreenMixin",
     "EnderDragonEntityMixin",
     "ShaderProgramMixin",
-    "VertexBufferMixin",
     "MusicTrackerMixin",
     "TextVisitFactoryMixin",
     "PingMeasurerMixin",

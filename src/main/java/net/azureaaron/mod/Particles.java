@@ -42,7 +42,7 @@ public class Particles {
 	});
 	
 	//Create a "synthetic" particle to work better with registries without registering it
-	public static final Identifier BLOCK_BREAKING = new Identifier("minecraft", "block_breaking");
+	public static final Identifier BLOCK_BREAKING = Identifier.ofVanilla("block_breaking");
 	private static final ParticleType<?> BLOCK_BREAKING_TYPE = FabricParticleTypes.simple();
 	private static final RegistryKey<ParticleType<?>> BLOCK_BREAKING_REGISTRY_KEY = RegistryKey.of(RegistryKeys.PARTICLE_TYPE, BLOCK_BREAKING);
 	
