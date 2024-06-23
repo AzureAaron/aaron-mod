@@ -4,6 +4,8 @@ import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.commands.BazaarCommand;
@@ -37,6 +39,7 @@ import net.azureaaron.mod.features.M7Waypoints;
 import net.azureaaron.mod.listeners.ClientPlayConnectionListener;
 import net.azureaaron.mod.listeners.PlaySoundListener;
 import net.azureaaron.mod.listeners.ReceiveChatMessageListener;
+import net.azureaaron.mod.utils.ApiAuthentication;
 import net.azureaaron.mod.utils.Skyblock;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -57,11 +60,13 @@ public class Main implements ClientModInitializer {
 	public static final String MOD_VERSION = MOD_CONTAINER.getMetadata().getVersion().getFriendlyString();
 	public static final String MINECRAFT_VERSION = SharedConstants.getGameVersion().getName();
 	private static final boolean ENABLE_REFLECT_COMMAND = Boolean.parseBoolean(System.getProperty("aaronmod.enableReflectCommand", "false")) || FabricLoader.getInstance().isDevelopmentEnvironment();
-		
+	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+
 	@Override
 	public void onInitializeClient() {
 		//Load configuration
 		AaronModConfigManager.init();
+		ApiAuthentication.init();
 		
 		//Register listeneres and commands
 		ClientCommandRegistrationCallback.EVENT.register(Main::registerCommands);

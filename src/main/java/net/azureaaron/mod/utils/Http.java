@@ -35,20 +35,22 @@ public class Http {
 	private static final String AARON_BASE = "https://api.azureaaron.net/";
 	private static final String NAME_TO_UUID = "https://api.minecraftservices.com/minecraft/profile/lookup/name/";
 	private static final String UUID_TO_NAME = "https://api.minecraftservices.com/minecraft/profile/lookup/";
-	private static final String NETWORTH = "https://maro.skyblockextras.com/api/networth/categories";
+	public static final String NETWORTH = "https://maro.skyblockextras.com/api/networth/categories";
 	private static final String MOULBERRY = "https://moulberry.codes/";
 	private static final String USER_AGENT = "Aaron's Mod/" + Main.MOD_VERSION + " (" + Main.MINECRAFT_VERSION + ")";
 	
-	private static ApiResponse sendGetRequest(String url, boolean throwOnNonOk) throws IOException, InterruptedException, ApiException {
-		HttpRequest request = HttpRequest.newBuilder()
+	private static ApiResponse sendGetRequest(String url, boolean throwOnNonOk, String apiToken) throws IOException, InterruptedException, ApiException {
+		HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
 				.GET()
 				.header("Accept", "application/json")
 				.header("Accept-Encoding", "gzip, deflate")
 				.header("User-Agent", USER_AGENT)
 				.version(Version.HTTP_2)
-				.uri(URI.create(url))
-				.build();
-		
+				.uri(URI.create(url));
+
+		if (apiToken != null) requestBuilder.header("Token", apiToken);
+
+		HttpRequest request = requestBuilder.build();
 		HttpResponse<InputStream> response = HTTP_CLIENT.send(request, BodyHandlers.ofInputStream());
 		InputStream decodedInputStream = getDecodedInputStream(response);
 		
@@ -61,43 +63,48 @@ public class Http {
 	}
 			
 	public static String sendUnauthorizedHypixelRequest(String endpoint, @NotNull String parameters) throws IOException, InterruptedException, ApiException {
-		return sendGetRequest(HYPIXEL_BASE + endpoint + parameters, true).content();
+		return sendGetRequest(HYPIXEL_BASE + endpoint + parameters, true, null).content();
 	}
 	
 	public static String sendAuthorizedHypixelRequest(String endpoint, @NotNull String parameters) throws IOException, InterruptedException, ApiException {
-		return sendGetRequest(AARON_BASE + "hypixel/" + endpoint + parameters, true).content();
+		return sendGetRequest(AARON_BASE + "hypixel/" + endpoint + parameters, true, ApiAuthentication.getToken()).content();
 	}
 	
 	public static ApiResponse sendNameToUuidRequest(String name) throws IOException, InterruptedException, ApiException {
-		return sendGetRequest(NAME_TO_UUID + name, false);
+		return sendGetRequest(NAME_TO_UUID + name, false, null);
 	}
 	
 	public static ApiResponse sendUuidToNameRequest(String uuid) throws IOException, InterruptedException, ApiException {
-		return sendGetRequest(UUID_TO_NAME + uuid, false);
+		return sendGetRequest(UUID_TO_NAME + uuid, false, null);
 	}
-	
+
 	//TODO give this a better name?
 	public static ApiResponse sendApiRequest(String path) throws IOException, InterruptedException, ApiException {
-		return sendGetRequest(AARON_BASE + path, true);
+		return sendGetRequest(AARON_BASE + path, true, null);
 	}
 	
 	public static String sendMoulberryRequest(String endpoint) throws IOException, InterruptedException, ApiException {
-		return sendGetRequest(MOULBERRY + endpoint, false).content();
+		return sendGetRequest(MOULBERRY + endpoint, false, null).content();
 	}
-	
-	public static String sendNetworthRequest(String body) throws IOException, InterruptedException {		
+
+	public static String sendPostRequest(String url, String requestBody, String contentType) throws IOException, InterruptedException {		
 		HttpRequest request = HttpRequest.newBuilder()
-				.POST(HttpRequest.BodyPublishers.ofString(body))
-				.header("Accept", "application/json")
-				.header("Content-Type", "application/json") //We don't want them to know this isn't SBE!
-				.uri(URI.create(NETWORTH))
+				.POST(HttpRequest.BodyPublishers.ofString(requestBody))
+				.header("Accept", contentType)
+				.header("Accept-Encoding", "gzip, deflate")
+				.header("Content-Type", contentType)
+				.header("User-Agent", USER_AGENT)
+				.uri(URI.create(url))
 				.build();
-		
-		HttpResponse<String> response = HTTP_CLIENT.send(request, BodyHandlers.ofString());
-		
-		return response.body();
+
+		HttpResponse<InputStream> response = HTTP_CLIENT.send(request, BodyHandlers.ofInputStream());
+		InputStream decodedInputStream = getDecodedInputStream(response);
+
+		String body = new String(decodedInputStream.readAllBytes());
+
+		return body;
 	}
-	
+
 	public static InputStream sendGenericH2Request(URI uri, ImmutableSet<String> expectedContentTypes) throws IOException, InterruptedException, ApiException {		
 		HttpRequest request = HttpRequest.newBuilder()
 				.GET()

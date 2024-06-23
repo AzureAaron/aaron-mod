@@ -66,7 +66,7 @@ public class NetworthCommand {
 		Networth networth = null;
 		if (inventoryEnabled == true) {
 			try {
-				networthData = Http.sendNetworthRequest(networthPostBody);
+				networthData = Http.sendPostRequest(networthPostBody, Http.NETWORTH, "application/json");
 				networth = Skyblock.readNetworthData(networthData, bank, purse);
 			} catch (Throwable t) {
 				source.sendError(NETWORTH_FETCH_ERROR.get());
