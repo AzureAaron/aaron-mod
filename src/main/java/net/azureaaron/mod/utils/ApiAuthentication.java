@@ -19,6 +19,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.mixins.accessors.MinecraftClientAccessor;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
@@ -63,7 +64,7 @@ public class ApiAuthentication {
 	 */
 	private static void updateToken() {
 		//The fetching runs async in ProfileKeysImpl#getKeyPair
-		CLIENT.getProfileKeys().fetchKeyPair().thenAcceptAsync(playerKeypairOpt -> {
+		((MinecraftClientAccessor) CLIENT).getProfileKeys().fetchKeyPair().thenAcceptAsync(playerKeypairOpt -> {
 			if (playerKeypairOpt.isPresent()) {
 				PlayerKeyPair playerKeyPair = playerKeypairOpt.get();
 

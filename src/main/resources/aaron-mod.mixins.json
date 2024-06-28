@@ -40,7 +40,8 @@
     "DirectoryResourcePackMixin",
     "NativeImageMixin",
     "accessors.ClientEntityManagerAccessor",
-    "accessors.ClientWorldAccessor"
+    "accessors.ClientWorldAccessor",
+    "accessors.MinecraftClientAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
