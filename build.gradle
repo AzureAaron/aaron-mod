@@ -12,9 +12,42 @@ repositories {
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
-	maven { url "https://maven.isxander.dev/releases" }
-	maven { url "https://maven.isxander.dev/snapshots" }
-	maven { url "https://maven.terraformersmc.com" }
+	maven {
+		url "https://maven.isxander.dev/releases"
+
+		content {
+			includeGroup "dev.isxander"
+			includeGroup "org.quiltmc.parsers"
+		}
+	}
+
+	maven {
+		url "https://maven.isxander.dev/snapshots"
+
+		content {
+			includeGroup "dev.isxander"
+		}
+	}
+
+	exclusiveContent {
+		forRepository {
+			maven { url "https://maven.terraformersmc.com" }
+		}
+
+		filter {
+			includeGroup "com.terraformersmc"
+		}
+	}
+
+	exclusiveContent {
+		forRepository {
+			maven { url "https://maven.azureaaron.net/releases" }
+		}
+
+		filter {
+			includeGroup "net.azureaaron"
+		}
+	}
 }
 
 dependencies {
@@ -33,6 +66,8 @@ dependencies {
 	include modImplementation("dev.isxander:yet-another-config-lib:${yacl_version}-fabric")
 
 	modImplementation "com.terraformersmc:modmenu:${modmenu_version}"
+
+	include modImplementation("net.azureaaron:hm-api:${hm_api_version}")
 }
 
 loom {

@@ -141,9 +141,8 @@ public class Functions {
 		return Color.getHSBColor(hue, saturation, value).getRGB();
 	}
 
-	@SuppressWarnings("resource")
 	public static boolean isInSkyblock() {
-		return MinecraftClient.getInstance().player.getScoreboard().getObjectiveNames().contains("SBScoreboard");
+		return Utils.isOnSkyblock();
 	}
 
 	public static boolean isUuid(String uuid) {
