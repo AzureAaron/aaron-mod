@@ -21,7 +21,7 @@ import net.minecraft.util.Formatting;
  * @author Aaron
  */
 public class TextTransformer {
-	private static final CharList COLOUR_FORMAT_CODES = CharList.of('4','c','6','e','2','a','b','3','1','9','d','5','f','7','8','0','r');
+	private static final CharList FORMAT_CODES = CharList.of('4', 'c', '6', 'e', '2', 'a','b', '3', '1', '9', 'd', '5', 'f', '7', '8', '0', 'r', 'k', 'l', 'm', 'n', 'o');
 
 	/**
 	 * Converts strings with section symbol/legacy formatting to MutableText objects.
@@ -41,8 +41,8 @@ public class TextTransformer {
 		boolean obfuscated = false;
 
 		for (int i = 0; i < legacy.length(); i++) {
-			//If we've encountered a new colour formatting then append the text from the previous "sequence" and reset state
-			if (i != 0 && legacy.charAt(i - 1) == '§' && COLOUR_FORMAT_CODES.contains(Character.toLowerCase(legacy.charAt(i)))) {
+			//If we've encountered a new formatting code then append the text from the previous "sequence" and reset state
+			if (i != 0 && legacy.charAt(i - 1) == '§' && FORMAT_CODES.contains(Character.toLowerCase(legacy.charAt(i))) && !builder.isEmpty()) {
 				newText.append(Text.literal(builder.toString()).setStyle(Style.EMPTY
 						.withColor(formatting)
 						.withBold(bold)
