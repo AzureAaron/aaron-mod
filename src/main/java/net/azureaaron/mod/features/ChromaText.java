@@ -15,8 +15,8 @@ public class ChromaText {
 	}
 
 	/**
-	 * Intended for compatibility and interop purposes. Note that this does not guarantee that there isn't another pack enabled
-	 * on top which overrides the necessary shaders required for it to work.
+	 * Note that this does not guarantee that there isn't another pack enabled on top which overrides
+	 * the necessary shaders required for it to work.
 	 * 
 	 * For accurate results, this method should only be called after the client has loaded resource packs.
 	 * 

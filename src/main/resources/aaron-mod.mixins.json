@@ -41,7 +41,8 @@
     "NativeImageMixin",
     "accessors.ClientEntityManagerAccessor",
     "accessors.ClientWorldAccessor",
-    "accessors.MinecraftClientAccessor"
+    "accessors.MinecraftClientAccessor",
+    "SkyblockerPVCollectionsGenericCategoryMixin"
   ],
   "injectors": {
     "defaultRequire": 1
