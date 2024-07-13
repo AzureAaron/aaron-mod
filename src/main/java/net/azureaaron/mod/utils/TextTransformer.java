@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import it.unimi.dsi.fastutil.chars.CharList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.OrderedText;
@@ -20,122 +21,76 @@ import net.minecraft.util.Formatting;
  * @author Aaron
  */
 public class TextTransformer {
+	private static final CharList COLOUR_FORMAT_CODES = CharList.of('4','c','6','e','2','a','b','3','1','9','d','5','f','7','8','0','r');
+
 	/**
 	 * Converts strings with section symbol/legacy formatting to MutableText objects.
-	 * Why? Section symbols are deprecated and support for them could be removed at a later date. - best not to use them :)
+	 * Why? Section symbols are deprecated/obsoleted and support for them could be removed at a later date. - best not to use them :)
 	 *
 	 * @param legacy The string with legacy formatting to be transformed
-	 * @return A {@link MutableText} object matching the formatting of the input
+	 * @return A {@link MutableText} object matching the exact formatting of the input
 	 */
 	public static MutableText fromLegacy(@NotNull String legacy) {
-		char[] colourFormatCodes = {'4','c','6','e','2','a','b','3','1','9','d','5','f','7','8','0','r'};
 		MutableText newText = Text.empty();
 		StringBuilder builder = new StringBuilder();
-		Formatting[] format = new Formatting[1];
-		boolean[] textEffects = new boolean[5];
-		
-		for(int i = 0; i < legacy.length(); i++) {
-			if(i != 0 && legacy.charAt(i-1) == '§' && String.valueOf(colourFormatCodes).contains(String.valueOf(legacy.charAt(i)))) {
-				newText.append(Text.literal(builder.toString()).styled(style -> 
-				style.withColor(format[0])
-				.withBold(textEffects[0])
-				.withUnderline(textEffects[1])
-				.withItalic(textEffects[2])
-				.withObfuscated(textEffects[3])
-				.withStrikethrough(textEffects[4])
-				));
-				
+		Formatting formatting = null;
+		boolean bold = false;
+		boolean italic = false;
+		boolean underline = false;
+		boolean strikethrough = false;
+		boolean obfuscated = false;
+
+		for (int i = 0; i < legacy.length(); i++) {
+			//If we've encountered a new colour formatting then append the text from the previous "sequence" and reset state
+			if (i != 0 && legacy.charAt(i - 1) == '§' && COLOUR_FORMAT_CODES.contains(Character.toLowerCase(legacy.charAt(i)))) {
+				newText.append(Text.literal(builder.toString()).setStyle(Style.EMPTY
+						.withColor(formatting)
+						.withBold(bold)
+						.withItalic(italic)
+						.withUnderline(underline)
+						.withStrikethrough(strikethrough)
+						.withObfuscated(obfuscated)));
+
+				//Erase all characters in the builder so we can reuse it, also clear formatting
 				builder.delete(0, builder.length());
-				format[0] = null;
-				textEffects[0] = false;
-				textEffects[1] = false;
-				textEffects[2] = false;
-				textEffects[3] = false;
-				textEffects[4] = false;
+				formatting = null;
+				bold = false;
+				italic = false;
+				underline = false;
+				strikethrough = false;
+				obfuscated = false;
 			}
-			if(i != 0 && legacy.charAt(i-1) == '§') {
-				switch (legacy.charAt(i)) {
-				case '4':
-					format[0] = Formatting.DARK_RED;
-					break;
-				case 'c':
-					format[0] = Formatting.RED;
-					break;
-				case '6':
-					format[0] = Formatting.GOLD;
-					break;
-				case 'e':
-					format[0] = Formatting.YELLOW;
-					break;
-				case '2':
-					format[0] = Formatting.DARK_GREEN;
-					break;
-				case 'a':
-					format[0] = Formatting.GREEN;
-					break;
-				case 'b':
-					format[0] = Formatting.AQUA;
-					break;
-				case '3':
-					format[0] = Formatting.DARK_AQUA;
-					break;
-				case '1':
-					format[0] = Formatting.DARK_BLUE;
-					break;
-				case '9':
-					format[0] = Formatting.BLUE;
-					break;
-				case 'd':
-					format[0] = Formatting.LIGHT_PURPLE;
-					break;
-				case '5':
-					format[0] = Formatting.DARK_PURPLE;
-					break;
-				case 'f':
-					format[0] = Formatting.WHITE;
-					break;
-				case '7':
-					format[0] = Formatting.GRAY;
-					break;
-				case '8':
-					format[0] = Formatting.DARK_GRAY;
-					break;
-				case '0':
-					format[0] = Formatting.BLACK;
-					break;
-				case 'l':
-					textEffects[0] = true;
-					break;
-				case 'n':
-					textEffects[1] = true;
-					break;
-				case 'o':
-					textEffects[2] = true;
-					break;
-				case 'k':
-					textEffects[3] = true;
-					break;
-				case 'm':
-					textEffects[4] = true;
-					break;
-				case 'r':
-					format[0] = Formatting.RESET;
+
+			if (i != 0 && legacy.charAt(i - 1) == '§') {
+				Formatting fmt = Formatting.byCode(legacy.charAt(i));
+
+				switch (fmt) {
+					case BOLD -> bold = true;
+					case ITALIC -> italic = true;
+					case UNDERLINE -> underline = true;
+					case STRIKETHROUGH -> strikethrough = true;
+					case OBFUSCATED -> obfuscated = true;
+
+					default -> formatting = fmt;
 				}
+
+				continue;
 			}
-			
-			if(legacy.charAt(i) != '§' && (i != 0 && legacy.charAt(i-1) != '§')) builder.append(legacy.charAt(i));
-			
-			if(i == 0 && legacy.charAt(i) != '§') builder.append(legacy.charAt(i));
-			
-			if(i == legacy.length()-1) {
-				newText.append(Text.literal(builder.toString()).styled(style -> 
-				style.withColor(format[0])
-				.withBold(textEffects[0])
-				.withUnderline(textEffects[1])
-				.withItalic(textEffects[2])
-				.withObfuscated(textEffects[3])
-				.withStrikethrough(textEffects[4])
-				));
+
+			//This character isn't the start of a formatting sequence or this character isn't part of a formatting sequence
+			if (legacy.charAt(i) != '§' && (i == 0 || (i != 0 && legacy.charAt(i - 1) != '§'))) {
+				builder.append(legacy.charAt(i));
+			}
+
+			// We've read the last character so append the last text with all of the formatting
+			if (i == legacy.length() - 1) {
+				newText.append(Text.literal(builder.toString()).setStyle(Style.EMPTY
+						.withColor(formatting)
+						.withBold(bold)
+						.withItalic(italic)
+						.withUnderline(underline)
+						.withStrikethrough(strikethrough)
+						.withObfuscated(obfuscated)));
 			}
 		}
 		return newText;
