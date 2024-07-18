@@ -5,6 +5,8 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.minecraft.util.annotation.MethodsReturnNonnullByDefault;
@@ -13,174 +15,62 @@ import net.minecraft.util.annotation.MethodsReturnNonnullByDefault;
  * Helper methods to assist in retrieving values nested in JSON objects.
  * 
  * All methods are fully null safe, whether it be from passing a {@code null} root object or from encountering a nonexistent or null object/value.
+ * 
+ * @implNote While this provides null safety, it does not provide type safety. The caller must know the target type of the target JSON element.
  */
 @MethodsReturnNonnullByDefault
 public class JsonHelper {
-	
+
 	public static OptionalInt getInt(JsonObject root, String path) {
-		//If root is null
-		if (root == null) return OptionalInt.empty();
-		
-		//Fast path for if we just want the field itself
-		if (!path.contains(".")) {
-			return root.has(path) && !root.get(path).isJsonNull() ? OptionalInt.of(root.get(path).getAsInt()) : OptionalInt.empty();
-		}
-		
-		String[] split = path.split("\\.");
-		String propertyName = split[split.length - 1];
-		String[] objects2Traverse = new String[split.length - 1];
-		
-		//Get the traversal path
-		System.arraycopy(split, 0, objects2Traverse, 0, split.length - 1);
-		
-		JsonObject currentLevel = root;
-		
-		for (String objectName : objects2Traverse) {			
-			if (currentLevel.has(objectName) && !currentLevel.get(objectName).isJsonNull()) {
-				currentLevel = currentLevel.getAsJsonObject(objectName);
-			} else {
-				return OptionalInt.empty();
-			}
-		}
-		
-		return currentLevel.has(propertyName) && !currentLevel.get(propertyName).isJsonNull() ? OptionalInt.of(currentLevel.get(propertyName).getAsInt()) : OptionalInt.empty();
+		return getElement(root, path, JsonElement::getAsInt).map(OptionalInt::of).orElseGet(OptionalInt::empty);
 	}
-	
+
 	public static OptionalLong getLong(JsonObject root, String path) {
-		//If root is null
-		if (root == null) return OptionalLong.empty();
-		
-		//Fast path for if we just want the field itself
-		if (!path.contains(".")) {
-			return root.has(path) && !root.get(path).isJsonNull() ? OptionalLong.of(root.get(path).getAsLong()) : OptionalLong.empty();
-		}
-		
-		String[] split = path.split("\\.");
-		String propertyName = split[split.length - 1];
-		String[] objects2Traverse = new String[split.length - 1];
-		
-		//Get the traversal path
-		System.arraycopy(split, 0, objects2Traverse, 0, split.length - 1);
-		
-		JsonObject currentLevel = root;
-		
-		for (String objectName : objects2Traverse) {			
-			if (currentLevel.has(objectName) && !currentLevel.get(objectName).isJsonNull()) {
-				currentLevel = currentLevel.getAsJsonObject(objectName);
-			} else {
-				return OptionalLong.empty();
-			}
-		}
-		
-		return currentLevel.has(propertyName) && !currentLevel.get(propertyName).isJsonNull() ? OptionalLong.of(currentLevel.get(propertyName).getAsLong()) : OptionalLong.empty();
+		return getElement(root, path, JsonElement::getAsLong).map(OptionalLong::of).orElseGet(OptionalLong::empty);
 	}
-	
-	
+
 	public static Optional<Float> getFloat(JsonObject root, String path) {
-		//If root is null
-		if (root == null) return Optional.empty();
-		
-		//Fast path for if we just want the field itself
-		if (!path.contains(".")) {
-			return root.has(path) && !root.get(path).isJsonNull() ? Optional.of(root.get(path).getAsFloat()) : Optional.empty();
-		}
-		
-		String[] split = path.split("\\.");
-		String propertyName = split[split.length - 1];
-		String[] objects2Traverse = new String[split.length - 1];
-		
-		//Get the traversal path
-		System.arraycopy(split, 0, objects2Traverse, 0, split.length - 1);
-		
-		JsonObject currentLevel = root;
-		
-		for (String objectName : objects2Traverse) {			
-			if (currentLevel.has(objectName) && !currentLevel.get(objectName).isJsonNull()) {
-				currentLevel = currentLevel.getAsJsonObject(objectName);
-			} else {
-				return Optional.empty();
-			}
-		}
-		
-		return currentLevel.has(propertyName) && !currentLevel.get(propertyName).isJsonNull() ? Optional.of(currentLevel.get(propertyName).getAsFloat()) : Optional.empty();
+		return getElement(root, path, JsonElement::getAsFloat);
 	}
-	
+
 	public static OptionalDouble getDouble(JsonObject root, String path) {
-		//If root is null
-		if (root == null) return OptionalDouble.empty();
-		
-		//Fast path for if we just want the field itself
-		if (!path.contains(".")) {
-			return root.has(path) && !root.get(path).isJsonNull() ? OptionalDouble.of(root.get(path).getAsDouble()) : OptionalDouble.empty();
-		}
-		
-		String[] split = path.split("\\.");
-		String propertyName = split[split.length - 1];
-		String[] objects2Traverse = new String[split.length - 1];
-		
-		//Get the traversal path
-		System.arraycopy(split, 0, objects2Traverse, 0, split.length - 1);
-		
-		JsonObject currentLevel = root;
-		
-		for (String objectName : objects2Traverse) {			
-			if (currentLevel.has(objectName) && !currentLevel.get(objectName).isJsonNull()) {
-				currentLevel = currentLevel.getAsJsonObject(objectName);
-			} else {
-				return OptionalDouble.empty();
-			}
-		}
-		
-		return currentLevel.has(propertyName) && !currentLevel.get(propertyName).isJsonNull() ? OptionalDouble.of(currentLevel.get(propertyName).getAsDouble()) : OptionalDouble.empty();
+		return getElement(root, path, JsonElement::getAsDouble).map(OptionalDouble::of).orElseGet(OptionalDouble::empty);
 	}
-	
+
 	public static Optional<Boolean> getBoolean(JsonObject root, String path) {
-		//If root is null
-		if (root == null) return Optional.empty();
-		
-		//Fast path for if we just want the field itself
-		if (!path.contains(".")) {
-			return root.has(path) && !root.get(path).isJsonNull() ? Optional.of(root.get(path).getAsBoolean()) : Optional.empty();
-		}
-		
-		String[] split = path.split("\\.");
-		String propertyName = split[split.length - 1];
-		String[] objects2Traverse = new String[split.length - 1];
-		
-		//Get the traversal path
-		System.arraycopy(split, 0, objects2Traverse, 0, split.length - 1);
-		
-		JsonObject currentLevel = root;
-		
-		for (String objectName : objects2Traverse) {			
-			if (currentLevel.has(objectName) && !currentLevel.get(objectName).isJsonNull()) {
-				currentLevel = currentLevel.getAsJsonObject(objectName);
-			} else {
-				return Optional.empty();
-			}
-		}
-		
-		return currentLevel.has(propertyName) && !currentLevel.get(propertyName).isJsonNull() ? Optional.of(currentLevel.get(propertyName).getAsBoolean()) : Optional.empty();
+		return getElement(root, path, JsonElement::getAsBoolean);
 	}
-	
+
 	public static Optional<String> getString(JsonObject root, String path) {
+		return getElement(root, path, JsonElement::getAsString);
+	}
+
+	public static Optional<JsonObject> getObject(JsonObject root, String path) {
+		return getElement(root, path, JsonElement::getAsJsonObject);
+	}
+
+	public static Optional<JsonArray> getArray(JsonObject root, String path) {
+		return getElement(root, path, JsonElement::getAsJsonArray);
+	}
+
+	private static <T> Optional<T> getElement(JsonObject root, String path, ValueExtractor<T> valueExtractor) {
 		//If root is null
 		if (root == null) return Optional.empty();
-		
+
 		//Fast path for if we just want the field itself
 		if (!path.contains(".")) {
-			return root.has(path) && !root.get(path).isJsonNull() ? Optional.of(root.get(path).getAsString()) : Optional.empty();
+			return root.has(path) && !root.get(path).isJsonNull() ? Optional.of(valueExtractor.to(root.get(path))) : Optional.empty();
 		}
-		
+
 		String[] split = path.split("\\.");
 		String propertyName = split[split.length - 1];
 		String[] objects2Traverse = new String[split.length - 1];
-		
+
 		//Get the traversal path
 		System.arraycopy(split, 0, objects2Traverse, 0, split.length - 1);
-		
+
 		JsonObject currentLevel = root;
-		
+
 		for (String objectName : objects2Traverse) {			
 			if (currentLevel.has(objectName) && !currentLevel.get(objectName).isJsonNull()) {
 				currentLevel = currentLevel.getAsJsonObject(objectName);
@@ -188,7 +78,12 @@ public class JsonHelper {
 				return Optional.empty();
 			}
 		}
-		
-		return currentLevel.has(propertyName) && !currentLevel.get(propertyName).isJsonNull() ? Optional.of(currentLevel.get(propertyName).getAsString()) : Optional.empty();
+
+		return currentLevel.has(propertyName) && !currentLevel.get(propertyName).isJsonNull() ? Optional.of(valueExtractor.to(currentLevel.get(propertyName))) : Optional.empty();
+	}
+
+	@FunctionalInterface
+	private interface ValueExtractor<R> {
+		R to(JsonElement element);
 	}
 }

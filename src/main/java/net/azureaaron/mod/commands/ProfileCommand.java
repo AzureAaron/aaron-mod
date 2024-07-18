@@ -8,6 +8,7 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 import java.lang.invoke.MethodHandle;
 import java.time.Instant;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
 
@@ -45,8 +46,9 @@ public class ProfileCommand {
 		boolean bankingEnabled = body.has("banking");
 		boolean skillsEnabled = Skyblock.isSkillsApiEnabled(profile);
 		
-		int farmingLevelCap = JsonHelper.getInt(profile, "jacobs_contest.perks.farming_level_cap").orElse(0);		
-		
+		int farmingLevelCap = JsonHelper.getInt(profile, "jacobs_contest.perks.farming_level_cap").orElse(0);
+		int tamingLevelCap = JsonHelper.getArray(profile, "pets_data.pet_care.pet_types_sacrificed").orElse(new JsonArray()).size();
+
 		String bank = Functions.NUMBER_FORMATTER.format(JsonHelper.getLong(body, "banking.balance").orElse(0L));
 		String purse = Functions.NUMBER_FORMATTER.format(JsonHelper.getLong(profile, "currencies.coin_purse").orElse(0L));
 		
@@ -67,7 +69,7 @@ public class ProfileCommand {
 		int miningLevel = Levelling.getSkillLevel(JsonHelper.getLong(playerData, "experience.SKILL_MINING").orElse(0L), Skills.MINING, 0);
 		int runecraftingLevel = Levelling.getSkillLevel(JsonHelper.getLong(playerData, "experience.SKILL_RUNECRAFTING").orElse(0L), Skills.RUNECRAFTING, 0);
 		int socialLevel = Levelling.getSkillLevel(Skyblock.calculateProfileSocialXp(body), Skills.SOCIAL, 0);
-		int tamingLevel = Levelling.getSkillLevel(JsonHelper.getLong(playerData, "experience.SKILL_TAMING").orElse(0L), Skills.TAMING, 0);
+		int tamingLevel = Levelling.getSkillLevel(JsonHelper.getLong(playerData, "experience.SKILL_TAMING").orElse(0L), Skills.TAMING, tamingLevelCap);
 		float skillAverage = (float) (alchemyLevel + carpentryLevel + combatLevel + enchantingLevel + farmingLevel + fishingLevel + foragingLevel + miningLevel + tamingLevel) / 9;
 		
 		JsonObject slayerBosses = profile.has("slayer") ? profile.getAsJsonObject("slayer").getAsJsonObject("slayer_bosses") : null;
