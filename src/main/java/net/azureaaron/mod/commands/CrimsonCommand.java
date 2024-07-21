@@ -54,6 +54,7 @@ public class CrimsonCommand {
 		int fieryCompletions = JsonHelper.getInt(kuudraTierCompletions, "fiery").orElse(0);
 		int infernalCompletions = JsonHelper.getInt(kuudraTierCompletions, "infernal").orElse(0);
 		int totalKuudraCompletions = basicCompletions + hotCompletions + burningCompletions + fieryCompletions + infernalCompletions;
+		int totalKuudraCollection = basicCompletions + (hotCompletions * 2) + (burningCompletions * 3) + (fieryCompletions * 4) + (infernalCompletions * 5);
 		
 		JsonObject dojoStats = crimsonIsleStats.getAsJsonObject("dojo");
 		
@@ -95,6 +96,7 @@ public class CrimsonCommand {
 		source.sendFeedback(Text.literal("(Kuudra Completions)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt())
 				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, 
 						Text.literal("Total Completions » " + Functions.NUMBER_FORMATTER_ND.format(totalKuudraCompletions) + "\n").withColor(colourProfile.infoColour.getAsInt())
+						.append(Text.literal("Total Collection » " + Functions.NUMBER_FORMATTER_ND.format(totalKuudraCollection) + "\n\n"))
 						.append(Text.literal("Basic » " + Functions.NUMBER_FORMATTER_ND.format(basicCompletions) + "\n" ))
 						.append(Text.literal("Hot » " + Functions.NUMBER_FORMATTER_ND.format(hotCompletions) + "\n" ))
 						.append(Text.literal("Burning » " + Functions.NUMBER_FORMATTER_ND.format(burningCompletions) + "\n" ))
