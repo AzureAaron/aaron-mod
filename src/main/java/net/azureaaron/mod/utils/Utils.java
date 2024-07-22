@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.azureaaron.hmapi.data.server.Environment;
 import net.azureaaron.hmapi.events.HypixelPacketEvents;
 import net.azureaaron.hmapi.network.HypixelNetworking;
 import net.azureaaron.hmapi.network.packet.s2c.ErrorS2CPacket;

@@ -5,10 +5,8 @@ import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
-import java.util.Base64;
 import java.util.Comparator;
 import java.util.IntSummaryStatistics;
 import java.util.Iterator;
@@ -44,16 +42,15 @@ import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.Functions;
+import net.azureaaron.mod.utils.ItemUtils;
 import net.azureaaron.mod.utils.JsonHelper;
 import net.azureaaron.mod.utils.Messages;
 import net.azureaaron.mod.utils.Skyblock;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtIo;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtSizeTracker;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -116,11 +113,10 @@ public class MagicalPowerCommand {
 			return;
 		}
 		
-		String accessoriesItemData = JsonHelper.getString(inventoryData, "bag_contents.talisman_bag.data").orElseThrow();
-		NbtList accessories;
+		List<ItemStack> accessories;
 		
 		try {
-			accessories = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(accessoriesItemData)), NbtSizeTracker.ofUnlimitedBytes()).getList("i", NbtElement.COMPOUND_TYPE);
+			accessories = ItemUtils.parseCompressedItemData(JsonHelper.getString(inventoryData, "bag_contents.talisman_bag.data").orElseThrow());
 		} catch (IOException e) {
 			source.sendError(NBT_PARSING_ERROR.get());
 			LOGGER.error("[Aaron's Mod] Encountered an exception while parsing NBT!", e);
@@ -132,26 +128,17 @@ public class MagicalPowerCommand {
 		ObjectArrayList<Pair<Accessory, String>> collectedAccessoriesFromBag = new ObjectArrayList<>();
 				
 		//Loop through the accessories
-		for (int i = 0; i < accessories.size(); i++) {
-			NbtCompound tag = accessories.getCompound(i).getCompound("tag");
-			
-			String itemId = "";
-			
-			//Collect item id of all accessories
-			if (tag.contains("ExtraAttributes")) {
-				NbtCompound extraAttributes = tag.getCompound("ExtraAttributes");
-				
-				if (extraAttributes.contains("id")) itemId = extraAttributes.getString("id");
-			}
-			
-			NbtCompound display = tag.getCompound("display");
-			NbtList lore = display.getList("Lore", NbtElement.STRING_TYPE);
-			
+		for (ItemStack stack : accessories) {
+			if (!stack.contains(DataComponentTypes.LORE)) continue; //Item is probably not an accessory
+
+			@SuppressWarnings("deprecation")
+			String itemId = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).getNbt().getString("id");
+
 			//Determine the rarity - iterate backwards for efficiency
-			for (int i2 = lore.size(); i2 >= 0; i2--) {
-				String loreLine = Formatting.strip(lore.getString(i2));
+			for (Text line : stack.get(DataComponentTypes.LORE).lines().reversed()) {
+				String loreLine = Formatting.strip(line.getString()); //Strip formatting again just in case it fails in original parsing
 				Matcher matcher = ACCESSORY_RARITY_PATTERN.matcher(loreLine);
-				
+
 				if (!itemId.isBlank() && matcher.matches()) {
 					collectedAccessoriesFromBag.add(ObjectObjectImmutablePair.of(Skyblock.getAccessories().getOrDefault(itemId, Accessory.fromId(itemId)), matcher.group("rarity")));
 										

@@ -25,7 +25,6 @@ import net.azureaaron.mod.utils.Http.ApiResponse;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.registry.RegistryOps;
 import net.minecraft.util.Identifier;
 
@@ -52,7 +51,7 @@ public class Skyblock {
 	private static CompletableFuture<Void> loadRareLootItems(MinecraftClient client) {
 		return CompletableFuture.supplyAsync(() -> {
 			try (BufferedReader reader = client.getResourceManager().openAsReader(Identifier.of(Main.NAMESPACE, "skyblock/rare_loot_items.json"))) {
-				RegistryOps<JsonElement> ops = BuiltinRegistries.createWrapperLookup().getOps(JsonOps.INSTANCE);
+				RegistryOps<JsonElement> ops = ItemUtils.getRegistryLookup().getOps(JsonOps.INSTANCE);
 
 				return RARE_LOOT_CODEC.parse(ops, JsonParser.parseReader(reader)).getOrThrow();
 			} catch (Exception e) {
