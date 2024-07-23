@@ -26,7 +26,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.Window;
 
-@Mixin(GameRenderer.class)
+@Mixin(value = GameRenderer.class, priority = 1100) //Inject after Fabric so that our handler also wraps the Screen API render events
 public class GameRendererMixin {
 	@Shadow
 	@Final
