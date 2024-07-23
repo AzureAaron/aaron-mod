@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
@@ -22,9 +23,12 @@ import net.minecraft.util.Formatting;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements AaronModItemMeta {
-	private static final String[] AARONMOD$MASTER_STARS = {"➊","➋","➌","➍","➎"};
-	private static final String AARONMOD$MASTER_STAR_REGEX = "➊|➋|➌|➍|➎";
-	private static final Style AARONMOD$BASE_STYLE = Style.EMPTY.withItalic(false);
+	@Unique
+	private static final String[] MASTER_STARS = {"➊","➋","➌","➍","➎"};
+	@Unique
+	private static final String MASTER_STAR_REGEX = "➊|➋|➌|➍|➎";
+	@Unique
+	private static final Style BASE_STYLE = Style.EMPTY.withItalic(false);
 
 	@ModifyVariable(method = "getName", at = @At("STORE"))
 	private Text aaronMod$customItemName(Text text) {
@@ -43,9 +47,9 @@ public abstract class ItemStackMixin implements AaronModItemMeta {
 				if (itemName.contains("➍")) masterStarsApplied = 4;
 				if (itemName.contains("➎")) masterStarsApplied = 5;
 
-				Text styledName = TextTransformer.stylize(text, AARONMOD$BASE_STYLE, "Diamond", nameStyle, 1);
-				Text styledStars = TextTransformer.stylize(styledName, AARONMOD$BASE_STYLE, "✪", starStyle, 5);
-				return TextTransformer.stylizeAndReplace(styledStars, AARONMOD$BASE_STYLE, "✪", masterStarStyle, AARONMOD$MASTER_STARS, AARONMOD$MASTER_STAR_REGEX, "", masterStarsApplied);
+				Text styledName = TextTransformer.stylize(text, BASE_STYLE, "Diamond", nameStyle, 1);
+				Text styledStars = TextTransformer.stylize(styledName, BASE_STYLE, "✪", starStyle, 5);
+				return TextTransformer.stylizeAndReplace(styledStars, BASE_STYLE, "✪", masterStarStyle, MASTER_STARS, MASTER_STAR_REGEX, "", masterStarsApplied);
 			}
 
 			if (AaronModConfigManager.get().oldMasterStars) {
@@ -58,7 +62,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta {
 				if (itemName.contains("➍")) masterStarsApplied = 4;
 				if (itemName.contains("➎")) masterStarsApplied = 5;
 
-				return TextTransformer.stylizeAndReplace(text, AARONMOD$BASE_STYLE, "✪", masterStarStyle, AARONMOD$MASTER_STARS, AARONMOD$MASTER_STAR_REGEX, "", masterStarsApplied);
+				return TextTransformer.stylizeAndReplace(text, BASE_STYLE, "✪", masterStarStyle, MASTER_STARS, MASTER_STAR_REGEX, "", masterStarsApplied);
 			}
 		}
 		return text;

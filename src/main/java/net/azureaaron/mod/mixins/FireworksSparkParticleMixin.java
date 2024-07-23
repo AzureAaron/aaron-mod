@@ -16,12 +16,12 @@ import net.minecraft.registry.Registries;
 
 @Mixin(FireworksSparkParticle.FireworkParticle.class)
 public class FireworksSparkParticleMixin {
-		
+
 	@Inject(method = "addExplosionParticle", at = @At("HEAD"), cancellable = true)
 	private void aaronMod$onExplosionParticle(CallbackInfo ci) {
 		if (AaronModConfigManager.get().particles.getOrDefault(Registries.PARTICLE_TYPE.getId(ParticleTypes.FIREWORK), Particles.State.FULL) == Particles.State.NONE) ci.cancel();
 	}
-	
+
 	@WrapWithCondition(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/particle/Particle;setColor(FFF)V", ordinal = 0))
 	private boolean aaronMod$explosionColour(Particle particle, float red, float green, float blue) {
 		return particle != null;

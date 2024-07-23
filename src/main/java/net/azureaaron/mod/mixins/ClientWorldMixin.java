@@ -30,6 +30,6 @@ public abstract class ClientWorldMixin extends World {
 
 	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;tickTime()V", shift = At.Shift.BEFORE))
 	private void aaronMod$correctAmbientDarkness(CallbackInfo ci) {
-		if(AaronModConfigManager.get().correctAmbientDarkness) this.calculateAmbientDarkness();
+		if (AaronModConfigManager.get().correctAmbientDarkness) this.calculateAmbientDarkness();
 	}
 }

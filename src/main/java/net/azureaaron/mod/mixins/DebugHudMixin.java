@@ -14,7 +14,7 @@ import net.minecraft.client.gui.hud.DebugHud;
 @Mixin(DebugHud.class)
 public class DebugHudMixin {
 
-	@Inject(method = "getRightText", at = @At("RETURN"), cancellable = true)
+	@Inject(method = "getRightText", at = @At("RETURN"))
 	private void aaronMod$addDebugInfo(CallbackInfoReturnable<List<String>> cir) {
 		if (AaronModConfigManager.get().extraDebugInfo) {
 			List<String> strings = cir.getReturnValue();

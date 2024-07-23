@@ -29,7 +29,7 @@ implements ScreenHandlerProvider<GenericContainerScreenHandler> {
 	private boolean aaronMod$hideScreenToolips(GenericContainerScreen container, DrawContext context, int mouseX, int mouseY) {
 		return !(Functions.isOnHypixel() && AaronModConfigManager.get().hideClickOnTimeTooltips && this.title.getString().equals("Click the button on time!"));
 	}
-	
+
 	@Override
 	public boolean shouldCloseOnEsc() {
 		MinecraftClient client = MinecraftClient.getInstance();

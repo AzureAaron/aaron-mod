@@ -15,6 +15,6 @@ public abstract class MobSpawnerBlockEntityRendererMixin implements BlockEntityR
 
 	@Inject(method = "render", at = @At("HEAD"), cancellable = true)
 	private void aaronMod$hideSpinningMobInSpawner(CallbackInfo ci) {
-		if(AaronModConfigManager.get().hideSpinningMobInMobSpawner) ci.cancel();
+		if (AaronModConfigManager.get().hideSpinningMobInMobSpawner) ci.cancel();
 	}
 }

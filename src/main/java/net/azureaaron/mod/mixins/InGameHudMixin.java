@@ -4,7 +4,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -44,8 +43,8 @@ public class InGameHudMixin {
     	if (AaronModConfigManager.get().fpsDisplay) FpsDisplay.render(context);
     }
 
-    @Redirect(method = "renderHeldItemTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;getWidth(Lnet/minecraft/text/StringVisitable;)I"))
-    private int aaronMod$correctXValue(TextRenderer textRenderer, StringVisitable text) {
-    	return AaronModConfigManager.get().visualTextReplacer ? textRenderer.getWidth(TextReplacer.visuallyReplaceText(((MutableText) text).asOrderedText())) : textRenderer.getWidth(text);
+    @WrapOperation(method = "renderHeldItemTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;getWidth(Lnet/minecraft/text/StringVisitable;)I"))
+    private int aaronMod$correctXValue(TextRenderer textRenderer, StringVisitable text, Operation<Integer> operation) {
+    	return AaronModConfigManager.get().visualTextReplacer ? textRenderer.getWidth(TextReplacer.visuallyReplaceText(((MutableText) text).asOrderedText())) : operation.call(textRenderer, text);
     }
 }

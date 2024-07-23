@@ -8,10 +8,11 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
@@ -38,8 +39,10 @@ public class MouseMixin implements MouseGuiPositioner {
 	@Shadow
 	private double cursorDeltaY;
 
-    private double aaronMod$guiX;
-	private double aaronMod$guiY;
+	@Unique
+	private double guiX;
+	@Unique
+	private double guiY;
 
 	@Inject(method = "onMouseButton", at = @At("HEAD"))
 	private void aaronMod$onMouseButton(CallbackInfo ci, @Local(argsOnly = true, ordinal = 0) int button, @Local(argsOnly = true, ordinal = 1) int action, @Local(argsOnly = true, ordinal = 2) int mods) {
@@ -48,35 +51,35 @@ public class MouseMixin implements MouseGuiPositioner {
 
 	@Inject(method = "lockCursor", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Mouse;x:D", ordinal = 0, shift = At.Shift.BEFORE))
 	private void aaronMod$lockXPos(CallbackInfo ci) {
-		this.aaronMod$guiX = this.x;
+		this.guiX = this.x;
 	}
 
 	@Inject(method = "lockCursor", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Mouse;y:D", ordinal = 0, shift = At.Shift.BEFORE))
 	private void aaronMod$lockYPos(CallbackInfo ci) {
-		this.aaronMod$guiY = this.y;		
+		this.guiY = this.y;		
 	}
 
-	@Redirect(method = "unlockCursor", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Mouse;x:D", opcode = Opcodes.PUTFIELD, ordinal = 0))
-	private void aaronMod$unlockXPos(Mouse mouse, double centreX) {
+	@WrapOperation(method = "unlockCursor", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Mouse;x:D", opcode = Opcodes.PUTFIELD, ordinal = 0))
+	private void aaronMod$unlockXPos(Mouse mouse, double centreX, Operation<Void> operation) {
 		if (AaronModConfigManager.get().resetCursorPosition && CLIENT.currentScreen instanceof GenericContainerScreen) {
-			this.x = this.aaronMod$guiX;
+			this.x = this.guiX;
 		} else {
-			this.x = centreX;
+			operation.call(mouse, centreX);
 		}
 	}
 
-	@Redirect(method = "unlockCursor", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Mouse;y:D", opcode = Opcodes.PUTFIELD, ordinal = 0))
-	private void aaronMod$unlockYPos(Mouse mouse, double centreY) {
+	@WrapOperation(method = "unlockCursor", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Mouse;y:D", opcode = Opcodes.PUTFIELD, ordinal = 0))
+	private void aaronMod$unlockYPos(Mouse mouse, double centreY, Operation<Void> operation) {
 		if (AaronModConfigManager.get().resetCursorPosition && CLIENT.currentScreen instanceof GenericContainerScreen) {
-			this.y = this.aaronMod$guiY;
+			this.y = this.guiY;
 		} else {
-			this.y = centreY;
+			operation.call(mouse, centreY);
 		}
 	}
 
 	@Inject(method = "unlockCursor", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/InputUtil;setCursorParameters(JIDD)V", ordinal = 0, shift = At.Shift.AFTER))
 	private void aaronMod$correctCursorPosition(CallbackInfo ci) {
-		if (AaronModConfigManager.get().resetCursorPosition && CLIENT.currentScreen instanceof GenericContainerScreen) GLFW.glfwSetCursorPos(CLIENT.getWindow().getHandle(), this.aaronMod$guiX, this.aaronMod$guiY);
+		if (AaronModConfigManager.get().resetCursorPosition && CLIENT.currentScreen instanceof GenericContainerScreen) GLFW.glfwSetCursorPos(CLIENT.getWindow().getHandle(), this.guiX, this.guiY);
 	}
 
 	//Lambda in onMouseButton

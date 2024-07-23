@@ -17,17 +17,17 @@ import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientPlayNetworkHandlerMixin {
-	
+
 	@WrapWithCondition(method = "onPlayerRespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/MusicTracker;stop()V", ordinal = 0))
 	private boolean aaronMod$onWorldChange(MusicTracker musicTracker) {
 		return !AaronModConfigManager.get().stopSoundsOnWorldChange;
 	}
-	
+
 	@Inject(method = "onPlaySound", at = @At("HEAD"))
 	private void aaronMod$onPlaySound(PlaySoundS2CPacket packet, CallbackInfo ci) {
 		PlaySoundEvent.EVENT.invoker().onPlaySound(packet);
 	}
-	
+
 	@Inject(method = "onParticle", at = @At("HEAD"))
 	private void aaronMod$onParticleSpawn(ParticleS2CPacket packet, CallbackInfo ci) {
 		ParticleSpawnEvent.EVENT.invoker().onParticleSpawn(packet);

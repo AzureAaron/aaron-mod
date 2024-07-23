@@ -10,9 +10,9 @@ import net.minecraft.client.gui.hud.InGameOverlayRenderer;
 
 @Mixin(InGameOverlayRenderer.class)
 public class InGameOverlayRendererMixin {
-	
+
 	@Inject(method = "renderFireOverlay", at = @At("HEAD"), cancellable = true)
 	private static void aaronMod$hideFireOverlay(CallbackInfo ci) {
-		if(AaronModConfigManager.get().hideFireOverlay) ci.cancel();
+		if (AaronModConfigManager.get().hideFireOverlay) ci.cancel();
 	}
 }

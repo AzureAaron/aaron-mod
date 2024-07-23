@@ -3,6 +3,7 @@ package net.azureaaron.mod.mixins;
 import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -36,6 +37,7 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
 	}
 
 	@SuppressWarnings("resource")
+	@Unique
 	private boolean shouldShowOperatorTab(PlayerEntity player) {
 		return player.isCreativeLevelTwoOp() && MinecraftClient.getInstance().options.getOperatorItemsTab().getValue().booleanValue();
 	}

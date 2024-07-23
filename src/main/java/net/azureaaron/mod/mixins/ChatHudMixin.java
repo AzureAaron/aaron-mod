@@ -17,18 +17,22 @@ import net.minecraft.client.gui.hud.ChatHud;
 
 @Mixin(ChatHud.class)
 public class ChatHudMixin {
-	
-	@Shadow @Final @Mutable private static int MAX_MESSAGES;
-	@Shadow @Final private MinecraftClient client;
-    
-    @ModifyExpressionValue(method = { "addVisibleMessage", "addMessage" }, at = @At(value = "CONSTANT", args = "intValue=100"))
-    private int aaronMod$longerChatHistory(int maxMessages) {
-    	MAX_MESSAGES = Math.max(100, AaronModConfigManager.get().chatHistoryLength);
-    	return Math.max(100, AaronModConfigManager.get().chatHistoryLength);
-    }
-    
-    @Inject(method = "clear", at = @At("TAIL"))
-    private void aaronMod$emptyImagePreviewCacheAndFreeMemOnChatClear(CallbackInfo ci) {
-    	ImagePreview.clearCache(client);
-    }
+	@Shadow
+	@Mutable
+	private static int MAX_MESSAGES;
+
+	@Shadow
+	@Final
+	private MinecraftClient client;
+
+	@ModifyExpressionValue(method = { "addVisibleMessage", "addMessage" }, at = @At(value = "CONSTANT", args = "intValue=100"))
+	private int aaronMod$longerChatHistory(int maxMessages) {
+		MAX_MESSAGES = Math.max(100, AaronModConfigManager.get().chatHistoryLength);
+		return Math.max(100, AaronModConfigManager.get().chatHistoryLength);
+	}
+
+	@Inject(method = "clear", at = @At("TAIL"))
+	private void aaronMod$emptyImagePreviewCacheAndFreeMemOnChatClear(CallbackInfo ci) {
+		ImagePreview.clearCache(client);
+	}
 }

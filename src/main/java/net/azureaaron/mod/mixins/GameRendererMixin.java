@@ -4,6 +4,7 @@ import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -32,19 +33,20 @@ public class GameRendererMixin {
 	@Final
 	MinecraftClient client;
 
-	private boolean aaronMod$cameraSmoothed = false;
+	@Unique
+	private boolean cameraSmoothed = false;
 
 	@ModifyReturnValue(method = "getFov", at = @At("RETURN"))
 	private double aaronMod$zoom(double fov) {
 		if (Keybinds.zoomKeybind.isPressed()) {
-			if (!this.aaronMod$cameraSmoothed) {
-				this.aaronMod$cameraSmoothed = true; 
+			if (!this.cameraSmoothed) {
+				this.cameraSmoothed = true; 
 				this.client.options.smoothCameraEnabled = true; 
 			}
 
 			return fov * AaronModConfigManager.get().zoomMultiplier;
-		} else if (this.aaronMod$cameraSmoothed) {
-			this.aaronMod$cameraSmoothed = false;
+		} else if (this.cameraSmoothed) {
+			this.cameraSmoothed = false;
 			this.client.options.smoothCameraEnabled = false;
 		}
 
