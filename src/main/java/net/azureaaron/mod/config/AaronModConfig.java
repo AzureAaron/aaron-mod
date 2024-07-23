@@ -169,6 +169,12 @@ public class AaronModConfig {
 	public boolean m7DragonSpawnNotifications = false;
 	
 	@SerialEntry
+	public boolean separateInventoryGuiScale = false;
+	
+	@SerialEntry
+	public int inventoryGuiScale = 0;
+	
+	@SerialEntry
 	public Object2ObjectOpenHashMap<Identifier, Particles.State> particles = new Object2ObjectOpenHashMap<>();
 	
 	@SerialEntry 

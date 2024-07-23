@@ -1,19 +1,30 @@
 package net.azureaaron.mod.mixins;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.sound.SoundManager;
 
 @Mixin(MinecraftClient.class)
 public class MinecraftClientMixin {
-	
+	@Shadow
+	private Screen currentScreen;
+
 	@WrapWithCondition(method = "reset", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/SoundManager;stopAll()V", ordinal = 0))
 	private boolean aaronMod$onWorldChange(SoundManager soundManager) {
 		return !AaronModConfigManager.get().stopSoundsOnWorldChange;
+	}
+
+	@Inject(method = "onResolutionChanged", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;resize(Lnet/minecraft/client/MinecraftClient;II)V"))
+	private void aaronMod$onResolutionChange(CallbackInfo ci) {
+		this.currentScreen.markResized(false);
 	}
 }

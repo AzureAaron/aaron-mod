@@ -18,6 +18,7 @@ import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.ColorControllerBuilder;
 import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.IntegerFieldControllerBuilder;
+import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.azureaaron.mod.Colour;
@@ -27,6 +28,7 @@ import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.Skyblock;
 import net.azureaaron.mod.utils.TextTransformer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
@@ -34,6 +36,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 public class AaronModConfigManager {
+	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
 	private static final Calendar CALENDAR = Calendar.getInstance();
 	private static final Path PATH = FabricLoader.getInstance().getConfigDir().resolve("aaron-mod.json");
 	private static final ConfigClassHandler<AaronModConfig> HANDLER = ConfigClassHandler.createBuilder(AaronModConfig.class)
@@ -367,6 +370,25 @@ public class AaronModConfigManager {
 												() -> config.resetCursorPosition,
 												newValue -> config.resetCursorPosition = newValue)
 										.controller(ConfigUtils::createBooleanController)
+										.build())
+								.option(Option.<Boolean>createBuilder()
+										.name(Text.literal("Separate Inventory GUI Scale"))
+										.description(OptionDescription.of(Text.literal("Allows you to set a separate GUI Scale for inventory/container screens.")))
+										.binding(defaults.separateInventoryGuiScale,
+												() -> config.separateInventoryGuiScale,
+												newValue -> config.separateInventoryGuiScale = newValue)
+										.controller(ConfigUtils::createBooleanController)
+										.build())
+								.option(Option.<Integer>createBuilder()
+										.name(Text.literal("Inventory GUI Scale"))
+										.description(OptionDescription.of(Text.literal("If you have the Separate Inventory GUI Scale option enabled then this will be the GUI scale used for all inventory/container screens.")))
+										.binding(defaults.inventoryGuiScale,
+												() -> config.inventoryGuiScale,
+												newValue -> config.inventoryGuiScale = newValue)
+										.controller(opt -> IntegerSliderControllerBuilder.create(opt)
+												.step(1)
+												.range(0, CLIENT.isRunning() ? CLIENT.getWindow().calculateScaleFactor(0, CLIENT.forcesUnicodeFont()) : 0)
+												.formatValue(scale -> scale == 0 ? Text.literal("Auto") : Text.literal(scale + "x")))
 										.build())
 								.option(Option.<Boolean>createBuilder()
 										.name(Text.literal("Optimized Screenshots"))

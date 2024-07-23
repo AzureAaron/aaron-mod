@@ -42,7 +42,8 @@
     "accessors.ClientEntityManagerAccessor",
     "accessors.ClientWorldAccessor",
     "accessors.MinecraftClientAccessor",
-    "SkyblockerPVCollectionsGenericCategoryMixin"
+    "SkyblockerPVCollectionsGenericCategoryMixin",
+    "ScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
