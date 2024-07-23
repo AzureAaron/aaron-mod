@@ -109,18 +109,18 @@ public class ProfileCommand {
 		if (skillsEnabled) {
 			source.sendFeedback(Text.literal("Skill Average » " + Functions.NUMBER_FORMATTER_OD.format(skillAverage)).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())
 					.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Alchemy » " + String.valueOf(alchemyLevel) + "\n").withColor(colourProfile.infoColour.getAsInt())
-							.append("Carpentry » " + String.valueOf(carpentryLevel) + "\n")
-							.append("Combat » " + String.valueOf(combatLevel) + "\n")
-							.append("Enchanting » " + String.valueOf(enchantingLevel) + "\n")
-							.append("Farming » " + String.valueOf(farmingLevel) + "\n")
-							.append("Fishing » " + String.valueOf(fishingLevel) + "\n")
-							.append("Foraging » " + String.valueOf(foragingLevel) + "\n")
-							.append("Mining » " + String.valueOf(miningLevel) + "\n")
-							.append("Taming » " + String.valueOf(tamingLevel))))));
+							.append("Carpentry » " + carpentryLevel + "\n")
+							.append("Combat » " + combatLevel + "\n")
+							.append("Enchanting » " + enchantingLevel + "\n")
+							.append("Farming » " + farmingLevel + "\n")
+							.append("Fishing » " + fishingLevel + "\n")
+							.append("Foraging » " + foragingLevel + "\n")
+							.append("Mining » " + miningLevel + "\n")
+							.append("Taming » " + tamingLevel)))));
 			
 			source.sendFeedback(Text.literal("(Cosmetic Skills)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt()).withItalic(true)
-					.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Runecrafting » " + String.valueOf(runecraftingLevel) + "\n").styled(style1 -> style1.withColor(colourProfile.infoColour.getAsInt()).withItalic(false))
-							.append("Social » " + String.valueOf(socialLevel))))));
+					.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Runecrafting » " + runecraftingLevel + "\n").styled(style1 -> style1.withColor(colourProfile.infoColour.getAsInt()).withItalic(false))
+							.append("Social » " + socialLevel)))));
 		} else {
 			source.sendFeedback(Text.literal("Skill Average » ").withColor(colourProfile.infoColour.getAsInt())
 					.append(Text.literal("Api Disabled!")));
@@ -131,14 +131,14 @@ public class ProfileCommand {
 		
 		source.sendFeedback(Text.literal(""));
 		
-		source.sendFeedback(Text.literal("Slayers » " + String.valueOf(revenantHorrorLevel) + " • " + String.valueOf(tarantulaBroodfatherLevel) + 
-				" • " + String.valueOf(svenPackmasterLevel) + " • " + String.valueOf(voidgloomSeraphLevel) + " • " + String.valueOf(infernoDemonlordLevel) + " • " + String.valueOf(riftstalkerBloodfiendLevel)).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())
-						.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Revenant Horror » " + String.valueOf(revenantHorrorLevel) + "\n").withColor(colourProfile.infoColour.getAsInt())
-								.append("Tarantula Broodfather » " + String.valueOf(tarantulaBroodfatherLevel) + "\n")
-								.append("Sven Packmaster » " + String.valueOf(svenPackmasterLevel) + "\n")
-								.append("Voidgloom Seraph » " + String.valueOf(voidgloomSeraphLevel) + "\n")
-								.append("Inferno Demonlord » " + String.valueOf(infernoDemonlordLevel) + "\n")
-								.append("Riftstalker Bloodfiend » " + String.valueOf(riftstalkerBloodfiendLevel))))));	
+		source.sendFeedback(Text.literal("Slayers » " + revenantHorrorLevel + " • " + tarantulaBroodfatherLevel + 
+				" • " + svenPackmasterLevel + " • " + voidgloomSeraphLevel + " • " + infernoDemonlordLevel + " • " + riftstalkerBloodfiendLevel).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())
+						.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Revenant Horror » " + revenantHorrorLevel + "\n").withColor(colourProfile.infoColour.getAsInt())
+								.append("Tarantula Broodfather » " + tarantulaBroodfatherLevel + "\n")
+								.append("Sven Packmaster » " + svenPackmasterLevel + "\n")
+								.append("Voidgloom Seraph » " + voidgloomSeraphLevel + "\n")
+								.append("Inferno Demonlord » " + infernoDemonlordLevel + "\n")
+								.append("Riftstalker Bloodfiend » " + riftstalkerBloodfiendLevel)))));	
 		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 	}
 }

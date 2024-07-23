@@ -98,7 +98,7 @@ public class LowestBinCommand {
 			
 			//TODO proper error msg for when there is no day average for an item (bc it hasn't been auctioned recently)
 			try {
-				String dayAverageResponse = Http.sendMoulberryRequest("auction_averages_lbin/" + String.valueOf(average) + "day.json");
+				String dayAverageResponse = Http.sendMoulberryRequest("auction_averages_lbin/" + average + "day.json");
 				JsonObject dayAverage = JsonParser.parseString(dayAverageResponse).getAsJsonObject();
 				
 				if (dayAverage.get(itemId) == null) { //Does this even work?

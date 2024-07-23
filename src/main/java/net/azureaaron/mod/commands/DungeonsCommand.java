@@ -120,7 +120,7 @@ public class DungeonsCommand {
 		
 		source.sendFeedback(startText);
 		
-		source.sendFeedback(Text.literal("Level » " + String.valueOf(catacombsLevel)).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())
+		source.sendFeedback(Text.literal("Level » " + catacombsLevel).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())
 				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Total XP: " + Functions.NUMBER_FORMATTER_ND.format(catacombsXp)).withColor(colourProfile.infoColour.getAsInt())))));
 		source.sendFeedback(Text.literal("Dailies » " + ((onDailies) ? "✓" : "✗") + dailiesLeft).withColor(colourProfile.infoColour.getAsInt()));
 		source.sendFeedback(Text.literal("Secrets » " + Functions.NUMBER_FORMATTER_ND.format(secrets)).withColor(colourProfile.infoColour.getAsInt()));

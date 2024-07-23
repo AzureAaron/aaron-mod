@@ -14,7 +14,7 @@ public class FpsDisplay {
 			matrices.translate(2, 2, 0);
 			matrices.scale(1, 1, 0);
 			matrices.translate(-2, -2, 0);
-			context.drawText(CLIENT.textRenderer, String.valueOf(CLIENT.getCurrentFps()) + " fps", 2, 2, 0xffffffff, false);
+			context.drawText(CLIENT.textRenderer, CLIENT.getCurrentFps() + " fps", 2, 2, 0xffffffff, false);
 			matrices.pop();
 		}
 	}

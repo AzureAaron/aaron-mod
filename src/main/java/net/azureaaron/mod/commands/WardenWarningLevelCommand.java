@@ -32,9 +32,9 @@ public class WardenWarningLevelCommand {
     	
         source.sendFeedback(Text.literal(spacing).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
         
-        source.sendFeedback(Text.literal("Warning Level » " + String.valueOf(warningLevel)).styled(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent(Action.SHOW_TEXT, DISCLAIMER))));
+        source.sendFeedback(Text.literal("Warning Level » " + warningLevel).styled(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent(Action.SHOW_TEXT, DISCLAIMER))));
         source.sendFeedback(Text.literal(""));
-        source.sendFeedback(Text.literal("Warnings Left » " + String.valueOf(warningsLeft)).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())));
+        source.sendFeedback(Text.literal("Warnings Left » " + warningsLeft).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())));
         source.sendFeedback(Text.literal("Last Triggered Shrieker » " + lastTriggered).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())));
         
         source.sendFeedback(Text.literal(spacing).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));

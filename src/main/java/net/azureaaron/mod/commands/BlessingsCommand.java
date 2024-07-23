@@ -28,19 +28,13 @@ public class BlessingsCommand {
     private static int printBlessings(FabricClientCommandSource source) {
     	ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
     	
-    	String powerBlessing = String.valueOf(Cache.powerBlessing);
-    	String wisdomBlessing = String.valueOf(Cache.wisdomBlessing);
-    	String lifeBlessing = String.valueOf(Cache.lifeBlessing);
-    	String stoneBlessing = String.valueOf(Cache.stoneBlessing);
-    	String timeBlessing = Cache.timeBlessing ? "✓" : "✗";
-    	
     	source.sendFeedback(Text.literal("               ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
     	
-    	source.sendFeedback(Text.literal("Power » " + powerBlessing).withColor(colourProfile.infoColour.getAsInt()));
-    	source.sendFeedback(Text.literal("Wisdom » " + wisdomBlessing).withColor(colourProfile.infoColour.getAsInt()));
-    	source.sendFeedback(Text.literal("Life » " + lifeBlessing).withColor(colourProfile.infoColour.getAsInt()));
-    	source.sendFeedback(Text.literal("Stone » " + stoneBlessing).withColor(colourProfile.infoColour.getAsInt()));
-    	source.sendFeedback(Text.literal("Time » " +  timeBlessing).withColor(colourProfile.infoColour.getAsInt()));
+    	source.sendFeedback(Text.literal("Power » " + Cache.powerBlessing).withColor(colourProfile.infoColour.getAsInt()));
+    	source.sendFeedback(Text.literal("Wisdom » " + Cache.wisdomBlessing).withColor(colourProfile.infoColour.getAsInt()));
+    	source.sendFeedback(Text.literal("Life » " + Cache.lifeBlessing).withColor(colourProfile.infoColour.getAsInt()));
+    	source.sendFeedback(Text.literal("Stone » " + Cache.stoneBlessing).withColor(colourProfile.infoColour.getAsInt()));
+    	source.sendFeedback(Text.literal("Time » " + (Cache.timeBlessing ? "✓" : "✗")).withColor(colourProfile.infoColour.getAsInt()));
     	
     	source.sendFeedback(Text.literal("               ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 
