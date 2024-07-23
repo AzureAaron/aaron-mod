@@ -11,9 +11,7 @@ public class FpsDisplay {
 		if (!CLIENT.getDebugHud().shouldShowDebugHud()) {
 			MatrixStack matrices = context.getMatrices();
 			matrices.push();
-			matrices.translate(2, 2, 0);
 			matrices.scale(1, 1, 0);
-			matrices.translate(-2, -2, 0);
 			context.drawText(CLIENT.textRenderer, CLIENT.getCurrentFps() + " fps", 2, 2, 0xffffffff, false);
 			matrices.pop();
 		}
