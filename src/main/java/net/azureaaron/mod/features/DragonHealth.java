@@ -28,7 +28,6 @@ public class DragonHealth {
 		WorldRenderEvents.BEFORE_DEBUG_RENDER.register(DragonHealth::render);
 	}
 	
-	@SuppressWarnings("resource")
 	private static void render(WorldRenderContext wrc) {
 		try {
 			if (Cache.inM7Phase5 && AaronModConfigManager.get().m7DragonHealth) {

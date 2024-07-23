@@ -3,32 +3,43 @@ package net.azureaaron.mod.mixins;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
+import net.azureaaron.mod.Main;
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.features.AaronModItemMeta;
+import net.azureaaron.mod.injected.AaronModItemMeta;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.Skyblock;
 import net.azureaaron.mod.utils.TextTransformer;
+import net.minecraft.component.ComponentHolder;
+import net.minecraft.component.ComponentType;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipAppender;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 @Mixin(ItemStack.class)
-public abstract class ItemStackMixin implements AaronModItemMeta {
+public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolder {
 	@Unique
 	private static final String[] MASTER_STARS = {"➊","➋","➌","➍","➎"};
 	@Unique
 	private static final String MASTER_STAR_REGEX = "➊|➋|➌|➍|➎";
 	@Unique
 	private static final Style BASE_STYLE = Style.EMPTY.withItalic(false);
+
+	@Shadow
+	public abstract <T> T set(ComponentType<? super T> type, @Nullable T value);
 
 	@ModifyVariable(method = "getName", at = @At("STORE"))
 	private Text aaronMod$customItemName(Text text) {
@@ -116,5 +127,30 @@ public abstract class ItemStackMixin implements AaronModItemMeta {
 			return newLore;
 		}
 		return itemComponent;
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	public boolean getAlwaysDisplaySkyblockInfo() {
+		NbtComponent component = getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT);
+
+		boolean alwaysDisplaySkyblockStuff = component.getNbt().getCompound(Main.NAMESPACE).getBoolean("alwaysDisplaySkyblockInfo");
+
+		return alwaysDisplaySkyblockStuff;
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	public void setAlwaysDisplaySkyblockInfo(boolean value) {
+		NbtComponent component = contains(DataComponentTypes.CUSTOM_DATA) ? get(DataComponentTypes.CUSTOM_DATA) : NbtComponent.of(new NbtCompound());
+		NbtCompound compound = component.getNbt();
+
+		if (!compound.contains(Main.NAMESPACE)) {
+			compound.put(Main.NAMESPACE, new NbtCompound());
+		}
+
+		compound.getCompound(Main.NAMESPACE).putBoolean("alwaysDisplaySkyblockInfo", value);
+
+		if (!contains(DataComponentTypes.CUSTOM_DATA)) set(DataComponentTypes.CUSTOM_DATA, component);
 	}
 }

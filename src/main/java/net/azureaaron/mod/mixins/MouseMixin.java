@@ -19,7 +19,7 @@ import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.MouseInputEvent;
 import net.azureaaron.mod.features.SeparateInventoryGuiScale;
 import net.azureaaron.mod.features.SeparateInventoryGuiScale.SavedScaleState;
-import net.azureaaron.mod.utils.render.MouseGuiPositioner;
+import net.azureaaron.mod.injected.MouseGuiPositioner;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;

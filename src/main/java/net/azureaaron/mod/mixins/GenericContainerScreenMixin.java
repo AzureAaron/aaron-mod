@@ -7,7 +7,6 @@ import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Functions;
-import net.azureaaron.mod.utils.render.MouseGuiPositioner;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
@@ -32,8 +31,8 @@ implements ScreenHandlerProvider<GenericContainerScreenHandler> {
 
 	@Override
 	public boolean shouldCloseOnEsc() {
-		MinecraftClient client = MinecraftClient.getInstance();
-		((MouseGuiPositioner) client.mouse).reset();
+		MinecraftClient.getInstance().mouse.reset();
+
 		return true;
 	}
 }

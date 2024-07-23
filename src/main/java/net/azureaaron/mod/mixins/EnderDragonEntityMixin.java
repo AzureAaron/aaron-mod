@@ -51,7 +51,6 @@ public class EnderDragonEntityMixin extends MobEntity implements Monster {
 		super(entityType, world);
 	}
 
-	@SuppressWarnings("resource")
 	@Unique
 	private void tickM7DragonColour() {
 		if (this.m7DragonType == null && this.lastM7DragTickTime + 250L < System.currentTimeMillis()) {

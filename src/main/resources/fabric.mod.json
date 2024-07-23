@@ -40,7 +40,10 @@
   "custom": {
     "loom:injected_interfaces": {
       "net/minecraft/class_1799": [
-        "net/azureaaron/mod/features/AaronModItemMeta"
+        "net/azureaaron/mod/injected/AaronModItemMeta"
+      ],
+      "net/minecraft/class_312": [
+        "net/azureaaron/mod/injected/MouseGuiPositioner"
       ],
       "net/minecraft/class_437": [
         "net/azureaaron/mod/injected/ScreenResizeMarker"
