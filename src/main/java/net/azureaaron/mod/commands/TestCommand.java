@@ -9,16 +9,21 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
 
 public class TestCommand {
-	
-	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
-		dispatcher.register(literal("test")
-				.executes(context -> printTest(context.getSource()))
-				.then(argument("option", word())
-						.executes(context -> printTest(context.getSource(), getString(context, "option")))));
+	private static final boolean ENABLED = Boolean.parseBoolean(System.getProperty("aaronmod.enableTestCommand", "false")) || FabricLoader.getInstance().isDevelopmentEnvironment();
+
+	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+		if (ENABLED) {
+			dispatcher.register(literal("test")
+					.executes(context -> printTest(context.getSource()))
+					.then(argument("option", word())
+							.executes(context -> printTest(context.getSource(), getString(context, "option")))));
+		}
 	}
 			
     private static int printTest(FabricClientCommandSource source) {

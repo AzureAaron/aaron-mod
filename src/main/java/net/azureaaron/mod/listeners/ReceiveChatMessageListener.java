@@ -18,6 +18,7 @@ public class ReceiveChatMessageListener {
 	private static final Pattern AUTO_PICKUP_BLESSING_PATTERN = Pattern.compile("DUNGEON BUFF! A Blessing of (?<blessing>[A-z]+) (?<level>[A-z]+) was found!( \\([^)]*\\))?");
 	private static final Pattern TEAM_SCORE_PATTERN = Pattern.compile(" +Team Score: [0-9]+ \\([A-z+]+\\)");
 	
+	@SuppressWarnings("removal")
 	public static void listen() {
 		ReceiveChatMessageEvent.EVENT.register((message, overlay, cancelled) -> {	
 			if (Functions.isOnHypixel() && !overlay) {

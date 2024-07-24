@@ -1,4 +1,4 @@
-package net.azureaaron.mod.commands;
+package net.azureaaron.mod.commands.skyblock;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
@@ -18,6 +18,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.logging.LogUtils;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Constants;
@@ -25,6 +26,7 @@ import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.Http;
 import net.azureaaron.mod.utils.Messages;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -33,7 +35,7 @@ import net.minecraft.util.Formatting;
 public class LowestBinCommand {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	
-	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
+	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
 		final LiteralCommandNode<FabricClientCommandSource> lowestBinCommand = dispatcher.register(literal("lowestbin")
 				.then(argument("item", greedyString())
 						.suggests((context, builder) -> CommandSource.suggestMatching(Cache.ITEMS_LIST, builder))

@@ -1,4 +1,4 @@
-package net.azureaaron.mod.commands;
+package net.azureaaron.mod.commands.vanilla;
 
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
@@ -10,6 +10,7 @@ import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Functions;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.HoverEvent.Action;
 import net.minecraft.text.Text;
@@ -17,7 +18,7 @@ import net.minecraft.text.Text;
 public class WardenWarningLevelCommand {
 	private static final Text DISCLAIMER = Text.literal("It isn't possible to find out the\nexact player who triggered the shrieker.\n\nThis may not be 100% accurate.").styled(style -> style.withColor(AaronModConfigManager.get().colourProfile.infoColour.getAsInt()));
 
-	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
+	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
 		dispatcher.register(literal("wardenwarninglevel")
 				.executes(context -> printWardenWarningLevel(context.getSource())));
 	}

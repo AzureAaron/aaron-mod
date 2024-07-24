@@ -10,12 +10,13 @@ import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.features.TextReplacer;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
 
 public class TextReplacerCommand {
 
-	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
+	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
 		dispatcher.register(literal("textreplacer")
 				.then(literal("add")
 						.then(argument("replacementText", string())

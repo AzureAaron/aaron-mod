@@ -1,4 +1,4 @@
-package net.azureaaron.mod.commands;
+package net.azureaaron.mod.commands.skyblock;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
@@ -18,6 +18,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.logging.LogUtils;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Constants;
@@ -25,6 +26,7 @@ import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.Http;
 import net.azureaaron.mod.utils.Messages;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -35,7 +37,7 @@ public class BazaarCommand {
 	private static final Supplier<MutableText> NON_EXISTENT_PRODUCT_ERROR = () -> Constants.PREFIX.get().append(Text.literal("The product you've provided is non existent!").formatted(Formatting.RED));
 	private static final Supplier<MutableText> BAZAAR_FETCH_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while fetching information from the bazaar!").formatted(Formatting.RED));
 	
-	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
+	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
 		final LiteralCommandNode<FabricClientCommandSource> bazaarCommand = dispatcher.register(literal("bazaarprice")
 				.then(argument("product", greedyString())
 						.suggests((context, builder) -> CommandSource.suggestMatching(Cache.PRODUCTS_LIST, builder))

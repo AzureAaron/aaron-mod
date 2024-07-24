@@ -1,4 +1,4 @@
-package net.azureaaron.mod.commands;
+package net.azureaaron.mod.commands.skyblock;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
@@ -13,11 +13,12 @@ import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Constants;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class BlessingsCommand {
-	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
+	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
 		dispatcher.register(literal("blessings")
 				.executes(context -> printBlessings(context.getSource()))
 				.then(argument("option", word())
@@ -25,7 +26,8 @@ public class BlessingsCommand {
 						.executes(context -> printBlessings(context.getSource(), getString(context, "option")))));
 	}
 	
-    private static int printBlessings(FabricClientCommandSource source) {
+    @SuppressWarnings("removal")
+	private static int printBlessings(FabricClientCommandSource source) {
     	ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
     	
     	source.sendFeedback(Text.literal("               ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));

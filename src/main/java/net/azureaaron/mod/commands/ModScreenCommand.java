@@ -12,11 +12,12 @@ import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.screens.ModScreen;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.command.CommandRegistryAccess;
 
 public class ModScreenCommand {
 	private static final long ONE_TICK = 50L;
 	
-	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
+	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
 		dispatcher.register(literal("aaronsmod")
 				.executes(context -> handleCommand(context.getSource()))
 				.then(literal("config")

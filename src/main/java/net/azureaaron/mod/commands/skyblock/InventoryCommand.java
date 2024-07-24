@@ -1,4 +1,4 @@
-package net.azureaaron.mod.commands;
+package net.azureaaron.mod.commands.skyblock;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
@@ -6,7 +6,6 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.arg
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 import java.io.IOException;
-import java.lang.invoke.MethodHandle;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
@@ -19,6 +18,9 @@ import com.mojang.logging.LogUtils;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.commands.Command;
+import net.azureaaron.mod.commands.CommandSystem;
+import net.azureaaron.mod.commands.SkyblockCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.ItemUtils;
@@ -26,6 +28,7 @@ import net.azureaaron.mod.utils.JsonHelper;
 import net.azureaaron.mod.utils.Messages;
 import net.azureaaron.mod.utils.Skyblock;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
@@ -37,23 +40,24 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-public class InventoryCommand {
+public class InventoryCommand extends SkyblockCommand {
+	public static final Command INSTANCE = new InventoryCommand();
 	private static final Logger LOGGER = LogUtils.getLogger();
-	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printInventory");
 	private static final Supplier<MutableText> NBT_PARSING_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while trying to parse NBT!").formatted(Formatting.RED));
-	
-	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
+
+	@Override
+	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
 		dispatcher.register(literal("inventory")
-				.executes(context -> CommandSystem.handleSelf4Skyblock(context.getSource(), DISPATCH_HANDLE))
+				.executes(context -> CommandSystem.handleSelf4Skyblock(this, context.getSource()))
 				.then(argument("player", word())
 						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
-						.executes(context -> CommandSystem.handlePlayer4Skyblock(context.getSource(), getString(context, "player"), DISPATCH_HANDLE))));
+						.executes(context -> CommandSystem.handlePlayer4Skyblock(this, context.getSource(), getString(context, "player")))));
 		
 		dispatcher.register(literal("inv")
-				.executes(context -> CommandSystem.handleSelf4Skyblock(context.getSource(), DISPATCH_HANDLE))
+				.executes(context -> CommandSystem.handleSelf4Skyblock(this, context.getSource()))
 				.then(argument("player", word())
 						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
-						.executes(context -> CommandSystem.handlePlayer4Skyblock(context.getSource(), getString(context, "player"), DISPATCH_HANDLE))));
+						.executes(context -> CommandSystem.handlePlayer4Skyblock(this, context.getSource(), getString(context, "player")))));
 	}
 
 	private record ItemData4(ItemStack stack, String fallback) {
@@ -66,7 +70,8 @@ public class InventoryCommand {
 		}
 	}
 
-	protected static void printInventory(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
+	@Override
+	public void print(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
 		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
 		
 		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);

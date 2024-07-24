@@ -1,20 +1,16 @@
 package net.azureaaron.mod.commands;
 
-import java.lang.StackWalker.Option;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.Command;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.JsonOps;
 
+import net.azureaaron.mod.commands.skyblock.NetworthCommand;
 import net.azureaaron.mod.features.TextReplacer;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.Http;
@@ -60,39 +56,18 @@ public class CommandSystem {
 	}
 	
 	/**
-	 * Specialized to skyblock commands!
-	 * @param printMethod The name of the command's print method
-	 * 
-	 * @return A {@link java.lang.invoke.MethodHandle MethodHandle} for the command's print method.
-	 */
-	public static MethodHandle obtainDispatchHandle4Skyblock(String printMethod) {
-		Class<?> cmdClass = StackWalker.getInstance(Option.RETAIN_CLASS_REFERENCE).getCallerClass();
-		MethodHandles.Lookup lookup = MethodHandles.lookup();
-		MethodType mt = MethodType.methodType(void.class, FabricClientCommandSource.class, JsonObject.class, String.class, String.class);
-		MethodHandle handle = null;
-		
-		try {
-			handle = lookup.findStatic(cmdClass, printMethod, mt);
-		} catch (Throwable t) {
-			LOGGER.error("[Aaron's Mod] Encountered an exception while obtaining a skyblock command dispatch handle!", t);
-		}
-		
-		return handle;
-	}
-	
-	/**
 	 * Handles the command for the current player
 	 */
-	public static int handleSelf4Skyblock(FabricClientCommandSource source, MethodHandle dispatchHandle) {
+	public static int handleSelf4Skyblock(SkyblockCommand command, FabricClientCommandSource source) {
 		Session session = source.getClient().getSession();
 		
-		return handleSkyblockCommand(source, new CommandPlayerData(session.getUsername(), session.getUuidOrNull().toString().replaceAll("-", "")), dispatchHandle);
+		return handleSkyblockCommand(command, source, new CommandPlayerData(session.getUsername(), session.getUuidOrNull().toString().replaceAll("-", "")));
 	}
 	
 	/**
 	 * Handles the command for another player
 	 */
-	public static int handlePlayer4Skyblock(FabricClientCommandSource source, String player, MethodHandle dispatchHandle) {
+	public static int handlePlayer4Skyblock(SkyblockCommand command, FabricClientCommandSource source, String player) {
 		CompletableFuture.supplyAsync(() -> {
 			try {
 				boolean isName = !Functions.isUuid(player);
@@ -111,17 +86,17 @@ public class CommandSystem {
 			}
 		})
 		.thenAccept(playerData -> {
-			if (playerData != null) handleSkyblockCommand(source, playerData, dispatchHandle);
+			if (playerData != null) handleSkyblockCommand(command, source, playerData);
 		});
 		
 		return Command.SINGLE_SUCCESS;
 	}
 	
-	private static int handleSkyblockCommand(FabricClientCommandSource source, CommandPlayerData playerData, MethodHandle dispatchHandle) {
+	private static int handleSkyblockCommand(SkyblockCommand command, FabricClientCommandSource source, CommandPlayerData playerData) {
 		CompletableFuture.supplyAsync(() -> {
 			try {
 				//TODO remove this legacy profiles v1 thing when the networth api updates
-				return Http.sendAuthorizedHypixelRequest(dispatchHandle == NetworthCommand.DISPATCH_HANDLE ? "skyblock/profiles" : "v2/skyblock/profiles", "?uuid=" + playerData.id());
+				return Http.sendAuthorizedHypixelRequest(command == NetworthCommand.INSTANCE ? "skyblock/profiles" : "v2/skyblock/profiles", "?uuid=" + playerData.id());
 			} catch (Throwable t) {
 				source.sendError(Messages.SKYBLOCK_PROFILES_FETCH_ERROR.get());
 				LOGGER.error("[Aaron's Mod] Encountered an exception while fetching a player's skyblock profiles!", t);
@@ -142,10 +117,10 @@ public class CommandSystem {
 		.thenAccept(profileData -> {
 			if (profileData != null) {
 				try {
-					dispatchHandle.invokeExact(source, profileData, playerData.name(), playerData.id());
+					command.print(source, profileData, playerData.name(), playerData.id());
 				} catch (Throwable t) {
 					source.sendError(Messages.UNKNOWN_ERROR.get());
-					LOGGER.error("[Aaron's Mod] Encountered an exception while dispatching a skyblock command! Handle: {}", dispatchHandle.describeConstable(), t);
+					LOGGER.error("[Aaron's Mod] Encountered an exception while dispatching a skyblock command! Command: {}", command.getClass().getName(), t);
 				}
 			}
 		});
@@ -153,41 +128,20 @@ public class CommandSystem {
 		return Command.SINGLE_SUCCESS;
 	}
 	
-	/**
-	 * Specialized to vanilla commands!
-	 * @param printMethod The name of the command's print method
-	 * 
-	 * @return A {@link java.lang.invoke.MethodHandle MethodHandle} for the command's print method.
-	 */
-	public static MethodHandle obtainDispatchHandle4Vanilla(String printMethod) {
-		Class<?> cmdClass = StackWalker.getInstance(Option.RETAIN_CLASS_REFERENCE).getCallerClass();
-		MethodHandles.Lookup lookup = MethodHandles.lookup();
-		MethodType mt = MethodType.methodType(void.class, FabricClientCommandSource.class, String.class, String.class);
-		MethodHandle handle = null;
-		
-		try {
-			handle = lookup.findStatic(cmdClass, printMethod, mt);
-		} catch (Throwable t) {
-			LOGGER.error("[Aaron's Mod] Encountered an exception while obtaining a vanilla command dispatch handle!", t);
-		}
-		
-		return handle;
-	}
-	
-	public static int handleSelf4Vanilla(FabricClientCommandSource source, MethodHandle dispatchHandle) {
+	public static int handleSelf4Vanilla(VanillaCommand command, FabricClientCommandSource source) {
 		Session session = source.getClient().getSession();
 		
 		try {
-			dispatchHandle.invokeExact(source, session.getUsername(), session.getUuidOrNull().toString().replaceAll("-", ""));
+			command.print(source, session.getUsername(), session.getUuidOrNull().toString().replaceAll("-", ""));
 		} catch (Throwable t) {
 			source.sendError(Messages.UNKNOWN_ERROR.get());
-			LOGGER.error("[Aaron's Mod] Encountered an exception while dispatching a vanilla command! Handle: {}", dispatchHandle.describeConstable(), t);
+			LOGGER.error("[Aaron's Mod] Encountered an exception while dispatching a vanilla command! Command: {}", command.getClass().getName(), t);
 		}
 		
 		return Command.SINGLE_SUCCESS;
 	}
 	
-	public static int handlePlayer4Vanilla(FabricClientCommandSource source, String player, MethodHandle dispatchHandle) {
+	public static int handlePlayer4Vanilla(VanillaCommand command, FabricClientCommandSource source, String player) {
 		CompletableFuture.supplyAsync(() -> {
 			try {
 				boolean isName = !Functions.isUuid(player);
@@ -208,10 +162,10 @@ public class CommandSystem {
 		.thenAccept(playerData -> {
 			if (playerData != null) {
 				try {
-					dispatchHandle.invokeExact(source, playerData.name(), playerData.id());
+					command.print(source, playerData.name(), playerData.id());
 				} catch (Throwable t) {
 					source.sendError(Messages.UNKNOWN_ERROR.get());
-					LOGGER.error("[Aaron's Mod] Encountered an exception while dispatching a vanilla command! Handle: {}", dispatchHandle.describeConstable(), t);
+					LOGGER.error("[Aaron's Mod] Encountered an exception while dispatching a vanilla command! Command: {}", command.getClass().getName(), t);
 				}
 			}
 		});

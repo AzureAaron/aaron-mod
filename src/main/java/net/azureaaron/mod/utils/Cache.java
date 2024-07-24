@@ -18,16 +18,25 @@ import net.minecraft.util.Formatting;
  */
 public class Cache {
 	
+	@Deprecated(forRemoval = true)
 	public static int powerBlessing = 0;
+	@Deprecated(forRemoval = true)
 	public static int wisdomBlessing = 0;
+	@Deprecated(forRemoval = true)
 	public static int lifeBlessing = 0;
+	@Deprecated(forRemoval = true)
 	public static int stoneBlessing = 0;
+	@Deprecated(forRemoval = true)
 	public static boolean timeBlessing = false;
 	
+	@Deprecated(forRemoval = true)
 	public static long lastTwoHundredSeventyScore = 0L;
+	@Deprecated(forRemoval = true)
 	public static long lastThreeHundredScore = 0L;	
 	public static boolean inM7Phase5 = false;
+	@Deprecated(forRemoval = true)
 	public static volatile boolean inDungeonBossRoom = false;
+	@Deprecated(forRemoval = true)
 	public static int currentScore = 0;
 		
 	public static String currentServerAddress = "";

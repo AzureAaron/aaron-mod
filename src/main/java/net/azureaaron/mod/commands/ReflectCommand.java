@@ -20,24 +20,30 @@ import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.UnsafeAccess;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class ReflectCommand implements UnsafeAccess {
-	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
-		//Maybe turn this into subcommands
-		dispatcher.register(literal("reflect")
-				.then(argument("opcode", word())
-						.suggests((context, builder) -> CommandSource.suggestMatching(OPCODES, builder))
-						.then(argument("target class", word())
-								.then(argument("target field", word())
-										.executes(context -> reflectionExecutor(context.getSource(), getString(context, "opcode"), getString(context, "target class"), getString(context, "target field"), null, null))
-										.then(argument("type", word())
-												.suggests((context, builder) -> CommandSource.suggestMatching(TYPES, builder))
-												.then(argument("new value", string())
-												.executes(context -> reflectionExecutor(context.getSource(), getString(context, "opcode"), getString(context, "target class"), getString(context, "target field"), getString(context, "type"), getString(context, "new value")))))))));
+	private static final boolean ENABLED = Boolean.parseBoolean(System.getProperty("aaronmod.enableReflectCommand", "false")) || FabricLoader.getInstance().isDevelopmentEnvironment();
+
+	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+		if (ENABLED) {
+			//Maybe turn this into subcommands
+			dispatcher.register(literal("reflect")
+					.then(argument("opcode", word())
+							.suggests((context, builder) -> CommandSource.suggestMatching(OPCODES, builder))
+							.then(argument("target class", word())
+									.then(argument("target field", word())
+											.executes(context -> reflectionExecutor(context.getSource(), getString(context, "opcode"), getString(context, "target class"), getString(context, "target field"), null, null))
+											.then(argument("type", word())
+													.suggests((context, builder) -> CommandSource.suggestMatching(TYPES, builder))
+													.then(argument("new value", string())
+													.executes(context -> reflectionExecutor(context.getSource(), getString(context, "opcode"), getString(context, "target class"), getString(context, "target field"), getString(context, "type"), getString(context, "new value")))))))));
+		}
 	}
 	
 	private static final Supplier<MutableText> INVALID_OPCODE = () -> Constants.PREFIX.get().append(Text.literal("Invalid Opcode!").formatted(Formatting.RED));

@@ -1,11 +1,10 @@
-package net.azureaaron.mod.commands;
+package net.azureaaron.mod.commands.skyblock;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
-import java.lang.invoke.MethodHandle;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,11 +24,15 @@ import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.commands.Command;
+import net.azureaaron.mod.commands.CommandSystem;
+import net.azureaaron.mod.commands.SkyblockCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.Skyblock;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BundleContentsComponent;
@@ -43,29 +46,22 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
 
-public class CroesusCommand {
-	private static final MethodHandle DISPATCH_HANDLE = CommandSystem.obtainDispatchHandle4Skyblock("printCroesus");
+public class CroesusCommand extends SkyblockCommand {
+	public static final Command INSTANCE = new CroesusCommand();
 	private static final long TWO_DAYS = 172_800_000;
 	private static final Supplier<MutableText> NO_TREASURES = () -> Constants.PREFIX.get().append(Text.literal("This player doesn't have any dungeon treasures to claim!").formatted(Formatting.RED));
-	@Deprecated(forRemoval = true)
-	//TODO replace this with a check on the key set of loaded rare loot items from the file
-	private static final String[] RARE_LOOT = {/*M7*/ "dark_claymore", "necron_handle", "wither_shield_scroll",
-			"implosion_scroll", "shadow_warp_scroll", "fifth_master_star", "necron_dye", "thunderlord_7", "master_skull_tier_5",
-			/*M6*/ "giants_sword", "fourth_master_star", /*M5*/ "shadow_fury", "shadow_assassin_chestplate", "third_master_star", 
-			/*M4*/ "spirit_wing", "item_spirit_bow", "second_master_star", /*M3*/ "first_master_star", /*All Floors*/ "recombobulator_3000"};
-	
-	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
+
+	@Override
+	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
 		dispatcher.register(literal("croesus")
-				.executes(context -> CommandSystem.handleSelf4Skyblock(context.getSource(), DISPATCH_HANDLE))
+				.executes(context -> CommandSystem.handleSelf4Skyblock(this, context.getSource()))
 				.then(argument("player", word())
 						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
-						.executes(context -> CommandSystem.handlePlayer4Skyblock(context.getSource(), getString(context, "player"), DISPATCH_HANDLE))));
+						.executes(context -> CommandSystem.handlePlayer4Skyblock(this, context.getSource(), getString(context, "player")))));
 	}
-	
-	private record ChestData(String runId, String type, JsonArray rewards) {}
-	private record RunData(long timestamp, int floor, String dungeon, List<ChestData> chests) {}
-	
-	protected static void printCroesus(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
+
+	@Override
+	public void print(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
 		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
 		
 		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);
@@ -132,7 +128,7 @@ public class CroesusCommand {
 				//rare drops can be duplicated in the list however common drops are deduplicated.
 				chest.rewards().forEach((element) -> {
 					String stringForm = element.getAsString();
-					boolean isRareLoot = Arrays.stream(RARE_LOOT).anyMatch(stringForm::equals);
+					boolean isRareLoot = Skyblock.getRareLootItems().keySet().stream().anyMatch(stringForm::equals);
 					
 					if (isRareLoot || (!isRareLoot && !rewards.contains(stringForm))) rewards.add(stringForm);
 				});
@@ -146,8 +142,8 @@ public class CroesusCommand {
 		}
 		
 		String rewardsString = rewards.toString();
-		boolean rareLootAwaits = Arrays.stream(RARE_LOOT).anyMatch(rewardsString::contains);
-		Function<String, Boolean> containsRareLoot = s -> Arrays.stream(RARE_LOOT).anyMatch(s::equals);
+		boolean rareLootAwaits = Skyblock.getRareLootItems().keySet().stream().anyMatch(rewardsString::contains);
+		Function<String, Boolean> containsRareLoot = s -> Skyblock.getRareLootItems().keySet().stream().anyMatch(s::equals);
 		List<String> rareLoot = rewards.stream().filter(e -> containsRareLoot.apply(e)).collect(Collectors.toList());
 		
 		ItemStack bundle = Items.BUNDLE.getDefaultStack();
@@ -201,7 +197,8 @@ public class CroesusCommand {
 		if (count > 10) source.sendFeedback(Text.literal("and " + (runs.size() - 10) + " more...").styled(style -> style.withColor(colourProfile.supportingInfoColour.getAsInt()).withItalic(true)));
 		
 		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
-		
-		return;
 	}
+
+	private record ChestData(String runId, String type, JsonArray rewards) {}
+	private record RunData(long timestamp, int floor, String dungeon, List<ChestData> chests) {}
 }

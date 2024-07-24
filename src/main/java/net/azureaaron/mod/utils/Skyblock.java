@@ -18,8 +18,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 
 import net.azureaaron.mod.Main;
-import net.azureaaron.mod.commands.MagicalPowerCommand;
-import net.azureaaron.mod.commands.NetworthCommand;
+import net.azureaaron.mod.commands.skyblock.MagicalPowerCommand;
+import net.azureaaron.mod.commands.skyblock.NetworthCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Http.ApiResponse;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;

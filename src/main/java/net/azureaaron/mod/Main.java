@@ -6,27 +6,27 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mojang.brigadier.CommandDispatcher;
 
-import net.azureaaron.mod.commands.BazaarCommand;
-import net.azureaaron.mod.commands.BlessingsCommand;
-import net.azureaaron.mod.commands.CopyChatCommand;
-import net.azureaaron.mod.commands.CrimsonCommand;
-import net.azureaaron.mod.commands.CroesusCommand;
-import net.azureaaron.mod.commands.DefaultSkinCommand;
-import net.azureaaron.mod.commands.DungeonsCommand;
-import net.azureaaron.mod.commands.EssenceCommand;
-import net.azureaaron.mod.commands.InventoryCommand;
-import net.azureaaron.mod.commands.LowestBinCommand;
-import net.azureaaron.mod.commands.MagicalPowerCommand;
 import net.azureaaron.mod.commands.ModScreenCommand;
-import net.azureaaron.mod.commands.NetworthCommand;
-import net.azureaaron.mod.commands.PingCommand;
-import net.azureaaron.mod.commands.ProfileCommand;
 import net.azureaaron.mod.commands.ReflectCommand;
+import net.azureaaron.mod.commands.TestCommand;
 import net.azureaaron.mod.commands.TextReplacerCommand;
-import net.azureaaron.mod.commands.UuidCommand;
-import net.azureaaron.mod.commands.WardenWarningLevelCommand;
+import net.azureaaron.mod.commands.skyblock.BazaarCommand;
+import net.azureaaron.mod.commands.skyblock.BlessingsCommand;
+import net.azureaaron.mod.commands.skyblock.CrimsonCommand;
+import net.azureaaron.mod.commands.skyblock.CroesusCommand;
+import net.azureaaron.mod.commands.skyblock.DungeonsCommand;
+import net.azureaaron.mod.commands.skyblock.EssenceCommand;
+import net.azureaaron.mod.commands.skyblock.InventoryCommand;
+import net.azureaaron.mod.commands.skyblock.LowestBinCommand;
+import net.azureaaron.mod.commands.skyblock.MagicalPowerCommand;
+import net.azureaaron.mod.commands.skyblock.NetworthCommand;
+import net.azureaaron.mod.commands.skyblock.ProfileCommand;
+import net.azureaaron.mod.commands.vanilla.CopyChatCommand;
+import net.azureaaron.mod.commands.vanilla.DefaultSkinCommand;
+import net.azureaaron.mod.commands.vanilla.PingCommand;
+import net.azureaaron.mod.commands.vanilla.UuidCommand;
+import net.azureaaron.mod.commands.vanilla.WardenWarningLevelCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.ReceiveChatMessageEvent;
 import net.azureaaron.mod.features.BoundingBoxes;
@@ -44,14 +44,12 @@ import net.azureaaron.mod.utils.Skyblock;
 import net.azureaaron.mod.utils.Utils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.command.CommandRegistryAccess;
 
 public class Main implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("aaron-mod");
@@ -60,7 +58,6 @@ public class Main implements ClientModInitializer {
 	public static final ModContainer MOD_CONTAINER = FabricLoader.getInstance().getModContainer("aaron-mod").get();
 	public static final String MOD_VERSION = MOD_CONTAINER.getMetadata().getVersion().getFriendlyString();
 	public static final String MINECRAFT_VERSION = SharedConstants.getGameVersion().getName();
-	private static final boolean ENABLE_REFLECT_COMMAND = Boolean.parseBoolean(System.getProperty("aaronmod.enableReflectCommand", "false")) || FabricLoader.getInstance().isDevelopmentEnvironment();
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
 	@Override
@@ -69,12 +66,12 @@ public class Main implements ClientModInitializer {
 		AaronModConfigManager.init();
 		ApiAuthentication.init();
 		Utils.init();
-		
+
 		//Register listeneres and commands
-		ClientCommandRegistrationCallback.EVENT.register(Main::registerCommands);
+		Main.registerCommands();
 		ClientPlayConnectionListener.init();
 		ReceiveChatMessageEvent.init();
-		
+
 		//Initialize Features
 		BoundingBoxes.init();
 		DragonTimers.init();
@@ -83,45 +80,49 @@ public class Main implements ClientModInitializer {
 		DragonHealth.init();
 		Skyblock.init();
 		ChromaText.init();
-		
+
 		//Register Keybinds
 		registerKeybindings();
-		
+
 		//Custom Event Registration
 		ReceiveChatMessageListener.listen();
 		CopyChatMessages.init();
 		PlaySoundListener.listen();
-		
-		//Particle Stuff :)
-	};
-	
-	private static void registerCommands(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {		
-		PingCommand.register(dispatcher); //1
-		UuidCommand.register(dispatcher); //3
-		CopyChatCommand.register(dispatcher); //10
-		DefaultSkinCommand.register(dispatcher); //16
-		WardenWarningLevelCommand.register(dispatcher); //17
-		ModScreenCommand.register(dispatcher); //18
-		TextReplacerCommand.register(dispatcher); //19
-		
-		if (AaronModConfigManager.get().enableSkyblockCommands) {
-			ProfileCommand.register(dispatcher); //2
-			DungeonsCommand.register(dispatcher); //4
-			BlessingsCommand.register(dispatcher); //5
-			NetworthCommand.register(dispatcher); //6
-			InventoryCommand.register(dispatcher); //7
-			CrimsonCommand.register(dispatcher); //8
-			BazaarCommand.register(dispatcher); //9
-			LowestBinCommand.register(dispatcher); //11
-			EssenceCommand.register(dispatcher); //13
-			CroesusCommand.register(dispatcher); //15
-			MagicalPowerCommand.register(dispatcher); //20
-		}
-		
-		//TestCommand.register(dispatcher); //12
-		if (ENABLE_REFLECT_COMMAND) ReflectCommand.register(dispatcher); //14
 	}
-	
+
+	//All registrations are grouped by their package or category, then alphabetically
+	private static void registerCommands() {
+		//Misc
+		ClientCommandRegistrationCallback.EVENT.register(ModScreenCommand::register);
+		ClientCommandRegistrationCallback.EVENT.register(TextReplacerCommand::register);
+
+		//Vanilla
+		ClientCommandRegistrationCallback.EVENT.register(CopyChatCommand::register);
+		ClientCommandRegistrationCallback.EVENT.register(DefaultSkinCommand.INSTANCE::register);
+		ClientCommandRegistrationCallback.EVENT.register(PingCommand::register);
+		ClientCommandRegistrationCallback.EVENT.register(UuidCommand.INSTANCE::register);
+		ClientCommandRegistrationCallback.EVENT.register(WardenWarningLevelCommand::register);
+
+		//Skyblock
+		if (AaronModConfigManager.get().enableSkyblockCommands) {
+			ClientCommandRegistrationCallback.EVENT.register(BazaarCommand::register);
+			ClientCommandRegistrationCallback.EVENT.register(BlessingsCommand::register);
+			ClientCommandRegistrationCallback.EVENT.register(CrimsonCommand.INSTANCE::register);
+			ClientCommandRegistrationCallback.EVENT.register(CroesusCommand.INSTANCE::register);
+			ClientCommandRegistrationCallback.EVENT.register(DungeonsCommand.INSTANCE::register);
+			ClientCommandRegistrationCallback.EVENT.register(EssenceCommand.INSTANCE::register);
+			ClientCommandRegistrationCallback.EVENT.register(InventoryCommand.INSTANCE::register);
+			ClientCommandRegistrationCallback.EVENT.register(LowestBinCommand::register);
+			ClientCommandRegistrationCallback.EVENT.register(MagicalPowerCommand.INSTANCE::register);
+			ClientCommandRegistrationCallback.EVENT.register(NetworthCommand.INSTANCE::register);
+			ClientCommandRegistrationCallback.EVENT.register(ProfileCommand.INSTANCE::register);
+		}
+
+		//Development
+		ClientCommandRegistrationCallback.EVENT.register(TestCommand::register);
+		ClientCommandRegistrationCallback.EVENT.register(ReflectCommand::register);
+	}
+
 	private static void registerKeybindings() {
 		//I used to cheat the translation key system but now I abide by it :)
 		Keybinds.zoomKeybind = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.aaron-mod.zoom", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_C, "category.aaron-mod.main"));
