@@ -50,13 +50,15 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 				Style nameStyle = Style.EMPTY.withColor(0x84dadd);
 				Style starStyle = Style.EMPTY.withColor(Formatting.AQUA);
 				Style masterStarStyle = Style.EMPTY.withColor(Formatting.DARK_AQUA);
-				int masterStarsApplied = 0;
+				int masterStarsApplied = switch (itemName) {
+					case String s when s.contains("➊") -> 1;
+					case String s when s.contains("➋") -> 2;
+					case String s when s.contains("➌") -> 3;
+					case String s when s.contains("➍") -> 4;
+					case String s when s.contains("➎") -> 5;
 
-				if (itemName.contains("➊")) masterStarsApplied = 1;
-				if (itemName.contains("➋")) masterStarsApplied = 2;
-				if (itemName.contains("➌")) masterStarsApplied = 3;
-				if (itemName.contains("➍")) masterStarsApplied = 4;
-				if (itemName.contains("➎")) masterStarsApplied = 5;
+					default -> 0;
+				};
 
 				Text styledName = TextTransformer.stylize(text, BASE_STYLE, "Diamond", nameStyle, 1);
 				Text styledStars = TextTransformer.stylize(styledName, BASE_STYLE, "✪", starStyle, 5);
@@ -65,13 +67,15 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 
 			if (AaronModConfigManager.get().oldMasterStars) {
 				Style masterStarStyle = Style.EMPTY.withColor(Formatting.RED);
-				int masterStarsApplied = 0;
+				int masterStarsApplied = switch (itemName) {
+					case String s when s.contains("➊") -> 1;
+					case String s when s.contains("➋") -> 2;
+					case String s when s.contains("➌") -> 3;
+					case String s when s.contains("➍") -> 4;
+					case String s when s.contains("➎") -> 5;
 
-				if (itemName.contains("➊")) masterStarsApplied = 1;
-				if (itemName.contains("➋")) masterStarsApplied = 2;
-				if (itemName.contains("➌")) masterStarsApplied = 3;
-				if (itemName.contains("➍")) masterStarsApplied = 4;
-				if (itemName.contains("➎")) masterStarsApplied = 5;
+					default -> 0;
+				};
 
 				return TextTransformer.stylizeAndReplace(text, BASE_STYLE, "✪", masterStarStyle, MASTER_STARS, MASTER_STAR_REGEX, "", masterStarsApplied);
 			}
@@ -134,9 +138,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 	public boolean getAlwaysDisplaySkyblockInfo() {
 		NbtComponent component = getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT);
 
-		boolean alwaysDisplaySkyblockStuff = component.getNbt().getCompound(Main.NAMESPACE).getBoolean("alwaysDisplaySkyblockInfo");
-
-		return alwaysDisplaySkyblockStuff;
+		return component.getNbt().getCompound(Main.NAMESPACE).getBoolean("alwaysDisplaySkyblockInfo");
 	}
 
 	@SuppressWarnings("deprecation")
@@ -151,6 +153,8 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 
 		compound.getCompound(Main.NAMESPACE).putBoolean("alwaysDisplaySkyblockInfo", value);
 
-		if (!contains(DataComponentTypes.CUSTOM_DATA)) set(DataComponentTypes.CUSTOM_DATA, component);
+		if (!contains(DataComponentTypes.CUSTOM_DATA)) {
+			set(DataComponentTypes.CUSTOM_DATA, component);
+		}
 	}
 }
