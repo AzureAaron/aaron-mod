@@ -1,4 +1,4 @@
-package net.azureaaron.mod.utils;
+package net.azureaaron.mod.utils.datafixer;
 
 import com.mojang.serialization.Dynamic;
 

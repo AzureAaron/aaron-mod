@@ -71,6 +71,8 @@ dependencies {
 }
 
 loom {
+	accessWidenerPath = file("src/main/resources/aaron-mod.accesswidener")
+
 	mixin {
 		useLegacyMixinAp = false
 	}
