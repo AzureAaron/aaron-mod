@@ -173,7 +173,10 @@ public class AaronModConfig {
 	
 	@SerialEntry
 	public int inventoryGuiScale = 0;
-	
+
+	@SerialEntry
+	public boolean noFog = false;
+
 	@SerialEntry
 	public Object2ObjectOpenHashMap<Identifier, Particles.State> particles = new Object2ObjectOpenHashMap<>();
 	

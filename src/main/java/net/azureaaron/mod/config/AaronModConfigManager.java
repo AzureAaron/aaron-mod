@@ -281,6 +281,14 @@ public class AaronModConfigManager {
 										.controller(ConfigUtils::createBooleanController)
 										.build())
 								.option(Option.<Boolean>createBuilder()
+										.name(Text.literal("No Fog"))
+										.description(OptionDescription.of(Text.literal("Disables fog in the world.")))
+										.binding(defaults.noFog,
+												() -> config.noFog,
+												newValue -> config.noFog = newValue)
+										.controller(ConfigUtils::createBooleanController)
+										.build())
+								.option(Option.<Boolean>createBuilder()
 										.name(Text.literal("Copy Chat Messages"))
 										.description(OptionDescription.createBuilder()
 												.text(Text.literal("Allows you to copy a chat message by middle/right clicking on it!"))

@@ -5,6 +5,7 @@
   "plugin": "net.azureaaron.mod.compatibility.MixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "BackgroundRendererMixin",
     "ChatHudMixin",
     "ChestBlockEntityRendererMixin",
     "ClientPlayNetworkHandlerMixin",
