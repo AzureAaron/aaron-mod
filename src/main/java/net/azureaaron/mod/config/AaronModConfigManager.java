@@ -201,6 +201,14 @@ public class AaronModConfigManager {
 										.controller(ConfigUtils::createBooleanController)
 										.build())
 								.option(Option.<Boolean>createBuilder()
+										.name(Text.literal("Always Show Day in F3"))
+										.description(OptionDescription.of(Text.literal("Due to an oversight in the fix of MC-230732 the world's day counter in the F3 menu is hidden outside of singleplayer, this option brings it back when outside of singleplayer.")))
+										.binding(defaults.alwaysShowDayInF3,
+												() -> config.alwaysShowDayInF3,
+												newValue -> config.alwaysShowDayInF3 = newValue)
+										.controller(ConfigUtils::createBooleanController)
+										.build())
+								.option(Option.<Boolean>createBuilder()
 										.name(Text.literal("Hide Fire Overlay"))
 										.description(OptionDescription.createBuilder()
 												.text(Text.literal("Prevents the fire overlay from being seen while you're burning."))

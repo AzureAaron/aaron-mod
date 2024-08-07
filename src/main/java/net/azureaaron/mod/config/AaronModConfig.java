@@ -178,6 +178,9 @@ public class AaronModConfig {
 	public boolean noFog = false;
 
 	@SerialEntry
+	public boolean alwaysShowDayInF3 = false;
+
+	@SerialEntry
 	public Object2ObjectOpenHashMap<Identifier, Particles.State> particles = new Object2ObjectOpenHashMap<>();
 	
 	@SerialEntry 
