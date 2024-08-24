@@ -37,7 +37,6 @@ import net.azureaaron.mod.features.DragonTimers;
 import net.azureaaron.mod.features.ImagePreview;
 import net.azureaaron.mod.features.M7Waypoints;
 import net.azureaaron.mod.listeners.ClientPlayConnectionListener;
-import net.azureaaron.mod.listeners.PlaySoundListener;
 import net.azureaaron.mod.listeners.ReceiveChatMessageListener;
 import net.azureaaron.mod.utils.ApiAuthentication;
 import net.azureaaron.mod.utils.Skyblock;
@@ -71,6 +70,7 @@ public class Main implements ClientModInitializer {
 
 		//Register listeneres and commands
 		Main.registerCommands();
+		WardenWarningLevelCommand.init();
 		ClientPlayConnectionListener.init();
 		ReceiveChatMessageEvent.init();
 
@@ -89,7 +89,6 @@ public class Main implements ClientModInitializer {
 		//Custom Event Registration
 		ReceiveChatMessageListener.listen();
 		CopyChatMessages.init();
-		PlaySoundListener.listen();
 	}
 
 	//All registrations are grouped by their package or category, then alphabetically

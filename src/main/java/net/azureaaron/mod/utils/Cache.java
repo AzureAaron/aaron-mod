@@ -42,10 +42,6 @@ public class Cache {
 
 	public static String currentServerAddress = "";
 	public static String lastServerAddress = "";
-	
-	/**@implNote It isn't possible to find out which exact player trigger a shrieker so this may not be 100% accurate*/
-	public static int warningLevel = 0;
-	public static long lastShriekTime = 0L;
 
 	public static void incrementBlessing(String blessing, String level) {
 		switch(blessing) {
@@ -74,11 +70,6 @@ public class Cache {
 		lifeBlessing = 0;
 		stoneBlessing = 0;
 		timeBlessing = false;
-	}
-	
-	public static int relativeWarningLevel() {
-		int tenMinuteIncrementsPassed = (int) ((System.currentTimeMillis() - lastShriekTime) / 600000L);
-		return lastShriekTime == 0L ? 0 : Math.max(warningLevel - tenMinuteIncrementsPassed, 0);
 	}
 	
 	/**{@link HashSet} containing bazaar product names. Example: {@code Fifth Master Star}*/

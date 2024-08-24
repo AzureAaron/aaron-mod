@@ -7,21 +7,16 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 
 public class ClientPlayConnectionListener {
-	
+
 	public static void init() {
 		ClientPlayConnectionEvents.JOIN.register(ClientPlayConnectionListener::onJoin);
 		ClientPlayConnectionEvents.DISCONNECT.register(ClientPlayConnectionListener::onDisconnect);
 	}
-	
+
 	private static void onJoin(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client) {
 		Cache.currentServerAddress = client.isInSingleplayer() || handler.getServerInfo().address == null ? "localhost" : handler.getServerInfo().address.toLowerCase();
-		
-		if (!Cache.lastServerAddress.equals(Cache.currentServerAddress)) {
-			Cache.warningLevel = 0;
-			Cache.lastShriekTime = 0L;
-		}
 	}
-	
+
 	private static void onDisconnect(ClientPlayNetworkHandler handler, MinecraftClient client) {
 		Cache.lastServerAddress = Cache.currentServerAddress;
 		Cache.currentServerAddress = "";
