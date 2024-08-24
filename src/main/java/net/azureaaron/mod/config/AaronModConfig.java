@@ -181,6 +181,9 @@ public class AaronModConfig {
 	public boolean alwaysShowDayInF3 = false;
 
 	@SerialEntry
+	public boolean hideTutorials = false;
+
+	@SerialEntry
 	public Object2ObjectOpenHashMap<Identifier, Particles.State> particles = new Object2ObjectOpenHashMap<>();
 	
 	@SerialEntry 

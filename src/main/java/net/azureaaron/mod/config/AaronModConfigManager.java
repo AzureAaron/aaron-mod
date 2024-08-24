@@ -209,6 +209,14 @@ public class AaronModConfigManager {
 										.controller(ConfigUtils::createBooleanController)
 										.build())
 								.option(Option.<Boolean>createBuilder()
+										.name(Text.literal("Hide Tutorials"))
+										.description(OptionDescription.of(Text.literal("Hides tutorial pop-up toasts.")))
+										.binding(defaults.hideTutorials,
+												() -> config.hideTutorials,
+												newValue -> config.hideTutorials = newValue)
+										.controller(ConfigUtils::createBooleanController)
+										.build())
+								.option(Option.<Boolean>createBuilder()
 										.name(Text.literal("Hide Fire Overlay"))
 										.description(OptionDescription.createBuilder()
 												.text(Text.literal("Prevents the fire overlay from being seen while you're burning."))

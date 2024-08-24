@@ -42,6 +42,7 @@
     "SkyblockerPVCollectionsGenericCategoryMixin",
     "TextRendererMixin",
     "TextVisitFactoryMixin",
+    "TutorialManagerMixin",
     "accessors.ChatAccessor",
     "accessors.ClientEntityManagerAccessor",
     "accessors.ClientWorldAccessor",
