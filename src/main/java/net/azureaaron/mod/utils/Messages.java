@@ -11,6 +11,7 @@ import net.minecraft.util.Formatting;
  * 
  * @author Aaron
  */
+//TODO rename to CommandMessages and move to another package?
 public interface Messages {
 	
 	/*
@@ -41,10 +42,7 @@ public interface Messages {
 	/*
 	 * Class-specific messages that don't fit well in their dedicated class
 	 */
-	
-	Supplier<MutableText> HYPIXEL_PROFILE_FETCH_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error fetching your Hypixel profile!")
-			.formatted(Formatting.RED));
-	
+
 	Supplier<MutableText> INVENTORY_API_DISABLED_ERROR = () -> Constants.PREFIX.get().append(Text.literal("This player has their inventory api disabled!")
 			.formatted(Formatting.RED));
 }

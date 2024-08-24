@@ -16,6 +16,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -31,15 +32,12 @@ public class Http {
 			.connectTimeout(Duration.ofSeconds(10))
 			.followRedirects(Redirect.NORMAL)
 			.build();
-	private static final String HYPIXEL_BASE = "https://api.hypixel.net/";
 	private static final String AARON_BASE = "https://api.azureaaron.net/";
 	private static final String NAME_TO_UUID = "https://api.minecraftservices.com/minecraft/profile/lookup/name/";
 	private static final String UUID_TO_NAME = "https://api.minecraftservices.com/minecraft/profile/lookup/";
-	public static final String NETWORTH = "https://maro.skyblockextras.com/api/networth/categories";
-	private static final String MOULBERRY = "https://moulberry.codes/";
 	private static final String USER_AGENT = "Aaron's Mod/" + Main.MOD_VERSION + " (" + Main.MINECRAFT_VERSION + ")";
-	
-	private static ApiResponse sendGetRequest(String url, boolean throwOnNonOk, String apiToken) throws IOException, InterruptedException, ApiException {
+
+	private static ApiResponse sendGetRequestInternal(String url, @Nullable String apiToken) throws IOException, InterruptedException {
 		HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
 				.GET()
 				.header("Accept", "application/json")
@@ -50,44 +48,42 @@ public class Http {
 
 		if (apiToken != null) requestBuilder.header("Token", apiToken);
 
-		HttpRequest request = requestBuilder.build();
-		HttpResponse<InputStream> response = HTTP_CLIENT.send(request, BodyHandlers.ofInputStream());
+		HttpResponse<InputStream> response = HTTP_CLIENT.send(requestBuilder.build(), BodyHandlers.ofInputStream());
 		InputStream decodedInputStream = getDecodedInputStream(response);
-		
+
 		String body = new String(decodedInputStream.readAllBytes());
-		int statusCode = response.statusCode();
-		
-		if (throwOnNonOk && statusCode != 200) throw new ApiException("[Aaron's Mod] API Error! URL: " + url + ", Code: " + statusCode + ", Body: " + body);
-		
-		return new ApiResponse(body, statusCode, url, response.headers());
+
+		return new ApiResponse(body, response.statusCode(), url, response.headers());
 	}
-			
-	public static String sendUnauthorizedHypixelRequest(String endpoint, @NotNull String parameters) throws IOException, InterruptedException, ApiException {
-		return sendGetRequest(HYPIXEL_BASE + endpoint + parameters, true, null).content();
+
+	public static String sendGetRequest(@NotNull String url) throws IOException, InterruptedException {
+		return sendGetRequestInternal(url, null).content();
 	}
-	
-	public static String sendAuthorizedHypixelRequest(String endpoint, @NotNull String parameters) throws IOException, InterruptedException, ApiException {
-		return sendGetRequest(AARON_BASE + "hypixel/" + endpoint + parameters, true, ApiAuthentication.getToken()).content();
+
+	public static String sendAuthorizedHypixelRequest(@NotNull String endpoint, @NotNull String parameters) throws IOException, InterruptedException, ApiException {
+		ApiResponse response = sendGetRequestInternal(AARON_BASE + "hypixel/v2/" + endpoint + parameters, ApiAuthentication.getToken());
+		response.tryThrow();
+
+		return response.content();
 	}
-	
-	public static ApiResponse sendNameToUuidRequest(String name) throws IOException, InterruptedException, ApiException {
-		return sendGetRequest(NAME_TO_UUID + name, false, null);
+
+	public static ApiResponse sendNameToUuidRequest(@NotNull String name) throws IOException, InterruptedException, ApiException {
+		return sendGetRequestInternal(NAME_TO_UUID + name, null);
 	}
-	
-	public static ApiResponse sendUuidToNameRequest(String uuid) throws IOException, InterruptedException, ApiException {
-		return sendGetRequest(UUID_TO_NAME + uuid, false, null);
+
+	public static ApiResponse sendUuidToNameRequest(@NotNull String uuid) throws IOException, InterruptedException, ApiException {
+		return sendGetRequestInternal(UUID_TO_NAME + uuid, null);
 	}
 
 	//TODO give this a better name?
-	public static ApiResponse sendApiRequest(String path) throws IOException, InterruptedException, ApiException {
-		return sendGetRequest(AARON_BASE + path, true, null);
-	}
-	
-	public static String sendMoulberryRequest(String endpoint) throws IOException, InterruptedException, ApiException {
-		return sendGetRequest(MOULBERRY + endpoint, false, null).content();
+	public static ApiResponse sendApiRequest(@NotNull String path) throws IOException, InterruptedException, ApiException {
+		ApiResponse response = sendGetRequestInternal(AARON_BASE + path, null);
+		response.tryThrow();
+
+		return response;
 	}
 
-	public static String sendPostRequest(String url, String requestBody, String contentType) throws IOException, InterruptedException {		
+	public static String sendPostRequest(@NotNull String url, @NotNull String requestBody, @NotNull String contentType) throws IOException, InterruptedException {		
 		HttpRequest request = HttpRequest.newBuilder()
 				.POST(HttpRequest.BodyPublishers.ofString(requestBody))
 				.header("Accept", contentType)
@@ -152,7 +148,8 @@ public class Http {
 	private static String getContentType(HttpResponse<InputStream> response) {
 		return response.headers().firstValue("Content-Type").orElse("");
 	}
-	
+
+	//TODO give this a more generic name?
 	public record ApiResponse(String content, int statusCode, String url, HttpHeaders headers) {
 		
 		public boolean ok() {
@@ -166,8 +163,13 @@ public class Http {
 		public ApiException createException() {
 			return new ApiException("[Aaron's Mod] API Error! URL: " + url + ", Code: " + statusCode + ", Body: " + content);
 		}
+
+		public void tryThrow() throws ApiException {
+			if (!ok()) throw createException();
+		}
 	}
-	
+
+	//FIXME deprecate maybe?
 	public static class ApiException extends Exception {
 		private static final long serialVersionUID = 2804124614055383667L;
 

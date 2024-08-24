@@ -1,5 +1,9 @@
 package net.azureaaron.mod.utils.datafixer;
 
+import static net.azureaaron.legacyitemdfu.LegacyItemStackFixer.FIRST_VERSION;
+import static net.azureaaron.legacyitemdfu.LegacyItemStackFixer.LATEST_VERSION;
+import static net.azureaaron.legacyitemdfu.LegacyItemStackFixer.getFixer;
+
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -7,17 +11,15 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Dynamic;
 
+import net.azureaaron.legacyitemdfu.TypeReferences;
 import net.azureaaron.mod.utils.ItemUtils;
 import net.azureaaron.mod.utils.TextTransformer;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.SharedConstants;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.component.type.LoreComponent;
 import net.minecraft.component.type.NbtComponent;
-import net.minecraft.datafixer.Schemas;
-import net.minecraft.datafixer.TypeReferences;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -26,23 +28,18 @@ import net.minecraft.text.Text;
 
 public class LegacyItemStackFixer {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	public static final ThreadLocal<Boolean> ENABLE_DFU_FIXES = ThreadLocal.withInitial(() -> false);
-	private static final int FIRST_DATA_VERSION = 100; //15w32a (1.9 snapshot)
-	private static final int CURRENT_DATA_VERSION = SharedConstants.getGameVersion().getSaveVersion().getId();
 
 	private static boolean shouldLog = FabricLoader.getInstance().isDevelopmentEnvironment();
 
 	@SuppressWarnings("deprecation")
 	public static ItemStack fixLegacyStack(NbtCompound nbt) {
-		ENABLE_DFU_FIXES.set(true);
+		if (nbt.getInt("id") == 0) return ItemStack.EMPTY;
 
-		Dynamic<NbtElement> fixed = Schemas.getFixer().update(TypeReferences.ITEM_STACK, new Dynamic<>(ItemUtils.getRegistryLookup().getOps(NbtOps.INSTANCE), nbt), FIRST_DATA_VERSION, CURRENT_DATA_VERSION);
+		Dynamic<NbtElement> fixed = getFixer().update(TypeReferences.LEGACY_ITEM_STACK, new Dynamic<>(ItemUtils.getRegistryLookup().getOps(NbtOps.INSTANCE), nbt), FIRST_VERSION, LATEST_VERSION);
 		ItemStack stack = ItemStack.CODEC.parse(fixed)
 				.setPartial(ItemStack.EMPTY)
 				.resultOrPartial(LegacyItemStackFixer::tryLogFixerError)
 				.get();
-
-		ENABLE_DFU_FIXES.remove(); //Free memory
 
 		//Convert Custom Name & Lore to text components
 		if (stack.contains(DataComponentTypes.CUSTOM_NAME)) {
@@ -68,7 +65,7 @@ public class LegacyItemStackFixer {
 		stack.set(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT.withShowInTooltip(false));
 
 		//Hide Vanilla Enchantments
-		stack.set(DataComponentTypes.ENCHANTMENTS, ItemEnchantmentsComponent.DEFAULT.withShowInTooltip(false));
+		stack.set(DataComponentTypes.ENCHANTMENTS, stack.getOrDefault(DataComponentTypes.ENCHANTMENTS, ItemEnchantmentsComponent.DEFAULT).withShowInTooltip(false));
 
 		//Always Display Skyblock Stuff on the item
 		stack.setAlwaysDisplaySkyblockInfo(true);

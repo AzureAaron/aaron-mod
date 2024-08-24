@@ -10,7 +10,6 @@ import com.mojang.brigadier.Command;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.JsonOps;
 
-import net.azureaaron.mod.commands.skyblock.NetworthCommand;
 import net.azureaaron.mod.features.TextReplacer;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.Http;
@@ -91,12 +90,11 @@ public class CommandSystem {
 		
 		return Command.SINGLE_SUCCESS;
 	}
-	
+
 	private static int handleSkyblockCommand(SkyblockCommand command, FabricClientCommandSource source, CommandPlayerData playerData) {
 		CompletableFuture.supplyAsync(() -> {
 			try {
-				//TODO remove this legacy profiles v1 thing when the networth api updates
-				return Http.sendAuthorizedHypixelRequest(command == NetworthCommand.INSTANCE ? "skyblock/profiles" : "v2/skyblock/profiles", "?uuid=" + playerData.id());
+				return Http.sendAuthorizedHypixelRequest("skyblock/profiles", "?uuid=" + playerData.id());
 			} catch (Throwable t) {
 				source.sendError(Messages.SKYBLOCK_PROFILES_FETCH_ERROR.get());
 				LOGGER.error("[Aaron's Mod] Encountered an exception while fetching a player's skyblock profiles!", t);

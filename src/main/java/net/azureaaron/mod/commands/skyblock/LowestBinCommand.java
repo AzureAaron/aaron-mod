@@ -81,7 +81,7 @@ public class LowestBinCommand {
 		
 		CompletableFuture.supplyAsync(() -> {
 			try {
-				String lowestBinResponse = Http.sendMoulberryRequest("lowestbin.json");
+				String lowestBinResponse = Http.sendGetRequest("https://moulberry.codes/lowestbin.json");
 				JsonObject lowestBin = JsonParser.parseString(lowestBinResponse).getAsJsonObject();	
 				JsonObject priceObject = new JsonObject();
 				
@@ -100,7 +100,7 @@ public class LowestBinCommand {
 			
 			//TODO proper error msg for when there is no day average for an item (bc it hasn't been auctioned recently)
 			try {
-				String dayAverageResponse = Http.sendMoulberryRequest("auction_averages_lbin/" + average + "day.json");
+				String dayAverageResponse = Http.sendGetRequest("https://moulberry.codes/auction_averages_lbin/" + average + "day.json");
 				JsonObject dayAverage = JsonParser.parseString(dayAverageResponse).getAsJsonObject();
 				
 				if (dayAverage.get(itemId) == null) { //Does this even work?

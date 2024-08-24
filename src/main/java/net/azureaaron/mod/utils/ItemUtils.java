@@ -20,15 +20,28 @@ public class ItemUtils {
 	private static final WrapperLookup DEFAULT_LOOKUP = BuiltinRegistries.createWrapperLookup();
 
 	/**
+	 * Decodes from the item format from the Hypixel API into a list of {@link NbtCompound}s.
+	 */
+	public static List<NbtCompound> decodeCompressedItemData(String encoded) throws IOException {
+		return decodeCompressedItemData(Base64.getDecoder().decode(encoded));
+	}
+
+	/**
+	 * @see #decodeCompressedItemData(String)
+	 */
+	public static List<NbtCompound> decodeCompressedItemData(byte[] bytes) throws IOException {
+		return NbtIo.readCompressed(new ByteArrayInputStream(bytes), NbtSizeTracker.ofUnlimitedBytes()).getList("i", NbtElement.COMPOUND_TYPE).stream()
+				.map(NbtCompound.class::cast)
+				.toList();
+	}
+
+	/**
 	 * Parses the item format from the Hypixel API into a list of {@link ItemStack}s.
 	 */
 	public static List<ItemStack> parseCompressedItemData(String encoded) throws IOException {
-		List<ItemStack> items = NbtIo.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(encoded)), NbtSizeTracker.ofUnlimitedBytes()).getList("i", NbtElement.COMPOUND_TYPE).stream()
-				.map(NbtCompound.class::cast)
+		return decodeCompressedItemData(encoded).stream()
 				.map(LegacyItemStackFixer::fixLegacyStack)
 				.toList();
-
-		return items;
 	}
 
 	public static WrapperLookup getRegistryLookup() {

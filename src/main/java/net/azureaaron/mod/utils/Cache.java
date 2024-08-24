@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -38,18 +39,14 @@ public class Cache {
 	public static volatile boolean inDungeonBossRoom = false;
 	@Deprecated(forRemoval = true)
 	public static int currentScore = 0;
-		
+
 	public static String currentServerAddress = "";
 	public static String lastServerAddress = "";
 	
 	/**@implNote It isn't possible to find out which exact player trigger a shrieker so this may not be 100% accurate*/
 	public static int warningLevel = 0;
 	public static long lastShriekTime = 0L;
-			
-	static {
-		populate();
-	}
-	
+
 	public static void incrementBlessing(String blessing, String level) {
 		switch(blessing) {
 		case "Power": 
@@ -96,17 +93,14 @@ public class Cache {
 	/**{@link HashMap} used for mapping item names to skyblock item ids. Example: {@code Astraea → ASTRAEA}*/
 	public static final HashMap<String, String> ITEM_NAMES = new HashMap<>();
 	
-	public static void populate() {
+	public static void populate(JsonArray itemsData) {
 		//HashMap used for mapping item ids to item names
 		HashMap<String, String> items = new HashMap<>();
 		
 		CompletableFuture.supplyAsync(() -> {
 			//Populate skyblock items cache
-			try {
-				String itemsResponse = Http.sendUnauthorizedHypixelRequest("v2/resources/skyblock/items", "");
-				JsonObject itemsData = JsonParser.parseString(itemsResponse).getAsJsonObject();
-				
-				for(JsonElement item : itemsData.get("items").getAsJsonArray()) {
+			try {				
+				for (JsonElement item : itemsData) {
 					String itemName = Formatting.strip(item.getAsJsonObject().get("name").getAsString());
 					String itemId = item.getAsJsonObject().get("id").getAsString();
 					
@@ -127,7 +121,7 @@ public class Cache {
 			//Populate bazaar products cache
 			if(!result) return false; //Prevent exception (crash?) if item cache doesn't get populated
 			try {
-				String bazaarResponse = Http.sendUnauthorizedHypixelRequest("skyblock/bazaar", "");
+				String bazaarResponse = Http.sendGetRequest("https://api.hypixel.net/v2/skyblock/bazaar");
 				JsonObject bazaarData = JsonParser.parseString(bazaarResponse).getAsJsonObject();
 				
 				bazaarData.get("products").getAsJsonObject().keySet().forEach(key -> {

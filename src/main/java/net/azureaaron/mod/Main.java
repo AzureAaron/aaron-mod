@@ -41,6 +41,7 @@ import net.azureaaron.mod.listeners.PlaySoundListener;
 import net.azureaaron.mod.listeners.ReceiveChatMessageListener;
 import net.azureaaron.mod.utils.ApiAuthentication;
 import net.azureaaron.mod.utils.Skyblock;
+import net.azureaaron.mod.utils.SkyblockItemData;
 import net.azureaaron.mod.utils.Utils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -66,6 +67,7 @@ public class Main implements ClientModInitializer {
 		AaronModConfigManager.init();
 		ApiAuthentication.init();
 		Utils.init();
+		SkyblockItemData.init();
 
 		//Register listeneres and commands
 		Main.registerCommands();

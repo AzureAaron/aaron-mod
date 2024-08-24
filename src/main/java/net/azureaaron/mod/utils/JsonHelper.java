@@ -86,4 +86,45 @@ public class JsonHelper {
 	private interface ValueExtractor<R> {
 		R to(JsonElement element);
 	}
+
+	/**
+	 * Clears all null values from a {@link JsonElement} as a workaround for JsonOps not handling JsonNulls correctly.
+	 * 
+	 * Credit to ResourcefulLib for the original implementation this was based off
+	 */
+	public static JsonElement clearNullValues(JsonElement rootElement) {
+		switch (rootElement) {
+			case JsonObject object -> {
+				JsonObject newObject = new JsonObject();
+
+				for (String key : object.keySet()) {
+					JsonElement element = clearNullValues(object.get(key));
+
+					if (element != null) newObject.add(key, element);
+				}
+
+				return newObject;
+			}
+
+			case JsonArray array -> {
+				JsonArray newArray = new JsonArray();
+
+				for (JsonElement item : array) {
+					JsonElement element = clearNullValues(item);
+
+					if (element != null) newArray.add(element);
+				}
+
+				return newArray;
+			}
+
+			case null -> {
+				return null;
+			}
+
+			default -> {
+				return rootElement.isJsonNull() ? null : rootElement;
+			}
+		}
+	}
 }

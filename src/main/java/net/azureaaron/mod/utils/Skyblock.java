@@ -19,7 +19,6 @@ import com.mojang.serialization.JsonOps;
 
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.commands.skyblock.MagicalPowerCommand;
-import net.azureaaron.mod.commands.skyblock.NetworthCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Http.ApiResponse;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
@@ -154,37 +153,6 @@ public class Skyblock {
 	
 	public static boolean isSkillsApiEnabled(JsonObject profile) {
 		return profile.getAsJsonObject("player_data").has("experience");
-	}
-	
-	public static NetworthCommand.Networth readNetworthData(String data, long bank, long purse) {
-		if (data == null) return null;
-		JsonObject json = JsonParser.parseString(data).getAsJsonObject();
-		JsonObject networthData = json.getAsJsonObject("data").getAsJsonObject("categories");
-		
-		long accessoriesValue = JsonHelper.getLong(networthData, "talismans.total").orElse(0L);
-		long armourValue = JsonHelper.getLong(networthData, "armor.total").orElse(0L);
-		long enderchestValue = JsonHelper.getLong(networthData, "enderchest.total").orElse(0L);
-		long inventoryValue = JsonHelper.getLong(networthData, "inventory.total").orElse(0L);
-		long petsValue = JsonHelper.getLong(networthData, "pets.total").orElse(0L);
-		long sacksValue = JsonHelper.getLong(json, "data.sacks").orElse(0L);
-		long storageValue = JsonHelper.getLong(networthData, "storage.total").orElse(0L);
-		long wardrobeValue = JsonHelper.getLong(networthData, "wardrobe_inventory.total").orElse(0L);
-		
-		long overallValue = accessoriesValue + armourValue + bank + enderchestValue + inventoryValue + petsValue + purse + sacksValue + storageValue + wardrobeValue;
-		
-		return new NetworthCommand.Networth(
-				accessoriesValue,
-				armourValue,
-				bank,
-				enderchestValue,
-				inventoryValue,
-				overallValue,
-				petsValue,
-				purse,
-				sacksValue,
-				storageValue,
-				wardrobeValue
-				);
 	}
 	
 	public static String getDojoGrade(int score) {

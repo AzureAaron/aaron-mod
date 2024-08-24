@@ -52,7 +52,7 @@ public class ProfileCommand extends SkyblockCommand {
 		boolean skillsEnabled = Skyblock.isSkillsApiEnabled(profile);
 		
 		int farmingLevelCap = JsonHelper.getInt(profile, "jacobs_contest.perks.farming_level_cap").orElse(0);
-		int tamingLevelCap = JsonHelper.getArray(profile, "pets_data.pet_care.pet_types_sacrificed").orElse(new JsonArray()).size();
+		int tamingLevelCap = JsonHelper.getArray(profile, "pets_data.pet_care.pet_types_sacrificed").orElseGet(JsonArray::new).size();
 
 		String bank = Functions.NUMBER_FORMATTER.format(JsonHelper.getLong(body, "banking.balance").orElse(0L));
 		String purse = Functions.NUMBER_FORMATTER.format(JsonHelper.getLong(profile, "currencies.coin_purse").orElse(0L));

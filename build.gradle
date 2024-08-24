@@ -68,6 +68,10 @@ dependencies {
 	modImplementation "com.terraformersmc:modmenu:${modmenu_version}"
 
 	include modImplementation("net.azureaaron:hm-api:${hm_api_version}")
+
+	include implementation("net.azureaaron:networth-calculator:${networth_calculator_version}")
+	
+	include implementation("net.azureaaron:legacy-item-dfu:${legacy_item_dfu_version}")
 }
 
 loom {
