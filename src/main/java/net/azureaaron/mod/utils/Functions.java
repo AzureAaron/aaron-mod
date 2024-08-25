@@ -1,17 +1,13 @@
 package net.azureaaron.mod.utils;
 
 import java.awt.Color;
-import java.lang.management.ManagementFactory;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
-
-import com.sun.management.HotSpotDiagnosticMXBean;
 
 import it.unimi.dsi.fastutil.objects.Object2LongLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
@@ -25,7 +21,7 @@ import net.minecraft.item.ItemStack;
  */
 public class Functions {	
 	/** {@link Object2LongLinkedOpenHashMap} containing time units and their equivalent in milliseconds. */
-	public static final Object2LongLinkedOpenHashMap<String> TIMES = new Object2LongLinkedOpenHashMap<>();
+	private static final Object2LongLinkedOpenHashMap<String> TIMES = new Object2LongLinkedOpenHashMap<>();
 
 	/** Format with 2 decimals of precision. */
 	public static final DecimalFormat NUMBER_FORMATTER = new DecimalFormat("#,###.##");
@@ -98,14 +94,16 @@ public class Functions {
 
 	public static String titleCase(String string) {
 		String[] split = string.toLowerCase().split(" ");
+
 		for(int i = 0; i < split.length; i++) {
-			split[i] = String.valueOf(split[i].charAt(0)).toUpperCase() + split[i].substring(1);	
+			split[i] = String.valueOf(Character.toUpperCase(split[i].charAt(0))) + split[i].substring(1);	
 		}
+
 		return String.join(" ", split);
 	}
 
 	public static String possessiveEnding(String string) {
-		return string.endsWith("s") ? string + "'" :  string + "'s";
+		return string.endsWith("s") ? string + "'" : string + "'s";
 	}
 
 	public static boolean isOnHypixel() {
@@ -126,15 +124,6 @@ public class Functions {
 
 			default -> 0;
 		};
-	}
-
-	public static boolean supportsFMA() {
-		try {
-			HotSpotDiagnosticMXBean hotspotMXBean = ManagementFactory.getPlatformMXBean(HotSpotDiagnosticMXBean.class);
-			return Objects.equals(hotspotMXBean.getVMOption("UseFMA").getValue(), "true");
-		} catch (Throwable t) {
-			return false;
-		}
 	}
 
 	public static int hsbToRGB(float hue, float saturation, float value) {

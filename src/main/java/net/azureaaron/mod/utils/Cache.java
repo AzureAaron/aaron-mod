@@ -18,7 +18,6 @@ import net.minecraft.util.Formatting;
  * @author Aaron
  */
 public class Cache {
-	
 	@Deprecated(forRemoval = true)
 	public static int powerBlessing = 0;
 	@Deprecated(forRemoval = true)
@@ -45,23 +44,12 @@ public class Cache {
 
 	public static void incrementBlessing(String blessing, String level) {
 		switch(blessing) {
-		case "Power": 
-			powerBlessing += Functions.romanToInt(level);
-			break;
-		case "Wisdom":
-			wisdomBlessing += Functions.romanToInt(level);
-			break;
-		case "Life":
-			lifeBlessing += Functions.romanToInt(level);
-			break;
-		case "Stone":
-			stoneBlessing += Functions.romanToInt(level);
-			break;
-		case "Time":
-			timeBlessing = true;
-			break;
+			case "Power" -> powerBlessing += Functions.romanToInt(level);
+			case "Wisdom" -> wisdomBlessing += Functions.romanToInt(level);
+			case "Life" -> lifeBlessing += Functions.romanToInt(level);
+			case "Stone" -> stoneBlessing += Functions.romanToInt(level);
+			case "Time" -> timeBlessing = true;
 		}
-		return;
 	}
 	
 	public static void resetBlessings() {
@@ -94,10 +82,9 @@ public class Cache {
 				for (JsonElement item : itemsData) {
 					String itemName = Formatting.strip(item.getAsJsonObject().get("name").getAsString());
 					String itemId = item.getAsJsonObject().get("id").getAsString();
-					
+
 					//Exclude items that aren't salable
-					if(itemName.contains("Minion")) continue;
-					if(item.getAsJsonObject().get("soulbound") != null) continue;
+					if (itemName.contains("Minion") || item.getAsJsonObject().get("soulbound") != null) continue;
 					
 					ITEMS_LIST.add(itemName);
 					ITEM_NAMES.put(itemName, itemId);
@@ -108,30 +95,36 @@ public class Cache {
 				e.printStackTrace();
 			}
 			return false;
-		}).thenApply(result -> {
+		}).thenAccept(result -> {
 			//Populate bazaar products cache
-			if(!result) return false; //Prevent exception (crash?) if item cache doesn't get populated
+			if (!result) return; //Prevent exception (crash?) if item cache doesn't get populated
+
 			try {
 				String bazaarResponse = Http.sendGetRequest("https://api.hypixel.net/v2/skyblock/bazaar");
 				JsonObject bazaarData = JsonParser.parseString(bazaarResponse).getAsJsonObject();
-				
+
 				bazaarData.get("products").getAsJsonObject().keySet().forEach(key -> {
-					if(key.startsWith("ENCHANTMENT") || key.startsWith("ESSENCE")) {
-						String itemName = key;
-						itemName = itemName.replaceAll("ENCHANTMENT_ULTIMATE_", "");
-						itemName = itemName.replaceAll("ENCHANTMENT_", "");
-						itemName = itemName.replaceAll("ESSENCE_", "");
-						itemName = itemName.replaceAll("REITERATE", "DUPLEX"); //So that I don't get a "bug" report about this!!
-						itemName = itemName.replaceAll("_", " ");
-						itemName = Functions.titleCase(itemName);
-						if(key.startsWith("ESSENCE")) itemName += " Essence";
-						if(key.startsWith("ENCHANTMENT_ULTIMATE_WISE")) itemName = "Ultimate " + itemName;
+					if (key.startsWith("ENCHANTMENT") || key.startsWith("ESSENCE")) {
+						String itemName = Functions.titleCase(key
+								.replaceAll("ENCHANTMENT_ULTIMATE_", "")
+								.replaceAll("ENCHANTMENT_", "")
+								.replaceAll("ESSENCE_", "")
+								.replaceAll("REITERATE", "DUPLEX") //So that I don't get a "bug" report about this!!
+								.replaceAll("_", " "));
+
+						switch (key) {
+							case String s when s.startsWith("ESSENCE") -> itemName += " Essence";
+							case String s when s.startsWith("ENCHANTMENT_ULTIMATE_WISE") -> itemName = "Ultimate " + itemName;
+
+							default -> {}
+						}
 						
 						PRODUCTS_LIST.add(itemName);
 						PRODUCTS_MAP.put(itemName, key);
 					} else {
 						String itemName = items.get(key);
-						if(itemName != null) {
+
+						if (itemName != null) {
 							PRODUCTS_LIST.add(itemName);
 							ITEMS_LIST.remove(itemName);
 							PRODUCTS_MAP.put(itemName, key);
@@ -144,7 +137,6 @@ public class Cache {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			return null;
 		});
 	}
 }
