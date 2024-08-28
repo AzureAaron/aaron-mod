@@ -9,12 +9,15 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.logging.LogUtils;
 
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.networth.NetworthDataSuppliers;
 
 public class SkyblockItemData {
 	private static final Logger LOGGER = LogUtils.getLogger();
 
 	public static void init() {
+		if (!AaronModConfigManager.get().enableSkyblockCommands) return;
+
 		CompletableFuture.supplyAsync(() -> {
 			try {
 				JsonObject itemsResponse = JsonParser.parseString(Http.sendGetRequest("https://api.hypixel.net/v2/resources/skyblock/items")).getAsJsonObject();
