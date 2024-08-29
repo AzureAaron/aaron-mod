@@ -3,7 +3,7 @@ package net.azureaaron.mod.features;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.TextTransformer;
@@ -11,7 +11,7 @@ import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 
 public class TextReplacer {
-	private static final Supplier<Object2ObjectOpenHashMap<String, Text>> TEXT_REPLACEMENTS = () -> AaronModConfigManager.get().textReplacer.textReplacements;
+	private static final Supplier<Object2ObjectLinkedOpenHashMap<String, Text>> TEXT_REPLACEMENTS = () -> AaronModConfigManager.get().textReplacer.textReplacements;
 	
 	public static void addTextReplacement(String textToReplace, Text replacementText) {		
 		TEXT_REPLACEMENTS.get().put(textToReplace, replacementText);

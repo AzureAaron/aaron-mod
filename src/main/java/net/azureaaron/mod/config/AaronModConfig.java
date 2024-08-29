@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.azureaaron.mod.Colour;
 import net.azureaaron.mod.Particles;
@@ -194,7 +195,7 @@ public class AaronModConfig {
 	
 	public static class TextReplacer {
 		@SerialEntry
-		public Object2ObjectOpenHashMap<String, Text> textReplacements = new Object2ObjectOpenHashMap<>();
+		public Object2ObjectLinkedOpenHashMap<String, Text> textReplacements = new Object2ObjectLinkedOpenHashMap<>();
 	}
 	
 	public static class CustomColourProfile {

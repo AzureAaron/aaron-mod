@@ -60,6 +60,7 @@ public class Http {
 		return sendGetRequestInternal(url, null).content();
 	}
 
+	//TODO rename
 	public static String sendAuthorizedHypixelRequest(@NotNull String endpoint, @NotNull String parameters) throws IOException, InterruptedException, ApiException {
 		ApiResponse response = sendGetRequestInternal(AARON_BASE + "hypixel/v2/" + endpoint + parameters, ApiAuthentication.getToken());
 		response.tryThrow();
@@ -76,6 +77,7 @@ public class Http {
 	}
 
 	//TODO give this a better name?
+	@Deprecated(forRemoval = true)
 	public static ApiResponse sendApiRequest(@NotNull String path) throws IOException, InterruptedException, ApiException {
 		ApiResponse response = sendGetRequestInternal(AARON_BASE + path, null);
 		response.tryThrow();

@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import it.unimi.dsi.fastutil.chars.CharList;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Style;
@@ -378,7 +378,7 @@ public class TextTransformer {
 	/**
 	 * Accepts a map of text replacements, which will then be used to replace occurrences of said strings in the {@code orderedText}
 	 */
-	public static OrderedText replaceMultipleEntriesInOrdered(OrderedText orderedText, Object2ObjectOpenHashMap<String, Text> replacements) {
+	public static OrderedText replaceMultipleEntriesInOrdered(OrderedText orderedText, Object2ObjectLinkedOpenHashMap<String, Text> replacements) {
 		MutableText text = Text.empty();
 		
 		orderedText.accept((index, style, codePoint) -> {
