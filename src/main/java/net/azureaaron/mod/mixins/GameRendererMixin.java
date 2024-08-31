@@ -20,7 +20,7 @@ import net.azureaaron.mod.Keybinds;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.SeparateInventoryGuiScale;
 import net.azureaaron.mod.features.SeparateInventoryGuiScale.SavedScaleState;
-import net.azureaaron.mod.utils.render.TimeUniform;
+import net.azureaaron.mod.utils.render.ShaderUniforms;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -55,7 +55,7 @@ public class GameRendererMixin {
 
 	@Inject(method = "render", at = @At("HEAD"))
 	private void aaronMod$timeUniform(CallbackInfo ci) {
-		TimeUniform.updateShaderTime();
+		ShaderUniforms.updateShaderTime();
 	}
 
 	@WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;renderWithTooltip(Lnet/minecraft/client/gui/DrawContext;IIF)V"))

@@ -185,6 +185,12 @@ public class AaronModConfig {
 	public boolean hideTutorials = false;
 
 	@SerialEntry
+	public float chromaSpeed = 4f;
+
+	@SerialEntry
+	public float chromaSaturation = 0.75f;
+
+	@SerialEntry
 	public Object2ObjectOpenHashMap<Identifier, Particles.State> particles = new Object2ObjectOpenHashMap<>();
 	
 	@SerialEntry 

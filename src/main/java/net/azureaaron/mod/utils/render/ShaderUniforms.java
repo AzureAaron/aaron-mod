@@ -2,7 +2,9 @@ package net.azureaaron.mod.utils.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-public class TimeUniform {
+import net.azureaaron.mod.config.AaronModConfigManager;
+
+public class ShaderUniforms {
 	/** 
 	 * Used to create a custom core shader uniform named {@code Time} which is a singular {@code float} value.<br>
 	 * This uniform can be used by any core shader in the game!
@@ -11,21 +13,28 @@ public class TimeUniform {
 	 *  relation to the current unix timestamp which ensures that the uniform will work even when not in a world.<br>
 	 */
 	private static float shaderTime;
-	
+
 	public static void updateShaderTime() {
 		float time = (System.currentTimeMillis() % 30000L) / 30000f;
+
 		if (!RenderSystem.isOnRenderThread()) {
-			RenderSystem.recordRenderCall(() -> {
-				shaderTime = time;
-			});
+			RenderSystem.recordRenderCall(() -> shaderTime = time);
 		} else {
 			shaderTime = time;
 		}
 	}
-	
+
 	public static float getShaderTime() {
 		RenderSystem.assertOnRenderThread();
-		
+
 		return shaderTime;
+	}
+
+	public static float getShaderChromaSpeed() {
+		return AaronModConfigManager.get().chromaSpeed;
+	}
+
+	public static float getShaderChromaSaturation() {
+		return AaronModConfigManager.get().chromaSaturation;
 	}
 }

@@ -17,6 +17,7 @@ import dev.isxander.yacl3.api.OptionGroup;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.ColorControllerBuilder;
 import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder;
+import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
 import dev.isxander.yacl3.api.controller.IntegerFieldControllerBuilder;
 import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
@@ -269,6 +270,22 @@ public class AaronModConfigManager {
 												() -> config.oldMessageIndicatorColours, 
 												newValue -> config.oldMessageIndicatorColours = newValue)
 										.controller(ConfigUtils::createBooleanController)
+										.build())
+								.option(Option.<Float>createBuilder()
+										.name(Text.literal("Chroma Text Animation Speed"))
+										.description(OptionDescription.of(Text.literal("The speed at which the chroma text effect will move between colours. The value must be between 1 and 64.")))
+										.binding(defaults.chromaSpeed,
+												() -> config.chromaSpeed,
+												newValue -> config.chromaSpeed = newValue)
+										.controller(opt -> FloatFieldControllerBuilder.create(opt).range(1f, 64f))
+										.build())
+								.option(Option.<Float>createBuilder()
+										.name(Text.literal("Chroma Text Saturation"))
+										.description(OptionDescription.of(Text.literal("How saturated the chroma text colours will be. The value must be between 0 and 1 (0-100%).")))
+										.binding(defaults.chromaSaturation,
+												() -> config.chromaSaturation,
+												newValue -> config.chromaSaturation = newValue)
+										.controller(opt -> FloatFieldControllerBuilder.create(opt).range(0f, 1f))
 										.build())
 								.option(Option.<Boolean>createBuilder()
 										.name(Text.literal("Potion Enchantment Glint"))

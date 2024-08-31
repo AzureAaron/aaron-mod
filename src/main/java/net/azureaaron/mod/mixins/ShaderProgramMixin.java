@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.azureaaron.mod.utils.render.TimeUniform;
+import net.azureaaron.mod.utils.render.ShaderUniforms;
 import net.minecraft.client.gl.GlUniform;
 import net.minecraft.client.gl.ShaderProgram;
 
@@ -16,20 +16,36 @@ import net.minecraft.client.gl.ShaderProgram;
 public abstract class ShaderProgramMixin {
 	@Unique
 	@Nullable
-	public GlUniform time;
+	private GlUniform time;
+	@Unique
+	@Nullable
+	private GlUniform chromaSpeed;
+	@Unique
+	@Nullable
+	private GlUniform chromaSaturation;
 
 	@Shadow
-	public abstract GlUniform getUniform(String uniform);
+	public abstract GlUniform getUniform(String name);
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void aaronMod$timeInitializer(CallbackInfo ci) {
-		this.time = getUniform("Time");
+		time = getUniform("Time");
+		chromaSpeed = getUniform("ChromaSpeed");
+		chromaSaturation = getUniform("ChromaSaturation");
 	}
 
 	@Inject(method = "initializeUniforms", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setupShaderLights(Lnet/minecraft/client/gl/ShaderProgram;)V"))
 	private void aaronMod$updateTime(CallbackInfo ci) {
 		if (time != null) {
-			time.set(TimeUniform.getShaderTime());
+			time.set(ShaderUniforms.getShaderTime());
+		}
+
+		if (chromaSpeed != null) {
+			chromaSpeed.set(ShaderUniforms.getShaderChromaSpeed());
+		}
+
+		if (chromaSaturation != null) {
+			chromaSaturation.set(ShaderUniforms.getShaderChromaSaturation());
 		}
 	}
 }
