@@ -19,7 +19,7 @@ public class TextReplacerCommand {
 
 	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
 		dispatcher.register(literal("textreplacer")
-				.executes(context -> openTextReplacerConfig(context.getSource()))
+				//.executes(context -> openTextReplacerConfig(context.getSource()))
 				.then(literal("add")
 						.then(argument("replacementText", string())
 								.then(argument("textComponent", ClientTextArgumentType.text())
@@ -30,6 +30,7 @@ public class TextReplacerCommand {
 								.executes(context -> removeReplacement(context.getSource(), getString(context, "replacementText"))))));
 	}
 
+	@SuppressWarnings("unused")
 	private static int openTextReplacerConfig(FabricClientCommandSource source) {
 		MinecraftClient client = source.getClient();
 

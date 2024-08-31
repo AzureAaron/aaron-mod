@@ -1,9 +1,7 @@
 package net.azureaaron.mod.utils;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
@@ -310,7 +308,7 @@ public class TextTransformer {
 	 * Deconstructs the extra components of a text object into components of individual characters 
 	 * and their styles, similar to the format of {@link OrderedText}
 	 */
-	private static final Map<Text, OrderedText> cache = new HashMap<>();
+	//private static final Map<Text, OrderedText> cache = new HashMap<>();
 
 	public static MutableText deconstructComponents(Text text) {
 		List<Text> currentComponents = text.getSiblings();
@@ -328,15 +326,17 @@ public class TextTransformer {
 				continue;
 			}
 
+			//FIXME figure out some cache invalidation strategy, likely just use a tick-based scheduler that runs a task
+			//every few minutes to clear the cache
 			// Check if the OrderedText is in the cache
-			OrderedText orderedText = cache.get(current);
+			/*OrderedText orderedText = cache.get(current);
 			if (orderedText == null) {
 				// If it's not in the cache, convert it and store it in the cache
 				orderedText = current.asOrderedText();
 				cache.put(current, orderedText);
-			}
+			}*/
 
-			orderedText.accept((index, style, codePoint) -> {
+			current.asOrderedText().accept((index, style, codePoint) -> {
 				newComponents.add(Text.literal(Character.toString(codePoint)).setStyle(style));
 
 				return true;
