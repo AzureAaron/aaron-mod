@@ -1,9 +1,8 @@
 package net.azureaaron.mod.screens;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializer;
+import com.mojang.serialization.JsonOps;
+
+import net.azureaaron.mod.Main;
 import net.azureaaron.mod.features.TextReplacer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -11,6 +10,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.*;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 
 import java.util.Map;
 
@@ -54,35 +54,29 @@ public class TextReplacerConfigScreen extends Screen {
 	 * Generates the text fields to be added when the screen is opened
 	 */
 	private void generateTextFields(GridWidget.Adder adder) {
-    Gson gson = new GsonBuilder()
-        .registerTypeAdapter(Text.class, (JsonSerializer<Text>) (src, typeOfSrc, context) -> {
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("text", src.getString());
-            return jsonObject;
-        })
-        .create();
+		for (Map.Entry<String, Text> entry : TextReplacer.TEXT_REPLACEMENTS.get().entrySet()) {
+			String replacementText = entry.getKey();
+			String replacementComponent = Main.GSON_PLAIN.toJson(TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, entry.getValue()).getOrThrow());
 
-    for (Map.Entry<String, Text> entry : TextReplacer.TEXT_REPLACEMENTS.get().entrySet()) {
-        String replacementText = entry.getKey();
-        String replacementComponent = gson.toJson(entry.getValue());
+			TextFieldWidget replacementTextField = new TextFieldWidget(this.textRenderer, 0, 0, TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT, Text.empty());
+			TextFieldWidget replacementComponentField = new TextFieldWidget(this.textRenderer, 0, 0, TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT, Text.empty());
 
-        TextFieldWidget replacementTextField = new TextFieldWidget(this.textRenderer, 0, 0, TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT, Text.empty());
-        TextFieldWidget replacementComponentField = new TextFieldWidget(this.textRenderer, 0, 0, TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT, Text.empty());
+			replacementTextField.setMaxLength(Integer.MAX_VALUE);
+			replacementTextField.setText(replacementText);
+			replacementComponentField.setMaxLength(Integer.MAX_VALUE);
+			replacementComponentField.setText(replacementComponent);
+			ButtonWidget removeButton = ButtonWidget.builder(Text.of("🗑"), (button) -> {
+				TextReplacer.removeTextReplacement(replacementText);
+				MinecraftClient.getInstance().setScreen(new TextReplacerConfigScreen(null));
+			})
+					.dimensions(0, 0, 20, 20)
+					.build();
 
-        replacementTextField.setText(replacementText);
-        replacementComponentField.setText(replacementComponent);
-        ButtonWidget removeButton = ButtonWidget.builder(Text.of("🗑"), (button) -> {
-            TextReplacer.removeTextReplacement(replacementText);
-            MinecraftClient.getInstance().setScreen(new TextReplacerConfigScreen(null));
-        })
-        .dimensions(0, 0, 20, 20)
-        .build();
-
-        adder.add(replacementTextField);
-        adder.add(new TextWidget(ARROW, this.textRenderer));
-        adder.add(replacementComponentField);
-        adder.add(removeButton);
-    }
+			adder.add(replacementTextField);
+			adder.add(new TextWidget(ARROW, this.textRenderer));
+			adder.add(replacementComponentField);
+			adder.add(removeButton);
+		}
 }
 
 	@Override
