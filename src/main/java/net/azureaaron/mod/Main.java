@@ -59,6 +59,7 @@ public class Main implements ClientModInitializer {
 	public static final String MOD_VERSION = MOD_CONTAINER.getMetadata().getVersion().getFriendlyString();
 	public static final String MINECRAFT_VERSION = SharedConstants.getGameVersion().getName();
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+	public static final Gson GSON_PLAIN = new GsonBuilder().create();
 
 	@Override
 	public void onInitializeClient() {

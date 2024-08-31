@@ -1,7 +1,9 @@
 package net.azureaaron.mod.utils;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
@@ -131,7 +133,7 @@ public class TextTransformer {
 				}
 				
 				if(Arrays.stream(replaceableText).anyMatch(componentString::contains)) {
-					if(replacementText.equals("")) continue; //Avoid adding components which won't display
+					if(replacementText.isEmpty()) continue; //Avoid adding components which won't display
 					Style componentStyle = textComponents.get(i).getStyle();
 					newText.append(Text.literal(componentString.replaceAll(replacementRegex, replacementText)).setStyle(componentStyle));
 					continue;
@@ -206,8 +208,8 @@ public class TextTransformer {
 	 * @param text The text object to be formatted into a partial rainbow gradient
 	 * @param totalTextLength The length of all the text that will be formatted across different positions
 	 * @param positionLeftOffAt The position left off at after formatting
-	 * @return A text object containing the {@ text} formatted into a partial rainbow gradient.
-	 * 
+	 * @return A text object containing the {@text} formatted into a partial rainbow gradient.
+	 *
 	 * @see #rainbowify(String)
 	 */
 	public static MutableText progressivelyRainbowify(@NotNull String text, int totalTextLength, int positionLeftOffAt) {
@@ -308,31 +310,39 @@ public class TextTransformer {
 	 * Deconstructs the extra components of a text object into components of individual characters 
 	 * and their styles, similar to the format of {@link OrderedText}
 	 */
+	private static final Map<Text, OrderedText> cache = new HashMap<>();
+
 	public static MutableText deconstructComponents(Text text) {
 		List<Text> currentComponents = text.getSiblings();
-		
+
 		MutableText newText = Text.empty();
 		List<Text> newComponents = newText.getSiblings();
-		
+
 		for (int i = 0; i < currentComponents.size(); i ++) {
 			Text current = currentComponents.get(i);
 			String currentString = current.getString();
-			
+
 			if (currentString.length() <= 1) {
 				newComponents.add(current);
-				
+
 				continue;
 			}
-			
-			//The conversion to ordered text is the only way to efficiently traverse the replacement component
-			//as it could have nesting layers or legacy formatting -- maybe we can cache this?
-			current.asOrderedText().accept((index, style, codePoint) -> {
+
+			// Check if the OrderedText is in the cache
+			OrderedText orderedText = cache.get(current);
+			if (orderedText == null) {
+				// If it's not in the cache, convert it and store it in the cache
+				orderedText = current.asOrderedText();
+				cache.put(current, orderedText);
+			}
+
+			orderedText.accept((index, style, codePoint) -> {
 				newComponents.add(Text.literal(Character.toString(codePoint)).setStyle(style));
-				
+
 				return true;
 			});
 		}
-		
+
 		return newText;
 	}
 	

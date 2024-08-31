@@ -1,20 +1,7 @@
 package net.azureaaron.mod.config;
 
-import java.awt.Color;
-import java.nio.file.Path;
-import java.util.Calendar;
-
-import org.apache.commons.lang3.SystemUtils;
-
 import com.google.gson.FieldNamingPolicy;
-
-import dev.isxander.yacl3.api.ButtonOption;
-import dev.isxander.yacl3.api.ConfigCategory;
-import dev.isxander.yacl3.api.Option;
-import dev.isxander.yacl3.api.OptionDescription;
-import dev.isxander.yacl3.api.OptionFlag;
-import dev.isxander.yacl3.api.OptionGroup;
-import dev.isxander.yacl3.api.YetAnotherConfigLib;
+import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.ColorControllerBuilder;
 import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
@@ -25,6 +12,7 @@ import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.azureaaron.mod.Colour;
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.Particles;
+import net.azureaaron.mod.screens.TextReplacerConfigScreen;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.Skyblock;
 import net.azureaaron.mod.utils.TextTransformer;
@@ -35,6 +23,11 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import org.apache.commons.lang3.SystemUtils;
+
+import java.awt.*;
+import java.nio.file.Path;
+import java.util.Calendar;
 
 public class AaronModConfigManager {
 	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
@@ -81,7 +74,12 @@ public class AaronModConfigManager {
 												.append(Text.literal("Sakura\n").withColor(Colour.ColourProfiles.Sakura.primaryColour.getAsInt()))
 												.append(Text.literal("Cloudy\n").withColor(Colour.ColourProfiles.Cloudy.primaryColour.getAsInt()))
 												.append(Text.literal("Halloween\n").withColor(Colour.ColourProfiles.Halloween.primaryColour.getAsInt()))
-												.append(Text.literal("and Christmas\n\n").withColor(Colour.ColourProfiles.Christmas.primaryColour.getAsInt()))
+												.append(Text.literal("Christmas\n").withColor(Colour.ColourProfiles.Christmas.primaryColour.getAsInt()))
+												.append(Text.literal("Candyland\n").withColor(Colour.ColourProfiles.Candyland.primaryColour.getAsInt()))
+												.append(Text.literal("Cyberpunk\n").withColor(Colour.ColourProfiles.Cyberpunk.primaryColour.getAsInt()))
+												.append(Text.literal("Lava\n").withColor(Colour.ColourProfiles.Lava.primaryColour.getAsInt()))
+												.append(Text.literal("and Ocean\n").withColor(Colour.ColourProfiles.Ocean.primaryColour.getAsInt()))
+
 												.append(Text.literal("or you can make a "))
 												.append(Text.literal("Custom").styled(style -> style.withItalic(true)))
 												.append(Text.literal(" colour profile!")))
@@ -358,7 +356,7 @@ public class AaronModConfigManager {
 										.name(Text.literal("Chat History Length"))
 										.description(OptionDescription.createBuilder()
 												.text(Text.literal("Change the maximum length of your chat history so that you don't miss any messages!")
-														.append(Text.literal("\n\n\u26a0 Warning: Significantly higher values will lead to more memory usage.").styled(style -> style.withColor(0xeac864))))
+														.append(Text.literal("\n\n⚠ Warning: Significantly higher values will lead to more memory usage.").styled(style -> style.withColor(0xeac864))))
 												.build())
 										.binding(defaults.chatHistoryLength,
 												() -> config.chatHistoryLength,
@@ -666,6 +664,12 @@ public class AaronModConfigManager {
 								.controller(ConfigUtils::createBooleanController)
 								.build())
 						.option(ButtonOption.createBuilder()
+								.name(Text.literal("Visual Text Replacer"))
+								.text(Text.empty())
+								.description(OptionDescription.of(Text.literal("Click to open the visual text replacer screen!")))
+								.action((screen, opt) -> MinecraftClient.getInstance().send(() -> MinecraftClient.getInstance().setScreen(new TextReplacerConfigScreen(null))))
+								.build())
+						.option(ButtonOption.createBuilder()
 								.name(Text.literal("How to use this! (Hover)"))
 								.text(Text.empty())
 								.description(OptionDescription.of(Text.literal("You can add text replacements with the command ")
@@ -678,7 +682,7 @@ public class AaronModConfigManager {
 						.option(ButtonOption.createBuilder()
 								.name(Text.literal("Text Component Generator Website"))
 								.description(OptionDescription.of(Text.literal("Click to open a link to the website!")))
-								.text(Text.literal("\u29C9"))
+								.text(Text.literal("⧉"))
 								.action((screen, opt) -> ConfirmLinkScreen.open(screen, "https://minecraft.tools/en/json_text.php"))
 								.build())
 						.build()))
