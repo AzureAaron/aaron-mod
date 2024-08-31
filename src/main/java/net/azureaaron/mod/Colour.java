@@ -23,7 +23,8 @@ public class Colour {
 		Candyland(0xffb3b3, 0xffec8b, 0x99d9ea, 0xf08080, 0xffe4e1, 0xc2c2f0),
 		Cyberpunk(0x007bff, 0x00cec9, 0x28a745, 0xff9933, 0x343a40, 0xeaecee),
 		Lava(0xff0000, 0xff9933, 0xffd700, 0xf0e68c, 0x696969, 0xf5f5f5),
-		Ocean(0x007bff, 0x3498db, 0x474747, 0x28a745, 0xc2c2f0, 0xe0e0e0),		Custom(() -> CUSTOM.get().primaryColour.getRGB(), () -> CUSTOM.get().secondaryColour.getRGB(), () -> CUSTOM.get().infoColour.getRGB(), () -> CUSTOM.get().highlightColour.getRGB(), () -> CUSTOM.get().hoverColour.getRGB(), () -> CUSTOM.get().supportingInfoColour.getRGB());
+		Ocean(0x007bff, 0x3498db, 0x474747, 0x28a745, 0xc2c2f0, 0xe0e0e0),
+		Custom(() -> CUSTOM.get().primaryColour.getRGB(), () -> CUSTOM.get().secondaryColour.getRGB(), () -> CUSTOM.get().infoColour.getRGB(), () -> CUSTOM.get().highlightColour.getRGB(), () -> CUSTOM.get().hoverColour.getRGB(), () -> CUSTOM.get().supportingInfoColour.getRGB());
 		
 		public final IntSupplier primaryColour;
 		public final IntSupplier secondaryColour;
