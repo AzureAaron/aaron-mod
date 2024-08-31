@@ -25,7 +25,7 @@ public class ChatHudMixin {
 	@Final
 	private MinecraftClient client;
 
-	@ModifyExpressionValue(method = { "addVisibleMessage", "addMessage" }, at = @At(value = "CONSTANT", args = "intValue=100"))
+	@ModifyExpressionValue(method = { "addVisibleMessage", "addMessage", "addToMessageHistory" }, at = @At(value = "CONSTANT", args = "intValue=100"))
 	private int aaronMod$longerChatHistory(int maxMessages) {
 		MAX_MESSAGES = Math.max(100, AaronModConfigManager.get().chatHistoryLength);
 		return Math.max(100, AaronModConfigManager.get().chatHistoryLength);
