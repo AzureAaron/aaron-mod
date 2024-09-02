@@ -194,7 +194,7 @@ public class NetworthCommand extends SkyblockCommand {
 		Object2DoubleMap<ItemStack> calculations = new Object2DoubleOpenHashMap<>();
 
 		for (ItemStack stack : items) {
-			calculations.put(stack, NetworthCalculator.calculateItemNetworth(stack).price());
+			if (!stack.isEmpty()) calculations.put(stack, NetworthCalculator.calculateItemNetworth(stack).price());
 		}
 
 		return calculations;
