@@ -12,7 +12,6 @@ import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.azureaaron.mod.Colour;
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.Particles;
-import net.azureaaron.mod.screens.TextReplacerConfigScreen;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.Skyblock;
 import net.azureaaron.mod.utils.TextTransformer;
@@ -663,12 +662,12 @@ public class AaronModConfigManager {
 										newValue -> config.visualTextReplacer = newValue)
 								.controller(ConfigUtils::createBooleanController)
 								.build())
-						.option(ButtonOption.createBuilder()
+						/*.option(ButtonOption.createBuilder()
 								.name(Text.literal("Visual Text Replacer"))
 								.text(Text.empty())
 								.description(OptionDescription.of(Text.literal("Click to open the visual text replacer screen!")))
 								.action((screen, opt) -> MinecraftClient.getInstance().send(() -> MinecraftClient.getInstance().setScreen(new TextReplacerConfigScreen(null))))
-								.build())
+								.build())*/
 						.option(ButtonOption.createBuilder()
 								.name(Text.literal("How to use this! (Hover)"))
 								.text(Text.empty())
