@@ -46,7 +46,7 @@ public class PingCommand {
 		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
 		
 		client.player.sendMessage(Text.literal("Ping » ").withColor(colourProfile.primaryColour.getAsInt())
-				.append(Text.literal(ping + " ms").withColor(colourProfile.secondaryColour.getAsInt())));
+				.append(Text.literal(ping + " ms").withColor(colourProfile.secondaryColour.getAsInt())), false);
 
 		return Command.SINGLE_SUCCESS;
 	}

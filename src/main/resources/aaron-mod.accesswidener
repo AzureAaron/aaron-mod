@@ -1,7 +1,4 @@
 accessWidener v2 named
 
-# ItemStack DFU Patch
-accessible class net/minecraft/datafixer/fix/ItemStackComponentizationFix$StackData
-
 # No Fog
 accessible class net/minecraft/client/render/BackgroundRenderer$StatusEffectFogModifier

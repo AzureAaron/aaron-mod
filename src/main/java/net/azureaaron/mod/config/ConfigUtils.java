@@ -2,7 +2,7 @@ package net.azureaaron.mod.config;
 
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
-import dev.isxander.yacl3.api.controller.CyclingListControllerBuilder;
+import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
 import net.minecraft.text.Text;
 
@@ -17,9 +17,9 @@ public class ConfigUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <E extends Enum<?>> CyclingListControllerBuilder<E> createEnumController(Option<E> opt) {
-		E[] constants = (E[]) opt.binding().defaultValue().getClass().getEnumConstants();
-		
-		return CyclingListControllerBuilder.create(opt).values(constants).formatValue(c -> Text.of(c.toString()));
+	public static <E extends Enum<E>> EnumControllerBuilder<E> createEnumController(Option<E> opt) {
+		Class<E> enumClass = (Class<E>) opt.pendingValue().getClass();
+
+		return EnumControllerBuilder.create(opt).enumClass(enumClass).formatValue(c -> Text.of(c.toString()));
 	}
 }

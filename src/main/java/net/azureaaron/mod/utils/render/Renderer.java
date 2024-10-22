@@ -10,16 +10,16 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.font.TextRenderer.TextLayerType;
+import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexFormat.DrawMode;
 import net.minecraft.client.render.VertexFormats;
-import net.minecraft.client.render.WorldRenderer;
+import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.util.BufferAllocator;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.OrderedText;
@@ -38,14 +38,14 @@ public class Renderer {
 		MatrixStack matrices = MatrixTransformer.CAMERA_RELATIVE.transform(wrc, null);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
 
-		RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
+		RenderSystem.setShader(ShaderProgramKeys.RENDERTYPE_LINES);
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		RenderSystem.lineWidth(lineWidth);
 		RenderSystem.disableCull();
 		RenderSystem.enableDepthTest();
 
 		BufferBuilder buffer = tessellator.begin(DrawMode.LINES, VertexFormats.LINES);
-		WorldRenderer.drawBox(matrices, buffer, box, red / 255f, green / 255f, blue / 255f, alpha);
+		VertexRendering.drawBox(matrices, buffer, box, red / 255f, green / 255f, blue / 255f, alpha);
 		BufferRenderer.drawWithGlobalProgram(buffer.end());
 
 		matrices.pop();
@@ -58,7 +58,7 @@ public class Renderer {
 		MatrixStack matrices = MatrixTransformer.CAMERA_RELATIVE.transform(wrc, null);		
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
 
-		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		RenderSystem.polygonOffset(-1f, -10f);
 		RenderSystem.enablePolygonOffset();
@@ -69,7 +69,7 @@ public class Renderer {
 		RenderSystem.disableCull();
 
 		BufferBuilder buffer = tessellator.begin(DrawMode.TRIANGLE_STRIP, VertexFormats.POSITION_COLOR);
-		WorldRenderer.renderFilledBox(matrices, buffer, pos.x, pos.y, pos.z, pos.x + 1, pos.y + 1, pos.z + 1, red / 255f, green / 255f, blue / 255f, alpha);
+		VertexRendering.drawFilledBox(matrices, buffer, pos.x, pos.y, pos.z, pos.x + 1, pos.y + 1, pos.z + 1, red / 255f, green / 255f, blue / 255f, alpha);
 		BufferRenderer.drawWithGlobalProgram(buffer.end());
 
 		matrices.pop();

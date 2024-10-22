@@ -1,9 +1,5 @@
 package net.azureaaron.mod.utils;
 
-import com.google.common.collect.ImmutableSet;
-import net.azureaaron.mod.Main;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serial;
@@ -20,7 +16,12 @@ import java.time.Duration;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import com.google.common.collect.ImmutableSet;
+
+import net.azureaaron.mod.Main;
 
 /**
  * The name speaks for itself.

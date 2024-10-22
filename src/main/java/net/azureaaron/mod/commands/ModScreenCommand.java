@@ -1,17 +1,18 @@
 package net.azureaaron.mod.commands;
 
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.screens.ModScreen;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandRegistryAccess;
-
-import java.util.Timer;
-import java.util.TimerTask;
-
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 public class ModScreenCommand {
 	private static final long ONE_TICK = 50L;

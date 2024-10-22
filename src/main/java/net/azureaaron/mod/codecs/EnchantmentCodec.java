@@ -1,9 +1,9 @@
 package net.azureaaron.mod.codecs;
 
-import com.mojang.serialization.Codec;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.mojang.serialization.Codec;
 
 public class EnchantmentCodec {
 

@@ -29,6 +29,10 @@ import net.minecraft.text.Text;
 public class LegacyItemStackFixer {
 	private static final Logger LOGGER = LogUtils.getLogger();
 
+	/**
+	 * @deprecated Logging will eventually be always enabled.
+	 */
+	@Deprecated(forRemoval = true)
 	private static boolean shouldLog = FabricLoader.getInstance().isDevelopmentEnvironment();
 
 	@SuppressWarnings("deprecation")

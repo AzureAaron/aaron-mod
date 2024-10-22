@@ -21,6 +21,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.util.math.MatrixStack;
@@ -118,7 +119,7 @@ public class ImagePreview {
 					matrices.scale(scale, scale, 1f); //The 1f is needed otherwise it'll render behind the chat (the chat's z is scaled by 1 too)
 					matrices.translate(0f, 0f, 200f);
 
-					context.drawTexture(image.texture(), 0, 0, 0, 0, width, height, width, height);
+					context.drawTexture(RenderLayer::getGuiTextured, image.texture(), 0, 0, 0, 0, width, height, width, height);
 
 					matrices.pop();
 				}

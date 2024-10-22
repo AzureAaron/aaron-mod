@@ -10,6 +10,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.GridWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.client.gui.widget.ThreePartsLayoutWidget;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.StringVisitable;
@@ -58,7 +59,7 @@ public class ModScreen extends Screen {
 	}
 
 	@Override
-	protected void initTabNavigation() {
+	protected void refreshWidgetPositions() {
 		this.layout.refreshPositions();
 	}
 
@@ -73,7 +74,6 @@ public class ModScreen extends Screen {
 
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-		this.renderBackground(context, mouseX, mouseY, delta);
 		super.render(context, mouseX, mouseY, delta);
 	}
 
@@ -102,7 +102,7 @@ public class ModScreen extends Screen {
 			int iconY = y - 13;
 
 			context.drawTextWithShadow(textRenderer, orderedText, x, y, this.getTextColor());
-			context.drawTexture(this.icon, iconX, iconY, 0, 0, 32, 32, 32, 32);
+			context.drawTexture(RenderLayer::getGuiTextured, this.icon, iconX, iconY, 0, 0, 32, 32, 32, 32);
 		}
 
 		//Copied from parent class

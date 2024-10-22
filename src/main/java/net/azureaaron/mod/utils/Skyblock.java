@@ -1,11 +1,25 @@
 package net.azureaaron.mod.utils;
 
+import static net.azureaaron.mod.codecs.EnchantmentCodec.MAX_ENCHANTMENTS_CODEC;
+import static net.azureaaron.mod.codecs.EnchantmentCodec.MAX_LEVEL_ENCHANTMENTS;
+import static net.azureaaron.mod.codecs.LootCodec.RARE_LOOT_CODEC;
+import static net.azureaaron.mod.codecs.LootCodec.RARE_LOOT_ITEMS;
+
+import java.io.BufferedReader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+
+import org.slf4j.Logger;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.JsonOps;
+
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.commands.skyblock.MagicalPowerCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
@@ -15,18 +29,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryOps;
 import net.minecraft.util.Identifier;
-import org.slf4j.Logger;
-
-import java.io.BufferedReader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-
-import static net.azureaaron.mod.codecs.EnchantmentCodec.MAX_ENCHANTMENTS_CODEC;
-import static net.azureaaron.mod.codecs.EnchantmentCodec.MAX_LEVEL_ENCHANTMENTS;
-import static net.azureaaron.mod.codecs.LootCodec.RARE_LOOT_CODEC;
-import static net.azureaaron.mod.codecs.LootCodec.RARE_LOOT_ITEMS;
 
 public class Skyblock {
 	private static final Logger LOGGER = LogUtils.getLogger();

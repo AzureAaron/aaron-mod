@@ -82,14 +82,12 @@ public class MouseMixin implements MouseGuiPositioner {
 		if (AaronModConfigManager.get().resetCursorPosition && CLIENT.currentScreen instanceof GenericContainerScreen) GLFW.glfwSetCursorPos(CLIENT.getWindow().getHandle(), this.guiX, this.guiY);
 	}
 
-	//Lambda in onMouseButton
-	@ModifyArgs(method = "method_1611", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z"))
+	@ModifyArgs(method = "onMouseButton", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z"))
 	private static void aaronMod$adjustMouseForSeparateScreenScalingOnClick(Args args) {
 		adjustPosition(args, CLIENT.mouse.getX(), CLIENT.mouse.getY(), 0, 1);
 	}
 
-	//Lambda in onMouseButton
-	@ModifyArgs(method = "method_1605", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z"))
+	@ModifyArgs(method = "onMouseButton", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z"))
 	private static void aaronMod$adjustMouseForSeparateScreenScalingOnRelease(Args args) {
 		adjustPosition(args, CLIENT.mouse.getX(), CLIENT.mouse.getY(), 0, 1);
 	}
@@ -99,14 +97,12 @@ public class MouseMixin implements MouseGuiPositioner {
 		adjustPosition(args, CLIENT.mouse.getX(), CLIENT.mouse.getY(), 0, 1);
 	}
 
-	//Lambda in tick
-	@ModifyArgs(method = "method_55794", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseMoved(DD)V"))
+	@ModifyArgs(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseMoved(DD)V"))
 	private static void aaronMod$adjustMouseForSeparateScreenScalingOnMove(Args args) {
 		adjustPosition(args, CLIENT.mouse.getX(), CLIENT.mouse.getY(), 0, 1);
 	}
 
-	//Lambda in tick
-	@ModifyArgs(method = "method_55795", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseDragged(DDIDD)Z"))
+	@ModifyArgs(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseDragged(DDIDD)Z"))
 	private void aaronMod$adjustMouseForSeparateScreelScalingOnDrag(Args args) {
 		adjustPosition(args, CLIENT.mouse.getX(), CLIENT.mouse.getY(), 0, 1);
 		adjustPosition(args, this.cursorDeltaX, this.cursorDeltaY, 3, 4);

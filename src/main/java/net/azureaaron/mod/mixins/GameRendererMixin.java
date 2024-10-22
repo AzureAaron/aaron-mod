@@ -13,8 +13,8 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.mojang.blaze3d.systems.ProjectionType;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.systems.VertexSorter;
 
 import net.azureaaron.mod.Keybinds;
 import net.azureaaron.mod.config.AaronModConfigManager;
@@ -37,14 +37,14 @@ public class GameRendererMixin {
 	private boolean cameraSmoothed = false;
 
 	@ModifyReturnValue(method = "getFov", at = @At("RETURN"))
-	private double aaronMod$zoom(double fov) {
+	private float aaronMod$zoom(float fov) {
 		if (Keybinds.zoomKeybind.isPressed()) {
 			if (!this.cameraSmoothed) {
 				this.cameraSmoothed = true; 
 				this.client.options.smoothCameraEnabled = true; 
 			}
 
-			return fov * AaronModConfigManager.get().zoomMultiplier;
+			return (float) (fov * AaronModConfigManager.get().zoomMultiplier);
 		} else if (this.cameraSmoothed) {
 			this.cameraSmoothed = false;
 			this.client.options.smoothCameraEnabled = false;
@@ -84,13 +84,13 @@ public class GameRendererMixin {
 			context.draw();
 
 			//Modify the projection matrix, render the screen, then draw everything that the screen drew (if we don't then things like tooltip positions get messed up)
-			RenderSystem.setProjectionMatrix(screenProjectionMatrix, VertexSorter.BY_Z);
+			RenderSystem.setProjectionMatrix(screenProjectionMatrix, ProjectionType.ORTHOGRAPHIC);
 			operation.call(screen, context, newMouseX, newMouseY, delta);
 			context.draw();
 
 			//Reset State
 			state.reset();
-			RenderSystem.setProjectionMatrix(guiProjectionMatrix, VertexSorter.BY_Z);
+			RenderSystem.setProjectionMatrix(guiProjectionMatrix, ProjectionType.ORTHOGRAPHIC);
 		} else {
 			operation.call(screen, context, mouseX, mouseY, delta);
 		}

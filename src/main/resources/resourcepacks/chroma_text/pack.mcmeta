@@ -1,8 +1,8 @@
 {
 	"pack": {
-		"pack_format": 32,
+		"pack_format": 42,
 		"supported_formats": {
-			"min_inclusive": 32,
+			"min_inclusive": 42,
 			"max_inclusive": 2147483647
 		},
 		"description": "Provides the chroma text colour feature. Optional."

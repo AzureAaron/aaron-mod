@@ -27,15 +27,15 @@ public abstract class ShaderProgramMixin {
 	@Shadow
 	public abstract GlUniform getUniform(String name);
 
-	@Inject(method = "<init>", at = @At("TAIL"))
-	private void aaronMod$timeInitializer(CallbackInfo ci) {
+	@Inject(method = "set", at = @At("TAIL"))
+	private void aaronMod$customUniformInitializer(CallbackInfo ci) {
 		time = getUniform("Time");
 		chromaSpeed = getUniform("ChromaSpeed");
 		chromaSaturation = getUniform("ChromaSaturation");
 	}
 
 	@Inject(method = "initializeUniforms", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setupShaderLights(Lnet/minecraft/client/gl/ShaderProgram;)V"))
-	private void aaronMod$updateTime(CallbackInfo ci) {
+	private void aaronMod$updateUniforms(CallbackInfo ci) {
 		if (time != null) {
 			time.set(ShaderUniforms.getShaderTime());
 		}

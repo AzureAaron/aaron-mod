@@ -18,12 +18,12 @@ import net.minecraft.text.OrderedText;
 @Mixin(TextRenderer.class)
 public class TextRendererMixin {
 
-	@Inject(method = "drawInternal(Lnet/minecraft/text/OrderedText;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;II)I", at = @At("HEAD"))
+	@Inject(method = "drawInternal(Lnet/minecraft/text/OrderedText;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;IIZ)I", at = @At("HEAD"))
 	private void aaronMod$visuallyReplaceOrderedText(CallbackInfoReturnable<Integer> cir, @Local(argsOnly = true) OrderedText text, @Share("newText") LocalRef<OrderedText> newText) {
 		if (AaronModConfigManager.get().visualTextReplacer) newText.set(TextReplacer.visuallyReplaceText(text));
 	}
 
-	@ModifyVariable(method = "drawInternal(Lnet/minecraft/text/OrderedText;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;II)I", at = @At("LOAD"))
+	@ModifyVariable(method = "drawInternal(Lnet/minecraft/text/OrderedText;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;IIZ)I", at = @At("LOAD"))
 	private OrderedText aaronMod$actuallyChangeTheText(OrderedText text, @Share("newText") LocalRef<OrderedText> newText) {
 		return AaronModConfigManager.get().visualTextReplacer ? newText.get() : text;
 	}

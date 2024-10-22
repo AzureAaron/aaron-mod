@@ -1,10 +1,11 @@
 package net.azureaaron.mod.codecs;
 
-import com.mojang.serialization.Codec;
-import net.minecraft.item.ItemStack;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.mojang.serialization.Codec;
+
+import net.minecraft.item.ItemStack;
 
 public class LootCodec {
 

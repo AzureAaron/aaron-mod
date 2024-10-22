@@ -1,7 +1,20 @@
 package net.azureaaron.mod.config;
 
+import java.awt.Color;
+import java.nio.file.Path;
+import java.util.Calendar;
+
+import org.apache.commons.lang3.SystemUtils;
+
 import com.google.gson.FieldNamingPolicy;
-import dev.isxander.yacl3.api.*;
+
+import dev.isxander.yacl3.api.ButtonOption;
+import dev.isxander.yacl3.api.ConfigCategory;
+import dev.isxander.yacl3.api.Option;
+import dev.isxander.yacl3.api.OptionDescription;
+import dev.isxander.yacl3.api.OptionFlag;
+import dev.isxander.yacl3.api.OptionGroup;
+import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.ColorControllerBuilder;
 import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
@@ -22,11 +35,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import org.apache.commons.lang3.SystemUtils;
-
-import java.awt.*;
-import java.nio.file.Path;
-import java.util.Calendar;
 
 public class AaronModConfigManager {
 	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
@@ -507,7 +515,7 @@ public class AaronModConfigManager {
 										() -> config.rainbowifyMaxSkyblockEnchantments,
 										newValue -> config.rainbowifyMaxSkyblockEnchantments = newValue)
 								.controller(ConfigUtils::createBooleanController)
-								.listener((_opt, pendingValue) -> Functions.runIf(() -> Skyblock.loadMaxEnchants(true), () -> pendingValue))
+								.addListener((opt, event) -> Functions.runIf(() -> Skyblock.loadMaxEnchants(true), () -> opt.pendingValue()))
 								.build())
 						.option(Option.<AaronModConfig.RainbowifyMode>createBuilder()
 								.name(Text.literal("Rainbowify Mode"))

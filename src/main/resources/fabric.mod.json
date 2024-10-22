@@ -31,15 +31,15 @@
   ],
   "accessWidener": "aaron-mod.accesswidener",
   "depends": {
-    "fabricloader": ">=0.16.3",
-    "fabric-api": ">=0.102.0+1.21.1",
-    "minecraft": "~1.21",
+    "fabricloader": ">=0.16.7",
+    "fabric-api": ">=0.106.0+1.21.2",
+    "minecraft": "~1.21.2",
     "java": ">=21",
-    "yet_another_config_lib_v3": ">=3.5.0+1.21",
-    "hm-api": ">=1.0.0+1.21"
+    "yet_another_config_lib_v3": ">=3.6.1+1.21.2",
+    "hm-api": ">=1.0.1+1.21.2"
   },
   "suggests": {
-    "modmenu": ">=11.0.0"
+    "modmenu": ">=12.0.0-beta.1"
   },
   "custom": {
     "loom:injected_interfaces": {
