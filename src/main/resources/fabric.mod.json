@@ -51,6 +51,9 @@
       ],
       "net/minecraft/class_437": [
         "net/azureaaron/mod/injected/ScreenResizeMarker"
+      ],
+      "net/minecraft/class_1011": [
+        "net/azureaaron/mod/injected/NativeImageMarker"
       ]
     }
   }
