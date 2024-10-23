@@ -388,9 +388,9 @@ public class AaronModConfigManager {
 										.controller(ConfigUtils::createFloatMultFieldController)
 										.build())
 								.option(Option.<Boolean>createBuilder()
-										.name(Text.literal("Infinite Hotbar Scrolling"))
+										.name(Text.literal("Hotbar & Bundle Scroll Looping"))
 										.description(OptionDescription.createBuilder()
-												.text(Text.literal("When scrolling in the hotbar with this disabled, it prevents you from scrolling down to slot 9 from slot 1, and from scrolling up to slot 1 from slot 9."))
+												.text(Text.literal("When scrolling in the hotbar with this disabled, it prevents you from scrolling down to slot 9 from slot 1, and from scrolling up to slot 1 from slot 9.\n\nThis also works with scrolling between items in bundles!"))
 												.build())
 										.binding(defaults.infiniteHotbarScrolling,
 												() -> config.infiniteHotbarScrolling,
