@@ -440,9 +440,8 @@ public class AaronModConfigManager {
 										.name(Text.literal("Optimized Screenshots"))
 										.description(OptionDescription.of(Text.literal("Saves screenshots without the alpha channel which is unused, reducing file sizes by ~11%.")))
 										.binding(defaults.optimizedScreenshots,
-												() -> false,
+												() -> config.optimizedScreenshots,
 												newValue -> config.optimizedScreenshots = newValue)
-										.available(false)
 										.controller(ConfigUtils::createBooleanController)
 										.build())
 								.option(Option.<Boolean>createBuilder()

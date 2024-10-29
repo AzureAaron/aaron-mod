@@ -2,3 +2,7 @@ accessWidener v2 named
 
 # No Fog
 accessible class net/minecraft/client/render/BackgroundRenderer$StatusEffectFogModifier
+
+# Optimized Screenshots
+accessible class net/minecraft/client/texture/NativeImage$WriteCallback
+accessible method net/minecraft/client/texture/NativeImage$WriteCallback <init> (Ljava/nio/channels/WritableByteChannel;)V
