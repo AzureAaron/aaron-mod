@@ -23,6 +23,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.mojang.jtracy.MemoryPool;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.ImagePreview;
@@ -44,6 +45,9 @@ public abstract class NativeImageMixin implements NativeImageMarker {
 	@Shadow
 	@Final
 	private static Logger LOGGER;
+	@Shadow
+	@Final
+	private static MemoryPool MEMORY_POOL;
 
 	@Shadow
 	@Final
@@ -86,6 +90,7 @@ public abstract class NativeImageMixin implements NativeImageMarker {
 			int pixels = this.width * this.height;
 			long size = pixels * RGB_CHANNEL_COUNT;
 			long pointer = MemoryUtil.nmemAlloc(size);
+			MEMORY_POOL.malloc(pointer, (int) size);
 
 			//The allocation was successful
 			if (pointer != MemoryUtil.NULL) {
@@ -118,6 +123,7 @@ public abstract class NativeImageMixin implements NativeImageMarker {
 				} finally {
 					writeCallback.free();
 					MemoryUtil.nmemFree(pointer);
+					MEMORY_POOL.free(pointer);
 				}
 			}
 
