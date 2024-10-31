@@ -191,6 +191,9 @@ public class AaronModConfig {
 	public float chromaSaturation = 0.75f;
 
 	@SerialEntry
+	public boolean hideLightning = false;
+
+	@SerialEntry
 	public Object2ObjectOpenHashMap<Identifier, Particles.State> particles = new Object2ObjectOpenHashMap<>();
 	
 	@SerialEntry 

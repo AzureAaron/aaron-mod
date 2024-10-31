@@ -23,6 +23,7 @@
     "InventoryScreenMixin",
     "ItemStackMixin",
     "KeyboardMixin",
+    "LightningEntityRendererMixin",
     "MessageIndicatorMixin",
     "MinecraftClientMixin",
     "MobSpawnerBlockEntityRendererMixin",

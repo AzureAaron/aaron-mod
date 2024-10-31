@@ -233,6 +233,14 @@ public class AaronModConfigManager {
 										.controller(ConfigUtils::createBooleanController)
 										.build())
 								.option(Option.<Boolean>createBuilder()
+										.name(Text.literal("Hide Lightning"))
+										.description(OptionDescription.of(Text.literal("Hides lightning bolts and lightning flashes in the sky.")))
+										.binding(defaults.hideLightning,
+												() -> config.hideLightning,
+												newValue -> config.hideLightning = newValue)
+										.controller(ConfigUtils::createBooleanController)
+										.build())
+								.option(Option.<Boolean>createBuilder()
 										.name(Text.literal("Hide Mob Spawner Animations"))
 										.description(OptionDescription.createBuilder()
 												.text(Text.literal("Hides the spinning mob inside of mob spawners aswell as also hiding the particles emitted by mob spawners.\n\nCan be useful in areas with lots of mob spawners!"))
