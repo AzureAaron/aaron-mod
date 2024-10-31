@@ -54,6 +54,9 @@
       ],
       "net/minecraft/class_1011": [
         "net/azureaaron/mod/injected/NativeImageMarker"
+      ],
+      "net/minecraft/class_703": [
+        "net/azureaaron/mod/injected/ParticleAlphaMarker"
       ]
     }
   }

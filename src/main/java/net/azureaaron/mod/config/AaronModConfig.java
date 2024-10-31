@@ -195,7 +195,10 @@ public class AaronModConfig {
 	
 	@SerialEntry 
 	public Object2FloatOpenHashMap<Identifier> particleScaling = new Object2FloatOpenHashMap<>();
-	
+
+	@SerialEntry
+	public Object2FloatOpenHashMap<Identifier> particleAlphas = new Object2FloatOpenHashMap<>();
+
 	@SerialEntry
 	public TextReplacer textReplacer = new TextReplacer();
 	

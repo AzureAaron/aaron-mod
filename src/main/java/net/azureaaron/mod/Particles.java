@@ -9,6 +9,7 @@ import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.OptionGroup;
 import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
+import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.azureaaron.mod.config.AaronModConfig;
 import net.azureaaron.mod.config.ConfigUtils;
@@ -101,6 +102,14 @@ public class Particles {
 									newValue -> config.particleScaling.put(id, newValue.floatValue()))
 							.available(!Main.OPTIFABRIC_LOADED)
 							.controller(opt -> FloatFieldControllerBuilder.create(opt).range(0f, 2f))
+							.build())
+					.option(Option.<Float>createBuilder()
+							.name(Text.literal(name + " Opacity"))
+							.binding(1f,
+									() -> config.particleAlphas.getOrDefault(id, 1f),
+									newValue -> config.particleAlphas.put(id, newValue.floatValue()))
+							.controller(opt -> FloatSliderControllerBuilder.create(opt).range(0.15f, 1f).step(0.05f))
+							.available(!Main.OPTIFABRIC_LOADED)
 							.build())
 					.build());
 		}

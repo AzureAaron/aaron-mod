@@ -31,6 +31,7 @@
     "MusicTrackerMixin",
     "NativeImageMixin",
     "ParticleManagerMixin",
+    "ParticleMixin",
     "PingMeasurerMixin",
     "PlayerSkinTextureMixin",
     "PotionItemMixin",
@@ -47,7 +48,8 @@
     "accessors.ChatAccessor",
     "accessors.ClientEntityManagerAccessor",
     "accessors.ClientWorldAccessor",
-    "accessors.MinecraftClientAccessor"
+    "accessors.MinecraftClientAccessor",
+    "accessors.ParticleAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

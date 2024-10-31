@@ -134,7 +134,7 @@ public abstract class NativeImageMixin implements NativeImageMarker {
 	}
 
 	@Override
-	public void markScreenshot(boolean isScreenshot) {
-		this.isScreenshot = isScreenshot;
+	public void markScreenshot() {
+		this.isScreenshot = true;
 	}
 }

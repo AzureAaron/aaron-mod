@@ -13,7 +13,7 @@ public class ScreenshotRecorderMixin {
 
 	@ModifyReturnValue(method = "takeScreenshot", at = @At("RETURN"))
 	private static NativeImage aaronMod$markScreenshotImages(NativeImage original) {
-		original.markScreenshot(true);
+		original.markScreenshot();
 
 		return original;
 	}
