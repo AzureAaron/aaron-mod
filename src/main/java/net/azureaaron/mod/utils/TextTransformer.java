@@ -1,5 +1,6 @@
 package net.azureaaron.mod.utils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
@@ -445,5 +446,19 @@ public class TextTransformer {
 		}
 		
 		return (newText.equals(text)) ? orderedText : newText.asOrderedText();
+	}
+
+	public static MutableText recursiveCopy(Text original) {
+		MutableText newText = MutableText.of(original.getContent())
+				.setStyle(original.getStyle());
+
+		//Size the array list ahead of time to prevent many memory copies due to resizing the array frequently otherwise
+		((ArrayList<Text>) newText.getSiblings()).ensureCapacity(original.getSiblings().size());
+
+		for (Text sibling : original.getSiblings()) {
+			newText.getSiblings().add(recursiveCopy(sibling));
+		}
+
+		return newText;
 	}
 }

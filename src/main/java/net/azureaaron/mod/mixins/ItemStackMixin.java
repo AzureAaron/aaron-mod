@@ -2,6 +2,8 @@ package net.azureaaron.mod.mixins;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.function.Predicate;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,42 +34,48 @@ import net.minecraft.util.Formatting;
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolder {
 	@Unique
-	private static final String[] MASTER_STARS = {"➊","➋","➌","➍","➎"};
+	private static final String STAR = "✪";
 	@Unique
-	private static final String MASTER_STAR_REGEX = "➊|➋|➌|➍|➎";
+	private static final Predicate<String> HAS_MASTER_STAR = s -> s.contains("➊") || s.contains("➋") || s.contains("➌") || s.contains("➍") || s.contains("➎");
 	@Unique
 	private static final Style BASE_STYLE = Style.EMPTY.withItalic(false);
 
 	@Shadow
+	@Nullable
 	public abstract <T> T set(ComponentType<? super T> type, @Nullable T value);
 
 	@ModifyVariable(method = "getName", at = @At("STORE"))
 	private Text aaronMod$customItemName(Text text) {
 		if ((Functions.isOnHypixel() && Functions.isInSkyblock() || getAlwaysDisplaySkyblockInfo()) && (AaronModConfigManager.get().oldMasterStars || AaronModConfigManager.get().fancyDiamondHeads) && text != null) {
-			String itemName = text.getString();
+			String name = text.getString();
+			Formatting masterStarStyle = Formatting.RED;
 
-			if (AaronModConfigManager.get().fancyDiamondHeads && itemName.contains("Diamond") && itemName.contains("Head")) {
-				Style nameStyle = Style.EMPTY.withColor(0x84dadd);
-				Style starStyle = Style.EMPTY.withColor(Formatting.AQUA);
-				Style masterStarStyle = Style.EMPTY.withColor(Formatting.DARK_AQUA);
-				int masterStarsApplied = switch (itemName) {
-					case String s when s.contains("➊") -> 1;
-					case String s when s.contains("➋") -> 2;
-					case String s when s.contains("➌") -> 3;
-					case String s when s.contains("➍") -> 4;
-					case String s when s.contains("➎") -> 5;
+			if (!name.contains(STAR) || !HAS_MASTER_STAR.test(name)) return text;
 
-					default -> 0;
-				};
+			if (AaronModConfigManager.get().fancyDiamondHeads && isDiamondHead()) {
+				Text styledName = TextTransformer.stylize(text, BASE_STYLE, "Diamond", Style.EMPTY.withColor(0x84dadd), 1);
+				Text styledStars = TextTransformer.stylize(styledName, BASE_STYLE, STAR, Style.EMPTY.withColor(Formatting.AQUA), 5);
 
-				Text styledName = TextTransformer.stylize(text, BASE_STYLE, "Diamond", nameStyle, 1);
-				Text styledStars = TextTransformer.stylize(styledName, BASE_STYLE, "✪", starStyle, 5);
-				return TextTransformer.stylizeAndReplace(styledStars, BASE_STYLE, "✪", masterStarStyle, MASTER_STARS, MASTER_STAR_REGEX, "", masterStarsApplied);
+				if (!AaronModConfigManager.get().oldMasterStars) {
+					String masterStar = switch (name) {
+						case String s when s.contains("➊") -> "➊";
+						case String s when s.contains("➋") -> "➋";
+						case String s when s.contains("➌") -> "➌";
+						case String s when s.contains("➍") -> "➍";
+						case String s when s.contains("➎") -> "➎";
+
+						default -> "?";
+					};
+
+					return TextTransformer.stylize(styledStars, BASE_STYLE, masterStar, Style.EMPTY.withColor(Formatting.DARK_AQUA), 1);
+				} else {
+					masterStarStyle = Formatting.DARK_AQUA;
+					text = styledStars;
+				}
 			}
 
 			if (AaronModConfigManager.get().oldMasterStars) {
-				Style masterStarStyle = Style.EMPTY.withColor(Formatting.RED);
-				int masterStarsApplied = switch (itemName) {
+				int masterStarsApplied = switch (name) {
 					case String s when s.contains("➊") -> 1;
 					case String s when s.contains("➋") -> 2;
 					case String s when s.contains("➌") -> 3;
@@ -77,16 +85,36 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 					default -> 0;
 				};
 
-				return TextTransformer.stylizeAndReplace(text, BASE_STYLE, "✪", masterStarStyle, MASTER_STARS, MASTER_STAR_REGEX, "", masterStarsApplied);
+				if (masterStarsApplied > 0) {
+					Text newText = TextTransformer.recursiveCopy(text);
+					List<Text> siblings = newText.getSiblings();
+					ListIterator<Text> iterator = siblings.listIterator();
+
+					while (iterator.hasNext()) {
+						Text component = iterator.next();
+						String stringified = component.getString();
+
+						if (stringified.contains(STAR) || HAS_MASTER_STAR.test(stringified)) iterator.remove();
+					}
+
+					Text redStars = Text.literal(STAR.repeat(masterStarsApplied)).formatted(masterStarStyle);
+					Text goldStars = (masterStarsApplied != 5) ? Text.literal(STAR.repeat(5 - masterStarsApplied)).formatted(Formatting.GOLD) : Text.empty();
+
+					siblings.add(redStars);
+					siblings.add(goldStars);
+
+					return newText;
+				}
 			}
 		}
+
 		return text;
 	}
 
 	@ModifyVariable(method = "appendTooltip", at = @At("STORE"))
 	private TooltipAppender aaronMod$rainbowifyMaxSkyblockEnchantments(TooltipAppender itemComponent) {
 		if (AaronModConfigManager.get().rainbowifyMaxSkyblockEnchantments && ((Functions.isOnHypixel() && Functions.isInSkyblock()) || getAlwaysDisplaySkyblockInfo()) && itemComponent instanceof LoreComponent lore) {
-			//For some reason the default styledLines list doesn't like when I modify a Text's siblings so we have to duplicate it
+			//For some areason the default styledLines list doesn't like when I modify a Text's siblings so we have to duplicate it
 			//Modifying the style works fine for some reason, idk what even happens
 			LoreComponent newLore = new LoreComponent(new ArrayList<>(lore.lines()), new ArrayList<>(lore.styledLines()));
 
@@ -131,6 +159,14 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 			return newLore;
 		}
 		return itemComponent;
+	}
+
+	@Unique
+	private boolean isDiamondHead() {
+		@SuppressWarnings("deprecation")
+		String itemId = getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).getNbt().getString("id");
+
+		return itemId.equals("DIAMOND_BONZO_HEAD") || itemId.equals("DIAMOND_SCARF_HEAD") || itemId.equals("DIAMOND_PROFESSOR_HEAD") || itemId.equals("DIAMOND_THORN_HEAD") || itemId.equals("DIAMOND_LIVID_HEAD") || itemId.equals("DIAMOND_SADAN_HEAD") || itemId.equals("DIAMOND_NECRON_HEAD");
 	}
 
 	@SuppressWarnings("deprecation")
