@@ -193,10 +193,10 @@ public class TextTransformer {
 		float textLength = text.length();
 		float next = Math.nextDown(1.0f) * textLength;
 		
-		newText.append(Text.literal(String.valueOf(text.charAt(0))).styled(style -> style.withColor(Functions.hsbToRGB(Math.nextDown(1.0f), 1.0f, 1.0f))));
+		newText.append(Text.literal(String.valueOf(text.charAt(0))).withColor(Functions.hsbToRGB(Math.nextDown(1.0f), 1.0f, 1.0f)));
 		for(int i = 1; i < textLength; ++i) {
 			float i2 = i; //For some reason Java doesn't like the direct reference
-			newText.append(Text.literal(String.valueOf(text.charAt(i))).styled(style -> style.withColor(Functions.hsbToRGB(i2 / next, 1.0f, 1.0f))));
+			newText.append(Text.literal(String.valueOf(text.charAt(i))).withColor(Functions.hsbToRGB(i2 / next, 1.0f, 1.0f)));
 		}
 		return newText;
 	}
@@ -215,10 +215,10 @@ public class TextTransformer {
 		MutableText newText = Text.empty();
 		float next = Math.nextDown(1.0f) * totalTextLength;
 		
-		newText.append(Text.literal(String.valueOf(text.charAt(0))).styled(style -> style.withColor(Functions.hsbToRGB(positionLeftOffAt / next, 1.0f, 1.0f))));
+		newText.append(Text.literal(String.valueOf(text.charAt(0))).withColor(Functions.hsbToRGB(positionLeftOffAt / next, 1.0f, 1.0f)));
 		for(int i = 1; i < text.length(); ++i) {
 			float i2 = i + positionLeftOffAt; //For some reason Java doesn't like the direct reference
-			newText.append(Text.literal(String.valueOf(text.charAt(i))).styled(style -> style.withColor(Functions.hsbToRGB(i2 / next, 1.0f, 1.0f))));
+			newText.append(Text.literal(String.valueOf(text.charAt(i))).withColor(Functions.hsbToRGB(i2 / next, 1.0f, 1.0f)));
 		}
 		return newText;
 	}

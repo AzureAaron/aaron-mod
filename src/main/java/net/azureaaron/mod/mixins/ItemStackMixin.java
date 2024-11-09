@@ -1,9 +1,9 @@
 package net.azureaaron.mod.mixins;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -114,9 +114,9 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 	@ModifyVariable(method = "appendTooltip", at = @At("STORE"))
 	private TooltipAppender aaronMod$rainbowifyMaxSkyblockEnchantments(TooltipAppender itemComponent) {
 		if (AaronModConfigManager.get().rainbowifyMaxSkyblockEnchantments && ((Functions.isOnHypixel() && Functions.isInSkyblock()) || getAlwaysDisplaySkyblockInfo()) && itemComponent instanceof LoreComponent lore) {
-			//For some areason the default styledLines list doesn't like when I modify a Text's siblings so we have to duplicate it
+			//For some reason the default styledLines list doesn't like when I modify a Text's siblings so we have to duplicate it
 			//Modifying the style works fine for some reason, idk what even happens
-			LoreComponent newLore = new LoreComponent(new ArrayList<>(lore.lines()), new ArrayList<>(lore.styledLines()));
+			LoreComponent newLore = new LoreComponent(lore.lines().stream().map(TextTransformer::recursiveCopy).collect(Collectors.toList()));
 
 			for (Text line : newLore.styledLines()) {
 				if (Skyblock.getMaxEnchants().stream().anyMatch(line.getString()::contains)) {
@@ -149,7 +149,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 								String componentString = currentComponent.getString();
 
 								if (Skyblock.getMaxEnchants().stream().anyMatch(componentString::contains)) {
-									((MutableText) currentComponent).styled(style -> style.withColor(0xAA5500));
+									((MutableText) currentComponent).withColor(0xAA5500);
 								}
 							}
 						}
