@@ -38,7 +38,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 	@Unique
 	private static final Predicate<String> HAS_MASTER_STAR = s -> s.contains("➊") || s.contains("➋") || s.contains("➌") || s.contains("➍") || s.contains("➎");
 	@Unique
-	private static final Style BASE_STYLE = Style.EMPTY.withItalic(false);
+	private static final Style NO_ITALIC = Style.EMPTY.withItalic(false);
 
 	@Shadow
 	@Nullable
@@ -53,8 +53,8 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 			if (!name.contains(STAR) || !HAS_MASTER_STAR.test(name)) return text;
 
 			if (AaronModConfigManager.get().fancyDiamondHeads && isDiamondHead()) {
-				Text styledName = TextTransformer.stylize(text, BASE_STYLE, "Diamond", Style.EMPTY.withColor(0x84dadd), 1);
-				Text styledStars = TextTransformer.stylize(styledName, BASE_STYLE, STAR, Style.EMPTY.withColor(Formatting.AQUA), 5);
+				Text styledName = TextTransformer.stylize(text, NO_ITALIC, "Diamond", Style.EMPTY.withColor(0x84dadd), 1);
+				Text styledStars = TextTransformer.stylize(styledName, NO_ITALIC, STAR, Style.EMPTY.withColor(Formatting.AQUA), 5);
 
 				if (!AaronModConfigManager.get().oldMasterStars) {
 					String masterStar = switch (name) {
@@ -67,7 +67,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 						default -> "?";
 					};
 
-					return TextTransformer.stylize(styledStars, BASE_STYLE, masterStar, Style.EMPTY.withColor(Formatting.DARK_AQUA), 1);
+					return TextTransformer.stylize(styledStars, NO_ITALIC, masterStar, Style.EMPTY.withColor(Formatting.DARK_AQUA), 1);
 				} else {
 					masterStarStyle = Formatting.DARK_AQUA;
 					text = styledStars;
@@ -95,8 +95,8 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 
 						//Swap the gold stars for the mixed red/gold stars
 						if (stringified.contains(STAR)) {
-							Text stars = Text.literal(STAR.repeat(masterStarsApplied)).formatted(masterStarStyle)
-									.append((masterStarsApplied != 5) ? Text.literal(STAR.repeat(5 - masterStarsApplied)).formatted(Formatting.GOLD) : Text.empty());
+							Text stars = Text.literal(STAR.repeat(masterStarsApplied)).setStyle(NO_ITALIC.withFormatting(masterStarStyle))
+									.append((masterStarsApplied != 5) ? Text.literal(STAR.repeat(5 - masterStarsApplied)).setStyle(NO_ITALIC.withFormatting(Formatting.GOLD)) : Text.empty());
 
 							iterator.set(stars);
 						}
