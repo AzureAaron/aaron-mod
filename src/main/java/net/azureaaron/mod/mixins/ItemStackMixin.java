@@ -87,21 +87,23 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 
 				if (masterStarsApplied > 0) {
 					Text newText = TextTransformer.recursiveCopy(text);
-					List<Text> siblings = newText.getSiblings();
-					ListIterator<Text> iterator = siblings.listIterator();
+					ListIterator<Text> iterator = newText.getSiblings().listIterator();
 
 					while (iterator.hasNext()) {
 						Text component = iterator.next();
 						String stringified = component.getString();
 
-						if (stringified.contains(STAR) || HAS_MASTER_STAR.test(stringified)) iterator.remove();
+						//Swap the gold stars for the mixed red/gold stars
+						if (stringified.contains(STAR)) {
+							Text stars = Text.literal(STAR.repeat(masterStarsApplied)).formatted(masterStarStyle)
+									.append((masterStarsApplied != 5) ? Text.literal(STAR.repeat(5 - masterStarsApplied)).formatted(Formatting.GOLD) : Text.empty());
+
+							iterator.set(stars);
+						}
+
+						//Hide the master star icon - we can't remove this otherwise if there is other text in this component then the name will be altered beyond what is necessary
+						if (HAS_MASTER_STAR.test(stringified)) iterator.set(TextTransformer.withContent(component, stringified.substring(1)));
 					}
-
-					Text redStars = Text.literal(STAR.repeat(masterStarsApplied)).formatted(masterStarStyle);
-					Text goldStars = (masterStarsApplied != 5) ? Text.literal(STAR.repeat(5 - masterStarsApplied)).formatted(Formatting.GOLD) : Text.empty();
-
-					siblings.add(redStars);
-					siblings.add(goldStars);
 
 					return newText;
 				}

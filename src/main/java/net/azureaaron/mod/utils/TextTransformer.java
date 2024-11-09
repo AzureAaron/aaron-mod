@@ -448,6 +448,9 @@ public class TextTransformer {
 		return (newText.equals(text)) ? orderedText : newText.asOrderedText();
 	}
 
+	/**
+	 * Copies a text's content, style, and creates a deep copy of the siblings.
+	 */
 	public static MutableText recursiveCopy(Text original) {
 		MutableText newText = MutableText.of(original.getContent())
 				.setStyle(original.getStyle());
@@ -458,6 +461,17 @@ public class TextTransformer {
 		for (Text sibling : original.getSiblings()) {
 			newText.getSiblings().add(recursiveCopy(sibling));
 		}
+
+		return newText;
+	}
+
+	/**
+	 * Replaces the text's content while preserving the style and siblings.
+	 */
+	public static MutableText withContent(Text original, String newContent) {
+		MutableText newText = Text.literal(newContent).setStyle(original.getStyle());
+
+		newText.getSiblings().addAll(original.getSiblings());
 
 		return newText;
 	}
