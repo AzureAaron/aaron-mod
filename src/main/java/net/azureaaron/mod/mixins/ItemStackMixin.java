@@ -116,11 +116,12 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 	@ModifyVariable(method = "appendTooltip", at = @At("STORE"))
 	private TooltipAppender aaronMod$rainbowifyMaxSkyblockEnchantments(TooltipAppender itemComponent) {
 		if (AaronModConfigManager.get().rainbowifyMaxSkyblockEnchantments && ((Functions.isOnHypixel() && Functions.isInSkyblock()) || getAlwaysDisplaySkyblockInfo()) && itemComponent instanceof LoreComponent lore) {
-			//For some reason the default styledLines list doesn't like when I modify a Text's siblings so we have to duplicate it
-			//Modifying the style works fine for some reason, idk what even happens
-			LoreComponent newLore = new LoreComponent(lore.lines().stream().map(TextTransformer::recursiveCopy).collect(Collectors.toList()));
+			//Copy the text to ensure that we don't modify the original
+			List<Text> lines = lore.lines().stream()
+					.map(TextTransformer::recursiveCopy)
+					.collect(Collectors.toList());
 
-			for (Text line : newLore.styledLines()) {
+			for (Text line : lines) {
 				if (Skyblock.getMaxEnchants().stream().anyMatch(line.getString()::contains)) {
 					List<Text> textComponents = line.getSiblings();
 
@@ -136,11 +137,13 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 								if (Skyblock.getMaxEnchants().stream().anyMatch(componentString::contains)) totalLength += componentString.length();
 							}
 
-							for (int j = 0; j < textComponents.size(); j++) {
-								String componentString = textComponents.get(j).getString();
+							ListIterator<Text> iterator = textComponents.listIterator();
+
+							while (iterator.hasNext()) {
+								String componentString = iterator.next().getString();
 
 								if (Skyblock.getMaxEnchants().stream().anyMatch(componentString::contains)) {
-									textComponents.set(j, TextTransformer.progressivelyRainbowify(componentString, totalLength, positionLeftOffAt).styled(style -> style.withItalic(false)));
+									iterator.set(TextTransformer.progressivelyRainbowify(componentString, totalLength, positionLeftOffAt).styled(style -> style.withItalic(false)));
 									positionLeftOffAt += componentString.length();
 								}
 							}
@@ -158,7 +161,10 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 					}
 				}
 			}
-			return newLore;
+
+			//Return a new lore component with the updated text
+			//Note that the styledLines list is actively transformed as its read so we can't create this component ahead of time and modify the contents of that list (it won't work)
+			return new LoreComponent(lines);
 		}
 		return itemComponent;
 	}
