@@ -44,6 +44,7 @@ public class ApiAuthentication {
 	private static final String AUTH_FAILURE = "Failed to refresh your Aaron Mod API token, some features may not work temporarily!";
 
 	private static TokenInfo tokenInfo = null;
+	private static boolean sentWarningOnce = false;
 
 	public static void init() {
 		//Only do this if Skyblock Commands are enabled since thats all this is necessary for
@@ -132,7 +133,10 @@ public class ApiAuthentication {
 		LOGGER.error(logMessage, logArgs);
 		Scheduler.schedule(ApiAuthentication::updateToken, retryAfter, TimeUnit.SECONDS);
 
-		if (CLIENT.player != null) CLIENT.player.sendMessage(Constants.PREFIX.get().append(warningMessage), false);
+		if (CLIENT.player != null && !sentWarningOnce) {
+			CLIENT.player.sendMessage(Constants.PREFIX.get().append(warningMessage), false);
+			sentWarningOnce = true;
+		}
 	}
 
 	@Nullable
