@@ -5,6 +5,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.ImmutableSet;
@@ -34,6 +35,7 @@ public class ImagePreview {
 	private static final Pattern IMAGE_URL_PATTERN = Pattern.compile("(https?:\\/\\/.*\\.(?:png|jpg|jpeg|gif)\\.?(?:\\?.+)?)", Pattern.CASE_INSENSITIVE);
 	private static final ImmutableSet<String> EXPECTED_CONTENT_TYPES = ImmutableSet.of("image/png", "image/jpeg");
 
+	private static final AtomicInteger COUNTER = new AtomicInteger();
 	//The actual image caches, we retain a separate set of urls to avoid attempting to cache the same image twice which'd cause a memory leak
 	private static final Object2ObjectOpenHashMap<String, CachedImage> IMAGE_CACHE = new Object2ObjectOpenHashMap<>();
 	private static final ObjectOpenHashSet<String> IMAGE_URLS_CACHED = new ObjectOpenHashSet<>();
@@ -85,9 +87,11 @@ public class ImagePreview {
 				try {
 					InputStream inputStream = Http.sendGenericH2Request(uri, EXPECTED_CONTENT_TYPES);
 					NativeImage image = NativeImage.read(inputStream);
-					Identifier texture = client.getTextureManager().registerDynamicTexture("image_preview", new NativeImageBackedTexture(image));
+					Identifier id = Identifier.of(Main.NAMESPACE, "image_preview/" + COUNTER.getAndIncrement());
 
-					IMAGE_CACHE.put(url, new CachedImage(System.currentTimeMillis(), texture, image.getWidth(), image.getHeight()));
+					client.getTextureManager().registerTexture(id, new NativeImageBackedTexture(image));
+
+					IMAGE_CACHE.put(url, new CachedImage(System.currentTimeMillis(), id, image.getWidth(), image.getHeight()));
 				} catch (Exception e) {
 					Main.LOGGER.error("[Aaron's Mod Image Preivew] Failed to cache image! URL: {}", url, e);
 

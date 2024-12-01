@@ -9,3 +9,6 @@ accessible method net/minecraft/client/texture/NativeImage$WriteCallback <init> 
 
 # Particle Customization
 accessible class net/minecraft/client/particle/FireworksSparkParticle$Explosion
+
+# December Christmas Chests
+accessible class net/minecraft/client/render/item/property/select/LocalTimeProperty$Data

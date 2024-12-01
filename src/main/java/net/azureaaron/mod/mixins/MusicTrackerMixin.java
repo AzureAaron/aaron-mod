@@ -26,7 +26,7 @@ public class MusicTrackerMixin {
 				.toArray(String[]::new);
 	}
 
-	@ModifyExpressionValue(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/sound/MusicSound;shouldReplaceCurrentMusic()Z"))
+	@ModifyExpressionValue(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/MusicInstance;shouldReplace(Lnet/minecraft/client/sound/SoundInstance;)Z"))
 	private boolean aaronMod$dontReplaceMusicSometimes(boolean original) {
 		//Walking the stack is done to ensure that we only return false when Screen#tick isn't the reason for this method invocation
 		String[] callerMethods = StackWalker.getInstance().walk(this::findCallerMethods);

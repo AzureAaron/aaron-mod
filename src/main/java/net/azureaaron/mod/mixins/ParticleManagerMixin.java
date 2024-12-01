@@ -1,5 +1,7 @@
 package net.azureaaron.mod.mixins;
 
+import java.util.Objects;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -11,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Cancellable;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.azureaaron.mod.Particles;
 import net.azureaaron.mod.Particles.State;
@@ -20,6 +21,9 @@ import net.azureaaron.mod.mixins.accessors.ParticleAccessor;
 import net.minecraft.client.particle.BlockDustParticle;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleManager;
+import net.minecraft.client.particle.ParticleTextureSheet;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
@@ -65,12 +69,13 @@ public class ParticleManagerMixin {
 		return modifyParticle(original, Particles.BLOCK_BREAKING);
 	}
 
-	@Inject(method = "renderParticles", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/particle/Particle;buildGeometry(Lnet/minecraft/client/render/VertexConsumer;Lnet/minecraft/client/render/Camera;F)V"))
-	private void aaronMod$blendOpaqueParticles(CallbackInfo ci, @Local Particle particle) {
-		if (particle.hasCustomAlpha()) {
-			RenderSystem.enableBlend();
-			RenderSystem.defaultBlendFunc();
+	@ModifyVariable(method = "renderParticles(Lnet/minecraft/client/render/Camera;FLnet/minecraft/client/render/VertexConsumerProvider$Immediate;Lnet/minecraft/client/particle/ParticleTextureSheet;Ljava/util/Queue;)V", at = @At("LOAD"))
+	private static VertexConsumer aaronMod$blendOpaqueParticles(VertexConsumer original, @Local Particle particle, @Local(argsOnly = true) ParticleTextureSheet sheet, @Local(argsOnly = true) VertexConsumerProvider.Immediate vertexConsumers) {
+		if (particle.hasCustomAlpha() && sheet == ParticleTextureSheet.PARTICLE_SHEET_OPAQUE) {
+			return vertexConsumers.getBuffer(Objects.requireNonNull(ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT.renderType()));
 		}
+
+		return original;
 	}
 
 	@Unique
