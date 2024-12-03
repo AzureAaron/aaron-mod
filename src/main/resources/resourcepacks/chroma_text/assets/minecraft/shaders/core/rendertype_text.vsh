@@ -16,7 +16,10 @@ uniform int FogShape;
 out float vertexDistance;
 out vec4 vertexColor;
 out vec2 texCoord0;
+
+#ifdef AARON_MOD_CHROMA
 out vec4 rawColour;
+#endif
 
 void main() {
     gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
@@ -25,6 +28,8 @@ void main() {
     vertexColor = Color * texelFetch(Sampler2, UV2 / 16, 0);
     texCoord0 = UV0;
 
-    // The Color uniform is empty in the fragment shader so we need to pass it through
+#ifdef AARON_MOD_CHROMA
+    // Pass through the original text colour to the fragment shader
     rawColour = Color;
+#endif
 }
