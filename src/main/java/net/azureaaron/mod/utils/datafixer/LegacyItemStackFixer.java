@@ -1,8 +1,8 @@
 package net.azureaaron.mod.utils.datafixer;
 
-import static net.azureaaron.legacyitemdfu.LegacyItemStackFixer.FIRST_VERSION;
-import static net.azureaaron.legacyitemdfu.LegacyItemStackFixer.LATEST_VERSION;
+import static net.azureaaron.legacyitemdfu.LegacyItemStackFixer.getFirstVersion;
 import static net.azureaaron.legacyitemdfu.LegacyItemStackFixer.getFixer;
+import static net.azureaaron.legacyitemdfu.LegacyItemStackFixer.getLatestVersion;
 
 import java.util.List;
 
@@ -39,7 +39,7 @@ public class LegacyItemStackFixer {
 	public static ItemStack fixLegacyStack(NbtCompound nbt) {
 		if (nbt.getInt("id") == 0) return ItemStack.EMPTY;
 
-		Dynamic<NbtElement> fixed = getFixer().update(TypeReferences.LEGACY_ITEM_STACK, new Dynamic<>(ItemUtils.getRegistryLookup().getOps(NbtOps.INSTANCE), nbt), FIRST_VERSION, LATEST_VERSION);
+		Dynamic<NbtElement> fixed = getFixer().update(TypeReferences.LEGACY_ITEM_STACK, new Dynamic<>(ItemUtils.getRegistryLookup().getOps(NbtOps.INSTANCE), nbt), getFirstVersion(), getLatestVersion());
 		ItemStack stack = ItemStack.CODEC.parse(fixed)
 				.setPartial(ItemStack.EMPTY)
 				.resultOrPartial(LegacyItemStackFixer::tryLogFixerError)
