@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 
 import net.azureaaron.mod.config.AaronModConfig.CustomColourProfile;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.utils.OkLabColour;
 import net.minecraft.util.math.MathHelper;
 
 public class Colour {
@@ -47,12 +48,12 @@ public class Colour {
 		}
 		
 		public int gradient(double percentage) {
-			return Colour.interpolate(primaryColour.getAsInt(), secondaryColour.getAsInt(), percentage);
+			return OkLabColour.interpolate(primaryColour.getAsInt(), secondaryColour.getAsInt(), (float) percentage);
 		}
 	}
 	
 	//Credit to https://codepen.io/OliverBalfour/post/programmatically-making-gradients
-	private static int interpolate(int firstColour, int secondColour, double percentage) {
+	public static int interpolate(int firstColour, int secondColour, double percentage) {
 		int r1 = MathHelper.square((firstColour >> 16) & 0xFF);
 		int g1 = MathHelper.square((firstColour >> 8) & 0xFF);
 		int b1 = MathHelper.square(firstColour & 0xFF);
