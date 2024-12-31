@@ -43,6 +43,7 @@ public class Renderer {
 		RenderSystem.lineWidth(lineWidth);
 		RenderSystem.disableCull();
 		RenderSystem.enableDepthTest();
+		RenderSystem.depthFunc(GL11.GL_LEQUAL);
 
 		BufferBuilder buffer = tessellator.begin(DrawMode.LINES, VertexFormats.LINES);
 		VertexRendering.drawBox(matrices, buffer, box, red / 255f, green / 255f, blue / 255f, alpha);
@@ -77,6 +78,7 @@ public class Renderer {
 		RenderSystem.disablePolygonOffset();
 		RenderSystem.disableBlend();
 		RenderSystem.enableCull();
+		RenderSystem.disableDepthTest();
 	}
 
 	public static void renderText(WorldRenderContext wrc, Vec3d pos, OrderedText text, boolean seeThrough) {
@@ -101,12 +103,14 @@ public class Renderer {
 
 		VertexConsumerProvider.Immediate consumers = VertexConsumerProvider.immediate(ALLOCATOR);
 
+		RenderSystem.enableDepthTest();
 		RenderSystem.depthFunc(seeThrough ? GL11.GL_ALWAYS : GL11.GL_LEQUAL);
 
-		textRenderer.draw(text, xOffset, 0, 0xFFFFFFFF, false, positionMatrix, consumers, TextLayerType.SEE_THROUGH, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
+		textRenderer.draw(text, xOffset, 0, 0xFFFFFFFF, false, positionMatrix, consumers, seeThrough ? TextLayerType.SEE_THROUGH : TextLayerType.NORMAL, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 		consumers.draw();
 
 		RenderSystem.depthFunc(GL11.GL_LEQUAL);
+		RenderSystem.disableDepthTest();
 	}
 
 	/**
