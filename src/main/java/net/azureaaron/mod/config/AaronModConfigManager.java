@@ -359,7 +359,8 @@ public class AaronModConfigManager {
 										.description(OptionDescription.createBuilder()
 												.text(Text.literal("The mod offers two different modes when copying chat messages:")
 														.append(Text.literal("\n\nEntire Message: Copies the entire chat message."))
-														.append(Text.literal("\n\nSingle Line: Copy chat messages line by line.")))
+														.append(Text.literal("\n\nSingle Line: Copy chat messages line by line."))
+														.append(Text.literal("\n\nTip: Holding down alt when copying an entire message will copy it as JSON.")))
 												.build())
 										.binding(defaults.copyChatMode,
 												() -> config.copyChatMode,

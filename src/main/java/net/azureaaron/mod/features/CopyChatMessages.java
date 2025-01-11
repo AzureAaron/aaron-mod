@@ -4,17 +4,22 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.gson.JsonElement;
+import com.mojang.serialization.JsonOps;
+
 import net.azureaaron.mod.config.AaronModConfig;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.MouseInputEvent;
 import net.azureaaron.mod.mixins.accessors.ChatAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHudLine;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.client.toast.ToastManager;
 import net.minecraft.client.util.Window;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 import net.minecraft.util.Formatting;
 
 public class CopyChatMessages {
@@ -67,9 +72,11 @@ public class CopyChatMessages {
 					List<ChatHudLine> messages = chatAccessor.getMessages();
 
 					if (messageIndex > -1 && messageIndex < messages.size()) {
-						String message = Formatting.strip(messages.get(messageIndex).content().getString());
+						Text message = messages.get(messageIndex).content();
+						String text2Copy = !Screen.hasAltDown() ? Formatting.strip(message.getString()) : TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, message)
+								.mapOrElse(JsonElement::toString, e -> "Error while encoding JSON text: " + e.message());
 
-						CLIENT.keyboard.setClipboard(message);
+						CLIENT.keyboard.setClipboard(text2Copy);
 						sendToast(true);
 					} else {
 						sendToast(false);
