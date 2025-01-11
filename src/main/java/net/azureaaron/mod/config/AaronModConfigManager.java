@@ -745,7 +745,7 @@ public class AaronModConfigManager {
 										.binding(defaults.itemModelCustomization.mainHand.x,
 												() -> config.itemModelCustomization.mainHand.x,
 												newValue -> config.itemModelCustomization.mainHand.x = newValue)
-										.controller(FloatFieldControllerBuilder::create)
+										.controller(ConfigUtils::createFloatFieldController)
 										.build())
 								.option(Option.<Float>createBuilder()
 										.name(Text.literal("Y Position"))
@@ -753,7 +753,7 @@ public class AaronModConfigManager {
 										.binding(defaults.itemModelCustomization.mainHand.y,
 												() -> config.itemModelCustomization.mainHand.y,
 												newValue -> config.itemModelCustomization.mainHand.y = newValue)
-										.controller(FloatFieldControllerBuilder::create)
+										.controller(ConfigUtils::createFloatFieldController)
 										.build())
 								.option(Option.<Float>createBuilder()
 										.name(Text.literal("Z Position"))
@@ -761,7 +761,7 @@ public class AaronModConfigManager {
 										.binding(defaults.itemModelCustomization.mainHand.z,
 												() -> config.itemModelCustomization.mainHand.z,
 												newValue -> config.itemModelCustomization.mainHand.z = newValue)
-										.controller(FloatFieldControllerBuilder::create)
+										.controller(ConfigUtils::createFloatFieldController)
 										.build())
 								.option(Option.<Float>createBuilder()
 										.name(Text.literal("Scale"))
@@ -806,7 +806,7 @@ public class AaronModConfigManager {
 										.binding(defaults.itemModelCustomization.offHand.x,
 												() -> config.itemModelCustomization.offHand.x,
 												newValue -> config.itemModelCustomization.offHand.x = newValue)
-										.controller(FloatFieldControllerBuilder::create)
+										.controller(ConfigUtils::createFloatFieldController)
 										.build())
 								.option(Option.<Float>createBuilder()
 										.name(Text.literal("Y Position"))
@@ -814,7 +814,7 @@ public class AaronModConfigManager {
 										.binding(defaults.itemModelCustomization.offHand.y,
 												() -> config.itemModelCustomization.offHand.y,
 												newValue -> config.itemModelCustomization.offHand.y = newValue)
-										.controller(FloatFieldControllerBuilder::create)
+										.controller(ConfigUtils::createFloatFieldController)
 										.build())
 								.option(Option.<Float>createBuilder()
 										.name(Text.literal("Z Position"))
@@ -822,7 +822,7 @@ public class AaronModConfigManager {
 										.binding(defaults.itemModelCustomization.offHand.z,
 												() -> config.itemModelCustomization.offHand.z,
 												newValue -> config.itemModelCustomization.offHand.z = newValue)
-										.controller(FloatFieldControllerBuilder::create)
+										.controller(ConfigUtils::createFloatFieldController)
 										.build())
 								.option(Option.<Float>createBuilder()
 										.name(Text.literal("Scale"))

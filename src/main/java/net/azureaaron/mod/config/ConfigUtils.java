@@ -12,6 +12,13 @@ public class ConfigUtils {
 		return BooleanControllerBuilder.create(opt).coloured(true);
 	}
 
+	/**
+	 * Workaround for YACL formatting to just 1 decimal place.
+	 */
+	public static FloatFieldControllerBuilder createFloatFieldController(Option<Float> opt) {
+		return FloatFieldControllerBuilder.create(opt).formatValue(f -> Text.of(f.toString()));
+	}
+
 	public static FloatFieldControllerBuilder createFloatMultFieldController(Option<Float> opt) {
 		return FloatFieldControllerBuilder.create(opt).formatValue(f -> Text.of(f + "x"));
 	}
