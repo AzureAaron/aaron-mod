@@ -11,6 +11,7 @@ import net.azureaaron.mod.config.AaronModConfig;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.MouseInputEvent;
 import net.azureaaron.mod.mixins.accessors.ChatAccessor;
+import net.azureaaron.mod.utils.ItemUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.gui.screen.Screen;
@@ -73,7 +74,7 @@ public class CopyChatMessages {
 
 					if (messageIndex > -1 && messageIndex < messages.size()) {
 						Text message = messages.get(messageIndex).content();
-						String text2Copy = !Screen.hasAltDown() ? Formatting.strip(message.getString()) : TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, message)
+						String text2Copy = !Screen.hasAltDown() ? Formatting.strip(message.getString()) : TextCodecs.CODEC.encodeStart(ItemUtils.getRegistryLookup().getOps(JsonOps.INSTANCE), message)
 								.mapOrElse(JsonElement::toString, e -> "Error while encoding JSON text: " + e.message());
 
 						CLIENT.keyboard.setClipboard(text2Copy);
