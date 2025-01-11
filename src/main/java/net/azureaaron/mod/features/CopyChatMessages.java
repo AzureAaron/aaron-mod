@@ -2,6 +2,8 @@ package net.azureaaron.mod.features;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import net.azureaaron.mod.config.AaronModConfig;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.MouseInputEvent;
@@ -64,7 +66,7 @@ public class CopyChatMessages {
 					int messageIndex = getMessageIndex(chatLineX, chatLineY);
 					List<ChatHudLine> messages = chatAccessor.getMessages();
 
-					if (messageIndex >= 0 && messageIndex < messages.size()) {
+					if (messageIndex > -1 && messageIndex < messages.size()) {
 						String message = Formatting.strip(messages.get(messageIndex).content().getString());
 
 						CLIENT.keyboard.setClipboard(message);
@@ -112,18 +114,20 @@ public class CopyChatMessages {
 
 		for (int i = upperbound; i >= lowerbound; i--) { //Iterate over the entries apart of this message and build the messages content
 			ChatHudLine.Visible currentEntry = visibleMessages.get(i);
+
 			currentEntry.content().accept((index, style, codePoint) -> {
-				hoveredMessage.appendCodePoint(codePoint);
+				if (!Character.isWhitespace(codePoint)) hoveredMessage.appendCodePoint(codePoint);
+
 				return true;
 			});
 		}
 
 		for (int i = 0; i < messages.size(); i++) { //Iterate over all stored messages
 			ChatHudLine currentMessage = messages.get(i);
-			String messageContent = Formatting.strip(currentMessage.content().getString()).replaceAll("\n", "").replaceAll(" ", "");
-			if (messageContent.equals(hoveredMessage.toString().replaceAll(" ", ""))) return i;
-		}
+			String messageContent = StringUtils.deleteWhitespace(Formatting.strip(currentMessage.content().getString()));
 
+			if (messageContent.equals(hoveredMessage.toString())) return i;
+		}
 		return -1;
 	}
 }
