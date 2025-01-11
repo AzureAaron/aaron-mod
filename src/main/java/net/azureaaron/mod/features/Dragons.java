@@ -20,7 +20,7 @@ public enum Dragons {
 	public final float green;
 	public final float blue;
 	
-	public volatile long spawnStart = 0L;
+	public long spawnStart = 0L;
 	
 	public static final Dragons[] VALUES = Dragons.values();
 	
