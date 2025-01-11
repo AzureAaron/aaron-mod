@@ -25,7 +25,7 @@ public class DragonHealth {
 	private static final Pattern DRAGON_HP = Pattern.compile("﴾ Withered Dragon (?:\u16E4 )?(?<health>[0-9kKMB.]+)\\/(?<max>[0-9kKMB.]+)\u2764 ﴿");
 	
 	public static void init() {
-		WorldRenderEvents.BEFORE_DEBUG_RENDER.register(DragonHealth::render);
+		WorldRenderEvents.AFTER_TRANSLUCENT.register(DragonHealth::render);
 	}
 	
 	private static void render(WorldRenderContext wrc) {
