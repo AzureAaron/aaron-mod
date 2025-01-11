@@ -39,7 +39,7 @@
     "hm-api": ">=1.0.1+1.21.2"
   },
   "suggests": {
-    "modmenu": ">=12.0.0-beta.1"
+    "modmenu": ">=13.0.0"
   },
   "custom": {
     "loom:injected_interfaces": {

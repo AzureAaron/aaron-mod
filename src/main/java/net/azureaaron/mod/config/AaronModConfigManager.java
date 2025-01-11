@@ -700,6 +700,163 @@ public class AaronModConfigManager {
 								.text(Text.literal("⧉"))
 								.action((screen, opt) -> ConfirmLinkScreen.open(screen, "https://minecraft.tools/en/json_text.php"))
 								.build())
+						.build())
+				.category(ConfigCategory.createBuilder()
+						.name(Text.literal("Item Model"))
+						.option(Option.<Boolean>createBuilder()
+								.name(Text.literal("Enable Item Model Customization"))
+								.description(OptionDescription.of(Text.literal("Must be enabled in order for any of the options in this tab to work.")))
+								.binding(defaults.itemModelCustomization.enableItemModelCustomization,
+										() -> config.itemModelCustomization.enableItemModelCustomization,
+										newValue -> config.itemModelCustomization.enableItemModelCustomization = newValue)
+								.controller(ConfigUtils::createBooleanController)
+								.build())
+						.option(ButtonOption.createBuilder()
+								.name(Text.literal("How to use this! (Hover)"))
+								.text(Text.empty())
+								.description(OptionDescription.of(
+										Text.literal("With these options, you can tweak the appearence of item models while they are held in first person."),
+										Text.literal("\nYou can change the position, scale (size), and the rotation for items held in the main or off hand, as well as being able to customize the swing animation!")))
+								.action((screen, opt) -> {}) //TODO make this BiConsumer a constant value somewhere for reuse
+								.build())
+						.option(Option.<Integer>createBuilder()
+								.name(Text.literal("Swing Duration"))
+								.description(OptionDescription.of(Text.literal("How long the hand swing animation should last. Leave at 6 for the default/vanilla time.")))
+								.binding(defaults.itemModelCustomization.swingDuration,
+										() -> config.itemModelCustomization.swingDuration,
+										newValue -> config.itemModelCustomization.swingDuration = newValue)
+								.controller(opt -> IntegerSliderControllerBuilder.create(opt).range(0, 16).step(1))
+								.build())
+						.option(Option.<Boolean>createBuilder()
+								.name(Text.literal("Ignore Haste"))
+								.description(OptionDescription.of(Text.literal("Cancels the effect that haste has on the swing duration.")))
+								.binding(defaults.itemModelCustomization.ignoreHaste,
+										() -> config.itemModelCustomization.ignoreHaste,
+										newValue -> config.itemModelCustomization.ignoreHaste = newValue)
+								.controller(ConfigUtils::createBooleanController)
+								.build())
+
+						.group(OptionGroup.createBuilder()
+								.name(Text.literal("Main Hand"))
+								.description(OptionDescription.of(Text.literal("Transformations to apply to the item model in the main hand.")))
+								.option(Option.<Float>createBuilder()
+										.name(Text.literal("X Position"))
+										.description(OptionDescription.of(Text.literal("The units to translate the x of the item model by.")))
+										.binding(defaults.itemModelCustomization.mainHand.x,
+												() -> config.itemModelCustomization.mainHand.x,
+												newValue -> config.itemModelCustomization.mainHand.x = newValue)
+										.controller(FloatFieldControllerBuilder::create)
+										.build())
+								.option(Option.<Float>createBuilder()
+										.name(Text.literal("Y Position"))
+										.description(OptionDescription.of(Text.literal("The units to translate the y of the item model by.")))
+										.binding(defaults.itemModelCustomization.mainHand.y,
+												() -> config.itemModelCustomization.mainHand.y,
+												newValue -> config.itemModelCustomization.mainHand.y = newValue)
+										.controller(FloatFieldControllerBuilder::create)
+										.build())
+								.option(Option.<Float>createBuilder()
+										.name(Text.literal("Z Position"))
+										.description(OptionDescription.of(Text.literal("The units to translate the z of the item model by.")))
+										.binding(defaults.itemModelCustomization.mainHand.z,
+												() -> config.itemModelCustomization.mainHand.z,
+												newValue -> config.itemModelCustomization.mainHand.z = newValue)
+										.controller(FloatFieldControllerBuilder::create)
+										.build())
+								.option(Option.<Float>createBuilder()
+										.name(Text.literal("Scale"))
+										.description(OptionDescription.of(Text.literal("The units to scale the item model by.")))
+										.binding(defaults.itemModelCustomization.mainHand.scale,
+												() -> config.itemModelCustomization.mainHand.scale,
+												newValue -> config.itemModelCustomization.mainHand.scale = newValue)
+										.controller(ConfigUtils::createFloatMultFieldController)
+										.build())
+								.option(Option.<Float>createBuilder()
+										.name(Text.literal("X Rotation"))
+										.description(OptionDescription.of(Text.literal("The degrees to rotate the item model by around the positive x axis.")))
+										.binding(defaults.itemModelCustomization.mainHand.xRotation,
+												() -> config.itemModelCustomization.mainHand.xRotation,
+												newValue -> config.itemModelCustomization.mainHand.xRotation = newValue)
+										.controller(ConfigUtils::createFloatDegreesFieldController)
+										.build())
+								.option(Option.<Float>createBuilder()
+										.name(Text.literal("Y Rotation"))
+										.description(OptionDescription.of(Text.literal("The degrees to rotate the item model by around the positive y axis.")))
+										.binding(defaults.itemModelCustomization.mainHand.yRotation,
+												() -> config.itemModelCustomization.mainHand.yRotation,
+												newValue -> config.itemModelCustomization.mainHand.yRotation = newValue)
+										.controller(ConfigUtils::createFloatDegreesFieldController)
+										.build())
+								.option(Option.<Float>createBuilder()
+										.name(Text.literal("Z Rotation"))
+										.description(OptionDescription.of(Text.literal("The degrees to rotate the item model by around the positive z axis.")))
+										.binding(defaults.itemModelCustomization.mainHand.zRotation,
+												() -> config.itemModelCustomization.mainHand.zRotation,
+												newValue -> config.itemModelCustomization.mainHand.zRotation = newValue)
+										.controller(ConfigUtils::createFloatDegreesFieldController)
+										.build())
+								.build())
+
+						.group(OptionGroup.createBuilder()
+								.name(Text.literal("Off Hand"))
+								.description(OptionDescription.of(Text.literal("Transformations to apply to the item model in the off hand.")))
+								.option(Option.<Float>createBuilder()
+										.name(Text.literal("X Position"))
+										.description(OptionDescription.of(Text.literal("The units to translate the x of the item model by.")))
+										.binding(defaults.itemModelCustomization.offHand.x,
+												() -> config.itemModelCustomization.offHand.x,
+												newValue -> config.itemModelCustomization.offHand.x = newValue)
+										.controller(FloatFieldControllerBuilder::create)
+										.build())
+								.option(Option.<Float>createBuilder()
+										.name(Text.literal("Y Position"))
+										.description(OptionDescription.of(Text.literal("The units to translate the y of the item model by.")))
+										.binding(defaults.itemModelCustomization.offHand.y,
+												() -> config.itemModelCustomization.offHand.y,
+												newValue -> config.itemModelCustomization.offHand.y = newValue)
+										.controller(FloatFieldControllerBuilder::create)
+										.build())
+								.option(Option.<Float>createBuilder()
+										.name(Text.literal("Z Position"))
+										.description(OptionDescription.of(Text.literal("The units to translate the z of the item model by.")))
+										.binding(defaults.itemModelCustomization.offHand.z,
+												() -> config.itemModelCustomization.offHand.z,
+												newValue -> config.itemModelCustomization.offHand.z = newValue)
+										.controller(FloatFieldControllerBuilder::create)
+										.build())
+								.option(Option.<Float>createBuilder()
+										.name(Text.literal("Scale"))
+										.description(OptionDescription.of(Text.literal("The units to scale the item model by.")))
+										.binding(defaults.itemModelCustomization.offHand.scale,
+												() -> config.itemModelCustomization.offHand.scale,
+												newValue -> config.itemModelCustomization.offHand.scale = newValue)
+										.controller(ConfigUtils::createFloatMultFieldController)
+										.build())
+								.option(Option.<Float>createBuilder()
+										.name(Text.literal("X Rotation"))
+										.description(OptionDescription.of(Text.literal("The degrees to rotate the item model by around the positive x axis.")))
+										.binding(defaults.itemModelCustomization.offHand.xRotation,
+												() -> config.itemModelCustomization.offHand.xRotation,
+												newValue -> config.itemModelCustomization.offHand.xRotation = newValue)
+										.controller(ConfigUtils::createFloatDegreesFieldController)
+										.build())
+								.option(Option.<Float>createBuilder()
+										.name(Text.literal("Y Rotation"))
+										.description(OptionDescription.of(Text.literal("The degrees to rotate the item model by around the positive y axis.")))
+										.binding(defaults.itemModelCustomization.offHand.yRotation,
+												() -> config.itemModelCustomization.offHand.yRotation,
+												newValue -> config.itemModelCustomization.offHand.yRotation = newValue)
+										.controller(ConfigUtils::createFloatDegreesFieldController)
+										.build())
+								.option(Option.<Float>createBuilder()
+										.name(Text.literal("Z Rotation"))
+										.description(OptionDescription.of(Text.literal("The degrees to rotate the item model by around the positive z axis.")))
+										.binding(defaults.itemModelCustomization.offHand.zRotation,
+												() -> config.itemModelCustomization.offHand.zRotation,
+												newValue -> config.itemModelCustomization.offHand.zRotation = newValue)
+										.controller(ConfigUtils::createFloatDegreesFieldController)
+										.build())
+								.build())
 						.build()))
 				.generateScreen(parent);
 	}

@@ -9,6 +9,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.azureaaron.mod.Colour;
 import net.azureaaron.mod.Particles;
 import net.azureaaron.mod.utils.Functions;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -204,7 +205,10 @@ public class AaronModConfig {
 
 	@SerialEntry
 	public TextReplacer textReplacer = new TextReplacer();
-	
+
+	@SerialEntry
+	public ItemModelCustomization itemModelCustomization = new ItemModelCustomization();
+
 	public static class TextReplacer {
 		@SerialEntry
 		public Object2ObjectLinkedOpenHashMap<String, Text> textReplacements = new Object2ObjectLinkedOpenHashMap<>();
@@ -228,6 +232,47 @@ public class AaronModConfig {
 		
 		@SerialEntry
 		public Color supportingInfoColour = new Color(0xFFFFFF);
+	}
+
+	public static class ItemModelCustomization {
+		@SerialEntry
+		public boolean enableItemModelCustomization = true;
+
+		@SerialEntry
+		//This constant is wrongly named in yarn - its actually the swing duration
+		public int swingDuration = LivingEntity.GLOWING_FLAG;
+
+		@SerialEntry
+		public boolean ignoreHaste = false;
+
+		@SerialEntry
+		public AbstractHand mainHand = new AbstractHand();
+
+		@SerialEntry
+		public AbstractHand offHand = new AbstractHand();
+
+		public static class AbstractHand {
+			@SerialEntry
+			public float x = 0f;
+
+			@SerialEntry
+			public float y = 0f;
+
+			@SerialEntry
+			public float z = 0f;
+
+			@SerialEntry
+			public float scale = 1f;
+
+			@SerialEntry
+			public float xRotation = 0f;
+
+			@SerialEntry
+			public float yRotation = 0f;
+
+			@SerialEntry
+			public float zRotation = 0f;
+		}
 	}
 
 	public enum DayAverage {

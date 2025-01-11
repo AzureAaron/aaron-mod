@@ -16,6 +16,10 @@ public class ConfigUtils {
 		return FloatFieldControllerBuilder.create(opt).formatValue(f -> Text.of(f + "x"));
 	}
 
+	public static FloatFieldControllerBuilder createFloatDegreesFieldController(Option<Float> opt) {
+		return FloatFieldControllerBuilder.create(opt).formatValue(f -> Text.of(f + "°"));
+	}
+
 	@SuppressWarnings("unchecked")
 	public static <E extends Enum<E>> EnumControllerBuilder<E> createEnumController(Option<E> opt) {
 		Class<E> enumClass = (Class<E>) opt.pendingValue().getClass();
