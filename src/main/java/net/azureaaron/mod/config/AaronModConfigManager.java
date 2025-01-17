@@ -327,6 +327,14 @@ public class AaronModConfigManager {
 										.controller(ConfigUtils::createBooleanController)
 										.build())
 								.option(Option.<Boolean>createBuilder()
+										.name(Text.literal("Hide World Loading Screen"))
+										.description(OptionDescription.of(Text.literal("Hides the screen shown when loading into worlds.")))
+										.binding(defaults.hideWorldLoadingScreen,
+												() -> config.hideWorldLoadingScreen,
+												newValue -> config.hideWorldLoadingScreen = newValue)
+										.controller(ConfigUtils::createBooleanController)
+										.build())
+								.option(Option.<Boolean>createBuilder()
 										.name(Text.literal("No Fog"))
 										.description(OptionDescription.of(Text.literal("Disables fog in the world.")))
 										.binding(defaults.noFog,

@@ -15,6 +15,7 @@
     "CreditsScreenMixin",
     "DebugHudMixin",
     "DirectoryResourcePackMixin",
+    "DownloadingTerrainScreenMixin",
     "EnderDragonEntityMixin",
     "EntityRendererMixin",
     "FireworksSparkParticleMixin",
