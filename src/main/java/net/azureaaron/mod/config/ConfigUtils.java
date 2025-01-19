@@ -1,9 +1,12 @@
 package net.azureaaron.mod.config;
 
+import java.util.function.UnaryOperator;
+
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
+import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
 import net.minecraft.text.Text;
 
 public class ConfigUtils {
@@ -25,6 +28,13 @@ public class ConfigUtils {
 
 	public static FloatFieldControllerBuilder createFloatDegreesFieldController(Option<Float> opt) {
 		return FloatFieldControllerBuilder.create(opt).formatValue(f -> Text.of(f + "°"));
+	}
+
+	public static FloatSliderControllerBuilder createFloatSliderController(Option<Float> opt, UnaryOperator<FloatSliderControllerBuilder> controllerUpdater) {
+		FloatSliderControllerBuilder builder = FloatSliderControllerBuilder.create(opt).formatValue(f -> Text.of(f.toString()));
+		builder = controllerUpdater.apply(builder);
+
+		return builder;
 	}
 
 	@SuppressWarnings("unchecked")

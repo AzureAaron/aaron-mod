@@ -198,6 +198,9 @@ public class AaronModConfig {
 	public boolean hideWorldLoadingScreen = false;
 
 	@SerialEntry
+	public float statusEffectBackgroundAlpha = 1f;
+
+	@SerialEntry
 	public Object2ObjectOpenHashMap<Identifier, Particles.State> particles = new Object2ObjectOpenHashMap<>();
 	
 	@SerialEntry 

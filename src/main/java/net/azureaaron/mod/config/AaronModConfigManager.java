@@ -186,6 +186,14 @@ public class AaronModConfigManager {
 												newValue -> config.hideNametagBackground = newValue)
 										.controller(ConfigUtils::createBooleanController)
 										.build())
+								.option(Option.<Float>createBuilder()
+										.name(Text.literal("Status Effect Background Opacity"))
+										.description(OptionDescription.of(Text.literal("Allows you to change the opacity of the background behind status effects in the HUD.\n\nSet this to 0 if you want to hide the background.")))
+										.binding(defaults.statusEffectBackgroundAlpha,
+												() -> config.statusEffectBackgroundAlpha,
+												newValue -> config.statusEffectBackgroundAlpha = newValue)
+										.controller(opt -> ConfigUtils.createFloatSliderController(opt, controller -> controller.range(0f, 1f).step(0.05f)))
+										.build())
 								.option(Option.<Boolean>createBuilder()
 										.name(Text.literal("FPS Display"))
 										.description(OptionDescription.createBuilder()
