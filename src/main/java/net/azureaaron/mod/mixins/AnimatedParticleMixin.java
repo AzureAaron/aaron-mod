@@ -1,5 +1,7 @@
 package net.azureaaron.mod.mixins;
 
+import java.util.Objects;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -11,26 +13,37 @@ import net.azureaaron.mod.config.AaronModConfigManager;
 import net.minecraft.client.particle.AnimatedParticle;
 import net.minecraft.client.particle.EndRodParticle;
 import net.minecraft.client.particle.FireworksSparkParticle;
+import net.minecraft.client.particle.SpriteBillboardParticle;
 import net.minecraft.client.particle.SquidInkParticle;
 import net.minecraft.client.particle.TotemParticle;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
 @Mixin(AnimatedParticle.class)
-public class AnimatedParticleMixin {
+public abstract class AnimatedParticleMixin extends SpriteBillboardParticle {
 	@Unique
-	private static final Identifier END_ROD = Identifier.ofVanilla("end_rod");
+	private static final Identifier END_ROD = Objects.requireNonNull(Registries.PARTICLE_TYPE.getId(ParticleTypes.END_ROD));
 	@Unique
-	private static final Identifier FIREWORK = Identifier.ofVanilla("firework");
+	private static final Identifier FIREWORK = Objects.requireNonNull(Registries.PARTICLE_TYPE.getId(ParticleTypes.FIREWORK));
 	@Unique
-	private static final Identifier SQUID_INK = Identifier.ofVanilla("squid_ink");
+	private static final Identifier GLOW_SQUID_INK = Objects.requireNonNull(Registries.PARTICLE_TYPE.getId(ParticleTypes.GLOW_SQUID_INK));
 	@Unique
-	private static final Identifier TOTEM = Identifier.ofVanilla("totem_of_undying");
+	private static final Identifier SQUID_INK = Objects.requireNonNull(Registries.PARTICLE_TYPE.getId(ParticleTypes.SQUID_INK));
+	@Unique
+	private static final Identifier TOTEM = Objects.requireNonNull(Registries.PARTICLE_TYPE.getId(ParticleTypes.TOTEM_OF_UNDYING));
+
+	protected AnimatedParticleMixin(ClientWorld world, double x, double y, double z) {
+		super(world, x, y, z);
+	}
 
 	@ModifyExpressionValue(method = "tick", at = @At(value = "CONSTANT", args = "floatValue=1.0"))
 	private float aaronMod$useConfiguredAlpha(float original) {
 		Identifier id = switch ((Object) this) {
 			case EndRodParticle ignored -> END_ROD;
 			case FireworksSparkParticle.Explosion ignored -> FIREWORK;
+			case SquidInkParticle ignored when red == 204 && green == 31 && blue == 102 -> GLOW_SQUID_INK;
 			case SquidInkParticle ignored -> SQUID_INK;
 			case TotemParticle ignored -> TOTEM;
 
