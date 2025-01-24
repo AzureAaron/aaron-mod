@@ -745,8 +745,8 @@ public class AaronModConfigManager {
 								.controller(opt -> IntegerSliderControllerBuilder.create(opt).range(0, 16).step(1))
 								.build())
 						.option(Option.<Boolean>createBuilder()
-								.name(Text.literal("Ignore Haste"))
-								.description(OptionDescription.of(Text.literal("Cancels the effect that haste has on the swing duration.")))
+								.name(Text.literal("Ignore Mining Effects"))
+								.description(OptionDescription.of(Text.literal("Cancels the effect that Haste and Mining Fatigue have on the swing duration.")))
 								.binding(defaults.itemModelCustomization.ignoreHaste,
 										() -> config.itemModelCustomization.ignoreHaste,
 										newValue -> config.itemModelCustomization.ignoreHaste = newValue)

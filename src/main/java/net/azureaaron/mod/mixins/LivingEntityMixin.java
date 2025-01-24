@@ -20,8 +20,12 @@ public abstract class LivingEntityMixin extends Entity {
 		super(type, world);
 	}
 
-	@ModifyExpressionValue(method = "getHandSwingDuration", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffectUtil;hasHaste(Lnet/minecraft/entity/LivingEntity;)Z"))
-	private boolean aaronMod$ignoreHaste(boolean original) {
+	@ModifyExpressionValue(method = "getHandSwingDuration",
+			at = { @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffectUtil;hasHaste(Lnet/minecraft/entity/LivingEntity;)Z"),
+					@At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;hasStatusEffect(Lnet/minecraft/registry/entry/RegistryEntry;)Z") },
+			require = 2
+	)
+	private boolean aaronMod$ignoreMiningEffects(boolean original) {
 		return shouldEnableSwingModifications() && AaronModConfigManager.get().itemModelCustomization.ignoreHaste ? false : original;
 	}
 
