@@ -61,6 +61,9 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
+	// Loom does not always add this
+	implementation "ca.weblite:java-objc-bridge:1.1"
+
 	//Mr. Jackson Json is no more :(
 
 	include modImplementation("dev.isxander:yet-another-config-lib:${yacl_version}-fabric")
