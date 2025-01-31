@@ -19,6 +19,7 @@ import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.commands.SkyblockCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Constants;
+import net.azureaaron.mod.utils.Formatters;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.JsonHelper;
 import net.azureaaron.mod.utils.Levelling;
@@ -126,9 +127,9 @@ public class DungeonsCommand extends SkyblockCommand {
 		source.sendFeedback(startText);
 		
 		source.sendFeedback(Text.literal("Level » " + catacombsLevel).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())
-				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Total XP: " + Functions.NUMBER_FORMATTER_ND.format(catacombsXp)).withColor(colourProfile.infoColour.getAsInt())))));
+				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Total XP: " + Formatters.INTEGER_NUMBERS.format(catacombsXp)).withColor(colourProfile.infoColour.getAsInt())))));
 		source.sendFeedback(Text.literal("Dailies » " + ((onDailies) ? "✓" : "✗") + dailiesLeft).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal("Secrets » " + Functions.NUMBER_FORMATTER_ND.format(secrets)).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Text.literal("Secrets » " + Formatters.INTEGER_NUMBERS.format(secrets)).withColor(colourProfile.infoColour.getAsInt()));
 		source.sendFeedback(Text.literal("Selected Class » ").withColor(colourProfile.infoColour.getAsInt())
 				.append(Text.literal(Functions.titleCase(selectedClass)).withColor(colourProfile.highlightColour.getAsInt())));
 		
@@ -148,22 +149,22 @@ public class DungeonsCommand extends SkyblockCommand {
 		source.sendFeedback(Text.literal(""));
 		
 		source.sendFeedback(Text.literal("(Catacombs Completions)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt())
-				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Entrance » " + Functions.NUMBER_FORMATTER_ND.format(entrances) + "\n").withColor(colourProfile.infoColour.getAsInt())
-						.append(Text.literal("F1 » " + Functions.NUMBER_FORMATTER_ND.format(floor1s) + "\n"))
-						.append(Text.literal("F2 » " + Functions.NUMBER_FORMATTER_ND.format(floor2s) + "\n"))
-						.append(Text.literal("F3 » " + Functions.NUMBER_FORMATTER_ND.format(floor3s) + "\n"))
-						.append(Text.literal("F4 » " + Functions.NUMBER_FORMATTER_ND.format(floor4s) + "\n"))
-						.append(Text.literal("F5 » " + Functions.NUMBER_FORMATTER_ND.format(floor5s) + "\n"))
-						.append(Text.literal("F6 » " + Functions.NUMBER_FORMATTER_ND.format(floor6s) + "\n"))
-						.append(Text.literal("F7 » " + Functions.NUMBER_FORMATTER_ND.format(floor7s)))))));
+				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Entrance » " + Formatters.INTEGER_NUMBERS.format(entrances) + "\n").withColor(colourProfile.infoColour.getAsInt())
+						.append(Text.literal("F1 » " + Formatters.INTEGER_NUMBERS.format(floor1s) + "\n"))
+						.append(Text.literal("F2 » " + Formatters.INTEGER_NUMBERS.format(floor2s) + "\n"))
+						.append(Text.literal("F3 » " + Formatters.INTEGER_NUMBERS.format(floor3s) + "\n"))
+						.append(Text.literal("F4 » " + Formatters.INTEGER_NUMBERS.format(floor4s) + "\n"))
+						.append(Text.literal("F5 » " + Formatters.INTEGER_NUMBERS.format(floor5s) + "\n"))
+						.append(Text.literal("F6 » " + Formatters.INTEGER_NUMBERS.format(floor6s) + "\n"))
+						.append(Text.literal("F7 » " + Formatters.INTEGER_NUMBERS.format(floor7s)))))));
 		source.sendFeedback(Text.literal("(Master Catacombs Completions)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt())
-				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("M1 » " + Functions.NUMBER_FORMATTER_ND.format(masterFloor1s) + "\n").withColor(colourProfile.infoColour.getAsInt())
-						.append(Text.literal("M2 » " + Functions.NUMBER_FORMATTER_ND.format(masterFloor2s) + "\n"))
-						.append(Text.literal("M3 » " + Functions.NUMBER_FORMATTER_ND.format(masterFloor3s) + "\n"))
-						.append(Text.literal("M4 » " + Functions.NUMBER_FORMATTER_ND.format(masterFloor4s) + "\n"))
-						.append(Text.literal("M5 » " + Functions.NUMBER_FORMATTER_ND.format(masterFloor5s) + "\n"))
-						.append(Text.literal("M6 » " + Functions.NUMBER_FORMATTER_ND.format(masterFloor6s) + "\n"))
-						.append(Text.literal("M7 » " + Functions.NUMBER_FORMATTER_ND.format(masterFloor7s)))))));
+				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("M1 » " + Formatters.INTEGER_NUMBERS.format(masterFloor1s) + "\n").withColor(colourProfile.infoColour.getAsInt())
+						.append(Text.literal("M2 » " + Formatters.INTEGER_NUMBERS.format(masterFloor2s) + "\n"))
+						.append(Text.literal("M3 » " + Formatters.INTEGER_NUMBERS.format(masterFloor3s) + "\n"))
+						.append(Text.literal("M4 » " + Formatters.INTEGER_NUMBERS.format(masterFloor4s) + "\n"))
+						.append(Text.literal("M5 » " + Formatters.INTEGER_NUMBERS.format(masterFloor5s) + "\n"))
+						.append(Text.literal("M6 » " + Formatters.INTEGER_NUMBERS.format(masterFloor6s) + "\n"))
+						.append(Text.literal("M7 » " + Formatters.INTEGER_NUMBERS.format(masterFloor7s)))))));
 		
 		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 	}

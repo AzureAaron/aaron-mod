@@ -22,7 +22,7 @@ import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Constants;
-import net.azureaaron.mod.utils.Functions;
+import net.azureaaron.mod.utils.Formatters;
 import net.azureaaron.mod.utils.Http;
 import net.azureaaron.mod.utils.Messages;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -146,9 +146,9 @@ public class LowestBinCommand {
 		
 		source.sendFeedback(startText);
 		
-		source.sendFeedback(Text.literal("Lowest BIN Price » " + Functions.NUMBER_FORMATTER_ND.format(data.get("price").getAsLong())).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Text.literal("Lowest BIN Price » " + Formatters.INTEGER_NUMBERS.format(data.get("price").getAsLong())).withColor(colourProfile.infoColour.getAsInt()));
 		source.sendFeedback(Text.literal(""));
-		source.sendFeedback(Text.literal(desc + " Price » " + Functions.NUMBER_FORMATTER_ND.format(data.get("dayAverage").getAsLong())).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Text.literal(desc + " Price » " + Formatters.INTEGER_NUMBERS.format(data.get("dayAverage").getAsLong())).withColor(colourProfile.infoColour.getAsInt()));
 		
 		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 		return;

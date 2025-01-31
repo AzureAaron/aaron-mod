@@ -32,6 +32,7 @@ import net.azureaaron.mod.commands.SkyblockCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Constants;
+import net.azureaaron.mod.utils.Formatters;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.ItemUtils;
 import net.azureaaron.mod.utils.JsonHelper;
@@ -170,22 +171,22 @@ public class NetworthCommand extends SkyblockCommand {
 
 		source.sendFeedback(startText);
 
-		source.sendFeedback(Text.literal("Networth » " + Functions.NUMBER_FORMATTER_ND.format(overallValue) + " (" + Functions.NUMBER_FORMATTER_S.format(overallValue) + ")").withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Text.literal("Networth » " + Formatters.INTEGER_NUMBERS.format(overallValue) + " (" + Formatters.SHORT_FLOAT_NUMBERS.format(overallValue) + ")").withColor(colourProfile.infoColour.getAsInt()));
 		source.sendFeedback(Text.literal(""));
-		source.sendFeedback(Text.literal("Armour » " + Functions.NUMBER_FORMATTER_S.format(armourValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(armourValue, armour, ItemStack::getName))));
-		source.sendFeedback(Text.literal("Equipment » " + Functions.NUMBER_FORMATTER_S.format(equipmentValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(equipmentValue, equipment, ItemStack::getName))));
-		source.sendFeedback(Text.literal("Inventory » " + Functions.NUMBER_FORMATTER_S.format(inventoryValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(inventoryValue, inventory, ItemStack::getName))));
-		source.sendFeedback(Text.literal("Ender Chests » " + Functions.NUMBER_FORMATTER_S.format(enderChestsValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(enderChestsValue, enderChests, ItemStack::getName))));
-		source.sendFeedback(Text.literal("Storage » " + Functions.NUMBER_FORMATTER_S.format(storageValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(storageValue, storage, ItemStack::getName))));
-		source.sendFeedback(Text.literal("Accessories » " + Functions.NUMBER_FORMATTER_S.format(accessoriesValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(accessoriesValue, accessories, ItemStack::getName))));
-		source.sendFeedback(Text.literal("Pets » " + Functions.NUMBER_FORMATTER_S.format(petsValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(petsValue, pets, NetworthCommand::formatPet))));
-		source.sendFeedback(Text.literal("Wardrobe » " + Functions.NUMBER_FORMATTER_S.format(wardrobeValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(wardrobeValue, wardrobe, ItemStack::getName))));
-		source.sendFeedback(Text.literal("Sacks » " + Functions.NUMBER_FORMATTER_S.format(sacksValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(sacksValue, sacks, NetworthCommand::formatSacks))));
-		source.sendFeedback(Text.literal("Essence » " + Functions.NUMBER_FORMATTER_S.format(essenceValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(essenceValue, essence, NetworthCommand::formatEssence))));
+		source.sendFeedback(Text.literal("Armour » " + Formatters.SHORT_FLOAT_NUMBERS.format(armourValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(armourValue, armour, ItemStack::getName))));
+		source.sendFeedback(Text.literal("Equipment » " + Formatters.SHORT_FLOAT_NUMBERS.format(equipmentValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(equipmentValue, equipment, ItemStack::getName))));
+		source.sendFeedback(Text.literal("Inventory » " + Formatters.SHORT_FLOAT_NUMBERS.format(inventoryValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(inventoryValue, inventory, ItemStack::getName))));
+		source.sendFeedback(Text.literal("Ender Chests » " + Formatters.SHORT_FLOAT_NUMBERS.format(enderChestsValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(enderChestsValue, enderChests, ItemStack::getName))));
+		source.sendFeedback(Text.literal("Storage » " + Formatters.SHORT_FLOAT_NUMBERS.format(storageValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(storageValue, storage, ItemStack::getName))));
+		source.sendFeedback(Text.literal("Accessories » " + Formatters.SHORT_FLOAT_NUMBERS.format(accessoriesValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(accessoriesValue, accessories, ItemStack::getName))));
+		source.sendFeedback(Text.literal("Pets » " + Formatters.SHORT_FLOAT_NUMBERS.format(petsValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(petsValue, pets, NetworthCommand::formatPet))));
+		source.sendFeedback(Text.literal("Wardrobe » " + Formatters.SHORT_FLOAT_NUMBERS.format(wardrobeValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(wardrobeValue, wardrobe, ItemStack::getName))));
+		source.sendFeedback(Text.literal("Sacks » " + Formatters.SHORT_FLOAT_NUMBERS.format(sacksValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(sacksValue, sacks, NetworthCommand::formatSacks))));
+		source.sendFeedback(Text.literal("Essence » " + Formatters.SHORT_FLOAT_NUMBERS.format(essenceValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(essenceValue, essence, NetworthCommand::formatEssence))));
 
 		source.sendFeedback(Text.literal(""));
-		source.sendFeedback(Text.literal("Bank » " + Functions.NUMBER_FORMATTER_S.format(bank)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(bank, null, null))));
-		source.sendFeedback(Text.literal("Purse » " + Functions.NUMBER_FORMATTER_S.format(purse)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(purse, null, null))));
+		source.sendFeedback(Text.literal("Bank » " + Formatters.SHORT_FLOAT_NUMBERS.format(bank)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(bank, null, null))));
+		source.sendFeedback(Text.literal("Purse » " + Formatters.SHORT_FLOAT_NUMBERS.format(purse)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(purse, null, null))));
 
 		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 	}
@@ -202,7 +203,7 @@ public class NetworthCommand extends SkyblockCommand {
 
 	private static <T> HoverEvent getHover(double totalValue, @Nullable Object2DoubleMap<T> objects, @Nullable Function<T, Text> textifier) {
 		ColourProfiles colourProfile = Constants.PROFILE.get();
-		MutableText hoverText = Text.empty().append(Text.literal("Exact Value » " + Functions.NUMBER_FORMATTER_ND.format(totalValue)).withColor(colourProfile.infoColour.getAsInt()));
+		MutableText hoverText = Text.empty().append(Text.literal("Exact Value » " + Formatters.INTEGER_NUMBERS.format(totalValue)).withColor(colourProfile.infoColour.getAsInt()));
 
 		if (objects != null && textifier != null) {
 			List<Object2DoubleMap.Entry<T>> sortedEntries = objects.object2DoubleEntrySet().stream()
@@ -214,7 +215,7 @@ public class NetworthCommand extends SkyblockCommand {
 				hoverText.append("\n");
 				hoverText.append(textifier.apply(entry.getKey()));
 				hoverText.append(" - ");
-				hoverText.append(Text.literal(Functions.NUMBER_FORMATTER_S.format(entry.getDoubleValue())).withColor(colourProfile.infoColour.getAsInt()));
+				hoverText.append(Text.literal(Formatters.SHORT_FLOAT_NUMBERS.format(entry.getDoubleValue())).withColor(colourProfile.infoColour.getAsInt()));
 			}
 		}
 

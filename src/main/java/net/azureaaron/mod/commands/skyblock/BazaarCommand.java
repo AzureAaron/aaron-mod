@@ -22,7 +22,7 @@ import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Constants;
-import net.azureaaron.mod.utils.Functions;
+import net.azureaaron.mod.utils.Formatters;
 import net.azureaaron.mod.utils.Http;
 import net.azureaaron.mod.utils.Messages;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -92,15 +92,15 @@ public class BazaarCommand {
 		
 		source.sendFeedback(startText);
 		
-		source.sendFeedback(Text.literal("Buy Price » " + Functions.NUMBER_FORMATTER.format(productData.get("buyPrice").getAsDouble())).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal(Functions.NUMBER_FORMATTER_S.format(productData.get("buyVolume").getAsInt()) + " in " + Functions.NUMBER_FORMATTER_S.format(productData.get("buyOrders").getAsInt()) + " offers").withColor(colourProfile.supportingInfoColour.getAsInt()));
-		source.sendFeedback(Text.literal(Functions.NUMBER_FORMATTER_S.format(productData.get("buyMovingWeek").getAsInt()) + " insta-buys in 7 days").withColor(colourProfile.supportingInfoColour.getAsInt()));
+		source.sendFeedback(Text.literal("Buy Price » " + Formatters.DOUBLE_NUMBERS.format(productData.get("buyPrice").getAsDouble())).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Text.literal(Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("buyVolume").getAsInt()) + " in " + Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("buyOrders").getAsInt()) + " offers").withColor(colourProfile.supportingInfoColour.getAsInt()));
+		source.sendFeedback(Text.literal(Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("buyMovingWeek").getAsInt()) + " insta-buys in 7 days").withColor(colourProfile.supportingInfoColour.getAsInt()));
 		
 		source.sendFeedback(Text.literal(""));
 		
-		source.sendFeedback(Text.literal("Sell Price » " + Functions.NUMBER_FORMATTER.format(productData.get("sellPrice").getAsDouble())).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal(Functions.NUMBER_FORMATTER_S.format(productData.get("sellVolume").getAsInt()) + " in " + Functions.NUMBER_FORMATTER_S.format(productData.get("sellOrders").getAsInt()) + " orders").withColor(colourProfile.supportingInfoColour.getAsInt()));
-		source.sendFeedback(Text.literal(Functions.NUMBER_FORMATTER_S.format(productData.get("sellMovingWeek").getAsInt()) + " insta-sells in 7 days").withColor(colourProfile.supportingInfoColour.getAsInt()));
+		source.sendFeedback(Text.literal("Sell Price » " + Formatters.DOUBLE_NUMBERS.format(productData.get("sellPrice").getAsDouble())).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Text.literal(Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("sellVolume").getAsInt()) + " in " + Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("sellOrders").getAsInt()) + " orders").withColor(colourProfile.supportingInfoColour.getAsInt()));
+		source.sendFeedback(Text.literal(Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("sellMovingWeek").getAsInt()) + " insta-sells in 7 days").withColor(colourProfile.supportingInfoColour.getAsInt()));
 		
 		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 	}

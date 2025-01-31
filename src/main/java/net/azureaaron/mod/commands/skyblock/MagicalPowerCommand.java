@@ -43,6 +43,7 @@ import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.commands.SkyblockCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Constants;
+import net.azureaaron.mod.utils.Formatters;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.ItemUtils;
 import net.azureaaron.mod.utils.JsonHelper;
@@ -329,7 +330,7 @@ public class MagicalPowerCommand extends SkyblockCommand {
 		source.sendFeedback(startText);
 		
 		source.sendFeedback(Text.literal("Magical Power » ").withColor(colourProfile.infoColour.getAsInt())
-				.append(Text.literal(Functions.NUMBER_FORMATTER_ND.format(magicalPower)).withColor(colourProfile.highlightColour.getAsInt())));
+				.append(Text.literal(Formatters.INTEGER_NUMBERS.format(magicalPower)).withColor(colourProfile.highlightColour.getAsInt())));
 		source.sendFeedback(Text.literal("Selected Power » " + Functions.titleCase(selectedPower)).withColor(colourProfile.infoColour.getAsInt()));
 		
 		//If the power data isn't null then print out the stats
@@ -364,7 +365,7 @@ public class MagicalPowerCommand extends SkyblockCommand {
 	}
 	
 	private static Text formatStatText(String stat, float amount) {
-		String base = (Math.signum(amount) == 1f ? "+" : "") + Functions.NUMBER_FORMATTER_OD.format(amount);
+		String base = (Math.signum(amount) == 1f ? "+" : "") + Formatters.FLOAT_NUMBERS.format(amount);
 		
 		return switch (stat) {
 			case "health" -> Text.literal(base + "\u2764 Health").formatted(Formatting.RED);

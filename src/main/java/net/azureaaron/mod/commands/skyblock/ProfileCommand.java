@@ -16,6 +16,7 @@ import net.azureaaron.mod.commands.Command;
 import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.commands.SkyblockCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.utils.Formatters;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.JsonHelper;
 import net.azureaaron.mod.utils.Levelling;
@@ -54,8 +55,8 @@ public class ProfileCommand extends SkyblockCommand {
 		int farmingLevelCap = JsonHelper.getInt(profile, "jacobs_contest.perks.farming_level_cap").orElse(0);
 		int tamingLevelCap = JsonHelper.getArray(profile, "pets_data.pet_care.pet_types_sacrificed").orElseGet(JsonArray::new).size();
 
-		String bank = Functions.NUMBER_FORMATTER.format(JsonHelper.getLong(body, "banking.balance").orElse(0L));
-		String purse = Functions.NUMBER_FORMATTER.format(JsonHelper.getLong(profile, "currencies.coin_purse").orElse(0L));
+		String bank = Formatters.DOUBLE_NUMBERS.format(JsonHelper.getLong(body, "banking.balance").orElse(0L));
+		String purse = Formatters.DOUBLE_NUMBERS.format(JsonHelper.getLong(profile, "currencies.coin_purse").orElse(0L));
 		
 		long firstJoinTimestamp = profile.getAsJsonObject("profile").get("first_join").getAsLong();
 		long firstJoinRelative = System.currentTimeMillis() - firstJoinTimestamp;
@@ -96,7 +97,7 @@ public class ProfileCommand extends SkyblockCommand {
 		
 		source.sendFeedback(Text.literal("Profile » " + Functions.titleCase(body.get("cute_name").getAsString())).withColor(colourProfile.infoColour.getAsInt()));
 		source.sendFeedback(Text.literal("Joined » " + Functions.toMostRelative(firstJoinRelative))
-				.styled(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal(Functions.DATE_FORMATTER.format(Instant.ofEpochMilli(firstJoinTimestamp))).styled(style1 -> style1.withColor(colourProfile.infoColour.getAsInt()))))));
+				.styled(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal(Formatters.DATE_FORMATTER.format(Instant.ofEpochMilli(firstJoinTimestamp))).styled(style1 -> style1.withColor(colourProfile.infoColour.getAsInt()))))));
 		source.sendFeedback(Text.literal("Level » " + level).withColor(colourProfile.infoColour.getAsInt()));
 		
 		source.sendFeedback(Text.literal(""));
@@ -112,7 +113,7 @@ public class ProfileCommand extends SkyblockCommand {
 		source.sendFeedback(Text.literal(""));
 		
 		if (skillsEnabled) {
-			source.sendFeedback(Text.literal("Skill Average » " + Functions.NUMBER_FORMATTER_OD.format(skillAverage)).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())
+			source.sendFeedback(Text.literal("Skill Average » " + Formatters.FLOAT_NUMBERS.format(skillAverage)).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())
 					.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Alchemy » " + String.valueOf(alchemyLevel) + "\n").withColor(colourProfile.infoColour.getAsInt())
 							.append("Carpentry » " + carpentryLevel + "\n")
 							.append("Combat » " + combatLevel + "\n")

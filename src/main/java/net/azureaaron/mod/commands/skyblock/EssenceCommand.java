@@ -13,7 +13,7 @@ import net.azureaaron.mod.commands.Command;
 import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.commands.SkyblockCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.utils.Functions;
+import net.azureaaron.mod.utils.Formatters;
 import net.azureaaron.mod.utils.JsonHelper;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
@@ -57,14 +57,14 @@ public class EssenceCommand extends SkyblockCommand {
 		
 		source.sendFeedback(startText);
 		
-		source.sendFeedback(Text.literal("Wither » " + Functions.NUMBER_FORMATTER_ND.format(witherEssence)).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal("Spider » " + Functions.NUMBER_FORMATTER_ND.format(spiderEssence)).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal("Undead » " + Functions.NUMBER_FORMATTER_ND.format(undeadEssence)).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal("Dragon » " + Functions.NUMBER_FORMATTER_ND.format(dragonEssence)).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal("Gold » " + Functions.NUMBER_FORMATTER_ND.format(goldEssence)).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal("Diamond » " + Functions.NUMBER_FORMATTER_ND.format(diamondEssence)).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal("Ice » " + Functions.NUMBER_FORMATTER_ND.format(iceEssence)).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal("Crimson » " + Functions.NUMBER_FORMATTER_ND.format(crimsonEssence)).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Text.literal("Wither » " + Formatters.INTEGER_NUMBERS.format(witherEssence)).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Text.literal("Spider » " + Formatters.INTEGER_NUMBERS.format(spiderEssence)).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Text.literal("Undead » " + Formatters.INTEGER_NUMBERS.format(undeadEssence)).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Text.literal("Dragon » " + Formatters.INTEGER_NUMBERS.format(dragonEssence)).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Text.literal("Gold » " + Formatters.INTEGER_NUMBERS.format(goldEssence)).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Text.literal("Diamond » " + Formatters.INTEGER_NUMBERS.format(diamondEssence)).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Text.literal("Ice » " + Formatters.INTEGER_NUMBERS.format(iceEssence)).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Text.literal("Crimson » " + Formatters.INTEGER_NUMBERS.format(crimsonEssence)).withColor(colourProfile.infoColour.getAsInt()));
 		
 		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 	}

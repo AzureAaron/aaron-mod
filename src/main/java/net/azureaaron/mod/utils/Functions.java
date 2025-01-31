@@ -1,18 +1,12 @@
 package net.azureaaron.mod.utils;
 
 import java.awt.Color;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 
 import it.unimi.dsi.fastutil.objects.Object2LongLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.ItemStack;
 
 /**
  * Class containing various utility/helper functions.
@@ -22,27 +16,6 @@ import net.minecraft.item.ItemStack;
 public class Functions {	
 	/** {@link Object2LongLinkedOpenHashMap} containing time units and their equivalent in milliseconds. */
 	private static final Object2LongLinkedOpenHashMap<String> TIMES = new Object2LongLinkedOpenHashMap<>();
-
-	/** Format with 2 decimals of precision. */
-	public static final DecimalFormat NUMBER_FORMATTER = new DecimalFormat("#,###.##");
-
-	/** Format with 1 decimal of precision. */
-	public static final DecimalFormat NUMBER_FORMATTER_OD = new DecimalFormat("#,###.#");
-
-	/** Format with no decimals. */
-	public static final DecimalFormat NUMBER_FORMATTER_ND = new DecimalFormat("#,###");
-
-	/**
-	 * Shorthand Format
-	 * @implNote The locale of the mod is Canadian English (en-CA) and this number format reflects that.
-	 */
-	public static final NumberFormat NUMBER_FORMATTER_S = NumberFormat.getCompactNumberInstance(Locale.CANADA, NumberFormat.Style.SHORT);
-
-	/** Date Format Example: Tue 15 March 2023 11:11 EST */
-	public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("E d MMMM yyyy HH:mm zz").withZone(ZoneId.systemDefault());
-
-	/** Used in {@link #addToBundle(ItemStack, ItemStack)}*/
-	public static final String BUNDLE_ITEMS_NBT_KEY = "Items";
 
 	static {
 		TIMES.put("year", TimeUnit.DAYS.toMillis(365));

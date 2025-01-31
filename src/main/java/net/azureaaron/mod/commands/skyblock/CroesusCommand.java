@@ -29,6 +29,7 @@ import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.commands.SkyblockCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Constants;
+import net.azureaaron.mod.utils.Formatters;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.Skyblock;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -188,7 +189,7 @@ public class CroesusCommand extends SkyblockCommand {
 				
 				source.sendFeedback(Text.literal("(" + floorShorthand + " • " + timeAgo + ")")
 						.styled(style -> style.withColor(colourProfile.hoverColour.getAsInt())
-								.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Expires:\n" + Functions.DATE_FORMATTER.format(Instant.ofEpochMilli(expiresAt)) + "\n(In " + TimeUnit.MILLISECONDS.toHours(expiresIn) + " hours)")
+								.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Expires:\n" + Formatters.DATE_FORMATTER.format(Instant.ofEpochMilli(expiresAt)) + "\n(In " + TimeUnit.MILLISECONDS.toHours(expiresIn) + " hours)")
 										.withColor(colourProfile.infoColour.getAsInt())))));
 				count++;
 			}

@@ -13,6 +13,7 @@ import net.azureaaron.mod.commands.Command;
 import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.commands.SkyblockCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.utils.Formatters;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.JsonHelper;
 import net.azureaaron.mod.utils.Skyblock;
@@ -91,33 +92,33 @@ public class CrimsonCommand extends SkyblockCommand {
 				.append(Text.literal(Functions.titleCase(selectedFaction)).withColor(colourProfile.highlightColour.getAsInt())));
 		
 		source.sendFeedback(Text.literal("[ B » ").withColor(colourProfile.infoColour.getAsInt())
-				.append(Text.literal(Functions.NUMBER_FORMATTER_ND.format(barbarianReputation)).withColor(barbarianColour))
+				.append(Text.literal(Formatters.INTEGER_NUMBERS.format(barbarianReputation)).withColor(barbarianColour))
 				.append(Text.literal(" • M » ").withColor(colourProfile.infoColour.getAsInt()))
-				.append(Text.literal(Functions.NUMBER_FORMATTER_ND.format(mageReputation)).withColor(mageColour))
+				.append(Text.literal(Formatters.INTEGER_NUMBERS.format(mageReputation)).withColor(mageColour))
 				.append(Text.literal(" ]")));
 		
 		source.sendFeedback(Text.literal(""));
 		source.sendFeedback(Text.literal("(Kuudra Completions)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt())
 				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, 
-						Text.literal("Total Completions » " + Functions.NUMBER_FORMATTER_ND.format(totalKuudraCompletions) + "\n").withColor(colourProfile.infoColour.getAsInt())
-						.append(Text.literal("Total Collection » " + Functions.NUMBER_FORMATTER_ND.format(totalKuudraCollection) + "\n\n"))
-						.append(Text.literal("Basic » " + Functions.NUMBER_FORMATTER_ND.format(basicCompletions) + "\n" ))
-						.append(Text.literal("Hot » " + Functions.NUMBER_FORMATTER_ND.format(hotCompletions) + "\n" ))
-						.append(Text.literal("Burning » " + Functions.NUMBER_FORMATTER_ND.format(burningCompletions) + "\n" ))
-						.append(Text.literal("Fiery » " + Functions.NUMBER_FORMATTER_ND.format(fieryCompletions) + "\n" ))
-						.append(Text.literal("Infernal » " + Functions.NUMBER_FORMATTER_ND.format(infernalCompletions)))))));
+						Text.literal("Total Completions » " + Formatters.INTEGER_NUMBERS.format(totalKuudraCompletions) + "\n").withColor(colourProfile.infoColour.getAsInt())
+						.append(Text.literal("Total Collection » " + Formatters.INTEGER_NUMBERS.format(totalKuudraCollection) + "\n\n"))
+						.append(Text.literal("Basic » " + Formatters.INTEGER_NUMBERS.format(basicCompletions) + "\n" ))
+						.append(Text.literal("Hot » " + Formatters.INTEGER_NUMBERS.format(hotCompletions) + "\n" ))
+						.append(Text.literal("Burning » " + Formatters.INTEGER_NUMBERS.format(burningCompletions) + "\n" ))
+						.append(Text.literal("Fiery » " + Formatters.INTEGER_NUMBERS.format(fieryCompletions) + "\n" ))
+						.append(Text.literal("Infernal » " + Formatters.INTEGER_NUMBERS.format(infernalCompletions)))))));
 		
 		//Colour the dojo score eventually - maybe!
 		source.sendFeedback(Text.literal("(Dojo Tests)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt())
 				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, 
-						Text.literal("Total Score » " + Functions.NUMBER_FORMATTER_ND.format(totalDojoScore) + "\n").withColor(colourProfile.infoColour.getAsInt())
-						.append(Text.literal("Force » " + forceGrade + " (" + Functions.NUMBER_FORMATTER_ND.format(forceScore) + ") \n" ))
-						.append(Text.literal("Stamina » " + staminaGrade + " (" + Functions.NUMBER_FORMATTER_ND.format(staminaScore) + ") \n" ))
-						.append(Text.literal("Mastery » " + masteryGrade + " (" + Functions.NUMBER_FORMATTER_ND.format(masteryScore) + ") \n" ))
-						.append(Text.literal("Discipline » " + disciplineGrade + " (" + Functions.NUMBER_FORMATTER_ND.format(disciplineScore) + ") \n" ))
-						.append(Text.literal("Swiftness » " + swiftnessGrade + " (" + Functions.NUMBER_FORMATTER_ND.format(swiftnessScore) + ") \n" ))
-						.append(Text.literal("Control » " + controlGrade + " (" + Functions.NUMBER_FORMATTER_ND.format(controlScore) + ") \n" ))
-						.append(Text.literal("Tenacity » " + tenacityGrade + " (" + Functions.NUMBER_FORMATTER_ND.format(tenacityScore) + ")" ))))));
+						Text.literal("Total Score » " + Formatters.INTEGER_NUMBERS.format(totalDojoScore) + "\n").withColor(colourProfile.infoColour.getAsInt())
+						.append(Text.literal("Force » " + forceGrade + " (" + Formatters.INTEGER_NUMBERS.format(forceScore) + ") \n" ))
+						.append(Text.literal("Stamina » " + staminaGrade + " (" + Formatters.INTEGER_NUMBERS.format(staminaScore) + ") \n" ))
+						.append(Text.literal("Mastery » " + masteryGrade + " (" + Formatters.INTEGER_NUMBERS.format(masteryScore) + ") \n" ))
+						.append(Text.literal("Discipline » " + disciplineGrade + " (" + Formatters.INTEGER_NUMBERS.format(disciplineScore) + ") \n" ))
+						.append(Text.literal("Swiftness » " + swiftnessGrade + " (" + Formatters.INTEGER_NUMBERS.format(swiftnessScore) + ") \n" ))
+						.append(Text.literal("Control » " + controlGrade + " (" + Formatters.INTEGER_NUMBERS.format(controlScore) + ") \n" ))
+						.append(Text.literal("Tenacity » " + tenacityGrade + " (" + Formatters.INTEGER_NUMBERS.format(tenacityScore) + ")" ))))));
 		
 		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 	}
