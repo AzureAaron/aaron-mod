@@ -11,6 +11,7 @@ import net.azureaaron.mod.Particles;
 import net.azureaaron.mod.utils.Functions;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 public class AaronModConfig {
@@ -199,6 +200,12 @@ public class AaronModConfig {
 
 	@SerialEntry
 	public float statusEffectBackgroundAlpha = 1f;
+
+	@SerialEntry
+	public boolean goodSkyblockEnchantments = true;
+
+	@SerialEntry
+	public Color goodSkyblockEnchantmentColour = new Color(Formatting.GOLD.getColorValue());
 
 	@SerialEntry
 	public Object2ObjectOpenHashMap<Identifier, Particles.State> particles = new Object2ObjectOpenHashMap<>();

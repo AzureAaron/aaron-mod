@@ -25,8 +25,8 @@ import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.azureaaron.mod.Colour;
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.Particles;
+import net.azureaaron.mod.skyblock.item.SkyblockEnchantments;
 import net.azureaaron.mod.utils.Functions;
-import net.azureaaron.mod.utils.Skyblock;
 import net.azureaaron.mod.utils.TextTransformer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
@@ -540,7 +540,7 @@ public class AaronModConfigManager {
 										() -> config.rainbowifyMaxSkyblockEnchantments,
 										newValue -> config.rainbowifyMaxSkyblockEnchantments = newValue)
 								.controller(ConfigUtils::createBooleanController)
-								.addListener((opt, event) -> Functions.runIf(() -> Skyblock.loadMaxEnchants(true), () -> opt.pendingValue()))
+								.addListener((opt, event) -> Functions.runIf(() -> SkyblockEnchantments.loadEnchantments(true), () -> opt.pendingValue()))
 								.build())
 						.option(Option.<AaronModConfig.RainbowifyMode>createBuilder()
 								.name(Text.literal("Rainbowify Mode"))
@@ -555,6 +555,25 @@ public class AaronModConfigManager {
 										() -> config.rainbowifyMode,
 										newValue -> config.rainbowifyMode = newValue)
 								.controller(ConfigUtils::createEnumController)
+								.build())
+						.option(Option.<Boolean>createBuilder()
+								.name(Text.literal("Show Good Enchants"))
+								.description(OptionDescription.createBuilder()
+										.text(Text.literal("Changes the text colour of enchantments that are at a \"good\" level.\n\nRequires the \"Rainbowify Max Enchants\" option to be enabled."))
+										.build())
+								.binding(defaults.goodSkyblockEnchantments,
+										() -> config.goodSkyblockEnchantments,
+										newValue -> config.goodSkyblockEnchantments = newValue)
+								.controller(ConfigUtils::createBooleanController)
+								.addListener((opt, event) -> Functions.runIf(() -> SkyblockEnchantments.loadEnchantments(true), () -> opt.pendingValue()))
+								.build())
+						.option(Option.<Color>createBuilder()
+								.name(Text.literal("Good Enchant Colour"))
+								.description(OptionDescription.of(Text.literal("Changes the colour that \"good\" enchants will appear in.")))
+								.binding(defaults.goodSkyblockEnchantmentColour,
+										() -> config.goodSkyblockEnchantmentColour,
+										newValue -> config.goodSkyblockEnchantmentColour = newValue)
+								.controller(ColorControllerBuilder::create)
 								.build())
 						.group(OptionGroup.createBuilder()
 								.name(Text.literal("Dungeons"))

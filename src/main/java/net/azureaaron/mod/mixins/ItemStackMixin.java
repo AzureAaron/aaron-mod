@@ -12,11 +12,16 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.injected.AaronModItemMeta;
+import net.azureaaron.mod.skyblock.item.SkyblockEnchantment;
+import net.azureaaron.mod.skyblock.item.SkyblockEnchantments;
 import net.azureaaron.mod.utils.Functions;
-import net.azureaaron.mod.utils.Skyblock;
+import net.azureaaron.mod.utils.ItemUtils;
+import net.azureaaron.mod.utils.RomanNumerals;
 import net.azureaaron.mod.utils.TextTransformer;
 import net.minecraft.component.ComponentHolder;
 import net.minecraft.component.ComponentType;
@@ -116,13 +121,36 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 	@ModifyVariable(method = "appendTooltip", at = @At("STORE"))
 	private TooltipAppender aaronMod$rainbowifyMaxSkyblockEnchantments(TooltipAppender itemComponent) {
 		if (AaronModConfigManager.get().rainbowifyMaxSkyblockEnchantments && ((Functions.isOnHypixel() && Functions.isInSkyblock()) || getAlwaysDisplaySkyblockInfo()) && itemComponent instanceof LoreComponent lore) {
+			//Find what enchantments to replace with what colour
+			NbtCompound appliedEnchantments = ItemUtils.getCustomData(this).getCompound("enchantments");
+			Object2IntMap<String> maxEnchantmentColours = new Object2IntOpenHashMap<>();
+			Object2IntMap<String> goodEnchantmentColours = new Object2IntOpenHashMap<>();
+
+			for (String id : appliedEnchantments.getKeys()) {
+				SkyblockEnchantment enchantment = SkyblockEnchantments.getEnchantments().get(id);
+				int level = appliedEnchantments.getInt(id); //Will be 0 if the key isn't an int
+
+				if (level > 0 && enchantment != null && enchantment.isAtGoodOrMaxLevel(level)) {
+					//The name as shown when applied (e.g. Critical VII)
+					String appliedName = enchantment.name() + " " + RomanNumerals.toRoman(level);
+
+					if (enchantment.isAtMaxLevel(level)) {
+						maxEnchantmentColours.put(appliedName, 0xAA5500);
+					} else if (enchantment.isAtGoodLevel(level) && AaronModConfigManager.get().goodSkyblockEnchantments) {
+						goodEnchantmentColours.put(appliedName, AaronModConfigManager.get().goodSkyblockEnchantmentColour.getRGB() & 0x00FFFFFF);
+					}
+				}
+			}
+
 			//Copy the text to ensure that we don't modify the original
 			List<Text> lines = lore.lines().stream()
 					.map(TextTransformer::recursiveCopy)
 					.collect(Collectors.toList());
 
 			for (Text line : lines) {
-				if (Skyblock.getMaxEnchants().stream().anyMatch(line.getString()::contains)) {
+				Predicate<String> lineContains = line.getString()::contains;
+
+				if (!maxEnchantmentColours.isEmpty() && maxEnchantmentColours.keySet().stream().anyMatch(lineContains)) {
 					List<Text> textComponents = line.getSiblings();
 
 					switch (AaronModConfigManager.get().rainbowifyMode) {
@@ -132,18 +160,22 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 
 							//Exclude non-max enchants from counting towards total length since it looks weird & incomplete otherwise
 							for (Text currentComponent : textComponents) {
-								String componentString = currentComponent.getString();
+								String componentString = currentComponent.getString().trim();
 
-								if (Skyblock.getMaxEnchants().stream().anyMatch(componentString::contains)) totalLength += componentString.length();
+								if (maxEnchantmentColours.containsKey(componentString) && currentComponent.getStyle().getColor().getRgb() == Formatting.BLUE.getColorValue()) {
+									totalLength += componentString.length();
+								}
 							}
 
 							ListIterator<Text> iterator = textComponents.listIterator();
 
 							while (iterator.hasNext()) {
-								String componentString = iterator.next().getString();
+								Text currentComponent = iterator.next();
+								String componentString = currentComponent.getString().trim();
 
-								if (Skyblock.getMaxEnchants().stream().anyMatch(componentString::contains)) {
+								if (maxEnchantmentColours.containsKey(componentString) && currentComponent.getStyle().getColor().getRgb() == Formatting.BLUE.getColorValue()) {
 									iterator.set(TextTransformer.progressivelyRainbowify(componentString, totalLength, positionLeftOffAt).styled(style -> style.withItalic(false)));
+									maxEnchantmentColours.removeInt(componentString);
 									positionLeftOffAt += componentString.length();
 								}
 							}
@@ -151,14 +183,27 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 
 						case DYNAMIC -> {
 							for (Text currentComponent : textComponents) {
-								String componentString = currentComponent.getString();
+								String enchant = currentComponent.getString().trim();
 
-								if (Skyblock.getMaxEnchants().stream().anyMatch(componentString::contains)) {
-									((MutableText) currentComponent).withColor(0xAA5500);
+								if (maxEnchantmentColours.containsKey(enchant) && currentComponent.getStyle().getColor().getRgb() == Formatting.BLUE.getColorValue()) {
+									((MutableText) currentComponent).withColor(maxEnchantmentColours.getInt(enchant));
+									maxEnchantmentColours.removeInt(enchant);
 								}
 							}
 						}
 					}
+				}
+
+				if (!goodEnchantmentColours.isEmpty() && goodEnchantmentColours.keySet().stream().anyMatch(lineContains)) {
+					for (Text currentComponent : line.getSiblings()) {
+						String enchant = currentComponent.getString().trim();
+
+						if (goodEnchantmentColours.containsKey(enchant) && currentComponent.getStyle().getColor().getRgb() == Formatting.BLUE.getColorValue()) {
+							((MutableText) currentComponent).withColor(goodEnchantmentColours.getInt(enchant));
+							goodEnchantmentColours.removeInt(enchant);
+						}
+					}
+					
 				}
 			}
 
@@ -166,23 +211,20 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 			//Note that the styledLines list is actively transformed as its read so we can't create this component ahead of time and modify the contents of that list (it won't work)
 			return new LoreComponent(lines);
 		}
+
 		return itemComponent;
 	}
 
 	@Unique
 	private boolean isDiamondHead() {
-		@SuppressWarnings("deprecation")
-		String itemId = getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).getNbt().getString("id");
+		String itemId = ItemUtils.getId(this);
 
 		return itemId.equals("DIAMOND_BONZO_HEAD") || itemId.equals("DIAMOND_SCARF_HEAD") || itemId.equals("DIAMOND_PROFESSOR_HEAD") || itemId.equals("DIAMOND_THORN_HEAD") || itemId.equals("DIAMOND_LIVID_HEAD") || itemId.equals("DIAMOND_SADAN_HEAD") || itemId.equals("DIAMOND_NECRON_HEAD");
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public boolean getAlwaysDisplaySkyblockInfo() {
-		NbtComponent component = getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT);
-
-		return component.getNbt().getCompound(Main.NAMESPACE).getBoolean("alwaysDisplaySkyblockInfo");
+		return ItemUtils.getCustomData(this).getCompound(Main.NAMESPACE).getBoolean("alwaysDisplaySkyblockInfo");
 	}
 
 	@SuppressWarnings("deprecation")

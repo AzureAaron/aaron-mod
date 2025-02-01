@@ -1,13 +1,10 @@
 package net.azureaaron.mod.utils;
 
-import static net.azureaaron.mod.codecs.EnchantmentCodec.MAX_ENCHANTMENTS_CODEC;
-import static net.azureaaron.mod.codecs.EnchantmentCodec.MAX_LEVEL_ENCHANTMENTS;
 import static net.azureaaron.mod.codecs.LootCodec.RARE_LOOT_CODEC;
 import static net.azureaaron.mod.codecs.LootCodec.RARE_LOOT_ITEMS;
 
 import java.io.BufferedReader;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -38,10 +35,9 @@ public class Skyblock {
 	private static final Map<String, MagicalPowerCommand.Accessory> ACCESSORIES = new HashMap<>();
 	
 	private static boolean loaded;
-	private static boolean enchantsLoaded;
 		
 	public static void init() {
-		ClientLifecycleEvents.CLIENT_STARTED.register(client -> CompletableFuture.allOf(loadRareLootItems(client), loadMaxEnchants(false), loadMagicalPowers(), loadAccessories())
+		ClientLifecycleEvents.CLIENT_STARTED.register(client -> CompletableFuture.allOf(loadRareLootItems(client), loadMagicalPowers(), loadAccessories())
 				.whenComplete((_result, _throwable) -> loaded = true));
 	}
 	
@@ -57,25 +53,6 @@ public class Skyblock {
 				return Map.<String, ItemStack>of();
 			}
 		}).thenAccept(RARE_LOOT_ITEMS::putAll);
-	}
-
-	//Maybe load the enchants from file as backup?
-	public static CompletableFuture<Void> loadMaxEnchants(boolean loadAnyways) {
-		return CompletableFuture.supplyAsync(() -> {
-					if ((AaronModConfigManager.get().rainbowifyMaxSkyblockEnchantments || AaronModConfigManager.get().enableSkyblockCommands || loadAnyways) && !enchantsLoaded) {
-						try {
-							ApiResponse response = Http.sendAaronRequest("skyblock/maxenchantments");
-							return MAX_ENCHANTMENTS_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).getOrThrow();
-						} catch (Exception e) {
-							LOGGER.error("[Aaron's Mod] Failed to load max enchantments file!", e);
-
-							return List.<String>of();
-						}
-					} else {
-						return List.<String>of();
-					}
-				}).thenAccept(MAX_LEVEL_ENCHANTMENTS::addAll)
-				.thenRun(() -> Functions.runIf(() -> enchantsLoaded = true, () -> !MAX_LEVEL_ENCHANTMENTS.isEmpty()));
 	}
 	
 	private static CompletableFuture<Void> loadMagicalPowers() {
@@ -114,10 +91,6 @@ public class Skyblock {
 	
 	public static Map<String, ItemStack> getRareLootItems() {
 		return loaded ? RARE_LOOT_ITEMS : Map.of();
-	}
-	
-	public static List<String> getMaxEnchants() {
-		return enchantsLoaded ? MAX_LEVEL_ENCHANTMENTS : List.of();
 	}
 	
 	public static Map<String, MagicalPowerCommand.MagicalPowerData> getMagicalPowers() {

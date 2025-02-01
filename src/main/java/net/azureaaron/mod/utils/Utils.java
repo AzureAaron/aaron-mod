@@ -27,6 +27,7 @@ public class Utils {
 		HypixelNetworking.registerToEvents(Util.make(new Object2IntOpenHashMap<>(), map -> map.put(LocationUpdateS2CPacket.ID, 1)));
 		HypixelPacketEvents.HELLO.register(Utils::handlePacket);
 		HypixelPacketEvents.LOCATION_UPDATE.register(Utils::handlePacket);
+		//TODO set skyblock to false too
 		ClientPlayConnectionEvents.DISCONNECT.register((_handler, _client) -> isOnHypixel = false);
 	}
 

@@ -5,8 +5,13 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+
 import net.azureaaron.mod.utils.datafixer.LegacyItemStackFixer;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.component.ComponentHolder;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -42,6 +47,17 @@ public class ItemUtils {
 		return decodeCompressedItemData(encoded).stream()
 				.map(LegacyItemStackFixer::fixLegacyStack)
 				.toList();
+	}
+
+	@SuppressWarnings("deprecation")
+	@NotNull
+	public static NbtCompound getCustomData(ComponentHolder stack) {
+		return stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).getNbt();
+	}
+
+	@NotNull
+	public static String getId(ComponentHolder stack) {
+		return getCustomData(stack).getString("id");
 	}
 
 	public static WrapperLookup getRegistryLookup() {
