@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.IntToDoubleFunction;
 import java.util.function.Supplier;
@@ -27,8 +26,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.logging.LogUtils;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
@@ -42,6 +39,9 @@ import net.azureaaron.mod.commands.Command;
 import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.commands.SkyblockCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.skyblock.item.Accessories;
+import net.azureaaron.mod.skyblock.item.Accessory;
+import net.azureaaron.mod.skyblock.item.MagicalPower;
 import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.Formatters;
 import net.azureaaron.mod.utils.Functions;
@@ -60,8 +60,6 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
-import net.minecraft.util.dynamic.Codecs;
-import net.minecraft.util.dynamic.Codecs.StrictUnboundedMapCodec;
 
 public class MagicalPowerCommand extends SkyblockCommand {
 	public static final Command INSTANCE = new MagicalPowerCommand();
@@ -132,7 +130,7 @@ public class MagicalPowerCommand extends SkyblockCommand {
 		
 		//This can contain duplicates, we will deduplicate after collection
 		ObjectArrayList<Pair<Accessory, String>> collectedAccessoriesFromBag = new ObjectArrayList<>();
-				
+
 		//Loop through the accessories
 		for (ItemStack stack : accessories) {
 			if (!stack.contains(DataComponentTypes.LORE)) continue; //Item is probably not an accessory
@@ -146,7 +144,7 @@ public class MagicalPowerCommand extends SkyblockCommand {
 				Matcher matcher = ACCESSORY_RARITY_PATTERN.matcher(loreLine);
 
 				if (!itemId.isBlank() && matcher.matches()) {
-					collectedAccessoriesFromBag.add(ObjectObjectImmutablePair.of(Skyblock.getAccessories().getOrDefault(itemId, Accessory.fromId(itemId)), matcher.group("rarity")));
+					collectedAccessoriesFromBag.add(ObjectObjectImmutablePair.of(Accessories.getAccessories().getOrDefault(itemId, Accessory.fromId(itemId)), matcher.group("rarity")));
 										
 					break;
 				}
@@ -194,7 +192,7 @@ public class MagicalPowerCommand extends SkyblockCommand {
 				.filter(a -> {
 					Accessory accessory = a.left();
 					
-					IntSummaryStatistics accessoryTierSummary = Skyblock.getAccessories().entrySet().stream()
+					IntSummaryStatistics accessoryTierSummary = Accessories.getAccessories().entrySet().stream()
 							.map(Entry::getValue)
 							.filter(ca -> ca.family().isPresent()) //Filter out accessories with no family - if we don't then if the accessory itself has no family then well...
 							.filter(accessory::hasSameFamily) //If the accessories are apart of the same family
@@ -298,8 +296,8 @@ public class MagicalPowerCommand extends SkyblockCommand {
 		String selectedPower = JsonHelper.getString(accessoryBagStorage, "selected_power").orElse("None");
 		
 		//Get the selected magical power's data and calculate the stat boosts
-		Map<String, MagicalPowerData> magicalPowers = Skyblock.getMagicalPowers();
-		MagicalPowerData powerData = magicalPowers.getOrDefault(selectedPower, null);
+		Map<String, MagicalPower> magicalPowers = Accessories.getMagicalPowers();
+		MagicalPower powerData = magicalPowers.getOrDefault(selectedPower, null);
 		
 		Object2FloatOpenHashMap<String> stats = null;
 		Object2FloatOpenHashMap<String> bonus = null;
@@ -444,41 +442,8 @@ public class MagicalPowerCommand extends SkyblockCommand {
 		
 		return null;
 	}
-	
+
 	private static int countOfRarity(Object2ObjectOpenHashMap<String, String> map, String rarity) {
 		return (int) map.entrySet().stream().filter(entry -> entry.getValue().equals(rarity)).count();
-	}
-	
-	public record MagicalPowerData(Object2FloatOpenHashMap<String> stats, Object2FloatOpenHashMap<String> bonus) {
-		private static final Codec<MagicalPowerData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				Codecs.strictUnboundedMap(Codec.STRING, Codec.FLOAT).fieldOf("stats").forGetter(MagicalPowerData::stats),
-				Codecs.strictUnboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("bonus").forGetter(MagicalPowerData::bonusOptional))
-				.apply(instance, MagicalPowerData::new));
-		public static final StrictUnboundedMapCodec<String, MagicalPowerData> MAP_CODEC = Codecs.strictUnboundedMap(Codec.STRING, MagicalPowerData.CODEC);
-		
-		private MagicalPowerData(Map<String, Float> stats, Optional<Map<String, Float>> bonus) {
-			this(new Object2FloatOpenHashMap<>(stats), new Object2FloatOpenHashMap<String>(bonus.orElse(Map.of())));
-		}
-		
-		private Optional<Map<String, Float>> bonusOptional() {
-			return Optional.of(bonus);
-		}
-	}
-	
-	public record Accessory(String id, Optional<String> family, int tier) {
-		private static final Codec<Accessory> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				Codec.STRING.fieldOf("id").forGetter(Accessory::id),
-				Codec.STRING.optionalFieldOf("family").forGetter(Accessory::family),
-				Codec.INT.optionalFieldOf("tier", 0).forGetter(Accessory::tier))
-				.apply(instance, Accessory::new));
-		public static final Codec<Map<String, Accessory>> MAP_CODEC = Codec.unboundedMap(Codec.STRING, CODEC);
-		
-		private boolean hasSameFamily(Accessory other) {
-			return other.family().equals(this.family);
-		}
-		
-		private static Accessory fromId(String id) {
-			return new Accessory(id, Optional.empty(), 0);
-		}
 	}
 }

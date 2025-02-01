@@ -4,7 +4,6 @@ import static net.azureaaron.mod.codecs.LootCodec.RARE_LOOT_CODEC;
 import static net.azureaaron.mod.codecs.LootCodec.RARE_LOOT_ITEMS;
 
 import java.io.BufferedReader;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -18,9 +17,6 @@ import com.mojang.logging.LogUtils;
 import com.mojang.serialization.JsonOps;
 
 import net.azureaaron.mod.Main;
-import net.azureaaron.mod.commands.skyblock.MagicalPowerCommand;
-import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.utils.Http.ApiResponse;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
@@ -29,15 +25,11 @@ import net.minecraft.util.Identifier;
 
 public class Skyblock {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	//TODO refactor the codecs into their own classes
-
-	private static final Map<String, MagicalPowerCommand.MagicalPowerData> MAGICAL_POWERS = new HashMap<>();
-	private static final Map<String, MagicalPowerCommand.Accessory> ACCESSORIES = new HashMap<>();
 	
 	private static boolean loaded;
 		
 	public static void init() {
-		ClientLifecycleEvents.CLIENT_STARTED.register(client -> CompletableFuture.allOf(loadRareLootItems(client), loadMagicalPowers(), loadAccessories())
+		ClientLifecycleEvents.CLIENT_STARTED.register(client -> CompletableFuture.allOf(loadRareLootItems(client))
 				.whenComplete((_result, _throwable) -> loaded = true));
 	}
 	
@@ -55,50 +47,8 @@ public class Skyblock {
 		}).thenAccept(RARE_LOOT_ITEMS::putAll);
 	}
 	
-	private static CompletableFuture<Void> loadMagicalPowers() {
-		return CompletableFuture.supplyAsync(() -> {
-			if (AaronModConfigManager.get().enableSkyblockCommands) {
-				try {
-					ApiResponse response = Http.sendAaronRequest("skyblock/magicalpowers");
-					return MagicalPowerCommand.MagicalPowerData.MAP_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).getOrThrow();
-				} catch (Exception e) {
-					LOGGER.error("[Aaron's Mod] Failed to load magical powers file!", e);
-					
-					return Map.<String, MagicalPowerCommand.MagicalPowerData>of();
-				}
-			} else {
-				return Map.<String, MagicalPowerCommand.MagicalPowerData>of();
-			}
-		}).thenAccept(MAGICAL_POWERS::putAll);
-	}
-	
-	private static CompletableFuture<Void> loadAccessories() {
-		return CompletableFuture.supplyAsync(() -> {
-			if (AaronModConfigManager.get().enableSkyblockCommands) {
-				try {
-					ApiResponse response = Http.sendAaronRequest("skyblock/accessories");
-					return MagicalPowerCommand.Accessory.MAP_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).getOrThrow();
-				} catch (Exception e) {
-					LOGGER.error("[Aaron's Mod] Failed to load accessories!", e);
-					
-					return Map.<String, MagicalPowerCommand.Accessory>of();
-				}
-			} else {
-				return Map.<String, MagicalPowerCommand.Accessory>of();
-			}
-		}).thenAccept(ACCESSORIES::putAll);
-	}
-	
 	public static Map<String, ItemStack> getRareLootItems() {
 		return loaded ? RARE_LOOT_ITEMS : Map.of();
-	}
-	
-	public static Map<String, MagicalPowerCommand.MagicalPowerData> getMagicalPowers() {
-		return loaded ? MAGICAL_POWERS : Map.of();
-	}
-	
-	public static Map<String, MagicalPowerCommand.Accessory> getAccessories() {
-		return loaded ? ACCESSORIES : Map.of();
 	}
 	
 	public static JsonObject getSelectedProfile2(String profiles) throws IllegalStateException {
