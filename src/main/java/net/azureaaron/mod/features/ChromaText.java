@@ -1,6 +1,7 @@
 package net.azureaaron.mod.features;
 
 import net.azureaaron.mod.Main;
+import net.azureaaron.mod.annotations.Init;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.minecraft.client.MinecraftClient;
@@ -10,6 +11,7 @@ public class ChromaText {
 	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
 	public static final Identifier ID = Identifier.of(Main.NAMESPACE, "chroma_text");
 
+	@Init
 	public static void init() {
 		ResourceManagerHelper.registerBuiltinResourcePack(ID, Main.MOD_CONTAINER, ResourcePackActivationType.DEFAULT_ENABLED);
 	}

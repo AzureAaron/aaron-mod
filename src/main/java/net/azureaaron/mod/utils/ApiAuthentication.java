@@ -18,6 +18,7 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.azureaaron.mod.Main;
+import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.mixins.accessors.MinecraftClientAccessor;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
@@ -46,6 +47,7 @@ public class ApiAuthentication {
 	private static TokenInfo tokenInfo = null;
 	private static boolean sentWarningOnce = false;
 
+	@Init
 	public static void init() {
 		//Only do this if Skyblock Commands are enabled since thats all this is necessary for
 		if (AaronModConfigManager.get().enableSkyblockCommands) {

@@ -10,6 +10,7 @@ import com.google.gson.JsonParser;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.JsonOps;
 
+import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Http;
 
@@ -20,6 +21,7 @@ public class Accessories {
 	@Unmodifiable
 	private static Map<String, MagicalPower> magicalPowers = Map.of();
 
+	@Init
 	public static void init() {
 		loadAccessories();
 		loadMagicalPowers();

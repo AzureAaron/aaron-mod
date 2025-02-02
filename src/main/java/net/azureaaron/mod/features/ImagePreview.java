@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.azureaaron.mod.Main;
+import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.ReceiveChatMessageEvent;
 import net.azureaaron.mod.utils.Http;
@@ -40,6 +41,7 @@ public class ImagePreview {
 	private static final Object2ObjectOpenHashMap<String, CachedImage> IMAGE_CACHE = new Object2ObjectOpenHashMap<>();
 	private static final ObjectOpenHashSet<String> IMAGE_URLS_CACHED = new ObjectOpenHashSet<>();
 
+	@Init
 	public static void init() {
 		ReceiveChatMessageEvent.EVENT.register(ImagePreview::inspectMessageForImageLinks);
 		ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {

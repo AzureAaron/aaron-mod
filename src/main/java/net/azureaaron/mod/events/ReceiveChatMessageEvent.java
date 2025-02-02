@@ -1,5 +1,6 @@
 package net.azureaaron.mod.events;
 
+import net.azureaaron.mod.annotations.Init;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
@@ -27,6 +28,7 @@ public interface ReceiveChatMessageEvent {
 	 */
 	void onMessage(Text message, boolean overlay, boolean cancelled);
 	
+	@Init
 	static void init() {
 		ClientReceiveMessageEvents.GAME.register((message, overlay) -> EVENT.invoker().onMessage(message, overlay, false));
 		ClientReceiveMessageEvents.GAME_CANCELED.register((message, overlay) -> EVENT.invoker().onMessage(message, overlay, true));

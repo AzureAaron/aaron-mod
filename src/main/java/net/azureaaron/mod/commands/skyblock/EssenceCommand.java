@@ -9,19 +9,26 @@ import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.commands.Command;
 import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.commands.SkyblockCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Formatters;
 import net.azureaaron.mod.utils.JsonHelper;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
 
 public class EssenceCommand extends SkyblockCommand {
-	public static final Command INSTANCE = new EssenceCommand();
+	private static final Command INSTANCE = new EssenceCommand();
+
+	@Init
+	public static void init() {
+		if (AaronModConfigManager.get().enableSkyblockCommands) ClientCommandRegistrationCallback.EVENT.register(INSTANCE::register);
+	}
 
 	@Override
 	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {

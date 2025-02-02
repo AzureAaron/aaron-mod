@@ -3,6 +3,7 @@ package net.azureaaron.mod.listeners;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.ReceiveChatMessageEvent;
 import net.azureaaron.mod.features.Dragons;
@@ -19,6 +20,7 @@ public class ReceiveChatMessageListener {
 	private static final Pattern TEAM_SCORE_PATTERN = Pattern.compile(" +Team Score: [0-9]+ \\([A-z+]+\\)");
 	
 	@SuppressWarnings("removal")
+	@Init
 	public static void listen() {
 		ReceiveChatMessageEvent.EVENT.register((message, overlay, cancelled) -> {	
 			if (Functions.isOnHypixel() && !overlay) {

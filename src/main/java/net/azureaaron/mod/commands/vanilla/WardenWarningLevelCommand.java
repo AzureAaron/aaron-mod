@@ -8,10 +8,12 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.PlaySoundEvent;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Functions;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.command.CommandRegistryAccess;
@@ -31,12 +33,14 @@ public class WardenWarningLevelCommand {
 	private static int warningLevel = 0;
 	private static long lastShriekTime = 0L;
 
+	@Init
 	public static void init() {
+		ClientCommandRegistrationCallback.EVENT.register(WardenWarningLevelCommand::register);
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> reset());
 		PlaySoundEvent.EVENT.register(WardenWarningLevelCommand::onPlaySound);
 	}
 
-	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
 		dispatcher.register(literal("wardenwarninglevel")
 				.executes(context -> printWardenWarningLevel(context.getSource())));
 	}

@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.azureaaron.mod.Main;
+import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.mixins.accessors.ClientEntityManagerAccessor;
 import net.azureaaron.mod.mixins.accessors.ClientWorldAccessor;
@@ -24,6 +25,7 @@ import net.minecraft.world.entity.EntityIndex;
 public class DragonHealth {
 	private static final Pattern DRAGON_HP = Pattern.compile("﴾ Withered Dragon (?:\u16E4 )?(?<health>[0-9kKMB.]+)\\/(?<max>[0-9kKMB.]+)\u2764 ﴿");
 	
+	@Init
 	public static void init() {
 		WorldRenderEvents.AFTER_TRANSLUCENT.register(DragonHealth::render);
 	}

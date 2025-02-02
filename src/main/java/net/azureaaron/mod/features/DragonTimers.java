@@ -1,6 +1,7 @@
 package net.azureaaron.mod.features;
 
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.ParticleSpawnEvent;
 import net.azureaaron.mod.utils.Cache;
@@ -31,6 +32,7 @@ public class DragonTimers {
 		map.put(Dragons.SOUL, SOUL_TEXT_LOCATION);
 	});
 	
+	@Init
 	public static void init() {
 		WorldRenderEvents.BEFORE_DEBUG_RENDER.register(DragonTimers::renderSpawnTimers);
 		ParticleSpawnEvent.EVENT.register(DragonTimers::tick);

@@ -8,8 +8,10 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 
+import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.features.TextReplacer;
 import net.azureaaron.mod.screens.TextReplacerConfigScreen;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandRegistryAccess;
@@ -17,8 +19,13 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
 
 public class TextReplacerCommand {
+	
+	@Init
+	public static void init() {
+		ClientCommandRegistrationCallback.EVENT.register(TextReplacerCommand::register);
+	}
 
-	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
 		dispatcher.register(literal("textreplacer")
 				//.executes(context -> openTextReplacerConfig(context.getSource()))
 				.then(literal("add")

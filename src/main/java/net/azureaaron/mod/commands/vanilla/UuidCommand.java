@@ -8,11 +8,13 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.commands.Command;
 import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.commands.VanillaCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Functions;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
@@ -22,7 +24,12 @@ import net.minecraft.text.HoverEvent.Action;
 import net.minecraft.text.Text;
 
 public class UuidCommand extends VanillaCommand {
-	public static final Command INSTANCE = new UuidCommand();
+	private static final Command INSTANCE = new UuidCommand();
+
+	@Init
+	public static void init() {
+		ClientCommandRegistrationCallback.EVENT.register(INSTANCE::register);
+	}
 
 	@Override
 	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {

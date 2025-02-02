@@ -16,9 +16,11 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.UnsafeAccess;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.CommandRegistryAccess;
@@ -30,7 +32,12 @@ import net.minecraft.util.Formatting;
 public class ReflectCommand implements UnsafeAccess {
 	private static final boolean ENABLED = Boolean.parseBoolean(System.getProperty("aaronmod.enableReflectCommand", "false")) || FabricLoader.getInstance().isDevelopmentEnvironment();
 
-	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	@Init
+	public static void init() {
+		ClientCommandRegistrationCallback.EVENT.register(ReflectCommand::register);
+	}
+
+	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
 		if (ENABLED) {
 			//Maybe turn this into subcommands
 			dispatcher.register(literal("reflect")

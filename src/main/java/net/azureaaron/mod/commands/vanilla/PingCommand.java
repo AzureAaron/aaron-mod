@@ -6,9 +6,11 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.PingResultEvent;
 import net.azureaaron.mod.utils.Constants;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -20,7 +22,12 @@ import net.minecraft.util.Util;
 public class PingCommand {
 	private static volatile boolean sentCommand = false;
 
-	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	@Init
+	public static void init() {
+		ClientCommandRegistrationCallback.EVENT.register(PingCommand::register);
+	}
+
+	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
 		dispatcher.register(literal("ping")
 				.executes(context -> handleCommand(context.getSource())));
 

@@ -11,7 +11,9 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
+import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.mixins.accessors.ChatAccessor;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHudLine;
@@ -21,14 +23,18 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class CopyChatCommand {
-
 	private static final MinecraftClient minecraftClient = MinecraftClient.getInstance();
 	private static final Text successToastTitle = Text.literal("Success!");
 	private static final Text successToastDescription = Text.literal("The message was copied to your clipboard!");
 	private static final Text notFoundToastTitle = Text.literal("Not Found!");
 	private static final Text notFoundToastDescription = Text.literal("No message contained your input!");
 	
-	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	@Init
+	public static void init() {
+		ClientCommandRegistrationCallback.EVENT.register(CopyChatCommand::register);
+	}
+	
+	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
 		LiteralCommandNode<FabricClientCommandSource> copyChatCommand = dispatcher.register(literal("copychat")
 				.then(argument("excerpt", greedyString())
 						.executes(context -> copyMessage(context.getSource(), getString(context, "excerpt")))));

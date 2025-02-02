@@ -17,6 +17,7 @@ import com.mojang.logging.LogUtils;
 import com.mojang.serialization.JsonOps;
 
 import net.azureaaron.mod.Main;
+import net.azureaaron.mod.annotations.Init;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
@@ -25,9 +26,9 @@ import net.minecraft.util.Identifier;
 
 public class Skyblock {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	
 	private static boolean loaded;
-		
+
+	@Init
 	public static void init() {
 		ClientLifecycleEvents.CLIENT_STARTED.register(client -> CompletableFuture.allOf(loadRareLootItems(client))
 				.whenComplete((_result, _throwable) -> loaded = true));

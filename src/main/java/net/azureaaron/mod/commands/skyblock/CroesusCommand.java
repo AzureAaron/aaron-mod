@@ -24,6 +24,7 @@ import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.commands.Command;
 import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.commands.SkyblockCommand;
@@ -32,6 +33,7 @@ import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.Formatters;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.Skyblock;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
@@ -48,9 +50,14 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
 
 public class CroesusCommand extends SkyblockCommand {
-	public static final Command INSTANCE = new CroesusCommand();
+	private static final Command INSTANCE = new CroesusCommand();
 	private static final long TWO_DAYS = 172_800_000;
 	private static final Supplier<MutableText> NO_TREASURES = () -> Constants.PREFIX.get().append(Text.literal("This player doesn't have any dungeon treasures to claim!").formatted(Formatting.RED));
+
+	@Init
+	public static void init() {
+		if (AaronModConfigManager.get().enableSkyblockCommands) ClientCommandRegistrationCallback.EVENT.register(INSTANCE::register);
+	}
 
 	@Override
 	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {

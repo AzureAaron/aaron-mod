@@ -11,11 +11,13 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.util.UndashedUuid;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.commands.Command;
 import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.commands.VanillaCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Functions;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.client.util.SkinTextures;
@@ -24,7 +26,12 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
 
 public class DefaultSkinCommand extends VanillaCommand {
-	public static final Command INSTANCE = new DefaultSkinCommand();
+	private static final Command INSTANCE = new DefaultSkinCommand();
+
+	@Init
+	public static void init() {
+		ClientCommandRegistrationCallback.EVENT.register(INSTANCE::register);
+	}
 
 	@Override
 	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {

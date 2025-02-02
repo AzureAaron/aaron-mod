@@ -18,6 +18,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.logging.LogUtils;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Cache;
@@ -25,6 +26,7 @@ import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.Formatters;
 import net.azureaaron.mod.utils.Http;
 import net.azureaaron.mod.utils.Messages;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
@@ -34,8 +36,17 @@ import net.minecraft.util.Formatting;
 
 public class LowestBinCommand {
 	private static final Logger LOGGER = LogUtils.getLogger();
+	private static final Supplier<MutableText> LOWEST_BIN_FETCH_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while fetching information for the lowest bin prices!").formatted(Formatting.RED));
+	private static final Supplier<MutableText> DAY_AVERAGE_FETCH_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while fetching information for the average day price!").formatted(Formatting.RED));
+	private static final Supplier<MutableText> NON_EXISTENT_ITEM_ERROR = () -> Constants.PREFIX.get().append(Text.literal("The item you've provided is non existent!").formatted(Formatting.RED));
+	private static final Supplier<MutableText> NO_AVERAGE_PRICE_FOR_ITEM_ERROR = () -> Constants.PREFIX.get().append(Text.literal("No average price was found! (Most likely because this item hasn't been on the auction house recently!)").formatted(Formatting.RED));
+
+	@Init
+	public static void init() {
+		ClientCommandRegistrationCallback.EVENT.register(LowestBinCommand::register);
+	}
 	
-	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
 		final LiteralCommandNode<FabricClientCommandSource> lowestBinCommand = dispatcher.register(literal("lowestbin")
 				.then(argument("item", greedyString())
 						.suggests((context, builder) -> CommandSource.suggestMatching(Cache.ITEMS_LIST, builder))
@@ -43,11 +54,6 @@ public class LowestBinCommand {
 		
 		dispatcher.register(literal("lbin").redirect(lowestBinCommand));
 	}
-	
-	private static final Supplier<MutableText> LOWEST_BIN_FETCH_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while fetching information for the lowest bin prices!").formatted(Formatting.RED));
-	private static final Supplier<MutableText> DAY_AVERAGE_FETCH_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while fetching information for the average day price!").formatted(Formatting.RED));
-	private static final Supplier<MutableText> NON_EXISTENT_ITEM_ERROR = () -> Constants.PREFIX.get().append(Text.literal("The item you've provided is non existent!").formatted(Formatting.RED));
-	private static final Supplier<MutableText> NO_AVERAGE_PRICE_FOR_ITEM_ERROR = () -> Constants.PREFIX.get().append(Text.literal("No average price was found! (Most likely because this item hasn't been on the auction house recently!)").formatted(Formatting.RED));
 	
 	private static int handleCommand(FabricClientCommandSource source, String item) {
 		String itemId = Cache.ITEM_NAMES.get(item);

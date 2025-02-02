@@ -1,0 +1,21 @@
+plugins {
+	id 'java-gradle-plugin'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation "org.ow2.asm:asm:${project.asm_version}"
+	implementation "org.ow2.asm:asm-tree:${project.asm_version}"
+}
+
+gradlePlugin {
+	plugins {
+		simplePlugin {
+			id = "net.azureaaron.mod.annotation-processor"
+			implementationClass = "net.azureaaron.mod.AnnotationProcessor"
+		}
+	}
+}

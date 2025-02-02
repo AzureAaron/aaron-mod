@@ -18,6 +18,7 @@ import com.mojang.logging.LogUtils;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.commands.Command;
 import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.commands.SkyblockCommand;
@@ -27,6 +28,7 @@ import net.azureaaron.mod.utils.ItemUtils;
 import net.azureaaron.mod.utils.JsonHelper;
 import net.azureaaron.mod.utils.Messages;
 import net.azureaaron.mod.utils.Skyblock;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
@@ -41,9 +43,14 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class InventoryCommand extends SkyblockCommand {
-	public static final Command INSTANCE = new InventoryCommand();
+	private static final Command INSTANCE = new InventoryCommand();
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final Supplier<MutableText> NBT_PARSING_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while trying to parse NBT!").formatted(Formatting.RED));
+
+	@Init
+	public static void init() {
+		if (AaronModConfigManager.get().enableSkyblockCommands) ClientCommandRegistrationCallback.EVENT.register(INSTANCE::register);
+	}
 
 	@Override
 	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {

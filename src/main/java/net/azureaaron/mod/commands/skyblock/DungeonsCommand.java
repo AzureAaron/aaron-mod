@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
+import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.commands.Command;
 import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.commands.SkyblockCommand;
@@ -23,6 +24,7 @@ import net.azureaaron.mod.utils.Formatters;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.JsonHelper;
 import net.azureaaron.mod.utils.Levelling;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
@@ -33,8 +35,13 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class DungeonsCommand extends SkyblockCommand {
-	public static final Command INSTANCE = new DungeonsCommand();
+	private static final Command INSTANCE = new DungeonsCommand();
 	private static final Supplier<MutableText> NEVER_PLAYED_DUNGEONS_ERROR = () -> Constants.PREFIX.get().append(Text.literal("This player hasn't entered the catacombs yet!").formatted(Formatting.RED));
+
+	@Init
+	public static void init() {
+		if (AaronModConfigManager.get().enableSkyblockCommands) ClientCommandRegistrationCallback.EVENT.register(INSTANCE::register);
+	}
 
 	@Override
 	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {

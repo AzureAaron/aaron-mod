@@ -8,6 +8,8 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 
+import net.azureaaron.mod.annotations.Init;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.CommandRegistryAccess;
@@ -17,7 +19,12 @@ import net.minecraft.text.Texts;
 public class TestCommand {
 	private static final boolean ENABLED = Boolean.parseBoolean(System.getProperty("aaronmod.enableTestCommand", "false")) || FabricLoader.getInstance().isDevelopmentEnvironment();
 
-	public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	@Init
+	public static void init() {
+		ClientCommandRegistrationCallback.EVENT.register(TestCommand::register);
+	}
+
+	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
 		if (ENABLED) {
 			dispatcher.register(literal("test")
 					.executes(context -> printTest(context.getSource()))

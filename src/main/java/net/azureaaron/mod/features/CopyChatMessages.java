@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 
+import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfig;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.MouseInputEvent;
@@ -30,6 +31,7 @@ public class CopyChatMessages {
 	private static final Text NOT_FOUND_TITLE = Text.literal("Not Found!");
 	private static final Text NOT_FOUND_DESCRIPTION = Text.literal("No message was hovered over!");
 
+	@Init
 	public static void init() {
 		MouseInputEvent.EVENT.register(CopyChatMessages::onMouseInput);
 	}	

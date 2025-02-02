@@ -11,6 +11,7 @@ import net.azureaaron.hmapi.network.packet.s2c.ErrorS2CPacket;
 import net.azureaaron.hmapi.network.packet.s2c.HelloS2CPacket;
 import net.azureaaron.hmapi.network.packet.s2c.HypixelS2CPacket;
 import net.azureaaron.hmapi.network.packet.v1.s2c.LocationUpdateS2CPacket;
+import net.azureaaron.mod.annotations.Init;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.util.Util;
 import net.minecraft.util.annotation.FieldsAreNonnullByDefault;
@@ -23,6 +24,7 @@ public class Utils {
 	private static boolean isOnSkyblock;
 	private static String mode = ""; //Future Use
 
+	@Init
 	public static void init() {
 		HypixelNetworking.registerToEvents(Util.make(new Object2IntOpenHashMap<>(), map -> map.put(LocationUpdateS2CPacket.ID, 1)));
 		HypixelPacketEvents.HELLO.register(Utils::handlePacket);

@@ -1,5 +1,6 @@
 package net.azureaaron.mod.features;
 
+import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Functions;
@@ -26,6 +27,7 @@ public class M7Waypoints {
 	private static final Vec3d GREEN_STACK = new Vec3d(62, 5, 109); // 66, 5, 109 or 62, 5, 109
 	private static final Vec3d RED_STACK = new Vec3d(16, 5, 89); //16, 5, 89
 	
+	@Init
 	public static void init() {
 		WorldRenderEvents.AFTER_TRANSLUCENT.register(M7Waypoints::renderWaypoints);
 	}

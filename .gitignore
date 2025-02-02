@@ -18,3 +18,10 @@
 !/LICENSE
 !/README.md
 !/settings.gradle
+
+# Build Src
+!/buildSrc
+/buildSrc/*
+!/buildSrc/src
+!/buildSrc/build.gradle
+!/buildSrc/gradle.properties
