@@ -33,7 +33,7 @@ public class Http {
 			.connectTimeout(Duration.ofSeconds(10))
 			.followRedirects(Redirect.NORMAL)
 			.build();
-	private static final String AARON_BASE = "https://api.azureaaron.net/";
+	private static final String HYPIXEL_PROXY = "https://api.azureaaron.net/hypixel/v2/";
 	private static final String NAME_TO_UUID = "https://api.minecraftservices.com/minecraft/profile/lookup/name/";
 	private static final String UUID_TO_NAME = "https://api.minecraftservices.com/minecraft/profile/lookup/";
 	private static final String USER_AGENT = "Aaron's Mod/" + Main.MOD_VERSION + " (" + Main.MINECRAFT_VERSION + ")";
@@ -53,6 +53,7 @@ public class Http {
 		InputStream decodedInputStream = getDecodedInputStream(response);
 
 		String body = new String(decodedInputStream.readAllBytes());
+		decodedInputStream.close();
 
 		return new ApiResponse(body, response.statusCode(), url, response.headers());
 	}
@@ -61,9 +62,8 @@ public class Http {
 		return sendGetRequestInternal(url, null).content();
 	}
 
-	//TODO rename
-	public static String sendAuthorizedHypixelRequest(@NotNull String endpoint, @NotNull String parameters) throws IOException, InterruptedException, ApiException {
-		ApiResponse response = sendGetRequestInternal(AARON_BASE + "hypixel/v2/" + endpoint + parameters, ApiAuthentication.getToken());
+	public static String sendHypixelRequest(@NotNull String endpoint, @NotNull String parameters) throws IOException, InterruptedException, ApiException {
+		ApiResponse response = sendGetRequestInternal(HYPIXEL_PROXY + endpoint + parameters, ApiAuthentication.getToken());
 		response.tryThrow();
 
 		return response.content();
@@ -75,15 +75,6 @@ public class Http {
 
 	public static ApiResponse sendUuidToNameRequest(@NotNull String uuid) throws IOException, InterruptedException, ApiException {
 		return sendGetRequestInternal(UUID_TO_NAME + uuid, null);
-	}
-
-	//TODO give this a better name?
-	@Deprecated(forRemoval = true)
-	public static ApiResponse sendAaronRequest(@NotNull String path) throws IOException, InterruptedException, ApiException {
-		ApiResponse response = sendGetRequestInternal(AARON_BASE + path, null);
-		response.tryThrow();
-
-		return response;
 	}
 
 	public static String sendPostRequest(@NotNull String url, @NotNull String requestBody, @NotNull String contentType) throws IOException, InterruptedException {		
@@ -100,6 +91,7 @@ public class Http {
 		InputStream decodedInputStream = getDecodedInputStream(response);
 
 		String body = new String(decodedInputStream.readAllBytes());
+		decodedInputStream.close();
 
 		return body;
 	}
@@ -127,14 +119,13 @@ public class Http {
 	
 	private static InputStream getDecodedInputStream(HttpResponse<InputStream> response) {
 		String encoding = getContentEncoding(response);
-		
+
 		try {
 			return switch (encoding) {
 				case "" -> response.body();
 				case "gzip" -> new GZIPInputStream(response.body());
 				case "deflate" -> new InflaterInputStream(response.body());
-				default ->
-						throw new UnsupportedOperationException("The server sent content in unexpected encoding: " + encoding);
+				default -> throw new UnsupportedOperationException("The server sent content in unexpected encoding: " + encoding);
 			};
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);

@@ -94,7 +94,7 @@ public class CommandSystem {
 	private static int handleSkyblockCommand(SkyblockCommand command, FabricClientCommandSource source, CommandPlayerData playerData) {
 		CompletableFuture.supplyAsync(() -> {
 			try {
-				return Http.sendAuthorizedHypixelRequest("skyblock/profiles", "?uuid=" + playerData.id());
+				return Http.sendHypixelRequest("skyblock/profiles", "?uuid=" + playerData.id());
 			} catch (Throwable t) {
 				source.sendError(Messages.SKYBLOCK_PROFILES_FETCH_ERROR.get());
 				LOGGER.error("[Aaron's Mod] Encountered an exception while fetching a player's skyblock profiles!", t);
