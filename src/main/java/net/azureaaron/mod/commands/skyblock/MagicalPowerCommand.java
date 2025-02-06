@@ -69,7 +69,7 @@ public class MagicalPowerCommand extends SkyblockCommand {
 	private static final Supplier<MutableText> NO_ACCESSORY_BAG_DATA = () -> Constants.PREFIX.get().append(Text.literal("This profile doesn't have any accessory bag data!").formatted(Formatting.RED));
 	private static final Supplier<MutableText> NBT_PARSING_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while trying to parse NBT!").formatted(Formatting.RED)); //TODO make constant
 	private static final Pattern ACCESSORY_RARITY_PATTERN = Pattern.compile("(?:a )?(?<rarity>(?:VERY )?[A-Za-z]+) (?:DUNGEON )?(?:AC|HAT)CESSORY(?: a)?");
-	private static final IntToDoubleFunction STATS_MULT = magicalPower -> 29.97d * Math.pow(Math.log(0.0019d * magicalPower + 1d), 1.2d);
+	private static final IntToDoubleFunction STATS_MULT = magicalPower -> 29.97d * Math.pow(Math.log(Math.fma(0.0019d, magicalPower, 1d)), 1.2d);
 	private static final Object2IntOpenHashMap<String> RARITY_TIER_MAP = Util.make(new Object2IntOpenHashMap<>(), map -> {
 		map.put("VERY SPECIAL", 8);
 		map.put("SPECIAL", 7);
