@@ -47,7 +47,7 @@ public class Http {
 				.version(Version.HTTP_2)
 				.uri(URI.create(url));
 
-		if (apiToken != null) requestBuilder.header("Token", apiToken);
+		if (apiToken != null) requestBuilder.header("Authorization", "Bearer " + apiToken);
 
 		HttpResponse<InputStream> response = HTTP_CLIENT.send(requestBuilder.build(), BodyHandlers.ofInputStream());
 		InputStream decodedInputStream = getDecodedInputStream(response);
