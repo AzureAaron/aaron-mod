@@ -12,11 +12,11 @@ import net.fabricmc.loader.api.FabricLoader;
 
 public class MixinPlugin implements IMixinConfigPlugin {
 	private static final boolean OPTIFABRIC_LOADED = FabricLoader.getInstance().isModLoaded("optifabric");
+	private static final boolean SKYBLOCKER_LOADED = FabricLoader.getInstance().isModLoaded("skyblocker");
 	private static final String MIXIN_PACKAGE = "net.azureaaron.mod.mixins.";
 
 	@Override
-	public void onLoad(String mixinPackage) {		
-	}
+	public void onLoad(String mixinPackage) {}
 
 	@Override
 	public String getRefMapperConfig() {
@@ -25,18 +25,18 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
 	@Override
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-		//Only apply if we're on macOS to avoid unnecessary bytecode transformation.
-		if(mixinClassName.equals(MIXIN_PACKAGE + "KeyboardMixin")) return SystemUtils.IS_OS_MAC;
-		
-		//OptiFine compatibility
-		if(OPTIFABRIC_LOADED && (mixinClassName.equals(MIXIN_PACKAGE + "ParticleManagerMixin") || mixinClassName.equals(MIXIN_PACKAGE + "FireworksSparkParticleMixin"))) return false;
-		
-		return true;
+		return switch (mixinClassName) {
+			case String s when s.equals(MIXIN_PACKAGE + "KeyboardMixin") -> SystemUtils.IS_OS_MAC; //Skip application outside of macOS
+			case String s when s.equals(MIXIN_PACKAGE + "ParticleManagerMixin") -> !OPTIFABRIC_LOADED;
+			case String s when s.equals(MIXIN_PACKAGE + "FireworksSparkParticleMixin") -> !OPTIFABRIC_LOADED;
+			case String s when s.equals(MIXIN_PACKAGE + "SkyblockerPVCollectionsGenericCategoryMixin") -> SKYBLOCKER_LOADED;
+
+			default -> true;
+		};
 	}
 
 	@Override
-	public void acceptTargets(Set<String> myTargets, Set<String> otherTargets) {		
-	}
+	public void acceptTargets(Set<String> myTargets, Set<String> otherTargets) {}
 
 	@Override
 	public List<String> getMixins() {
@@ -44,11 +44,9 @@ public class MixinPlugin implements IMixinConfigPlugin {
 	}
 
 	@Override
-	public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-	}
+	public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {}
 
 	@Override
-	public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {		
-	}
+	public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {}
 
 }
