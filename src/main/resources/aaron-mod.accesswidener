@@ -12,3 +12,6 @@ accessible class net/minecraft/client/particle/FireworksSparkParticle$Explosion
 
 # December Christmas Chests
 accessible class net/minecraft/client/render/item/property/select/LocalTimeProperty$Data
+
+# Chroma Text
+accessible method net/minecraft/text/Style <init> (Lnet/minecraft/text/TextColor;Ljava/lang/Integer;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Lnet/minecraft/text/ClickEvent;Lnet/minecraft/text/HoverEvent;Ljava/lang/String;Lnet/minecraft/util/Identifier;)V
