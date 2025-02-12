@@ -68,7 +68,9 @@ public class ApiAuthentication {
 	private static void updateToken() {
 		//The fetching runs async in ProfileKeysImpl#getKeyPair
 		((MinecraftClientAccessor) CLIENT).getProfileKeys().fetchKeyPair().thenAcceptAsync(playerKeypairOpt -> {
-			if (playerKeypairOpt.isPresent()) {
+			boolean expired = playerKeypairOpt.map(keyPair -> keyPair.publicKey().data().isExpired()).orElse(false);
+
+			if (playerKeypairOpt.isPresent() && !expired) {
 				PlayerKeyPair playerKeyPair = playerKeypairOpt.get();
 
 				//The key header and footer can be sent but that doesn't matter to the server
@@ -92,8 +94,8 @@ public class ApiAuthentication {
 					logErrorAndScheduleRetry(Text.literal(AUTH_FAILURE), 60, "[Aaron's Mod Api Auth] Failed to refresh the api token! Some features might not work :(", e);
 				}
 			} else {
-				//The Minecraft Services API is probably down so we will retry in 5 minutes, either that or your access token has expired (game open for 24h) and you need to restart.
-				logErrorAndScheduleRetry(Text.literal(NO_PROFILE_KEYS), 300, "[Aaron's Mod Api Auth] Failed to fetch profile keys! Some features may not work temporarily :( (Has your game been open for more than 24 hours? If so restart.)");
+				//The Minecraft Services API is probably down so we will retry in 5 minutes, or if your access token has expired (game open for 24h) you will need to restart.
+				logErrorAndScheduleRetry(Text.literal(NO_PROFILE_KEYS), expired ? -1 : 300, "[Aaron's Mod Api Auth] Failed to fetch profile keys! Some features may not work temporarily :( (Has your game been open for more than 24 hours? If so restart.)");
 			}
 		}).exceptionally(throwable -> {
 			//Try again in 1 minute
@@ -133,7 +135,7 @@ public class ApiAuthentication {
 
 	private static void logErrorAndScheduleRetry(Text warningMessage, int retryAfter, String logMessage, Object... logArgs) {
 		LOGGER.error(logMessage, logArgs);
-		Scheduler.schedule(ApiAuthentication::updateToken, retryAfter, TimeUnit.SECONDS);
+		if (retryAfter != -1) Scheduler.schedule(ApiAuthentication::updateToken, retryAfter, TimeUnit.SECONDS);
 
 		if (CLIENT.player != null && !sentWarningOnce) {
 			CLIENT.player.sendMessage(Constants.PREFIX.get().append(warningMessage), false);
