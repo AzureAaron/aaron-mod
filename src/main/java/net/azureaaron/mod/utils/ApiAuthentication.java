@@ -6,7 +6,6 @@ import java.security.Signature;
 import java.util.Base64;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -88,7 +87,7 @@ public class ApiAuthentication {
 					tokenInfo = TokenInfo.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(Http.sendPostRequest(AUTH_URL, request, CONTENT_TYPE))).getOrThrow();
 					int refreshAtSeconds = (int) (((tokenInfo.expiresAt() - tokenInfo.issuedAt()) / 1000L) - 300L); //Refresh 5 minutes before expiry date
 
-					Scheduler.schedule(ApiAuthentication::updateToken, refreshAtSeconds, TimeUnit.SECONDS);
+					Scheduler.INSTANCE.scheduleCyclic(ApiAuthentication::updateToken, refreshAtSeconds * 20, true);
 				} catch (Exception e) {
 					//Try again in 1 minute
 					logErrorAndScheduleRetry(Text.literal(AUTH_FAILURE), 60, "[Aaron's Mod Api Auth] Failed to refresh the api token! Some features might not work :(", e);
@@ -135,7 +134,7 @@ public class ApiAuthentication {
 
 	private static void logErrorAndScheduleRetry(Text warningMessage, int retryAfter, String logMessage, Object... logArgs) {
 		LOGGER.error(logMessage, logArgs);
-		if (retryAfter != -1) Scheduler.schedule(ApiAuthentication::updateToken, retryAfter, TimeUnit.SECONDS);
+		if (retryAfter != -1) Scheduler.INSTANCE.schedule(ApiAuthentication::updateToken, retryAfter * 20, true);
 
 		if (CLIENT.player != null && !sentWarningOnce) {
 			CLIENT.player.sendMessage(Constants.PREFIX.get().append(warningMessage), false);

@@ -2,9 +2,6 @@ package net.azureaaron.mod.commands;
 
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 
@@ -17,7 +14,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandRegistryAccess;
 
 public class ModScreenCommand {
-	private static final long ONE_TICK = 50L;
 
 	@Init
 	public static void init() {
@@ -39,26 +35,18 @@ public class ModScreenCommand {
 				.then(literal("options")
 						.executes(context -> handleOpenConfig(context.getSource()))));
 	}
-	
+
 	private static int handleCommand(FabricClientCommandSource source) {
 		MinecraftClient client = source.getClient();
-		
 		client.send(() -> client.setScreen(new ModScreen(null)));
-				
+
 		return Command.SINGLE_SUCCESS;
 	}
-	
+
 	private static int handleOpenConfig(FabricClientCommandSource source) {
 		MinecraftClient client = source.getClient();
-		TimerTask timedTask = new TimerTask() {
-			@Override
-			public void run() {
-				client.send(() -> client.setScreen(AaronModConfigManager.createGui(null)));
-			}
-		};
-		
-		new Timer().schedule(timedTask, ONE_TICK);
-		
+		client.send(() -> client.setScreen(AaronModConfigManager.createGui(null)));
+
 		return Command.SINGLE_SUCCESS;
 	}
 }

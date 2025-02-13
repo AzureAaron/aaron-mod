@@ -9,11 +9,14 @@ import com.google.gson.GsonBuilder;
 
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.utils.Scheduler;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.SharedConstants;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 
@@ -30,10 +33,15 @@ public class Main implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+		ClientTickEvents.END_CLIENT_TICK.register(Main::tick);
 		//Load configuration
 		AaronModConfigManager.init();
 		//Initialize classes
 		init();
+	}
+
+	private static void tick(MinecraftClient client) {
+		Scheduler.INSTANCE.tick();
 	}
 
 	/**
