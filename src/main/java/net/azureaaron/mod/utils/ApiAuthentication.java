@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.google.gson.JsonParser;
+import com.mojang.brigadier.Command;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
@@ -18,8 +19,11 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.annotations.Init;
+import net.azureaaron.mod.commands.ReflectCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.mixins.accessors.MinecraftClientAccessor;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
@@ -53,6 +57,17 @@ public class ApiAuthentication {
 			//Update token after the profileKeys instance is initialized
 			ClientLifecycleEvents.CLIENT_STARTED.register(_client -> updateToken());
 		}
+		if (ReflectCommand.ENABLED) {
+			ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+				dispatcher.register(ClientCommandManager.literal("aaronmod")
+						.then(ClientCommandManager.literal("updateToken")
+						.executes(source -> {
+							updateToken();
+
+							return Command.SINGLE_SUCCESS;
+						})));
+			});
+		}
 	}
 
 	/**
@@ -85,20 +100,20 @@ public class ApiAuthentication {
 
 				try {
 					tokenInfo = TokenInfo.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(Http.sendPostRequest(AUTH_URL, request, CONTENT_TYPE))).getOrThrow();
-					int refreshAtSeconds = (int) (((tokenInfo.expiresAt() - tokenInfo.issuedAt()) / 1000L) - 300L); //Refresh 5 minutes before expiry date
+					int refreshAtTicks = (int) (((tokenInfo.expiresAt() - tokenInfo.issuedAt()) / 1000L) - 300L) * 20; //Refresh 5 minutes before expiry date
 
-					Scheduler.INSTANCE.scheduleCyclic(ApiAuthentication::updateToken, refreshAtSeconds * 20, true);
+					Scheduler.INSTANCE.schedule(ApiAuthentication::updateToken, refreshAtTicks, true);
 				} catch (Exception e) {
-					//Try again in 1 minute
-					logErrorAndScheduleRetry(Text.literal(AUTH_FAILURE), 60, "[Aaron's Mod Api Auth] Failed to refresh the api token! Some features might not work :(", e);
+					//Try again in 5 minutes
+					logErrorAndScheduleRetry(Text.literal(AUTH_FAILURE), 300 * 20, "[Aaron's Mod Api Auth] Failed to refresh the api token! Some features might not work :(", e);
 				}
 			} else {
 				//The Minecraft Services API is probably down so we will retry in 5 minutes, or if your access token has expired (game open for 24h) you will need to restart.
-				logErrorAndScheduleRetry(Text.literal(NO_PROFILE_KEYS), expired ? -1 : 300, "[Aaron's Mod Api Auth] Failed to fetch profile keys! Some features may not work temporarily :( (Has your game been open for more than 24 hours? If so restart.)");
+				logErrorAndScheduleRetry(Text.literal(NO_PROFILE_KEYS), expired ? -1 : 300 * 20, "[Aaron's Mod Api Auth] Failed to fetch profile keys! Some features may not work temporarily :( (Has your game been open for more than 24 hours? If so restart.)");
 			}
 		}).exceptionally(throwable -> {
 			//Try again in 1 minute
-			logErrorAndScheduleRetry(Text.literal(AUTH_FAILURE), 60, "[Aaron's Mod Api Auth] Encountered an unexpected exception while refreshing the api token!", throwable);
+			logErrorAndScheduleRetry(Text.literal(AUTH_FAILURE), 60 * 20, "[Aaron's Mod Api Auth] Encountered an unexpected exception while refreshing the api token!", throwable);
 
 			return null;
 		});
@@ -134,7 +149,7 @@ public class ApiAuthentication {
 
 	private static void logErrorAndScheduleRetry(Text warningMessage, int retryAfter, String logMessage, Object... logArgs) {
 		LOGGER.error(logMessage, logArgs);
-		if (retryAfter != -1) Scheduler.INSTANCE.schedule(ApiAuthentication::updateToken, retryAfter * 20, true);
+		if (retryAfter != -1) Scheduler.INSTANCE.schedule(ApiAuthentication::updateToken, retryAfter, true);
 
 		if (CLIENT.player != null && !sentWarningOnce) {
 			CLIENT.player.sendMessage(Constants.PREFIX.get().append(warningMessage), false);

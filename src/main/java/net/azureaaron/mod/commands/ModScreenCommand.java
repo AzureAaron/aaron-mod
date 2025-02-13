@@ -21,13 +21,6 @@ public class ModScreenCommand {
 	}
 
 	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
-		dispatcher.register(literal("aaronsmod")
-				.executes(context -> handleCommand(context.getSource()))
-				.then(literal("config")
-						.executes(context -> handleOpenConfig(context.getSource())))
-				.then(literal("options")
-						.executes(context -> handleOpenConfig(context.getSource()))));
-		
 		dispatcher.register(literal("aaronmod")
 				.executes(context -> handleCommand(context.getSource()))
 				.then(literal("config")

@@ -30,7 +30,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class ReflectCommand implements UnsafeAccess {
-	private static final boolean ENABLED = Boolean.parseBoolean(System.getProperty("aaronmod.enableReflectCommand", "false")) || FabricLoader.getInstance().isDevelopmentEnvironment();
+	//TODO replace this with a generic debug mode
+	public static final boolean ENABLED = Boolean.parseBoolean(System.getProperty("aaronmod.enableReflectCommand", "false")) || FabricLoader.getInstance().isDevelopmentEnvironment();
 
 	@Init
 	public static void init() {
