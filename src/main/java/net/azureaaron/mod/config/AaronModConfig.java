@@ -56,7 +56,16 @@ public class AaronModConfig {
 	
 	@SerialEntry
 	public boolean fpsDisplay = true;
-	
+
+	@SerialEntry
+	public int fpsDisplayX = 2;
+
+	@SerialEntry
+	public int fpsDisplayY = 2;
+
+	@SerialEntry
+	public float fpsDisplayScale = 1;
+
 	@SerialEntry
 	public boolean copyChatMessages = true;
 	

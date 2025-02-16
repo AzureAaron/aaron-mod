@@ -28,6 +28,7 @@ import net.azureaaron.mod.Particles;
 import net.azureaaron.mod.skyblock.item.SkyblockEnchantments;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.TextTransformer;
+import net.azureaaron.mod.utils.render.hud.HudElementConfigScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
@@ -95,6 +96,12 @@ public class AaronModConfigManager {
 										() -> config.colourProfile,
 										newValue -> config.colourProfile = newValue)
 								.controller(ConfigUtils::createEnumController)
+								.build())
+						.option(ButtonOption.createBuilder()
+								.name(Text.literal("HUD Manager"))
+								.description(OptionDescription.of(Text.literal("Manage the placement and scaling of Aaron Mod's HUD elements from a single location!")))
+								.text(Text.literal("Open"))
+								.action((screen, opt) -> MinecraftClient.getInstance().setScreen(new HudElementConfigScreen(screen)))
 								.build())
 						.group(OptionGroup.createBuilder()
 								.name(Text.literal("Custom Colour Profile"))

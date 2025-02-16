@@ -113,6 +113,10 @@ public class Renderer {
 		RenderSystem.disableDepthTest();
 	}
 
+	public static boolean pointIsInArea(double x, double y, double x1, double y1, double x2, double y2) {
+		return x >= x1 && x <= x2 && y >= y1 && y <= y2;
+	}
+
 	/**
 	 * Matrix Transformation Utility
 	 * 

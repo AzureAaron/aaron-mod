@@ -6,7 +6,6 @@ import java.util.function.DoubleFunction;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectOpenHashMap;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.RenderLayer.MultiPhase;
 import net.minecraft.client.render.RenderLayer.MultiPhaseParameters;
 import net.minecraft.client.render.RenderPhase.Cull;
@@ -17,6 +16,7 @@ import net.minecraft.client.render.RenderPhase.ShaderProgram;
 import net.minecraft.client.render.RenderPhase.Transparency;
 import net.minecraft.client.render.RenderPhase.WriteMaskState;
 import net.minecraft.client.render.VertexFormat.DrawMode;
+import net.minecraft.client.render.VertexFormats;
 
 public class AaronModRenderLayers {
 	private static final Double2ObjectMap<MultiPhase> LINES_RENDER_LAYERS = new Double2ObjectOpenHashMap<>();
