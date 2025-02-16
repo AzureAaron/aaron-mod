@@ -19,8 +19,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.annotations.Init;
-import net.azureaaron.mod.commands.ReflectCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.debug.Debug;
 import net.azureaaron.mod.mixins.accessors.MinecraftClientAccessor;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -57,7 +57,7 @@ public class ApiAuthentication {
 			//Update token after the profileKeys instance is initialized
 			ClientLifecycleEvents.CLIENT_STARTED.register(_client -> updateToken());
 		}
-		if (ReflectCommand.ENABLED) {
+		if (Debug.debugEnabled()) {
 			ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
 				dispatcher.register(ClientCommandManager.literal("aaronmod")
 						.then(ClientCommandManager.literal("updateToken")

@@ -18,11 +18,11 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.debug.Debug;
 import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.UnsafeAccess;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.MutableText;
@@ -30,8 +30,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class ReflectCommand implements UnsafeAccess {
-	//TODO replace this with a generic debug mode
-	public static final boolean ENABLED = Boolean.parseBoolean(System.getProperty("aaronmod.enableReflectCommand", "false")) || FabricLoader.getInstance().isDevelopmentEnvironment();
 
 	@Init
 	public static void init() {
@@ -39,7 +37,7 @@ public class ReflectCommand implements UnsafeAccess {
 	}
 
 	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
-		if (ENABLED) {
+		if (Debug.debugEnabled()) {
 			//Maybe turn this into subcommands
 			dispatcher.register(literal("reflect")
 					.then(argument("opcode", word())
