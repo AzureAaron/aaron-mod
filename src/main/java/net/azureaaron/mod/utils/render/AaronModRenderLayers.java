@@ -21,14 +21,14 @@ import net.minecraft.client.render.VertexFormats;
 public class AaronModRenderLayers {
 	private static final Double2ObjectMap<MultiPhase> LINES_RENDER_LAYERS = new Double2ObjectOpenHashMap<>();
 
-	public static final MultiPhase FILLED_BOX = RenderLayer.of("filled_box", VertexFormats.POSITION_COLOR, DrawMode.TRIANGLE_STRIP, RenderLayer.CUTOUT_BUFFER_SIZE, false, true, MultiPhaseParameters.builder()
+	public static final MultiPhase FILLED_BOX = RenderLayer.of("filled_box", VertexFormats.POSITION_COLOR, DrawMode.TRIANGLE_STRIP, RenderLayer.DEFAULT_BUFFER_SIZE, false, true, MultiPhaseParameters.builder()
 			.program(ShaderProgram.POSITION_COLOR_PROGRAM)
 			.layering(Layering.VIEW_OFFSET_Z_LAYERING)
 			.transparency(Transparency.TRANSLUCENT_TRANSPARENCY)
 			.depthTest(DepthTest.LEQUAL_DEPTH_TEST)
 			.build(false));
 
-	private static final DoubleFunction<MultiPhase> LINES = lineWidth -> RenderLayer.of("lines", VertexFormats.LINES, DrawMode.LINES, RenderLayer.CUTOUT_BUFFER_SIZE, false, false, MultiPhaseParameters.builder()
+	private static final DoubleFunction<MultiPhase> LINES = lineWidth -> RenderLayer.of("lines", VertexFormats.LINES, DrawMode.LINES, RenderLayer.DEFAULT_BUFFER_SIZE, false, false, MultiPhaseParameters.builder()
 			.program(ShaderProgram.LINES_PROGRAM)
 			.lineWidth(new LineWidth(OptionalDouble.of(lineWidth)))
 			.layering(Layering.VIEW_OFFSET_Z_LAYERING)
