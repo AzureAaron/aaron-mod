@@ -212,6 +212,16 @@ public class AaronModConfigManager {
 										.controller(ConfigUtils::createBooleanController)
 										.build())
 								.option(Option.<Boolean>createBuilder()
+										.name(Text.literal("Ping Display"))
+										.description(OptionDescription.createBuilder()
+												.text(Text.literal("Displays your ping in the left of your screen."))
+												.build())
+										.binding(defaults.pingDisplay,
+												() -> config.pingDisplay,
+												newValue -> config.pingDisplay = newValue)
+										.controller(ConfigUtils::createBooleanController)
+										.build())
+								.option(Option.<Boolean>createBuilder()
 										.name(Text.literal("Extra Debug Info"))
 										.description(OptionDescription.createBuilder()
 												.text(Text.literal("Adds some extra information to the F3 menu."))

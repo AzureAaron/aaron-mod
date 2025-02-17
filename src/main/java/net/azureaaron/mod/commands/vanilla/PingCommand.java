@@ -8,7 +8,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.events.PingResultEvent;
+import net.azureaaron.mod.events.PingResultCallback;
 import net.azureaaron.mod.utils.Constants;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -31,7 +31,7 @@ public class PingCommand {
 		dispatcher.register(literal("ping")
 				.executes(context -> handleCommand(context.getSource())));
 
-		PingResultEvent.EVENT.register(PingCommand::onPingResult);
+		PingResultCallback.EVENT.register(PingCommand::onPingResult);
 	}
 
 	private static int handleCommand(FabricClientCommandSource source) {

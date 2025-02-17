@@ -35,7 +35,7 @@ public class FpsDisplay {
 	}
 
 	private static void render(DrawContext context, RenderTickCounter tickCounter) {
-		if (!CLIENT.getDebugHud().shouldShowDebugHud()) {
+		if (!CLIENT.getDebugHud().shouldShowDebugHud() && AaronModConfigManager.get().fpsDisplay) {
 			int x = AaronModConfigManager.get().fpsDisplayX;
 			int y = AaronModConfigManager.get().fpsDisplayY;
 			float scale = AaronModConfigManager.get().fpsDisplayScale;

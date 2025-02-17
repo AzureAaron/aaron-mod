@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.azureaaron.mod.Colour;
 import net.azureaaron.mod.Particles;
+import net.azureaaron.mod.features.PingDisplay;
 import net.azureaaron.mod.utils.Functions;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.text.Text;
@@ -212,6 +213,18 @@ public class AaronModConfig {
 
 	@SerialEntry
 	public boolean goodSkyblockEnchantments = true;
+
+	@SerialEntry
+	public boolean pingDisplay = false;
+
+	@SerialEntry
+	public int pingDisplayX = 2;
+
+	@SerialEntry
+	public int pingDisplayY = PingDisplay.DEFAULT_Y;
+
+	@SerialEntry
+	public float pingDisplayScale = 1f;
 
 	@SerialEntry
 	public Color goodSkyblockEnchantmentColour = new Color(Formatting.GOLD.getColorValue());
