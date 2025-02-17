@@ -102,7 +102,7 @@ public class ApiAuthentication {
 					tokenInfo = TokenInfo.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(Http.sendPostRequest(AUTH_URL, request, CONTENT_TYPE))).getOrThrow();
 					int refreshAtTicks = (int) (((tokenInfo.expiresAt() - tokenInfo.issuedAt()) / 1000L) - 300L) * 20; //Refresh 5 minutes before expiry date
 
-					Scheduler.INSTANCE.schedule(ApiAuthentication::updateToken, refreshAtTicks, true);
+					CLIENT.send(() -> Scheduler.INSTANCE.schedule(ApiAuthentication::updateToken, refreshAtTicks, true));
 				} catch (Exception e) {
 					//Try again in 5 minutes
 					logErrorAndScheduleRetry(Text.literal(AUTH_FAILURE), 300 * 20, "[Aaron's Mod Api Auth] Failed to refresh the api token! Some features might not work :(", e);
@@ -149,7 +149,7 @@ public class ApiAuthentication {
 
 	private static void logErrorAndScheduleRetry(Text warningMessage, int retryAfter, String logMessage, Object... logArgs) {
 		LOGGER.error(logMessage, logArgs);
-		if (retryAfter != -1) Scheduler.INSTANCE.schedule(ApiAuthentication::updateToken, retryAfter, true);
+		if (retryAfter != -1) CLIENT.send(() -> Scheduler.INSTANCE.schedule(ApiAuthentication::updateToken, retryAfter, true));
 
 		if (CLIENT.player != null && !sentWarningOnce) {
 			CLIENT.player.sendMessage(Constants.PREFIX.get().append(warningMessage), false);

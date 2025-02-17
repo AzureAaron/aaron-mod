@@ -118,6 +118,13 @@ public class Renderer {
 	}
 
 	/**
+	 * A version of {@link RenderSystem#assertOnRenderThread()} that allows for a custom error message.
+	 */
+	public static void assertOnRenderThread(String message) {
+		if (!RenderSystem.isOnRenderThread()) throw new IllegalStateException(message);
+	}
+
+	/**
 	 * Matrix Transformation Utility
 	 * 
 	 * @implNote Each default operation automatically pushes a copy of the top entry onto the stack

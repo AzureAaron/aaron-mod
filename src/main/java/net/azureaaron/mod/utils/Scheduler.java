@@ -10,6 +10,7 @@ import com.google.common.base.Preconditions;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.azureaaron.mod.utils.render.Renderer;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.profiler.Profilers;
 
@@ -43,6 +44,7 @@ public class Scheduler {
 	public void schedule(Runnable task, int delay, boolean multithreaded) {
 		Objects.requireNonNull(task, "Cannot schedule a null task!");
 		Preconditions.checkArgument(delay >= 0, "Cannot schedule a task in the past!");
+		Renderer.assertOnRenderThread("Scheduler called from outside the Render Thread");
 
 		addTask(new Task(task, delay, false, multithreaded), currentTick + delay);
 	}
@@ -64,6 +66,7 @@ public class Scheduler {
 	public void scheduleCyclic(Runnable task, int period, boolean multithreaded) {
 		Objects.requireNonNull(task, "Cannot schedule a null task!");
 		Preconditions.checkArgument(period >= 1, "Cannot schedule a cyclic task with a period shorter than 1!"); //Due to re-scheduling
+		Renderer.assertOnRenderThread("Scheduler called from outside the Render Thread");
 
 		addTask(new Task(task, period, true, multithreaded), currentTick);
 	}
