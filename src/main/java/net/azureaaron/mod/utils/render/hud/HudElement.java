@@ -2,7 +2,9 @@ package net.azureaaron.mod.utils.render.hud;
 
 import java.util.Objects;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderTickCounter;
 
 /**
  * An abstract representation of a HUD element. Extend this or use built-in subclasses to implement HUD elements.
@@ -11,6 +13,7 @@ import net.minecraft.client.gui.DrawContext;
  * of it to the HUD.
  */
 public abstract class HudElement {
+	protected static final MinecraftClient CLIENT = MinecraftClient.getInstance();
 	protected final HudElementAccess access;
 	private final int defaultX;
 	private final int defaultY;
@@ -19,11 +22,7 @@ public abstract class HudElement {
 	private int y;
 	private float scale;
 
-	protected HudElement(
-			HudElementAccess access,
-			int defaultX,
-			int defaultY
-	) {
+	protected HudElement(HudElementAccess access, int defaultX, int defaultY) {
 		this.access = Objects.requireNonNull(access, "Access cannot be null!");
 		this.defaultX = defaultX;
 		this.defaultY = defaultY;
@@ -76,8 +75,21 @@ public abstract class HudElement {
 	}
 
 	/**
-	 * @apiNote The implementation of the rendering for each HUD element in the config screen should be
-	 * the exact same as the rendering of the element to the actual HUD itself.
+	 * Returns whether this element should be rendered onto the HUD.
 	 */
-	public abstract void render(DrawContext context);
+	protected boolean shouldRender() {
+		return !CLIENT.getDebugHud().shouldShowDebugHud() && access.shouldRender();
+	}
+
+	/**
+	 * Used for rendering this element to a {@link net.minecraft.client.gui.screen.Screen Screen}.
+	 */
+	public abstract void renderScreen(DrawContext context);
+
+	/**
+	 * Used for rendering this element to the HUD with Fabric's HUD layer rendering system.
+	 * 
+	 * @implSpec The signature of this method must match the {@link net.minecraft.client.gui.LayeredDrawer.Layer#render(DrawContext, RenderTickCounter) LayeredDrawer$Layer#render} method.
+	 */
+	public abstract void renderHud(DrawContext context, RenderTickCounter tickCounter);
 }

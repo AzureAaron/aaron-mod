@@ -68,7 +68,7 @@ public final class HudElementConfigScreen extends Screen {
 	private void renderElements(DrawContext context) {
 		//Render all HUD elements
 		for (HudElement element : ELEMENTS) {
-			element.render(context);
+			element.renderScreen(context);
 		}
 
 		//Render box around selected element

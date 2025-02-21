@@ -16,4 +16,6 @@ public interface HudElementAccess {
 	float scale();
 
 	void scale(float scale);
+
+	boolean shouldRender();
 }

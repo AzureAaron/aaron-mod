@@ -1,8 +1,11 @@
 package net.azureaaron.mod.utils.render.hud;
 
-import net.minecraft.client.MinecraftClient;
+import java.util.Objects;
+import java.util.function.Supplier;
+
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
@@ -12,14 +15,20 @@ import net.minecraft.util.Colors;
  */
 public class TextHudElement extends HudElement {
 	private final Text exampleText;
+	private final Supplier<Text> textSupplier;
 
-	public TextHudElement(Text exampleText, HudElementAccess access, int defaultX, int defaultY) {
+	/**
+	 * @param exampleText  The text to show when rendering this element to the {@link HudElementConfigScreen}.
+	 * @param textSupplier Supplies the text that should be rendered to the HUD each frame.
+	 */
+	public TextHudElement(Text exampleText, Supplier<Text> textSupplier, HudElementAccess access, int defaultX, int defaultY) {
 		super(access, defaultX, defaultY);
-		this.exampleText = exampleText;
+		this.exampleText = Objects.requireNonNull(exampleText, "Example text cannot be null!");
+		this.textSupplier = Objects.requireNonNull(textSupplier, "Text Supplier cannot be null!");
 	}
 
 	private static TextRenderer getTextRenderer() {
-		return MinecraftClient.getInstance().textRenderer;
+		return CLIENT.textRenderer;
 	}
 
 	@Override
@@ -33,13 +42,24 @@ public class TextHudElement extends HudElement {
 	}
 
 	@Override
-	public void render(DrawContext context) {
+	public void renderScreen(DrawContext context) {
+		renderInternal(exampleText, context, x(), y(), scale());
+	}
+
+	@Override
+	public void renderHud(DrawContext context, RenderTickCounter tickCounter) {
+		if (shouldRender()) {
+			renderInternal(textSupplier.get(), context, access.x(), access.y(), access.scale());
+		}
+	}
+
+	private void renderInternal(Text text, DrawContext context, int x, int y, float scale) {
 		MatrixStack matrices = context.getMatrices();
 		matrices.push();
-		matrices.scale(scale(), scale(), 0);
+		matrices.scale(scale, scale, 0);
 
 		//Render the text
-		context.drawText(getTextRenderer(), exampleText, (int) (x() / scale()), (int) (y() / scale()), Colors.WHITE, false);
+		context.drawText(getTextRenderer(), exampleText, (int) (x / scale), (int) (y / scale), Colors.WHITE, false);
 
 		matrices.pop();
 	}

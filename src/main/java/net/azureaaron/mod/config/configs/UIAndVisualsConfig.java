@@ -1,7 +1,6 @@
 package net.azureaaron.mod.config.configs;
 
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
-import net.azureaaron.mod.features.PingDisplay;
 import net.azureaaron.mod.features.SeparateInventoryGuiScale;
 import net.azureaaron.mod.utils.render.hud.HudElementAccess;
 
@@ -111,6 +110,11 @@ public class UIAndVisualsConfig {
 		public void scale(float scale) {
 			this.scale = scale;
 		}
+
+		@Override
+		public boolean shouldRender() {
+			return enableFpsHud;
+		}
 	}
 
 	public static class PingHud implements HudElementAccess {
@@ -121,7 +125,7 @@ public class UIAndVisualsConfig {
 		public int x = 2;
 
 		@SerialEntry
-		public int y = PingDisplay.DEFAULT_Y;
+		public int y = net.azureaaron.mod.features.PingHud.DEFAULT_Y;
 
 		@SerialEntry
 		public float scale = 1f;
@@ -154,6 +158,11 @@ public class UIAndVisualsConfig {
 		@Override
 		public void scale(float scale) {
 			this.scale = scale;
+		}
+
+		@Override
+		public boolean shouldRender() {
+			return enablePingHud;
 		}
 	}
 
