@@ -15,7 +15,7 @@ public class DragonNotifications {
 	 * Called from the {@link DragonTimers} class to avoid duplicating logic
 	 */
 	protected static void notifySpawn(Dragons dragon) {
-		if (AaronModConfigManager.get().m7DragonSpawnNotifications) {
+		if (AaronModConfigManager.get().skyblock.m7.dragonSpawnNotifications) {
 			RenderSystem.recordRenderCall(() -> {
 				MinecraftClient client = MinecraftClient.getInstance();
 

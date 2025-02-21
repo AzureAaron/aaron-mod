@@ -3,13 +3,14 @@ package net.azureaaron.mod;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
-import net.azureaaron.mod.config.AaronModConfig.CustomColourProfile;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.config.configs.GeneralConfig;
 import net.azureaaron.mod.utils.OkLabColour;
 import net.minecraft.util.math.MathHelper;
 
 public class Colour {
-	private static final Supplier<CustomColourProfile> CUSTOM = () -> AaronModConfigManager.get().customColourProfile;
+	private static final Supplier<GeneralConfig.CustomColourProfile> CUSTOM = () -> AaronModConfigManager.get().general.customColourProfile;
+	public static final int WARNING = 0xeac864;
 	//google search: good colour combinations
 	//https://primer.style/prism
 	

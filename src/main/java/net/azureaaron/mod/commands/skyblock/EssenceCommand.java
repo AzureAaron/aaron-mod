@@ -14,6 +14,7 @@ import net.azureaaron.mod.commands.Command;
 import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.commands.SkyblockCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.Formatters;
 import net.azureaaron.mod.utils.JsonHelper;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -27,7 +28,7 @@ public class EssenceCommand extends SkyblockCommand {
 
 	@Init
 	public static void init() {
-		if (AaronModConfigManager.get().enableSkyblockCommands) ClientCommandRegistrationCallback.EVENT.register(INSTANCE::register);
+		if (AaronModConfigManager.get().skyblock.commands.enableSkyblockCommands) ClientCommandRegistrationCallback.EVENT.register(INSTANCE::register);
 	}
 
 	@Override
@@ -41,7 +42,7 @@ public class EssenceCommand extends SkyblockCommand {
 
 	@Override
 	public void print(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
-		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
+		ColourProfiles colourProfile = Constants.PROFILE.get();
 		
 		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);
 		

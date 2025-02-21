@@ -17,7 +17,6 @@ import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.annotations.Init;
-import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.debug.Debug;
 import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.UnsafeAccess;
@@ -61,7 +60,7 @@ public class ReflectCommand implements UnsafeAccess {
 	
     @SuppressWarnings("deprecation")
 	private static int reflectionExecutor(FabricClientCommandSource source, String opcode, String targetClass, String target, String type, String newValue) {
-    	ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
+    	ColourProfiles colourProfile = Constants.PROFILE.get();
     	
     	if(!OPCODES.contains(opcode)) {
     		source.sendError(INVALID_OPCODE.get());

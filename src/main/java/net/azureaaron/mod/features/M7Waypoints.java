@@ -34,7 +34,7 @@ public class M7Waypoints {
 	
 	private static void renderWaypoints(WorldRenderContext wrc) {
 		if (Functions.isOnHypixel() && Cache.inM7Phase5) {
-			if (AaronModConfigManager.get().m7ShootWaypoints) {
+			if (AaronModConfigManager.get().skyblock.m7.dragonAimWaypoints) {
 				Renderer.renderFilledBox(wrc, BLUE_SHOOT, Dragons.ICE.red, Dragons.ICE.green, Dragons.ICE.blue, ALPHA);
 				Renderer.renderFilledBox(wrc, GREEN_SHOOT, Dragons.APEX.red, Dragons.APEX.green, Dragons.APEX.blue, ALPHA);
 				Renderer.renderFilledBox(wrc, ORANGE_SHOOT, Dragons.FLAME.red, Dragons.FLAME.green, Dragons.FLAME.blue, ALPHA);
@@ -42,7 +42,7 @@ public class M7Waypoints {
 				Renderer.renderFilledBox(wrc, RED_SHOOT, Dragons.POWER.red, Dragons.POWER.green, Dragons.POWER.blue, ALPHA);
 			}
 			
-			if (AaronModConfigManager.get().m7StackWaypoints) {
+			if (AaronModConfigManager.get().skyblock.m7.arrowStackWaypoints) {
 				Renderer.renderFilledBox(wrc, ORANGE_STACK, Dragons.FLAME.red, Dragons.FLAME.green, Dragons.FLAME.blue, ALPHA);
 				Renderer.renderFilledBox(wrc, BLUE_STACK, Dragons.ICE.red, Dragons.ICE.green, Dragons.ICE.blue, ALPHA);
 				Renderer.renderFilledBox(wrc, PURPLE_STACK, Dragons.SOUL.red, Dragons.SOUL.green, Dragons.SOUL.blue, ALPHA);

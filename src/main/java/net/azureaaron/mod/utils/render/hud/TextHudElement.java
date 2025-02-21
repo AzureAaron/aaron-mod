@@ -1,8 +1,5 @@
 package net.azureaaron.mod.utils.render.hud;
 
-import java.util.function.IntConsumer;
-
-import it.unimi.dsi.fastutil.floats.FloatConsumer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -16,8 +13,8 @@ import net.minecraft.util.Colors;
 public class TextHudElement extends HudElement {
 	private final Text exampleText;
 
-	public TextHudElement(Text exampleText, int x, int y, float scale, IntConsumer xConsumer, IntConsumer yConsumer, FloatConsumer scaleConsumer, int defaultX, int defaultY) {
-		super(x, y, scale, xConsumer, yConsumer, scaleConsumer, defaultX, defaultY);
+	public TextHudElement(Text exampleText, HudElementAccess access, int defaultX, int defaultY) {
+		super(access, defaultX, defaultY);
 		this.exampleText = exampleText;
 	}
 

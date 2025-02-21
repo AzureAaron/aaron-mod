@@ -50,7 +50,7 @@ public abstract class AnimatedParticleMixin extends SpriteBillboardParticle {
 			default -> null;
 		};
 
-		return AaronModConfigManager.get().particleAlphas.getOrDefault(id, original);
+		return AaronModConfigManager.get().particles.alphas.getOrDefault(id, original);
 	}
 
 	@ModifyArg(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/particle/AnimatedParticle;setAlpha(F)V"))

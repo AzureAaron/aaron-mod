@@ -16,7 +16,7 @@ public class TutorialManagerMixin {
 
 	@WrapOperation(method = { "createHandler", "setStep" }, at = @At(value = "FIELD", target = "Lnet/minecraft/client/tutorial/TutorialManager;currentHandler:Lnet/minecraft/client/tutorial/TutorialStepHandler;", opcode = Opcodes.PUTFIELD), require = 2)
 	private void aaronMod$hideTutorials(TutorialManager manager, TutorialStepHandler stepHandler, Operation<Void> operation) {
-		if (AaronModConfigManager.get().hideTutorials) {
+		if (AaronModConfigManager.get().uiAndVisuals.overlays.hideTutorials) {
 			operation.call(manager, null);
 		} else {
 			operation.call(manager, stepHandler);

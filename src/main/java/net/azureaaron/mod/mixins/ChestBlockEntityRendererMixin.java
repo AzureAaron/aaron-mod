@@ -19,6 +19,6 @@ public abstract class ChestBlockEntityRendererMixin<T extends BlockEntity & LidO
 
 	@ModifyReturnValue(method = "isAroundChristmas", at = @At("RETURN"))
 	private static boolean aaronMod$decemberChristmasChests(boolean isAroundChristmas, @Local Calendar calendar) {
-		return AaronModConfigManager.get().decemberChristmasChests ? calendar.get(Calendar.MONTH) + 1 == 12 : isAroundChristmas;
+		return AaronModConfigManager.get().uiAndVisuals.seasonal.decemberChristmasChests ? calendar.get(Calendar.MONTH) + 1 == 12 : isAroundChristmas;
 	}
 }

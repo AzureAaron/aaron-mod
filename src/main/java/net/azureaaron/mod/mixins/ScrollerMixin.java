@@ -14,11 +14,11 @@ public class ScrollerMixin {
 
 	@ModifyVariable(method = "scrollCycling", at = @At(value = "STORE", ordinal = 2), argsOnly = true, ordinal = 0)
 	private static int aaronMod$modifyUpScroll(int newSlot) {
-		return AaronModConfigManager.get().infiniteHotbarScrolling ? newSlot : 0;
+		return !AaronModConfigManager.get().refinements.input.disableScrollLooping ? newSlot : 0;
 	}
 
 	@ModifyVariable(method = "scrollCycling", at = @At(value = "STORE", ordinal = 3), argsOnly = true, ordinal = 0)
 	private static int aaronMod$modifyDownScroll(int newSlot, @Local(argsOnly = true, ordinal = 1) int total) {
-		return AaronModConfigManager.get().infiniteHotbarScrolling ? newSlot : total - 1;
+		return !AaronModConfigManager.get().refinements.input.disableScrollLooping ? newSlot : total - 1;
 	}
 }

@@ -13,6 +13,6 @@ public class DownloadingTerrainScreenMixin {
 
 	@Inject(method = "render", at = @At("HEAD"), cancellable = true)
 	private void aaronMod$hideWorldLoadingScreen(CallbackInfo ci) {
-		if (AaronModConfigManager.get().hideWorldLoadingScreen) ci.cancel();
+		if (AaronModConfigManager.get().uiAndVisuals.world.hideWorldLoadingScreen) ci.cancel();
 	}
 }

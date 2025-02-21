@@ -28,6 +28,6 @@ public class ScreenMixin implements ScreenResizeMarker {
 
 	@Inject(method = "render", at = @At("HEAD"), cancellable = true)
 	private void aaronMod$hideReconfiguringScreen(CallbackInfo ci) {
-		if ((Object) this instanceof ReconfiguringScreen && AaronModConfigManager.get().hideWorldLoadingScreen) ci.cancel();
+		if ((Object) this instanceof ReconfiguringScreen && AaronModConfigManager.get().uiAndVisuals.world.hideWorldLoadingScreen) ci.cancel();
 	}
 }

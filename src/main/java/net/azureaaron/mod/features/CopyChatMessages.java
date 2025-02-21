@@ -8,8 +8,8 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 
 import net.azureaaron.mod.annotations.Init;
-import net.azureaaron.mod.config.AaronModConfig;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.config.configs.RefinementsConfig;
 import net.azureaaron.mod.events.MouseInputEvent;
 import net.azureaaron.mod.mixins.accessors.ChatAccessor;
 import net.azureaaron.mod.utils.ItemUtils;
@@ -38,18 +38,18 @@ public class CopyChatMessages {
 
 	private static void onMouseInput(int button, int action, int mods) {
 		//Button 0 = left click, Button 1 = right click, Button 2 = middle click & others are fancy mouse buttons
-		int configuredButton = AaronModConfigManager.get().copyChatMouseButton == AaronModConfig.MouseButton.MIDDLE ? 2 : 1;
+		int configuredButton = AaronModConfigManager.get().refinements.chat.copyChatMouseButton == RefinementsConfig.MouseButton.MIDDLE ? 2 : 1;
 		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.inGameHud.getChatHud());
 		boolean isChatOpen = chatAccessor.invokeIsChatFocused();
 
-		if (button == configuredButton && action == 1 && isChatOpen && AaronModConfigManager.get().copyChatMessages) {
+		if (button == configuredButton && action == 1 && isChatOpen && AaronModConfigManager.get().refinements.chat.copyChatMessages) {
 			Window window = CLIENT.getWindow();
 			int mouseX = (int) (CLIENT.mouse.getX() * window.getScaledWidth() / window.getWidth());
 			int mouseY = (int) (CLIENT.mouse.getY() * window.getScaledHeight() / window.getHeight());
 			double chatLineX = chatAccessor.invokeToChatLineX(mouseX);
 			double chatLineY = chatAccessor.invokeToChatLineY(mouseY);
 
-			switch (AaronModConfigManager.get().copyChatMode) {
+			switch (AaronModConfigManager.get().refinements.chat.copyChatMode) {
 				case SINGLE_LINE -> {
 					int messageLineIndex = chatAccessor.invokeGetMessageLineIndex(chatLineX, chatLineY);
 					List<ChatHudLine.Visible> visibleMessages = chatAccessor.getVisibleMessages();

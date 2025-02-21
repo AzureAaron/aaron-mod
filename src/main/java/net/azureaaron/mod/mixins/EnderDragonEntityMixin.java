@@ -107,6 +107,6 @@ public class EnderDragonEntityMixin extends MobEntity implements Monster {
 
 	@Override
 	public boolean isGlowing() {
-		return (Cache.inM7Phase5 && AaronModConfigManager.get().glowingM7Dragons) ? true : super.isGlowing();
+		return (Cache.inM7Phase5 && AaronModConfigManager.get().skyblock.m7.glowingDragons) ? true : super.isGlowing();
 	}
 }

@@ -20,12 +20,7 @@ public class FpsDisplay {
 	@SuppressWarnings("unused")
 	private static final TextHudElement HUD_ELEMENT = new TextHudElement(
 			Text.of("100 fps"),
-			AaronModConfigManager.get().fpsDisplayX,
-			AaronModConfigManager.get().fpsDisplayY,
-			AaronModConfigManager.get().fpsDisplayScale,
-			x -> AaronModConfigManager.get().fpsDisplayX = x,
-			y -> AaronModConfigManager.get().fpsDisplayY = y,
-			scale -> AaronModConfigManager.get().fpsDisplayScale = scale,
+			AaronModConfigManager.get().uiAndVisuals.fpsHud,
 			2,
 			2);
 
@@ -35,10 +30,10 @@ public class FpsDisplay {
 	}
 
 	private static void render(DrawContext context, RenderTickCounter tickCounter) {
-		if (!CLIENT.getDebugHud().shouldShowDebugHud() && AaronModConfigManager.get().fpsDisplay) {
-			int x = AaronModConfigManager.get().fpsDisplayX;
-			int y = AaronModConfigManager.get().fpsDisplayY;
-			float scale = AaronModConfigManager.get().fpsDisplayScale;
+		if (!CLIENT.getDebugHud().shouldShowDebugHud() && AaronModConfigManager.get().uiAndVisuals.fpsHud.enableFpsHud) {
+			int x = AaronModConfigManager.get().uiAndVisuals.fpsHud.x;
+			int y = AaronModConfigManager.get().uiAndVisuals.fpsHud.y;
+			float scale = AaronModConfigManager.get().uiAndVisuals.fpsHud.scale;
 			MatrixStack matrices = context.getMatrices();
 
 			matrices.push();

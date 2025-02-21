@@ -24,7 +24,7 @@ public class DebugHudMixin {
 
 	@Inject(method = "getRightText", at = @At("RETURN"))
 	private void aaronMod$addDebugInfo(CallbackInfoReturnable<List<String>> cir) {
-		if (AaronModConfigManager.get().extraDebugInfo) {
+		if (AaronModConfigManager.get().uiAndVisuals.debugHud.extraDebugInfo) {
 			List<String> strings = cir.getReturnValue();
 			for (int i = 0; i < strings.size(); i++) {
 				String str = strings.get(i);
@@ -44,6 +44,6 @@ public class DebugHudMixin {
 
 	@ModifyExpressionValue(method = "getLeftText", at = @At(value = "CONSTANT", args = "stringValue=Local Difficulty: ??"))
 	private String aaronMod$fixLocalDifficultyDay(String original) {
-		return AaronModConfigManager.get().alwaysShowDayInF3 ? original + " (Day " + this.client.world.getTimeOfDay() / 24000L + ")" : original;
+		return AaronModConfigManager.get().uiAndVisuals.debugHud.alwaysShowDayInF3 ? original + " (Day " + this.client.world.getTimeOfDay() / 24000L + ")" : original;
 	}
 }

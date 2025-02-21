@@ -7,7 +7,6 @@ import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.annotations.Init;
-import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.PingResultCallback;
 import net.azureaaron.mod.utils.Constants;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -35,7 +34,7 @@ public class PingCommand {
 	}
 
 	private static int handleCommand(FabricClientCommandSource source) {
-		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
+		ColourProfiles colourProfile = Constants.PROFILE.get();
 		
 		MinecraftClient client = source.getClient();
 		ClientPlayNetworkHandler networkHandler = client.getNetworkHandler();
@@ -50,7 +49,7 @@ public class PingCommand {
 	}
 
 	private static int printPing(MinecraftClient client, long ping) {
-		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
+		ColourProfiles colourProfile = Constants.PROFILE.get();
 		
 		client.player.sendMessage(Text.literal("Ping » ").withColor(colourProfile.primaryColour.getAsInt())
 				.append(Text.literal(ping + " ms").withColor(colourProfile.secondaryColour.getAsInt())), false);

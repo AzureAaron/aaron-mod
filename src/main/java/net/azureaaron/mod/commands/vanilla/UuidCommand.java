@@ -12,7 +12,7 @@ import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.commands.Command;
 import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.commands.VanillaCommand;
-import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.Functions;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -42,7 +42,7 @@ public class UuidCommand extends VanillaCommand {
 
 	@Override
 	public void print(FabricClientCommandSource source, String name, String uuid) {
-		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
+		ColourProfiles colourProfile = Constants.PROFILE.get();
 		
 		source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Uuid » ").withColor(colourProfile.primaryColour.getAsInt())
 				.append(Text.literal(uuid).withColor(colourProfile.secondaryColour.getAsInt()))

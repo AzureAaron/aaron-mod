@@ -61,7 +61,7 @@ public class MouseMixin implements MouseGuiPositioner {
 
 	@WrapOperation(method = "unlockCursor", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Mouse;x:D", opcode = Opcodes.PUTFIELD, ordinal = 0))
 	private void aaronMod$unlockXPos(Mouse mouse, double centreX, Operation<Void> operation) {
-		if (AaronModConfigManager.get().resetCursorPosition && CLIENT.currentScreen instanceof GenericContainerScreen) {
+		if (AaronModConfigManager.get().refinements.input.dontResetCursorPosition && CLIENT.currentScreen instanceof GenericContainerScreen) {
 			this.x = this.guiX;
 		} else {
 			operation.call(mouse, centreX);
@@ -70,7 +70,7 @@ public class MouseMixin implements MouseGuiPositioner {
 
 	@WrapOperation(method = "unlockCursor", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Mouse;y:D", opcode = Opcodes.PUTFIELD, ordinal = 0))
 	private void aaronMod$unlockYPos(Mouse mouse, double centreY, Operation<Void> operation) {
-		if (AaronModConfigManager.get().resetCursorPosition && CLIENT.currentScreen instanceof GenericContainerScreen) {
+		if (AaronModConfigManager.get().refinements.input.dontResetCursorPosition && CLIENT.currentScreen instanceof GenericContainerScreen) {
 			this.y = this.guiY;
 		} else {
 			operation.call(mouse, centreY);
@@ -79,7 +79,7 @@ public class MouseMixin implements MouseGuiPositioner {
 
 	@Inject(method = "unlockCursor", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/InputUtil;setCursorParameters(JIDD)V", ordinal = 0, shift = At.Shift.AFTER))
 	private void aaronMod$correctCursorPosition(CallbackInfo ci) {
-		if (AaronModConfigManager.get().resetCursorPosition && CLIENT.currentScreen instanceof GenericContainerScreen) GLFW.glfwSetCursorPos(CLIENT.getWindow().getHandle(), this.guiX, this.guiY);
+		if (AaronModConfigManager.get().refinements.input.dontResetCursorPosition && CLIENT.currentScreen instanceof GenericContainerScreen) GLFW.glfwSetCursorPos(CLIENT.getWindow().getHandle(), this.guiX, this.guiY);
 	}
 
 	@ModifyArgs(method = "onMouseButton", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z"))

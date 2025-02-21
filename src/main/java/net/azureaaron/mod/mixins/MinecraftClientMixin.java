@@ -20,7 +20,7 @@ public class MinecraftClientMixin {
 
 	@WrapWithCondition(method = "reset", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/SoundManager;stopAll()V", ordinal = 0))
 	private boolean aaronMod$onWorldChange(SoundManager soundManager) {
-		return !AaronModConfigManager.get().stopSoundsOnWorldChange;
+		return !AaronModConfigManager.get().refinements.music.uninterruptedMusic;
 	}
 
 	@Inject(method = "onResolutionChanged", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;resize(Lnet/minecraft/client/MinecraftClient;II)V"))

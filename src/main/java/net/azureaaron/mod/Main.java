@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder;
 
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.config.datafixer.ConfigDataFixer;
 import net.azureaaron.mod.utils.Scheduler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -34,6 +35,8 @@ public class Main implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		ClientTickEvents.END_CLIENT_TICK.register(Main::tick);
+		//Perform any data fixing
+		ConfigDataFixer.apply();
 		//Load configuration
 		AaronModConfigManager.init();
 		//Initialize classes

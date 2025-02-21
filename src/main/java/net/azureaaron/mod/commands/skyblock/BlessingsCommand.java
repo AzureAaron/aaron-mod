@@ -23,7 +23,7 @@ public class BlessingsCommand {
 
 	@Init
 	public static void init() {
-		if (AaronModConfigManager.get().enableSkyblockCommands) ClientCommandRegistrationCallback.EVENT.register(BlessingsCommand::register);
+		if (AaronModConfigManager.get().skyblock.commands.enableSkyblockCommands) ClientCommandRegistrationCallback.EVENT.register(BlessingsCommand::register);
 	}
 	
 	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
@@ -36,7 +36,7 @@ public class BlessingsCommand {
 	
     @SuppressWarnings("removal")
 	private static int printBlessings(FabricClientCommandSource source) {
-    	ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
+    	ColourProfiles colourProfile = Constants.PROFILE.get();
     	
     	source.sendFeedback(Text.literal("               ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
     	
@@ -52,7 +52,7 @@ public class BlessingsCommand {
     }
     
     private static int printBlessings(FabricClientCommandSource source, String option) {
-    	ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
+    	ColourProfiles colourProfile = Constants.PROFILE.get();
     	
     	if("reset".equals(option)) {
     		Cache.resetBlessings();

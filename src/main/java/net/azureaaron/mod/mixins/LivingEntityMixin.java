@@ -26,16 +26,16 @@ public abstract class LivingEntityMixin extends Entity {
 			require = 2
 	)
 	private boolean aaronMod$ignoreMiningEffects(boolean original) {
-		return shouldEnableSwingModifications() && AaronModConfigManager.get().itemModelCustomization.ignoreHaste ? false : original;
+		return shouldEnableSwingModifications() && AaronModConfigManager.get().itemModel.ignoreMiningEffects ? false : original;
 	}
 
 	@ModifyExpressionValue(method = "getHandSwingDuration", at = @At(value = "CONSTANT", args = "intValue=6"))
 	private int aaronMod$modifySwingDuration(int original) {
-		return shouldEnableSwingModifications() ? AaronModConfigManager.get().itemModelCustomization.swingDuration : original;
+		return shouldEnableSwingModifications() ? AaronModConfigManager.get().itemModel.swingDuration : original;
 	}
 
 	@Unique
 	private boolean shouldEnableSwingModifications() {
-		return AaronModConfigManager.get().itemModelCustomization.enableItemModelCustomization && (Entity) this == MinecraftClient.getInstance().player;
+		return AaronModConfigManager.get().itemModel.enableItemModelCustomization && (Entity) this == MinecraftClient.getInstance().player;
 	}
 }

@@ -26,7 +26,7 @@ public class SkyblockEnchantments {
 
 	public static void loadEnchantments(boolean loadAnyways) {
 		CompletableFuture.runAsync(() -> {
-			if (enchantments.isEmpty() && (AaronModConfigManager.get().rainbowifyMaxSkyblockEnchantments || loadAnyways)) {
+			if (enchantments.isEmpty() && (AaronModConfigManager.get().skyblock.enchantments.rainbowMaxEnchants || loadAnyways)) {
 				try {
 					String response = Http.sendGetRequest("https://api.azureaaron.net/skyblock/enchantments");
 					Map<String, SkyblockEnchantment> parsedEnchantments = SkyblockEnchantment.MAP_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response)).getOrThrow();

@@ -51,17 +51,17 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 
 	@ModifyVariable(method = "getName", at = @At("STORE"))
 	private Text aaronMod$customItemName(Text text) {
-		if ((Functions.isOnHypixel() && Functions.isInSkyblock() || getAlwaysDisplaySkyblockInfo()) && (AaronModConfigManager.get().oldMasterStars || AaronModConfigManager.get().fancyDiamondHeads) && text != null) {
+		if ((Functions.isOnHypixel() && Functions.isInSkyblock() || getAlwaysDisplaySkyblockInfo()) && (AaronModConfigManager.get().skyblock.dungeons.oldMasterStars || AaronModConfigManager.get().skyblock.dungeons.fancyDiamondHeadNames) && text != null) {
 			String name = text.getString();
 			Formatting masterStarStyle = Formatting.RED;
 
 			if (!name.contains(STAR) || !HAS_MASTER_STAR.test(name)) return text;
 
-			if (AaronModConfigManager.get().fancyDiamondHeads && isDiamondHead()) {
+			if (AaronModConfigManager.get().skyblock.dungeons.fancyDiamondHeadNames && isDiamondHead()) {
 				Text styledName = TextTransformer.stylize(text, NO_ITALIC, "Diamond", Style.EMPTY.withColor(0x84dadd), 1);
 				Text styledStars = TextTransformer.stylize(styledName, NO_ITALIC, STAR, Style.EMPTY.withColor(Formatting.AQUA), 5);
 
-				if (!AaronModConfigManager.get().oldMasterStars) {
+				if (!AaronModConfigManager.get().skyblock.dungeons.oldMasterStars) {
 					String masterStar = switch (name) {
 						case String s when s.contains("➊") -> "➊";
 						case String s when s.contains("➋") -> "➋";
@@ -79,7 +79,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 				}
 			}
 
-			if (AaronModConfigManager.get().oldMasterStars) {
+			if (AaronModConfigManager.get().skyblock.dungeons.oldMasterStars) {
 				int masterStarsApplied = switch (name) {
 					case String s when s.contains("➊") -> 1;
 					case String s when s.contains("➋") -> 2;
@@ -120,7 +120,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 
 	@ModifyVariable(method = "appendTooltip", at = @At("STORE"))
 	private TooltipAppender aaronMod$rainbowifyMaxSkyblockEnchantments(TooltipAppender itemComponent) {
-		if (AaronModConfigManager.get().rainbowifyMaxSkyblockEnchantments && ((Functions.isOnHypixel() && Functions.isInSkyblock()) || getAlwaysDisplaySkyblockInfo()) && itemComponent instanceof LoreComponent lore) {
+		if (AaronModConfigManager.get().skyblock.enchantments.rainbowMaxEnchants && ((Functions.isOnHypixel() && Functions.isInSkyblock()) || getAlwaysDisplaySkyblockInfo()) && itemComponent instanceof LoreComponent lore) {
 			//Find what enchantments to replace with what colour
 			NbtCompound appliedEnchantments = ItemUtils.getCustomData(this).getCompound("enchantments");
 			Object2IntMap<String> maxEnchantmentColours = new Object2IntOpenHashMap<>();
@@ -136,8 +136,8 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 
 					if (enchantment.isAtMaxLevel(level)) {
 						maxEnchantmentColours.put(appliedName, 0xAA5500);
-					} else if (enchantment.isAtGoodLevel(level) && AaronModConfigManager.get().goodSkyblockEnchantments) {
-						goodEnchantmentColours.put(appliedName, AaronModConfigManager.get().goodSkyblockEnchantmentColour.getRGB() & 0x00FFFFFF);
+					} else if (enchantment.isAtGoodLevel(level) && AaronModConfigManager.get().skyblock.enchantments.showGoodEnchants) {
+						goodEnchantmentColours.put(appliedName, AaronModConfigManager.get().skyblock.enchantments.goodEnchantsColour.getRGB() & 0x00FFFFFF);
 					}
 				}
 			}
@@ -153,7 +153,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 				if (!maxEnchantmentColours.isEmpty() && maxEnchantmentColours.keySet().stream().anyMatch(lineContains)) {
 					List<Text> textComponents = line.getSiblings();
 
-					switch (AaronModConfigManager.get().rainbowifyMode) {
+					switch (AaronModConfigManager.get().skyblock.enchantments.rainbowMode) {
 						case STATIC -> {
 							int totalLength = 0;
 							int positionLeftOffAt = 0;
@@ -181,7 +181,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 							}
 						}
 
-						case DYNAMIC -> {
+						case CHROMA -> {
 							for (Text currentComponent : textComponents) {
 								String enchant = currentComponent.getString().trim();
 

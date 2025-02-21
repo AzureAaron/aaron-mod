@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 
-import net.azureaaron.mod.config.AaronModConfig.ItemModelCustomization.AbstractHand;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.config.configs.ItemModelConfig.AbstractHand;
 import net.minecraft.client.render.item.HeldItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Hand;
@@ -20,10 +20,10 @@ public class HeldItemRendererMixin {
 
 	@Inject(method = "renderFirstPersonItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/HeldItemRenderer;renderItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ModelTransformationMode;ZLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V"))
 	private void aaronMod$transformHandheldItem(CallbackInfo ci, @Local(argsOnly = true) Hand hand, @Local(argsOnly = true) MatrixStack matrices) {
-		if (AaronModConfigManager.get().itemModelCustomization.enableItemModelCustomization) {
+		if (AaronModConfigManager.get().itemModel.enableItemModelCustomization) {
 			AbstractHand config = switch (hand) {
-				case MAIN_HAND -> AaronModConfigManager.get().itemModelCustomization.mainHand;
-				case OFF_HAND -> AaronModConfigManager.get().itemModelCustomization.offHand;
+				case MAIN_HAND -> AaronModConfigManager.get().itemModel.mainHand;
+				case OFF_HAND -> AaronModConfigManager.get().itemModel.offHand;
 			};
 
 			if (config.xRotation != 0 || config.yRotation != 0 || config.zRotation != 0) {
@@ -44,6 +44,6 @@ public class HeldItemRendererMixin {
 
 	@ModifyExpressionValue(method = "updateHeldItems", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;getAttackCooldownProgress(F)F"))
 	private float aaronMod$preventSwingAnimationBobbing(float original) {
-		return AaronModConfigManager.get().itemModelCustomization.enableItemModelCustomization ? 1f : original;
+		return AaronModConfigManager.get().itemModel.enableItemModelCustomization ? 1f : original;
 	}
 }

@@ -3,15 +3,16 @@ package net.azureaaron.mod.commands.vanilla;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 import java.util.Set;
+import java.util.function.Supplier;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.azureaaron.mod.Colour.ColourProfiles;
 import net.azureaaron.mod.annotations.Init;
-import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.PlaySoundEvent;
 import net.azureaaron.mod.utils.Cache;
+import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.Functions;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -26,7 +27,7 @@ import net.minecraft.text.HoverEvent.Action;
 import net.minecraft.text.Text;
 
 public class WardenWarningLevelCommand {
-	private static final Text DISCLAIMER = Text.literal("It isn't possible to find out the\nexact player who triggered the shrieker.\n\nThis may not be 100% accurate.").styled(style -> style.withColor(AaronModConfigManager.get().colourProfile.infoColour.getAsInt()));
+	private static final Supplier<Text> DISCLAIMER = () -> Text.literal("It isn't possible to find out the\nexact player who triggered the shrieker.\n\nThis may not be 100% accurate.").styled(style -> style.withColor(Constants.PROFILE.get().infoColour.getAsInt()));
 	private static final Set<SoundEvent> WARNING_SOUNDS = Set.of(SoundEvents.ENTITY_WARDEN_NEARBY_CLOSE, SoundEvents.ENTITY_WARDEN_NEARBY_CLOSER, SoundEvents.ENTITY_WARDEN_NEARBY_CLOSEST, SoundEvents.ENTITY_WARDEN_LISTENING_ANGRY);
 
 	//It isn't possible to find out which exact player trigger a shrieker so this may not be 100% accurate
@@ -46,7 +47,7 @@ public class WardenWarningLevelCommand {
 	}
 
 	private static int printWardenWarningLevel(FabricClientCommandSource source) {
-		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
+		ColourProfiles colourProfile = Constants.PROFILE.get();
 
 		int warningLevel = relativeWarningLevel();
 		int warningsLeft = (warningLevel == 0) ? 3 : 3 - warningLevel;
@@ -55,7 +56,7 @@ public class WardenWarningLevelCommand {
 
 		source.sendFeedback(Text.literal(spacing).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 
-		source.sendFeedback(Text.literal("Warning Level » " + warningLevel).styled(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent(Action.SHOW_TEXT, DISCLAIMER))));
+		source.sendFeedback(Text.literal("Warning Level » " + warningLevel).styled(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent(Action.SHOW_TEXT, DISCLAIMER.get()))));
 		source.sendFeedback(Text.literal(""));
 		source.sendFeedback(Text.literal("Warnings Left » " + warningsLeft).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())));
 		source.sendFeedback(Text.literal("Last Triggered Shrieker » " + lastTriggered).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())));

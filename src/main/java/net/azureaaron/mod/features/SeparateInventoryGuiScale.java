@@ -8,19 +8,25 @@ import net.minecraft.client.util.Window;
 
 public class SeparateInventoryGuiScale {
 	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
+	public static final int AUTO = 0;
 
 	public static boolean isEnabled(Screen screen) {
-		return AaronModConfigManager.get().separateInventoryGuiScale && screen instanceof HandledScreen<?>;
+		return AaronModConfigManager.get().uiAndVisuals.inventoryScreen.separateInventoryGuiScale && screen instanceof HandledScreen<?>;
 	}
 
 	private static int getInventoryGuiScale() {
-		int configuredScale = AaronModConfigManager.get().inventoryGuiScale;
+		int configuredScale = AaronModConfigManager.get().uiAndVisuals.inventoryScreen.inventoryGuiScale;
 
-		if (configuredScale > 0) {
+		if (configuredScale > AUTO) {
 			return configuredScale;
 		} else {
-			return CLIENT.getWindow().calculateScaleFactor(0, CLIENT.forcesUnicodeFont());
+			//Never returns 0 since this is always called when the client is running
+			return getAutoGuiScale();
 		}
+	}
+
+	public static int getAutoGuiScale() {
+		return CLIENT.isRunning() ? CLIENT.getWindow().calculateScaleFactor(AUTO, CLIENT.forcesUnicodeFont()) : AUTO;
 	}
 
 	public record SavedScaleState(Window window, double originalScaleFactor) {

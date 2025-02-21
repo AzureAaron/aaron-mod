@@ -14,6 +14,7 @@ import net.azureaaron.mod.commands.Command;
 import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.commands.SkyblockCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.Formatters;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.JsonHelper;
@@ -31,7 +32,7 @@ public class CrimsonCommand extends SkyblockCommand {
 
 	@Init
 	public static void init() {
-		if (AaronModConfigManager.get().enableSkyblockCommands) ClientCommandRegistrationCallback.EVENT.register(INSTANCE::register);
+		if (AaronModConfigManager.get().skyblock.commands.enableSkyblockCommands) ClientCommandRegistrationCallback.EVENT.register(INSTANCE::register);
 	}
 
 	@Override
@@ -45,7 +46,7 @@ public class CrimsonCommand extends SkyblockCommand {
 
 	@Override
 	public void print(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
-		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
+		ColourProfiles colourProfile = Constants.PROFILE.get();
 		
 		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);
 		JsonObject crimsonIsleStats = profile.getAsJsonObject("nether_island_player_data");

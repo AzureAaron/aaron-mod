@@ -18,6 +18,6 @@ public class PotionItemMixin extends Item {
 
 	@Override
 	public boolean hasGlint(ItemStack stack) {
-		return AaronModConfigManager.get().shinyPotions && (super.hasGlint(stack) || stack.getOrDefault(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent.DEFAULT).hasEffects());
+		return AaronModConfigManager.get().uiAndVisuals.legacyRevival.potionGlint && (super.hasGlint(stack) || stack.getOrDefault(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent.DEFAULT).hasEffects());
 	}
 }

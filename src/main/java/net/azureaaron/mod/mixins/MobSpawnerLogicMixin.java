@@ -13,6 +13,6 @@ public class MobSpawnerLogicMixin {
 
 	@Inject(method = "clientTick", at = @At("HEAD"), cancellable = true)
 	private void aaronMod$dontTickClientLogic(CallbackInfo ci) {
-		if (AaronModConfigManager.get().hideSpinningMobInMobSpawner) ci.cancel();
+		if (AaronModConfigManager.get().uiAndVisuals.world.hideMobSpawnerAnimations) ci.cancel();
 	}
 }

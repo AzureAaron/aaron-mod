@@ -86,7 +86,7 @@ public abstract class NativeImageMixin implements NativeImageMarker {
 
 	@WrapMethod(method = "write")
 	private boolean aaronMod$writeWithoutAlphaChannel(WritableByteChannel channel, Operation<Boolean> operation) throws IOException {
-		if (AaronModConfigManager.get().optimizedScreenshots && this.isScreenshot) {
+		if (AaronModConfigManager.get().refinements.screenshots.optimizedScreenshots && this.isScreenshot) {
 			int pixels = this.width * this.height;
 			long size = pixels * RGB_CHANNEL_COUNT;
 			long pointer = MemoryUtil.nmemAlloc(size);

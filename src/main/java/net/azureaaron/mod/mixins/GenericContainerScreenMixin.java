@@ -25,6 +25,6 @@ implements ScreenHandlerProvider<GenericContainerScreenHandler> {
 
 	@WrapWithCondition(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/GenericContainerScreen;drawMouseoverTooltip(Lnet/minecraft/client/gui/DrawContext;II)V", ordinal = 0))
 	private boolean aaronMod$hideScreenToolips(GenericContainerScreen container, DrawContext context, int mouseX, int mouseY) {
-		return !(Functions.isOnHypixel() && AaronModConfigManager.get().hideClickOnTimeTooltips && this.title.getString().equals("Click the button on time!"));
+		return !(Functions.isOnHypixel() && AaronModConfigManager.get().skyblock.dungeons.hideClickOnTimeTooltips && this.title.getString().equals("Click the button on time!"));
 	}
 }

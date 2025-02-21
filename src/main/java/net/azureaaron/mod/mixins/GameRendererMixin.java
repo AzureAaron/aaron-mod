@@ -44,7 +44,7 @@ public class GameRendererMixin {
 				this.client.options.smoothCameraEnabled = true; 
 			}
 
-			return (float) (fov * AaronModConfigManager.get().zoomMultiplier);
+			return (float) (fov * AaronModConfigManager.get().uiAndVisuals.world.zoomMultiplier);
 		} else if (this.cameraSmoothed) {
 			this.cameraSmoothed = false;
 			this.client.options.smoothCameraEnabled = false;

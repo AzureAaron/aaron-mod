@@ -27,12 +27,7 @@ public class PingDisplay {
 	@SuppressWarnings("unused")
 	private static final TextHudElement HUD_ELEMENT = new TextHudElement(
 			Text.literal("30 ms"),
-			AaronModConfigManager.get().pingDisplayX,
-			AaronModConfigManager.get().pingDisplayY,
-			AaronModConfigManager.get().pingDisplayScale,
-			x -> AaronModConfigManager.get().pingDisplayX = x,
-			y -> AaronModConfigManager.get().pingDisplayY = y,
-			scale -> AaronModConfigManager.get().pingDisplayScale = scale,
+			AaronModConfigManager.get().uiAndVisuals.pingHud,
 			2,
 			DEFAULT_Y);
 	private static final Queue<Long> RESULTS = EvictingQueue.create(240); //240 is the amount of samples that the ping graph uses
@@ -49,10 +44,10 @@ public class PingDisplay {
 	}
 
 	private static void render(DrawContext context, RenderTickCounter tickCounter) {
-		if (!CLIENT.getDebugHud().shouldShowDebugHud() && AaronModConfigManager.get().pingDisplay) {
-			int x = AaronModConfigManager.get().pingDisplayX;
-			int y = AaronModConfigManager.get().pingDisplayY;
-			float scale = AaronModConfigManager.get().pingDisplayScale;
+		if (!CLIENT.getDebugHud().shouldShowDebugHud() && AaronModConfigManager.get().uiAndVisuals.pingHud.enablePingHud) {
+			int x = AaronModConfigManager.get().uiAndVisuals.pingHud.x;
+			int y = AaronModConfigManager.get().uiAndVisuals.pingHud.y;
+			float scale = AaronModConfigManager.get().uiAndVisuals.pingHud.scale;
 			MatrixStack matrices = context.getMatrices();
 
 			matrices.push();

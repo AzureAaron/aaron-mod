@@ -24,11 +24,11 @@ public class BackgroundRendererMixin {
 	}
 
 	@ModifyReturnValue(method = "applyFog", at = @At("RETURN"))
-	private static Fog aaronMod$noFog(Fog original, @Local(argsOnly = true) BackgroundRenderer.FogType fogType, @Local(argsOnly = true) boolean thickFog, @Local(argsOnly = true, ordinal = 1) float tickDelta, @Local CameraSubmersionType cameraSubmersionType, @Local Entity entity) {
+	private static Fog aaronMod$hideTerrainFog(Fog original, @Local(argsOnly = true) BackgroundRenderer.FogType fogType, @Local(argsOnly = true) boolean thickFog, @Local(argsOnly = true, ordinal = 1) float tickDelta, @Local CameraSubmersionType cameraSubmersionType, @Local Entity entity) {
 		//For some reason @Local can't capture this variable in the target method .-.
 		BackgroundRenderer.StatusEffectFogModifier statusEffectFogModifier = getFogModifier(entity, tickDelta);
 
-		if (AaronModConfigManager.get().noFog && statusEffectFogModifier == null && cameraSubmersionType == CameraSubmersionType.NONE && (fogType == BackgroundRenderer.FogType.FOG_TERRAIN || thickFog)) {
+		if (AaronModConfigManager.get().uiAndVisuals.world.hideFog && statusEffectFogModifier == null && cameraSubmersionType == CameraSubmersionType.NONE && (fogType == BackgroundRenderer.FogType.FOG_TERRAIN || thickFog)) {
 			Fog newFog = new Fog(original.start(), original.end(), original.shape(), 1f, 1f, 1f, 0f);
 
 			return newFog;

@@ -24,7 +24,6 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.Particles;
-import net.azureaaron.mod.Particles.State;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.mixins.accessors.ParticleAccessor;
 import net.minecraft.client.MinecraftClient;
@@ -53,11 +52,10 @@ public class ParticleManagerMixin {
 		if (original != null) {
 			Identifier particleId = Registries.PARTICLE_TYPE.getId(parameters.getType());
 
-			switch (AaronModConfigManager.get().particles.getOrDefault(particleId, State.FULL)) {
-				case State.NONE -> cir.setReturnValue(null);
-				case State.FULL -> {
-					return modifyParticle(original, particleId);
-				}
+			if (AaronModConfigManager.get().particles.states.getOrDefault(particleId, true)) {
+				return modifyParticle(original, particleId);
+			} else {
+				cir.setReturnValue(null);
 			}
 		}
 
@@ -66,12 +64,12 @@ public class ParticleManagerMixin {
 
 	@Inject(method = "addBlockBreakParticles", at = @At("HEAD"), cancellable = true)
 	private void aaronMod$hideBlockBreakParticles(CallbackInfo ci) {
-		if (AaronModConfigManager.get().particles.getOrDefault(Particles.BLOCK_BREAKING, State.FULL) == State.NONE) ci.cancel();
+		if (!AaronModConfigManager.get().particles.states.getOrDefault(Particles.BLOCK_BREAKING, true)) ci.cancel();
 	}
 
 	@Inject(method = "addBlockBreakingParticles", at = @At("HEAD"), cancellable = true)
 	private void aaronMod$hideBlockBreakingParticles(CallbackInfo ci) {
-		if (AaronModConfigManager.get().particles.getOrDefault(Particles.BLOCK_BREAKING, State.FULL) == State.NONE) ci.cancel();
+		if (!AaronModConfigManager.get().particles.states.getOrDefault(Particles.BLOCK_BREAKING, true)) ci.cancel();
 	}
 
 	//Particle Modifications
@@ -109,8 +107,8 @@ public class ParticleManagerMixin {
 
 	@Unique
 	private static Particle modifyParticle(Particle particle, Identifier id) {
-		float alpha = AaronModConfigManager.get().particleAlphas.getOrDefault(id, 1f);
-		float scale = AaronModConfigManager.get().particleScaling.getOrDefault(id, 1f);
+		float alpha = AaronModConfigManager.get().particles.alphas.getOrDefault(id, 1f);
+		float scale = AaronModConfigManager.get().particles.scaling.getOrDefault(id, 1f);
 		ParticleAccessor particleAccessor = ((ParticleAccessor) particle);
 
 		//Only set the alpha if won't result in the particle being discarded by the fragment shader or if its not greater than the default

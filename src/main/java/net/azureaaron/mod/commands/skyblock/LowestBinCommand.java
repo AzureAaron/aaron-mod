@@ -43,7 +43,7 @@ public class LowestBinCommand {
 
 	@Init
 	public static void init() {
-		ClientCommandRegistrationCallback.EVENT.register(LowestBinCommand::register);
+		if (AaronModConfigManager.get().skyblock.commands.enableSkyblockCommands) ClientCommandRegistrationCallback.EVENT.register(LowestBinCommand::register);
 	}
 	
 	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
@@ -67,22 +67,23 @@ public class LowestBinCommand {
 		int average;
 		String averageDescription;
 		
-		switch (AaronModConfigManager.get().dayAverage) {
-			case ONE_DAY:
+		switch (AaronModConfigManager.get().skyblock.commands.lbinPriceDayAverage) {
+			case ONE_DAY -> {
 				average = 1;
 				averageDescription = "1 Day Avg.";
-				break;
-			case THREE_DAY:
+			}
+			case THREE_DAY -> {
 				average = 3;
 				averageDescription = "3 Day Avg.";
-				break;
-			case SEVEN_DAY:
+			}
+			case SEVEN_DAY -> {
 				average = 7;
 				averageDescription = "7 Day Avg.";
-				break;
-			default:
+			}
+			default -> {
 				average = 3;
 				averageDescription = "3 Day Avg.";
+			}
 		}
 		
 		CompletableFuture.supplyAsync(() -> {
@@ -142,7 +143,7 @@ public class LowestBinCommand {
 	}
 	
 	private static void printLowestBin(FabricClientCommandSource source, JsonObject data, String itemName, String desc) {
-		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
+		ColourProfiles colourProfile = Constants.PROFILE.get();
 		
 		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
 				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))

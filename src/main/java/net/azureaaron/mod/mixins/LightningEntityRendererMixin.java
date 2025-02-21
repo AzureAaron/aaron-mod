@@ -13,6 +13,6 @@ public class LightningEntityRendererMixin {
 
 	@Inject(method = "render", at = @At("HEAD"), cancellable = true)
 	private void aaronMod$hideLightningBolt(CallbackInfo ci) {
-		if (AaronModConfigManager.get().hideLightning) ci.cancel();
+		if (AaronModConfigManager.get().uiAndVisuals.world.hideLightning) ci.cancel();
 	}
 }

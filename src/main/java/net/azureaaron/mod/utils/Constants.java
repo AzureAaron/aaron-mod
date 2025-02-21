@@ -9,7 +9,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public interface Constants {
-	Supplier<ColourProfiles> PROFILE = () -> AaronModConfigManager.get().colourProfile;
+	Supplier<ColourProfiles> PROFILE = () -> AaronModConfigManager.get().general.colourProfile;
 	Supplier<MutableText> PREFIX = () -> Text.empty()
 			.append(Text.literal("[").formatted(Formatting.GRAY))
 			.append(Text.literal("A").withColor(PROFILE.get().gradient(0.0)))

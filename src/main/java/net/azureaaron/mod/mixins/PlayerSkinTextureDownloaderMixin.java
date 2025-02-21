@@ -12,7 +12,7 @@ public class PlayerSkinTextureDownloaderMixin {
 
 	@ModifyVariable(method = "download", at = @At("LOAD"), argsOnly = true, ordinal = 0)
 	private static String aaronMod$secureSkinDownloads(String uri) {		
-		if (AaronModConfigManager.get().secureSkinDownloads) {
+		if (AaronModConfigManager.get().refinements.secureSkinDownloads) {
 			return uri.replace("http://", "https://");
 		} else {
 			return uri;

@@ -53,7 +53,7 @@ public class ApiAuthentication {
 	@Init
 	public static void init() {
 		//Only do this if Skyblock Commands are enabled since thats all this is necessary for
-		if (AaronModConfigManager.get().enableSkyblockCommands) {
+		if (AaronModConfigManager.get().skyblock.commands.enableSkyblockCommands) {
 			//Update token after the profileKeys instance is initialized
 			ClientLifecycleEvents.CLIENT_STARTED.register(_client -> updateToken());
 		}

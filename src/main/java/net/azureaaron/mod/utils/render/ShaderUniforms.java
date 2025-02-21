@@ -31,10 +31,10 @@ public class ShaderUniforms {
 	}
 
 	public static float getShaderChromaSpeed() {
-		return AaronModConfigManager.get().chromaSpeed;
+		return AaronModConfigManager.get().uiAndVisuals.chromaText.chromaSpeed;
 	}
 
 	public static float getShaderChromaSaturation() {
-		return AaronModConfigManager.get().chromaSaturation;
+		return AaronModConfigManager.get().uiAndVisuals.chromaText.chromaSaturation;
 	}
 }

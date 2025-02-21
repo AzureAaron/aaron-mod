@@ -47,11 +47,6 @@ public class Particles {
 	private static final ParticleType<?> BLOCK_BREAKING_TYPE = FabricParticleTypes.simple();
 	private static final RegistryKey<ParticleType<?>> BLOCK_BREAKING_REGISTRY_KEY = RegistryKey.of(RegistryKeys.PARTICLE_TYPE, BLOCK_BREAKING);
 	
-	public enum State {
-		FULL,
-		NONE;
-	}
-	
 	private static String getParticleDisplayName(String id) {
 		return Functions.titleCase(id.toString().replace("_", " "));
 	}
@@ -85,29 +80,29 @@ public class Particles {
 					.collapsed(true)
 					
 					//Toggle
-					.option(Option.<State>createBuilder()
-							.name(Text.literal(name + " State"))
-							.binding(State.FULL,
-									() -> config.particles.getOrDefault(id, State.FULL),
-									newValue -> config.particles.put(id, newValue))
+					.option(Option.<Boolean>createBuilder()
+							.name(Text.literal("Enable " + name))
+							.binding(true,
+									() -> config.particles.states.getOrDefault(id, true),
+									newValue -> config.particles.states.put(id, newValue.booleanValue()))
 							.available(!Main.OPTIFABRIC_LOADED)
-							.controller(ConfigUtils::createEnumController)
+							.controller(ConfigUtils::createBooleanController)
 							.build())
 					
 					//Scale Multiplier
 					.option(Option.<Float>createBuilder()
 							.name(Text.literal(name + " Scale Multiplier"))
 							.binding(1f,
-									() -> config.particleScaling.getOrDefault(id, 1f),
-									newValue -> config.particleScaling.put(id, newValue.floatValue()))
+									() -> config.particles.scaling.getOrDefault(id, 1f),
+									newValue -> config.particles.scaling.put(id, newValue.floatValue()))
 							.available(!Main.OPTIFABRIC_LOADED)
 							.controller(opt -> FloatFieldControllerBuilder.create(opt).range(0f, 2f))
 							.build())
 					.option(Option.<Float>createBuilder()
 							.name(Text.literal(name + " Opacity"))
 							.binding(1f,
-									() -> config.particleAlphas.getOrDefault(id, 1f),
-									newValue -> config.particleAlphas.put(id, newValue.floatValue()))
+									() -> config.particles.alphas.getOrDefault(id, 1f),
+									newValue -> config.particles.alphas.put(id, newValue.floatValue()))
 							.controller(opt -> FloatSliderControllerBuilder.create(opt).range(0.15f, 1f).step(0.05f))
 							.available(!Main.OPTIFABRIC_LOADED)
 							.build())

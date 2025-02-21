@@ -39,7 +39,7 @@ public class DragonTimers {
 	}
 	
 	private static void renderSpawnTimers(WorldRenderContext wrc) {
-		if (Functions.isOnHypixel() && AaronModConfigManager.get().m7DragonSpawnTimers && Cache.inM7Phase5) {
+		if (Functions.isOnHypixel() && AaronModConfigManager.get().skyblock.m7.dragonSpawnTimers && Cache.inM7Phase5) {
 			for (Dragons dragon : Dragons.VALUES) {
 				if (dragon.spawnStart != 0L && dragon.spawnStart + 5000 > System.currentTimeMillis()) {
 					int timeUntilSpawn = (int) (dragon.spawnStart + 5000 - System.currentTimeMillis());

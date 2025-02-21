@@ -15,6 +15,6 @@ public class CreditsScreenMixin {
 
 	@WrapWithCondition(method = "removed", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/MusicTracker;stop(Lnet/minecraft/sound/MusicSound;)V"))
 	private boolean aaronMod$dontStopCreditsMusic(MusicTracker musicTracker, MusicSound type) {
-		return !AaronModConfigManager.get().stopSoundsOnWorldChange;
+		return !AaronModConfigManager.get().refinements.music.uninterruptedMusic;
 	}
 }

@@ -32,6 +32,6 @@ public class MusicTrackerMixin {
 		String[] callerMethods = StackWalker.getInstance().walk(this::findCallerMethods);
 		boolean calledScreenTick = Arrays.stream(callerMethods).anyMatch(SCREEN_TICK::equals);
 
-		return AaronModConfigManager.get().stopSoundsOnWorldChange && !calledScreenTick ? false : original;
+		return AaronModConfigManager.get().refinements.music.uninterruptedMusic && !calledScreenTick ? false : original;
 	}
 }

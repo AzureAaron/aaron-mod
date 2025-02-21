@@ -29,7 +29,7 @@ public abstract class ClientPlayNetworkHandlerMixin extends ClientCommonNetworkH
 
 	@WrapWithCondition(method = "onPlayerRespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/MusicTracker;stop()V"))
 	private boolean aaronMod$onWorldChange(MusicTracker musicTracker) {
-		return !AaronModConfigManager.get().stopSoundsOnWorldChange;
+		return !AaronModConfigManager.get().refinements.music.uninterruptedMusic;
 	}
 
 	@Inject(method = "onPlaySound", at = @At("RETURN"))
@@ -44,6 +44,6 @@ public abstract class ClientPlayNetworkHandlerMixin extends ClientCommonNetworkH
 
 	@ModifyExpressionValue(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/DebugHud;shouldShowPacketSizeAndPingCharts()Z"))
 	private boolean aaronMod$sendPingPackets4PingDisplay(boolean original) {
-		return client.getDebugHud().shouldShowDebugHud() ? original : original || AaronModConfigManager.get().pingDisplay;
+		return client.getDebugHud().shouldShowDebugHud() ? original : original || AaronModConfigManager.get().uiAndVisuals.pingHud.enablePingHud;
 	}
 }

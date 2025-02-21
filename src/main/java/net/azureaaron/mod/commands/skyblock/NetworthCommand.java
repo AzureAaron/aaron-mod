@@ -58,7 +58,7 @@ public class NetworthCommand extends SkyblockCommand {
 
 	@Init
 	public static void init() {
-		if (AaronModConfigManager.get().enableSkyblockCommands) ClientCommandRegistrationCallback.EVENT.register(INSTANCE::register);
+		if (AaronModConfigManager.get().skyblock.commands.enableSkyblockCommands) ClientCommandRegistrationCallback.EVENT.register(INSTANCE::register);
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public class NetworthCommand extends SkyblockCommand {
 
 	@Override
 	public void print(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
-		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
+		ColourProfiles colourProfile = Constants.PROFILE.get();
 
 		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);
 		boolean inventoryEnabled = Skyblock.isInventoryApiEnabled(JsonHelper.getObject(profile, "inventory").orElseGet(JsonObject::new));

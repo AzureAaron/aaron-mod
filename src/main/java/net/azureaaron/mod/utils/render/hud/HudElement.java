@@ -1,9 +1,7 @@
 package net.azureaaron.mod.utils.render.hud;
 
 import java.util.Objects;
-import java.util.function.IntConsumer;
 
-import it.unimi.dsi.fastutil.floats.FloatConsumer;
 import net.minecraft.client.gui.DrawContext;
 
 /**
@@ -13,9 +11,7 @@ import net.minecraft.client.gui.DrawContext;
  * of it to the HUD.
  */
 public abstract class HudElement {
-	private final IntConsumer xConsumer;
-	private final IntConsumer yConsumer;
-	private final FloatConsumer scaleConsumer;
+	protected final HudElementAccess access;
 	private final int defaultX;
 	private final int defaultY;
 
@@ -24,23 +20,16 @@ public abstract class HudElement {
 	private float scale;
 
 	protected HudElement(
-			int x,
-			int y,
-			float scale,
-			IntConsumer xConsumer,
-			IntConsumer yConsumer,
-			FloatConsumer scaleConsumer,
+			HudElementAccess access,
 			int defaultX,
 			int defaultY
 	) {
-		this.x = x;
-		this.y = y;
-		this.scale = scale;
-		this.xConsumer = Objects.requireNonNull(xConsumer, "X Consumer cannot be null");
-		this.yConsumer = Objects.requireNonNull(yConsumer, "Y Consumer cannot be null");
-		this.scaleConsumer = Objects.requireNonNull(scaleConsumer, "Scale Consumer cannot be null");
+		this.access = Objects.requireNonNull(access, "Access cannot be null!");
 		this.defaultX = defaultX;
 		this.defaultY = defaultY;
+		this.x = access.x();
+		this.y = access.y();
+		this.scale = access.scale();
 
 		//Register element with config
 		HudElementConfigScreen.register(this);
@@ -75,9 +64,9 @@ public abstract class HudElement {
 	public abstract int height();
 
 	public void apply() {
-		xConsumer.accept(x);
-		yConsumer.accept(y);
-		scaleConsumer.accept(scale);
+		access.x(x);
+		access.y(y);
+		access.scale(scale);
 	}
 
 	public void reset() {

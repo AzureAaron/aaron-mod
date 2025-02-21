@@ -29,7 +29,7 @@ public class Accessories {
 
 	private static void loadAccessories() {
 		CompletableFuture.runAsync(() -> {
-			if (AaronModConfigManager.get().enableSkyblockCommands) {
+			if (AaronModConfigManager.get().skyblock.commands.enableSkyblockCommands) {
 				try {
 					String response = Http.sendGetRequest("https://api.azureaaron.net/skyblock/accessories");
 					Map<String, Accessory> parsedAccessories = Accessory.MAP_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response)).getOrThrow();
@@ -44,7 +44,7 @@ public class Accessories {
 
 	private static void loadMagicalPowers() {
 		CompletableFuture.runAsync(() -> {
-			if (AaronModConfigManager.get().enableSkyblockCommands) {
+			if (AaronModConfigManager.get().skyblock.commands.enableSkyblockCommands) {
 				try {
 					String response = Http.sendGetRequest("https://api.azureaaron.net/skyblock/magicalpowers");
 					Map<String, MagicalPower> parsedMagicalPowers = MagicalPower.MAP_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response)).getOrThrow();

@@ -19,11 +19,11 @@ public class MessageIndicatorMixin {
 
 	@ModifyReturnValue(method = "notSecure", at = @At("RETURN"))
 	private static MessageIndicator aaronMod$changeNotSecureColour(MessageIndicator original) {
-		return AaronModConfigManager.get().oldMessageIndicatorColours ? new MessageIndicator(OLD_NOT_SECURE_COLOUR, original.icon(), original.text(), original.loggedName()) : original;
+		return AaronModConfigManager.get().uiAndVisuals.legacyRevival.oldMessageTrustIndicatorColours ? new MessageIndicator(OLD_NOT_SECURE_COLOUR, original.icon(), original.text(), original.loggedName()) : original;
 	}
 
 	@ModifyArg(method = "modified", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/MessageIndicator;<init>(ILnet/minecraft/client/gui/hud/MessageIndicator$Icon;Lnet/minecraft/text/Text;Ljava/lang/String;)V"))
 	private static int aaronMod$changeModifiedColour(int colour) {
-		return AaronModConfigManager.get().oldMessageIndicatorColours ? OLD_MODIFIED_COLOUR : colour;
+		return AaronModConfigManager.get().uiAndVisuals.legacyRevival.oldMessageTrustIndicatorColours ? OLD_MODIFIED_COLOUR : colour;
 	}
 }

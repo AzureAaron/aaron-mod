@@ -29,11 +29,11 @@ public abstract class ClientWorldMixin extends World {
 
 	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;tickTime()V", shift = At.Shift.BEFORE))
 	private void aaronMod$correctAmbientDarkness(CallbackInfo ci) {
-		if (AaronModConfigManager.get().correctAmbientDarkness) this.calculateAmbientDarkness();
+		if (AaronModConfigManager.get().uiAndVisuals.world.correctAmbientDarkness) this.calculateAmbientDarkness();
 	}
 
 	@ModifyExpressionValue(method = "getLightningTicksLeft", at = @At(value = "INVOKE", target = "Ljava/lang/Boolean;booleanValue()Z", remap = false))
 	private boolean aaronMod$hideLightningFlashes(boolean shouldHideLightningFlashes) {
-		return shouldHideLightningFlashes || AaronModConfigManager.get().hideLightning;
+		return shouldHideLightningFlashes || AaronModConfigManager.get().uiAndVisuals.world.hideLightning;
 	}
 }

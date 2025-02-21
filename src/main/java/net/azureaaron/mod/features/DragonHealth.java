@@ -32,7 +32,7 @@ public class DragonHealth {
 	
 	private static void render(WorldRenderContext wrc) {
 		try {
-			if (Cache.inM7Phase5 && AaronModConfigManager.get().m7DragonHealth) {
+			if (Cache.inM7Phase5 && AaronModConfigManager.get().skyblock.m7.dragonHealthDisplay) {
 				ClientWorld world = MinecraftClient.getInstance().world;
 				
 				if (world != null) {

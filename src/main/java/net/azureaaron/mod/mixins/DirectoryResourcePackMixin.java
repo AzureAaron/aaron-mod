@@ -14,11 +14,11 @@ public class DirectoryResourcePackMixin {
 
 	@WrapWithCondition(method = "findResources(Ljava/lang/String;Ljava/nio/file/Path;Ljava/util/List;Lnet/minecraft/resource/ResourcePack$ResultConsumer;)V", at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;error(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V", remap = false))
 	private static boolean aaronMod$silenceInvalidDirectoryErrors(Logger logger, String message, Object path, Object ioException) {
-		return !AaronModConfigManager.get().silenceResourcePackLogSpam;
+		return !AaronModConfigManager.get().refinements.silenceResourcePackLogSpam;
 	}
 
 	@WrapWithCondition(method = "getNamespaces", at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V", remap = false))
 	private boolean aaronMod$silenceDsStoreWarnings(Logger logger, String message, Object fileName, Object root) {
-		return !AaronModConfigManager.get().silenceResourcePackLogSpam && ((String)fileName).equals(".DS_Store");
+		return !AaronModConfigManager.get().refinements.silenceResourcePackLogSpam && ((String)fileName).equals(".DS_Store");
 	}
 }

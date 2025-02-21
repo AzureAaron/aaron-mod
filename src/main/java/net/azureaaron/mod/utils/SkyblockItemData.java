@@ -18,7 +18,7 @@ public class SkyblockItemData {
 
 	@Init
 	public static void init() {
-		if (!AaronModConfigManager.get().enableSkyblockCommands) return;
+		if (!AaronModConfigManager.get().skyblock.commands.enableSkyblockCommands) return;
 
 		CompletableFuture.supplyAsync(() -> {
 			try {

@@ -41,7 +41,7 @@ public class BazaarCommand {
 
 	@Init
 	public static void init() {
-		if (AaronModConfigManager.get().enableSkyblockCommands) ClientCommandRegistrationCallback.EVENT.register(BazaarCommand::register);
+		if (AaronModConfigManager.get().skyblock.commands.enableSkyblockCommands) ClientCommandRegistrationCallback.EVENT.register(BazaarCommand::register);
 	}
 
 	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
@@ -54,8 +54,7 @@ public class BazaarCommand {
 	}
 	
 	private static int handleCommand(FabricClientCommandSource source, String product) {
-		
-		//TODO lazy load this shit
+		//TODO lazy load this
 		if (!Cache.PRODUCTS_LIST.contains(product)) {
 			source.sendError(NON_EXISTENT_PRODUCT_ERROR.get());
 			
@@ -89,8 +88,8 @@ public class BazaarCommand {
 	}
 	
 	private static void printBazaar(FabricClientCommandSource source, JsonObject productData, String productName) {
-		ColourProfiles colourProfile = AaronModConfigManager.get().colourProfile;
-		
+		ColourProfiles colourProfile = Constants.PROFILE.get();
+
 		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
 				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
 				.append(Text.literal(productName).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))

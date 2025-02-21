@@ -7,8 +7,10 @@ import java.util.Objects;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
+import dev.isxander.yacl3.api.ButtonOption;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.render.Renderer;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
@@ -35,6 +37,17 @@ public final class HudElementConfigScreen extends Screen {
 	 */
 	protected static void register(HudElement element) {
 		ELEMENTS.add(Objects.requireNonNull(element, "Cannot register a null HUD Element"));
+	}
+
+	/**
+	 * Creates a {@link ButtonOption} which can be used to access this screen.
+	 */
+	public static ButtonOption createOption() {
+		return ButtonOption.createBuilder()
+				.name(Text.literal("HUD Manager"))
+				.text(Text.literal("Open"))
+				.action((screen, opt) -> MinecraftClient.getInstance().setScreen(new HudElementConfigScreen(screen)))
+				.build();
 	}
 
 	@Override

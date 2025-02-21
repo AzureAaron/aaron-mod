@@ -47,7 +47,7 @@ public class ImagePreview {
 	public static void init() {
 		ReceiveChatMessageEvent.EVENT.register(ImagePreview::inspectMessageForImageLinks);
 		ScreenEvents.AFTER_INIT.register((client, screen, _scaledWidth, _scaledHeight) -> {
-			if (screen instanceof ChatScreen && AaronModConfigManager.get().imagePreview) {
+			if (screen instanceof ChatScreen && AaronModConfigManager.get().uiAndVisuals.imagePreview.enableImagePreview) {
 				ScreenEvents.afterRender(screen).register((screen1, context, mouseX, mouseY, _delta) -> {
 					afterScreenRendered(client, screen1, context, mouseX, mouseY);
 				});
@@ -56,7 +56,7 @@ public class ImagePreview {
 	}
 
 	private static void inspectMessageForImageLinks(Text text, boolean overlay, boolean cancelled) {
-		if (AaronModConfigManager.get().imagePreview && !overlay && !cancelled) {
+		if (AaronModConfigManager.get().uiAndVisuals.imagePreview.enableImagePreview && !overlay && !cancelled) {
 			ObjectOpenHashSet<String> foundImages = new ObjectOpenHashSet<>();
 
 			//Visit the text to find all image links inside of its click events
@@ -108,7 +108,7 @@ public class ImagePreview {
 	}
 
 	private static void afterScreenRendered(MinecraftClient client, Screen screen, DrawContext context, int mouseX, int mouseY) {
-		if (!AaronModConfigManager.get().imagePreview) return;
+		if (!AaronModConfigManager.get().uiAndVisuals.imagePreview.enableImagePreview) return;
 
 		Style style = client.inGameHud.getChatHud().getTextStyleAt(mouseX, mouseY);
 
@@ -163,11 +163,11 @@ public class ImagePreview {
 	}
 
 	private static float getPrevWidthDiv() {
-		return (16 * 16f) * AaronModConfigManager.get().imagePreviewScale;
+		return (16 * 16f) * AaronModConfigManager.get().uiAndVisuals.imagePreview.scale;
 	}
 
 	private static float getPrevHeightDiv() {
-		return (9f * 16f) * AaronModConfigManager.get().imagePreviewScale;
+		return (9f * 16f) * AaronModConfigManager.get().uiAndVisuals.imagePreview.scale;
 	}
 
 	private static record CachedImage(long creationTime, Identifier texture, int width, int height) {
