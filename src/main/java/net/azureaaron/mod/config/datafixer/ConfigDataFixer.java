@@ -36,7 +36,7 @@ public class ConfigDataFixer {
 		try {
 			if (Files.exists(AaronModConfigManager.PATH)) {
 				JsonObject oldConfig = JsonParser.parseString(Files.readString(AaronModConfigManager.PATH)).getAsJsonObject();
-				int version = JsonHelper.getInt(oldConfig, "verison").orElse(1);
+				int version = JsonHelper.getInt(oldConfig, "version").orElse(1);
 
 				//The version was updated aka the file needs data fixing
 				if (version != AaronModConfigManager.VERSION) {

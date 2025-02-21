@@ -28,7 +28,7 @@ public class UIAndVisualsCategory {
 								.description(OptionDescription.of(Text.literal("Adds shadowing to all text on the scoreboard.")))
 								.binding(defaults.uiAndVisuals.scoreboard.shadowedScoreboardText,
 										() -> config.uiAndVisuals.scoreboard.shadowedScoreboardText,
-										newValue -> config.uiAndVisuals.scoreboard.shadowedScoreboardText = true)
+										newValue -> config.uiAndVisuals.scoreboard.shadowedScoreboardText = newValue)
 								.controller(ConfigUtils::createBooleanController)
 								.build())
 						.option(Option.<Boolean>createBuilder()
