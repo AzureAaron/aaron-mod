@@ -59,7 +59,7 @@ public class TextHudElement extends HudElement {
 		matrices.scale(scale, scale, 0);
 
 		//Render the text
-		context.drawText(getTextRenderer(), exampleText, (int) (x / scale), (int) (y / scale), Colors.WHITE, false);
+		context.drawText(getTextRenderer(), text, (int) (x / scale), (int) (y / scale), Colors.WHITE, false);
 
 		matrices.pop();
 	}
