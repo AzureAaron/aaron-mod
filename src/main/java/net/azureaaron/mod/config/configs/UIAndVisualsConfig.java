@@ -122,6 +122,9 @@ public class UIAndVisualsConfig {
 		public boolean enablePingHud = false;
 
 		@SerialEntry
+		public boolean colouredPing = true;
+
+		@SerialEntry
 		public int x = 2;
 
 		@SerialEntry

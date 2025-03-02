@@ -118,6 +118,14 @@ public class UIAndVisualsCategory {
 										newValue -> config.uiAndVisuals.pingHud.enablePingHud = newValue)
 								.controller(ConfigUtils::createBooleanController)
 								.build())
+						.option(Option.<Boolean>createBuilder()
+								.name(Text.literal("Coloured Ping"))
+								.description(OptionDescription.of(Text.literal("Adjusts the colour of the text depending on how much ping you have.")))
+								.binding(defaults.uiAndVisuals.pingHud.colouredPing,
+										() -> config.uiAndVisuals.pingHud.colouredPing,
+										newValue -> config.uiAndVisuals.pingHud.colouredPing = newValue)
+								.controller(ConfigUtils::createBooleanController)
+								.build())
 						.option(HudElementConfigScreen.createOption())
 						.build())
 

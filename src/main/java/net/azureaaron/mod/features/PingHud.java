@@ -14,6 +14,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 public class PingHud {
@@ -40,7 +41,25 @@ public class PingHud {
 	}
 
 	private static Text getPingText() {
-		return Text.literal(average + " ms");
+		int colour;
+
+		if (!AaronModConfigManager.get().uiAndVisuals.pingHud.colouredPing) {
+			colour = 0xFFFFFF;
+		} else if (average < 0) {
+			colour = Formatting.GRAY.getColorValue();
+		} else if (average < 150) {
+			colour = 0x00FF21;
+		} else if (average < 300) {
+			colour = 0xFBFF23;
+		} else if (average < 600) {
+			colour = 0xFF9028;
+		} else if (average < 1000) {
+			colour = 0xFF0000;
+		} else {
+			colour = 0x61007C;
+		}
+
+		return Text.empty().append(Text.literal(String.valueOf(average)).withColor(colour)).append(" ms");
 	}
 
 	private static void reset() {
