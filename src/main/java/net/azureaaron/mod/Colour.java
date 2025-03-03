@@ -11,6 +11,7 @@ import net.minecraft.util.math.MathHelper;
 public class Colour {
 	private static final Supplier<GeneralConfig.CustomColourProfile> CUSTOM = () -> AaronModConfigManager.get().general.customColourProfile;
 	public static final int WARNING = 0xeac864;
+	public static final int INFO = 0x218bff;
 	//google search: good colour combinations
 	//https://primer.style/prism
 	
