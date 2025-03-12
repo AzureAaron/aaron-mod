@@ -115,6 +115,8 @@ java {
 
 test {
 	useJUnitPlatform()
+
+	systemProperty("IS_TEST_ENV", "true")
 }
 
 jar {

@@ -8,7 +8,7 @@ import java.util.Locale;
 import com.ibm.icu.text.DateTimePatternGenerator;
 
 import ca.weblite.objc.Client;
-import net.fabricmc.loader.api.FabricLoader;
+import net.azureaaron.mod.debug.Debug;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Util;
 
@@ -52,13 +52,20 @@ public class Formatters {
 	 * 
 	 * Examples: Thu Jan 30 2025 2:00:10 PM, Thu Jan 30 2025 14:00:10
 	 */
-	public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("E MMM d yyyy " + getTimeFormat(), Locale.US).withZone(ZoneId.systemDefault());
+	public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("E MMM d yyyy " + getTimeFormat(), Locale.US).withZone(getTimeZone());
 
 	/**
-	 * Returns the formatting for the time, always returns 12 hour in development environments for testing purposes.
+	 * Returns the formatting for the time, always returns 12 hour in text environments.
 	 */
 	private static String getTimeFormat() {
-		return is12HourClock() || FabricLoader.getInstance().isDevelopmentEnvironment() ? "h:mm:ss a" : "HH:mm:ss";
+		return is12HourClock() || Debug.isTestEnvironment() ? "h:mm:ss a" : "HH:mm:ss";
+	}
+
+	/**
+	 * Returns the time zone to be used for date formatting, always returns UTC in test environments.
+	 */
+	private static ZoneId getTimeZone() {
+		return Debug.isTestEnvironment() ? ZoneId.of("UTC") : ZoneId.systemDefault();
 	}
 
 	/**
