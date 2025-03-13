@@ -104,16 +104,16 @@ public class ApiAuthentication {
 
 					CLIENT.send(() -> Scheduler.INSTANCE.schedule(ApiAuthentication::updateToken, refreshAtTicks, true));
 				} catch (Exception e) {
-					//Try again in 5 minutes
-					logErrorAndScheduleRetry(Text.literal(AUTH_FAILURE), 300 * 20, "[Aaron's Mod Api Auth] Failed to refresh the api token! Some features might not work :(", e);
+					//Try again in 15 minutes
+					logErrorAndScheduleRetry(Text.literal(AUTH_FAILURE), 900 * 20, "[Aaron's Mod Api Auth] Failed to refresh the api token! Some features might not work :(", e);
 				}
 			} else {
 				//The Minecraft Services API is probably down so we will retry in 5 minutes, or if your access token has expired (game open for 24h) you will need to restart.
 				logErrorAndScheduleRetry(Text.literal(NO_PROFILE_KEYS), expired ? -1 : 300 * 20, "[Aaron's Mod Api Auth] Failed to fetch profile keys! Some features may not work temporarily :( (Has your game been open for more than 24 hours? If so restart.)");
 			}
 		}).exceptionally(throwable -> {
-			//Try again in 1 minute
-			logErrorAndScheduleRetry(Text.literal(AUTH_FAILURE), 60 * 20, "[Aaron's Mod Api Auth] Encountered an unexpected exception while refreshing the api token!", throwable);
+			//Try again in 5 minutes
+			logErrorAndScheduleRetry(Text.literal(AUTH_FAILURE), 300 * 20, "[Aaron's Mod Api Auth] Encountered an unexpected exception while refreshing the api token!", throwable);
 
 			return null;
 		});
