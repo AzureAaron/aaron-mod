@@ -5,15 +5,15 @@ import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 
-import com.google.gson.JsonParser;
+import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.Command;
 import com.mojang.logging.LogUtils;
-import com.mojang.serialization.JsonOps;
+import com.mojang.util.UndashedUuid;
 
 import net.azureaaron.mod.features.TextReplacer;
+import net.azureaaron.mod.utils.ApiUtils;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.Http;
-import net.azureaaron.mod.utils.Http.ApiResponse;
 import net.azureaaron.mod.utils.Messages;
 import net.azureaaron.mod.utils.Skyblock;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -68,10 +68,8 @@ public class CommandSystem {
 	 */
 	public static int handlePlayer4Skyblock(SkyblockCommand command, FabricClientCommandSource source, String player) {
 		CompletableFuture.supplyAsync(() -> {
-			try {
-				boolean isName = !Functions.isUuid(player);
-				
-				return nameToUuid(player, isName, 0);
+			try {				
+				return lookupPlayer(player);
 			} catch (Throwable t) {
 				if (!Functions.isUuid(player)) {
 					source.sendError(Messages.NAME_TO_UUID_ERROR.get());
@@ -141,10 +139,8 @@ public class CommandSystem {
 	
 	public static int handlePlayer4Vanilla(VanillaCommand command, FabricClientCommandSource source, String player) {
 		CompletableFuture.supplyAsync(() -> {
-			try {
-				boolean isName = !Functions.isUuid(player);
-				
-				return nameToUuid(player, isName, 0);
+			try {				
+				return lookupPlayer(player);
 			} catch (Throwable t) {
 				if (!Functions.isUuid(player)) {
 					source.sendError(Messages.NAME_TO_UUID_ERROR.get());
@@ -170,18 +166,14 @@ public class CommandSystem {
 		
 		return Command.SINGLE_SUCCESS;
 	}
-	
-	private static CommandPlayerData nameToUuid(String player, boolean isName, int retries) throws Exception {
-		ApiResponse response = isName ? Http.sendNameToUuidRequest(player) : Http.sendUuidToNameRequest(player);
-		
-		if (response.ok()) {
-			return CommandPlayerData.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).getOrThrow();
-		} else if (response.ratelimited() && retries < 3) {
-			Thread.sleep(800);
-			
-			return nameToUuid(player, isName, ++retries);
+
+	private static CommandPlayerData lookupPlayer(String player) throws Exception {
+		GameProfile profile = ApiUtils.getProfile(player);
+
+		if (profile != null) {
+			return new CommandPlayerData(profile.getName(), UndashedUuid.toString(profile.getId()));
 		} else {
-			throw response.createException();
+			throw new IllegalStateException("Failed to fetch the GameProfile for " + player);
 		}
 	}
 }
