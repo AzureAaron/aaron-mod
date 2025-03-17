@@ -25,7 +25,6 @@ public class Main implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("aaron-mod");
 	public static final String NAMESPACE = "aaron-mod";
 	public static final boolean OPTIFABRIC_LOADED = FabricLoader.getInstance().isModLoaded("optifabric");
-	public static final boolean IRIS_LOADED = FabricLoader.getInstance().isModLoaded("iris");
 	public static final ModContainer MOD_CONTAINER = FabricLoader.getInstance().getModContainer("aaron-mod").get();
 	public static final String MOD_VERSION = MOD_CONTAINER.getMetadata().getVersion().getFriendlyString();
 	public static final String MINECRAFT_VERSION = SharedConstants.getGameVersion().getName();
