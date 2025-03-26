@@ -29,7 +29,6 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.HoverEvent;
-import net.minecraft.text.HoverEvent.Action;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -134,7 +133,7 @@ public class DungeonsCommand extends SkyblockCommand {
 		source.sendFeedback(startText);
 		
 		source.sendFeedback(Text.literal("Level » " + catacombsLevel).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())
-				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Total XP: " + Formatters.INTEGER_NUMBERS.format(catacombsXp)).withColor(colourProfile.infoColour.getAsInt())))));
+				.withHoverEvent(new HoverEvent.ShowText(Text.literal("Total XP: " + Formatters.INTEGER_NUMBERS.format(catacombsXp)).withColor(colourProfile.infoColour.getAsInt())))));
 		source.sendFeedback(Text.literal("Dailies » " + ((onDailies) ? "✓" : "✗") + dailiesLeft).withColor(colourProfile.infoColour.getAsInt()));
 		source.sendFeedback(Text.literal("Secrets » " + Formatters.INTEGER_NUMBERS.format(secrets)).withColor(colourProfile.infoColour.getAsInt()));
 		source.sendFeedback(Text.literal("Selected Class » ").withColor(colourProfile.infoColour.getAsInt())
@@ -151,12 +150,12 @@ public class DungeonsCommand extends SkyblockCommand {
 				.append(Text.literal(" • T » ").withColor(colourProfile.infoColour.getAsInt()))
 				.append(Text.literal(String.valueOf(tankLevel)).withColor(tankColour))
 				.append(Text.literal(" ]").withColor(colourProfile.infoColour.getAsInt()))
-				.styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Class Avg. » " + String.valueOf(classAverage)).withColor(colourProfile.infoColour.getAsInt())))));
+				.styled(style -> style.withHoverEvent(new HoverEvent.ShowText(Text.literal("Class Avg. » " + String.valueOf(classAverage)).withColor(colourProfile.infoColour.getAsInt())))));
 		
 		source.sendFeedback(Text.literal(""));
 		
 		source.sendFeedback(Text.literal("(Catacombs Completions)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt())
-				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Entrance » " + Formatters.INTEGER_NUMBERS.format(entrances) + "\n").withColor(colourProfile.infoColour.getAsInt())
+				.withHoverEvent(new HoverEvent.ShowText(Text.literal("Entrance » " + Formatters.INTEGER_NUMBERS.format(entrances) + "\n").withColor(colourProfile.infoColour.getAsInt())
 						.append(Text.literal("F1 » " + Formatters.INTEGER_NUMBERS.format(floor1s) + "\n"))
 						.append(Text.literal("F2 » " + Formatters.INTEGER_NUMBERS.format(floor2s) + "\n"))
 						.append(Text.literal("F3 » " + Formatters.INTEGER_NUMBERS.format(floor3s) + "\n"))
@@ -165,7 +164,7 @@ public class DungeonsCommand extends SkyblockCommand {
 						.append(Text.literal("F6 » " + Formatters.INTEGER_NUMBERS.format(floor6s) + "\n"))
 						.append(Text.literal("F7 » " + Formatters.INTEGER_NUMBERS.format(floor7s)))))));
 		source.sendFeedback(Text.literal("(Master Catacombs Completions)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt())
-				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("M1 » " + Formatters.INTEGER_NUMBERS.format(masterFloor1s) + "\n").withColor(colourProfile.infoColour.getAsInt())
+				.withHoverEvent(new HoverEvent.ShowText(Text.literal("M1 » " + Formatters.INTEGER_NUMBERS.format(masterFloor1s) + "\n").withColor(colourProfile.infoColour.getAsInt())
 						.append(Text.literal("M2 » " + Formatters.INTEGER_NUMBERS.format(masterFloor2s) + "\n"))
 						.append(Text.literal("M3 » " + Formatters.INTEGER_NUMBERS.format(masterFloor3s) + "\n"))
 						.append(Text.literal("M4 » " + Formatters.INTEGER_NUMBERS.format(masterFloor4s) + "\n"))

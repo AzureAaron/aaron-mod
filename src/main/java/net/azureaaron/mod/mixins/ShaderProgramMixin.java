@@ -34,7 +34,7 @@ public abstract class ShaderProgramMixin {
 		chromaSaturation = getUniform("ChromaSaturation");
 	}
 
-	@Inject(method = "initializeUniforms", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setupShaderLights(Lnet/minecraft/client/gl/ShaderProgram;)V"))
+	@Inject(method = "initializeUniforms", at = @At(value = "TAIL"))
 	private void aaronMod$updateUniforms(CallbackInfo ci) {
 		if (time != null) {
 			time.set(ShaderUniforms.getShaderTime());

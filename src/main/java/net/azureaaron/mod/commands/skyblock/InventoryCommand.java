@@ -32,12 +32,8 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.HoverEvent;
-import net.minecraft.text.HoverEvent.Action;
-import net.minecraft.text.HoverEvent.ItemStackContent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -70,7 +66,7 @@ public class InventoryCommand extends SkyblockCommand {
 	private record ItemData4(ItemStack stack, String fallback) {
 		private MutableText feedbackMessage() {
 			if (!stack.isEmpty()) {
-				return stack.getName().copy().styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_ITEM, new ItemStackContent(stack))));
+				return stack.getName().copy().styled(style -> style.withHoverEvent(new HoverEvent.ShowItem(stack)));
 			} else {
 				return Text.literal(fallback).formatted(Formatting.RED);
 			}
@@ -125,8 +121,7 @@ public class InventoryCommand extends SkyblockCommand {
 
 		if (inventoryEnabled) {
 			for (ItemStack stack : inventory) {
-				@SuppressWarnings("deprecation")
-				String itemId = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).getNbt().getString("id");
+				String itemId = ItemUtils.getId(stack);
 
 				if (itemId.equals("ASTRAEA") || itemId.equals("HYPERION") || itemId.equals("SCYLLA") || itemId.equals("VALKYRIE")
 						|| itemId.equals("TERMINATOR") || itemId.equals("DARK_CLAYMORE")) keyItems.add(new ItemData4(stack, "Error parsing item :("));

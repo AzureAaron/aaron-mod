@@ -1,7 +1,6 @@
 package net.azureaaron.mod.utils.render;
 
 import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
@@ -84,14 +83,8 @@ public class Renderer {
 
 		VertexConsumerProvider.Immediate consumers = VertexConsumerProvider.immediate(ALLOCATOR);
 
-		RenderSystem.enableDepthTest();
-		RenderSystem.depthFunc(seeThrough ? GL11.GL_ALWAYS : GL11.GL_LEQUAL);
-
 		textRenderer.draw(text, xOffset, 0, 0xFFFFFFFF, false, positionMatrix, consumers, seeThrough ? TextLayerType.SEE_THROUGH : TextLayerType.NORMAL, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
 		consumers.draw();
-
-		RenderSystem.depthFunc(GL11.GL_LEQUAL);
-		RenderSystem.disableDepthTest();
 	}
 
 	public static boolean pointIsInArea(double x, double y, double x1, double y1, double x2, double y2) {

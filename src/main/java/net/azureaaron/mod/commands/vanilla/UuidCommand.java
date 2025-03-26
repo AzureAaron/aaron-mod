@@ -20,7 +20,6 @@ import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
-import net.minecraft.text.HoverEvent.Action;
 import net.minecraft.text.Text;
 
 public class UuidCommand extends VanillaCommand {
@@ -46,7 +45,7 @@ public class UuidCommand extends VanillaCommand {
 		
 		source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Uuid » ").withColor(colourProfile.primaryColour.getAsInt())
 				.append(Text.literal(uuid).withColor(colourProfile.secondaryColour.getAsInt()))
-				.append("").styled(style -> style.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.translatable("chat.copy.click")))
-						.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid))));
+				.append("").styled(style -> style.withHoverEvent(new HoverEvent.ShowText(Text.translatable("chat.copy.click")))
+						.withClickEvent(new ClickEvent.CopyToClipboard(uuid))));
 	}
 }

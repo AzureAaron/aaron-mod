@@ -30,7 +30,6 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.HoverEvent;
-import net.minecraft.text.HoverEvent.Action;
 import net.minecraft.text.Text;
 
 public class ProfileCommand extends SkyblockCommand {
@@ -105,7 +104,7 @@ public class ProfileCommand extends SkyblockCommand {
 		
 		source.sendFeedback(Text.literal("Profile » " + Functions.titleCase(body.get("cute_name").getAsString())).withColor(colourProfile.infoColour.getAsInt()));
 		source.sendFeedback(Text.literal("Joined » " + Functions.toMostRelative(firstJoinRelative))
-				.styled(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal(Formatters.DATE_FORMATTER.format(Instant.ofEpochMilli(firstJoinTimestamp))).styled(style1 -> style1.withColor(colourProfile.infoColour.getAsInt()))))));
+				.styled(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent.ShowText(Text.literal(Formatters.DATE_FORMATTER.format(Instant.ofEpochMilli(firstJoinTimestamp))).styled(style1 -> style1.withColor(colourProfile.infoColour.getAsInt()))))));
 		source.sendFeedback(Text.literal("Level » " + level).withColor(colourProfile.infoColour.getAsInt()));
 		
 		source.sendFeedback(Text.literal(""));
@@ -122,7 +121,7 @@ public class ProfileCommand extends SkyblockCommand {
 		
 		if (skillsEnabled) {
 			source.sendFeedback(Text.literal("Skill Average » " + Formatters.FLOAT_NUMBERS.format(skillAverage)).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())
-					.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Alchemy » " + String.valueOf(alchemyLevel) + "\n").withColor(colourProfile.infoColour.getAsInt())
+					.withHoverEvent(new HoverEvent.ShowText(Text.literal("Alchemy » " + String.valueOf(alchemyLevel) + "\n").withColor(colourProfile.infoColour.getAsInt())
 							.append("Carpentry » " + carpentryLevel + "\n")
 							.append("Combat » " + combatLevel + "\n")
 							.append("Enchanting » " + enchantingLevel + "\n")
@@ -133,21 +132,21 @@ public class ProfileCommand extends SkyblockCommand {
 							.append("Taming » " + tamingLevel)))));
 			
 			source.sendFeedback(Text.literal("(Cosmetic Skills)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt()).withItalic(true)
-					.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Runecrafting » " + runecraftingLevel + "\n").styled(style1 -> style1.withColor(colourProfile.infoColour.getAsInt()).withItalic(false))
+					.withHoverEvent(new HoverEvent.ShowText(Text.literal("Runecrafting » " + runecraftingLevel + "\n").styled(style1 -> style1.withColor(colourProfile.infoColour.getAsInt()).withItalic(false))
 							.append("Social » " + socialLevel)))));
 		} else {
 			source.sendFeedback(Text.literal("Skill Average » ").withColor(colourProfile.infoColour.getAsInt())
 					.append(Text.literal("Api Disabled!")));
 			
 			source.sendFeedback(Text.literal("(Cosmetic Skills)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt()).withItalic(true)
-					.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Api Disabled!").styled(style1 -> style1.withColor(colourProfile.infoColour.getAsInt()).withItalic(false))))));
+					.withHoverEvent(new HoverEvent.ShowText(Text.literal("Api Disabled!").styled(style1 -> style1.withColor(colourProfile.infoColour.getAsInt()).withItalic(false))))));
 		}
 		
 		source.sendFeedback(Text.literal(""));
 		
 		source.sendFeedback(Text.literal("Slayers » " + revenantHorrorLevel + " • " + tarantulaBroodfatherLevel + 
 				" • " + svenPackmasterLevel + " • " + voidgloomSeraphLevel + " • " + infernoDemonlordLevel + " • " + riftstalkerBloodfiendLevel).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())
-						.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Revenant Horror » " + revenantHorrorLevel + "\n").withColor(colourProfile.infoColour.getAsInt())
+						.withHoverEvent(new HoverEvent.ShowText(Text.literal("Revenant Horror » " + revenantHorrorLevel + "\n").withColor(colourProfile.infoColour.getAsInt())
 								.append("Tarantula Broodfather » " + tarantulaBroodfatherLevel + "\n")
 								.append("Sven Packmaster » " + svenPackmasterLevel + "\n")
 								.append("Voidgloom Seraph » " + voidgloomSeraphLevel + "\n")

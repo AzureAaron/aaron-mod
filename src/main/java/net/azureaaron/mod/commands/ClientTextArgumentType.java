@@ -10,19 +10,21 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.text.MutableText;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.SnbtParsing;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextCodecs;
-import net.minecraft.util.JsonReaderUtils;
+import net.minecraft.util.packrat.Parser;
 
 public class ClientTextArgumentType implements ArgumentType<Text> {
 	private static final Collection<String> EXAMPLES = Arrays.asList("\"hello world\"", "\"\"",
 			"\"{\"text\":\"hello world\"}", "[\"\"]");
 	public static final DynamicCommandExceptionType INVALID_COMPONENT_EXCEPTION = new DynamicCommandExceptionType(
 			text -> Text.translatable("argument.component.invalid", text));
+	private static final Parser<NbtElement> PARSER = SnbtParsing.createParser(NbtOps.INSTANCE);
 	
-	private ClientTextArgumentType() {}
+	private ClientTextArgumentType() {}//TextArgumentType
 	
 	public static Text getTextArgument(CommandContext<FabricClientCommandSource> context, String name) {
 		return context.getArgument(name, Text.class);
@@ -38,7 +40,7 @@ public class ClientTextArgumentType implements ArgumentType<Text> {
 		String str = stringReader.getRemaining().replaceAll("&z", "§z").replaceAll("&Z", "§Z");
 		StringReader reader = new StringReader(str);
 		try {
-			MutableText text = (MutableText) JsonReaderUtils.parse(DynamicRegistryManager.EMPTY, reader, TextCodecs.CODEC);
+			Text text = PARSER.withDecoding(NbtOps.INSTANCE, PARSER, TextCodecs.CODEC, INVALID_COMPONENT_EXCEPTION).parse(reader);
 			if (text == null) {
 				throw INVALID_COMPONENT_EXCEPTION.createWithContext(reader, "empty");
 			}

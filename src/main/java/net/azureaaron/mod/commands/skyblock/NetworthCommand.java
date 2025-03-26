@@ -226,7 +226,7 @@ public class NetworthCommand extends SkyblockCommand {
 			}
 		}
 
-		return new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText);
+		return new HoverEvent.ShowText(hoverText);
 	}
 
 	private static Text formatPet(PetInfo petInfo) {

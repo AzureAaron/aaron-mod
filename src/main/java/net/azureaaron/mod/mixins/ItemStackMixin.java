@@ -118,17 +118,17 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 		return text;
 	}
 
-	@ModifyVariable(method = "appendTooltip", at = @At("STORE"))
+	@ModifyVariable(method = "appendComponentTooltip", at = @At("STORE"))
 	private TooltipAppender aaronMod$rainbowifyMaxSkyblockEnchantments(TooltipAppender itemComponent) {
 		if (AaronModConfigManager.get().skyblock.enchantments.rainbowMaxEnchants && ((Functions.isOnHypixel() && Functions.isInSkyblock()) || getAlwaysDisplaySkyblockInfo()) && itemComponent instanceof LoreComponent lore) {
 			//Find what enchantments to replace with what colour
-			NbtCompound appliedEnchantments = ItemUtils.getCustomData(this).getCompound("enchantments");
+			NbtCompound appliedEnchantments = ItemUtils.getCustomData(this).getCompoundOrEmpty("enchantments");
 			Object2IntMap<String> maxEnchantmentColours = new Object2IntOpenHashMap<>();
 			Object2IntMap<String> goodEnchantmentColours = new Object2IntOpenHashMap<>();
 
 			for (String id : appliedEnchantments.getKeys()) {
 				SkyblockEnchantment enchantment = SkyblockEnchantments.getEnchantments().get(id);
-				int level = appliedEnchantments.getInt(id); //Will be 0 if the key isn't an int
+				int level = appliedEnchantments.getInt(id, 0); //Will be 0 if the key isn't an int
 
 				if (level > 0 && enchantment != null && enchantment.isAtGoodOrMaxLevel(level)) {
 					//The name as shown when applied (e.g. Critical VII)
@@ -224,7 +224,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 
 	@Override
 	public boolean getAlwaysDisplaySkyblockInfo() {
-		return ItemUtils.getCustomData(this).getCompound(Main.NAMESPACE).getBoolean("alwaysDisplaySkyblockInfo");
+		return ItemUtils.getCustomData(this).getCompoundOrEmpty(Main.NAMESPACE).getBoolean("alwaysDisplaySkyblockInfo", false);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -237,7 +237,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 			compound.put(Main.NAMESPACE, new NbtCompound());
 		}
 
-		compound.getCompound(Main.NAMESPACE).putBoolean("alwaysDisplaySkyblockInfo", value);
+		compound.getCompoundOrEmpty(Main.NAMESPACE).putBoolean("alwaysDisplaySkyblockInfo", value);
 
 		if (!contains(DataComponentTypes.CUSTOM_DATA)) {
 			set(DataComponentTypes.CUSTOM_DATA, component);

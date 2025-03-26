@@ -19,7 +19,7 @@ public class NetworthCalculator {
 
 	public static NetworthResult calculateItemNetworth(ItemStack stack) {
 		NbtCompound customData = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
-		String itemId = customData.getString("id");
+		String itemId = customData.getString("id", "");
 		int count = stack.getCount();
 
 		SkyblockItemStack skyblockStack = SkyblockItemStack.of(itemId, count, new Dynamic<>(NbtOps.INSTANCE, customData), SkyblockItemMetadataRetriever.of(customData, itemId));

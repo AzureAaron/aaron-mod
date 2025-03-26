@@ -15,13 +15,8 @@ public class ShaderUniforms {
 	private static float shaderTime;
 
 	public static void updateShaderTime() {
-		float time = (System.currentTimeMillis() % 30000L) / 30000f;
-
-		if (!RenderSystem.isOnRenderThread()) {
-			RenderSystem.recordRenderCall(() -> shaderTime = time);
-		} else {
-			shaderTime = time;
-		}
+		RenderSystem.assertOnRenderThread();
+		shaderTime = (System.currentTimeMillis() % 30000L) / 30000f;
 	}
 
 	public static float getShaderTime() {

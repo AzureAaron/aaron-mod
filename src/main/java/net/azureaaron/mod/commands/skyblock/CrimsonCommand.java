@@ -24,7 +24,6 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.HoverEvent;
-import net.minecraft.text.HoverEvent.Action;
 import net.minecraft.text.Text;
 
 public class CrimsonCommand extends SkyblockCommand {
@@ -107,7 +106,7 @@ public class CrimsonCommand extends SkyblockCommand {
 		
 		source.sendFeedback(Text.literal(""));
 		source.sendFeedback(Text.literal("(Kuudra Completions)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt())
-				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, 
+				.withHoverEvent(new HoverEvent.ShowText(
 						Text.literal("Total Completions » " + Formatters.INTEGER_NUMBERS.format(totalKuudraCompletions) + "\n").withColor(colourProfile.infoColour.getAsInt())
 						.append(Text.literal("Total Collection » " + Formatters.INTEGER_NUMBERS.format(totalKuudraCollection) + "\n\n"))
 						.append(Text.literal("Basic » " + Formatters.INTEGER_NUMBERS.format(basicCompletions) + "\n" ))
@@ -118,7 +117,7 @@ public class CrimsonCommand extends SkyblockCommand {
 		
 		//Colour the dojo score eventually - maybe!
 		source.sendFeedback(Text.literal("(Dojo Tests)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt())
-				.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, 
+				.withHoverEvent(new HoverEvent.ShowText( 
 						Text.literal("Total Score » " + Formatters.INTEGER_NUMBERS.format(totalDojoScore) + "\n").withColor(colourProfile.infoColour.getAsInt())
 						.append(Text.literal("Force » " + forceGrade + " (" + Formatters.INTEGER_NUMBERS.format(forceScore) + ") \n" ))
 						.append(Text.literal("Stamina » " + staminaGrade + " (" + Formatters.INTEGER_NUMBERS.format(staminaScore) + ") \n" ))

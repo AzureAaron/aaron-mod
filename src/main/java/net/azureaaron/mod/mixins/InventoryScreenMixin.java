@@ -27,6 +27,7 @@ import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.world.GameMode;
 
 @Mixin(InventoryScreen.class)
 public abstract class InventoryScreenMixin extends RecipeBookScreen<PlayerScreenHandler> implements RecipeBookProvider {
@@ -39,14 +40,14 @@ public abstract class InventoryScreenMixin extends RecipeBookScreen<PlayerScreen
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void aaronMod$initDisplayGroups(PlayerEntity player, CallbackInfo ci) {
-		if (!CLIENT.interactionManager.hasCreativeInventory() && AaronModConfigManager.get().refinements.tooltips.showItemGroupsOutsideCreative) {
+		if (CLIENT.interactionManager.getCurrentGameMode() != GameMode.CREATIVE && AaronModConfigManager.get().refinements.tooltips.showItemGroupsOutsideCreative) {
 			updateDisplayGroups(CLIENT.getNetworkHandler().getSearchManager(), CLIENT.getNetworkHandler().getEnabledFeatures(), shouldShowOperatorTab(player), player.getRegistryManager());
 		}
 	}
 
 	@Inject(method = "handledScreenTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/RecipeBookScreen;handledScreenTick()V", shift = At.Shift.AFTER))
 	private void aaronMod$updateDisplayGroups(CallbackInfo ci) {
-		if (!CLIENT.interactionManager.hasCreativeInventory() && CLIENT.player != null && AaronModConfigManager.get().refinements.tooltips.showItemGroupsOutsideCreative) {
+		if (CLIENT.interactionManager.getCurrentGameMode() != GameMode.CREATIVE && CLIENT.player != null && AaronModConfigManager.get().refinements.tooltips.showItemGroupsOutsideCreative) {
 			updateDisplayGroups(CLIENT.getNetworkHandler().getSearchManager(), CLIENT.getNetworkHandler().getEnabledFeatures(), shouldShowOperatorTab(CLIENT.player), CLIENT.player.getRegistryManager());
 		}
 	}

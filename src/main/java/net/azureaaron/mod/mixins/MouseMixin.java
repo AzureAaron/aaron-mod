@@ -7,10 +7,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -82,50 +81,20 @@ public class MouseMixin implements MouseGuiPositioner {
 		if (AaronModConfigManager.get().refinements.input.dontResetCursorPosition && CLIENT.currentScreen instanceof GenericContainerScreen) GLFW.glfwSetCursorPos(CLIENT.getWindow().getHandle(), this.guiX, this.guiY);
 	}
 
-	@ModifyArgs(method = "onMouseButton", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseClicked(DDI)Z"))
-	private static void aaronMod$adjustMouseForSeparateScreenScalingOnClick(Args args) {
-		adjustPosition(args, CLIENT.mouse.getX(), CLIENT.mouse.getY(), 0, 1);
-	}
+	@WrapMethod(method = { "scaleX(Lnet/minecraft/client/util/Window;D)D", "scaleY(Lnet/minecraft/client/util/Window;D)D" })
+	private static double aaronMod$adjustPosition(Window window, double xOrY, Operation<Double> operation) {
+		double scaled;
 
-	@ModifyArgs(method = "onMouseButton", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseReleased(DDI)Z"))
-	private static void aaronMod$adjustMouseForSeparateScreenScalingOnRelease(Args args) {
-		adjustPosition(args, CLIENT.mouse.getX(), CLIENT.mouse.getY(), 0, 1);
-	}
-
-	@ModifyArgs(method = "onMouseScroll", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseScrolled(DDDD)Z"))
-	private void aaronMod$adjustMouseForSeparateScreenScalingOnScroll(Args args) {
-		adjustPosition(args, CLIENT.mouse.getX(), CLIENT.mouse.getY(), 0, 1);
-	}
-
-	@ModifyArgs(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseMoved(DD)V"))
-	private static void aaronMod$adjustMouseForSeparateScreenScalingOnMove(Args args) {
-		adjustPosition(args, CLIENT.mouse.getX(), CLIENT.mouse.getY(), 0, 1);
-	}
-
-	@ModifyArgs(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;mouseDragged(DDIDD)Z"))
-	private void aaronMod$adjustMouseForSeparateScreelScalingOnDrag(Args args) {
-		adjustPosition(args, CLIENT.mouse.getX(), CLIENT.mouse.getY(), 0, 1);
-		adjustPosition(args, this.cursorDeltaX, this.cursorDeltaY, 3, 4);
-	}
-
-	/**
-	 * @param x Either the mouse's x position or the cursor delta x
-	 * @param y Either the mouse's y position or the cursor delta y
-	 */
-	@Unique
-	private static void adjustPosition(Args args, double x, double y, int xIndex, int yIndex) {
 		if (SeparateInventoryGuiScale.isEnabled(CLIENT.currentScreen)) {
-			Window window = CLIENT.getWindow();
 			SavedScaleState state = SavedScaleState.create(window).adjust();
-
-			double newX = x * (double) window.getScaledWidth() / (double) window.getWidth();
-			double newY = y * (double) window.getScaledHeight() / (double) window.getHeight();
-
-			args.set(xIndex, newX);
-			args.set(yIndex, newY);
+			scaled = operation.call(window, xOrY);
 
 			state.reset();
+		} else {
+			scaled = operation.call(window, xOrY);
 		}
+
+		return scaled;
 	}
 
 	@Override

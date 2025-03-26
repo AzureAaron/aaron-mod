@@ -28,7 +28,7 @@ public class AaronModConfigManager {
 					.setJson5(false)
 					.appendGsonBuilder(builder -> builder
 							.setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
-							.registerTypeHierarchyAdapter(Identifier.class, new Identifier.Serializer()))
+							.registerTypeHierarchyAdapter(Identifier.class, new CodecTypeAdapter<>(Identifier.CODEC)))
 					.build())
 			.build();
 	public static final int VERSION = 2;

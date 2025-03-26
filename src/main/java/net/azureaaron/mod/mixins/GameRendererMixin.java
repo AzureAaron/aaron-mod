@@ -68,8 +68,8 @@ public class GameRendererMixin {
 				screen.markResized(true);
 			}
 
-			int newMouseX = (int) (this.client.mouse.getX() * (double) window.getScaledWidth() / (double) window.getWidth());
-			int newMouseY = (int) (this.client.mouse.getY() * (double) window.getScaledHeight() / (double) window.getHeight());
+			int newMouseX = (int) this.client.mouse.getScaledX(window);
+			int newMouseY = (int) this.client.mouse.getScaledY(window);
 			Matrix4f screenProjectionMatrix = new Matrix4f()
 					.setOrtho(
 							0.0f,

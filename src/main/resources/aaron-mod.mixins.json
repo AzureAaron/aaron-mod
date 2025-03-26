@@ -43,6 +43,7 @@
     "PingMeasurerMixin",
     "PlayerSkinTextureDownloaderMixin",
     "PotionItemMixin",
+    "RenderPipelinesMixin",
     "ScreenMixin",
     "ScreenshotRecorderMixin",
     "ScrollerMixin",

@@ -14,7 +14,6 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.NbtSizeTracker;
 import net.minecraft.registry.BuiltinRegistries;
@@ -35,7 +34,7 @@ public class ItemUtils {
 	 * @see #decodeCompressedItemData(String)
 	 */
 	public static List<NbtCompound> decodeCompressedItemData(byte[] bytes) throws IOException {
-		return NbtIo.readCompressed(new ByteArrayInputStream(bytes), NbtSizeTracker.ofUnlimitedBytes()).getList("i", NbtElement.COMPOUND_TYPE).stream()
+		return NbtIo.readCompressed(new ByteArrayInputStream(bytes), NbtSizeTracker.ofUnlimitedBytes()).getListOrEmpty("i").stream()
 				.map(NbtCompound.class::cast)
 				.toList();
 	}
@@ -57,7 +56,7 @@ public class ItemUtils {
 
 	@NotNull
 	public static String getId(ComponentHolder stack) {
-		return getCustomData(stack).getString("id");
+		return getCustomData(stack).getString("id", "");
 	}
 
 	public static WrapperLookup getRegistryLookup() {

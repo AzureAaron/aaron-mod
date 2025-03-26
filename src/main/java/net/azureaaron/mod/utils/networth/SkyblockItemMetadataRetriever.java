@@ -17,10 +17,10 @@ record SkyblockItemMetadataRetriever(IntList cakeBagCakeYears) implements ItemMe
 			try {
 				IntList cakeYears = new IntArrayList();
 
-				for (NbtCompound compound : ItemUtils.decodeCompressedItemData(customData.getByteArray("new_year_cake_bag_data"))) {
-					if (compound.getCompound("tag").contains("ExtraAttributes")) {
-						NbtCompound extraAttributes = compound.getCompound("tag").getCompound("ExtraAttributes");
-						int cakeYear = extraAttributes.getInt("new_years_cake"); //You can only put new year cakes in the bag so we don't need to check for it being one
+				for (NbtCompound compound : ItemUtils.decodeCompressedItemData(customData.getByteArray("new_year_cake_bag_data").orElse(new byte[0]))) {
+					if (compound.getCompoundOrEmpty("tag").contains("ExtraAttributes")) {
+						NbtCompound extraAttributes = compound.getCompoundOrEmpty("tag").getCompoundOrEmpty("ExtraAttributes");
+						int cakeYear = extraAttributes.getInt("new_years_cake", 0); //You can only put new year cakes in the bag so we don't need to check for it being one
 
 						cakeYears.add(cakeYear);
 					}

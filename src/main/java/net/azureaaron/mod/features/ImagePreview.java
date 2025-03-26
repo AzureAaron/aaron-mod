@@ -63,8 +63,8 @@ public class ImagePreview {
 			text.visit((style, stringified) -> {
 				ClickEvent clickEvent = style.getClickEvent();
 
-				if (clickEvent != null && clickEvent.getAction() == ClickEvent.Action.OPEN_URL) {
-					String url = fixupLink(clickEvent.getValue());
+				if (clickEvent instanceof ClickEvent.OpenUrl(URI uri)) {
+					String url = fixupLink(uri.toString());
 
 					if (IMAGE_URL_PATTERN.matcher(url).matches()) foundImages.add(url);
 				}
@@ -97,7 +97,7 @@ public class ImagePreview {
 					//Schedule the image to be uploaded as a texture on the render thread to avoid Mojang's
 					//horribly dangerous system for handling off-thread GL operations
 					client.send(() -> {
-						client.getTextureManager().registerTexture(id, new NativeImageBackedTexture(image));
+						client.getTextureManager().registerTexture(id, new NativeImageBackedTexture(id::toString, image));
 						IMAGE_CACHE.put(url, new CachedImage(System.currentTimeMillis(), id, image.getWidth(), image.getHeight()));
 					});
 				}
@@ -115,8 +115,8 @@ public class ImagePreview {
 		if (style != null && style.getClickEvent() != null) {
 			ClickEvent clickEvent = style.getClickEvent();
 
-			if (clickEvent.getAction() == ClickEvent.Action.OPEN_URL) {
-				CachedImage image = ImagePreview.IMAGE_CACHE.getOrDefault(fixupLink(clickEvent.getValue()), null);
+			if (clickEvent instanceof ClickEvent.OpenUrl(URI uri)) {
+				CachedImage image = ImagePreview.IMAGE_CACHE.getOrDefault(fixupLink(uri.toString()), null);
 
 				if (image != null && image != CachedImage.EMPTY) {
 					MatrixStack matrices = context.getMatrices();

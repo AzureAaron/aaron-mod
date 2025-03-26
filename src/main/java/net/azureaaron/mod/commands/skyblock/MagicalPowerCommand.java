@@ -55,7 +55,6 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.MutableText;
@@ -142,8 +141,7 @@ public class MagicalPowerCommand extends SkyblockCommand {
 		for (ItemStack stack : accessories) {
 			if (!stack.contains(DataComponentTypes.LORE)) continue; //Item is probably not an accessory
 
-			@SuppressWarnings("deprecation")
-			String itemId = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).getNbt().getString("id");
+			String itemId = ItemUtils.getId(stack);
 
 			//Determine the rarity - iterate backwards for efficiency
 			for (Text line : stack.get(DataComponentTypes.LORE).lines().reversed()) {
@@ -353,14 +351,14 @@ public class MagicalPowerCommand extends SkyblockCommand {
 				List<Text> bonuses = bonus.clone().object2FloatEntrySet().stream().map(e -> formatStatText(e.getKey(), e.getFloatValue())).collect(Collectors.toList());
 				
 				source.sendFeedback(Text.literal("(Unique Power Bonus)").withColor(colourProfile.hoverColour.getAsInt()).styled(style -> style.withHoverEvent(
-						new HoverEvent(HoverEvent.Action.SHOW_TEXT, getStatsBreakdown(bonuses)))));
+						new HoverEvent.ShowText(getStatsBreakdown(bonuses)))));
 			}
 		} else {
 			source.sendFeedback(Text.literal(""));
 		}
 		
 		source.sendFeedback(Text.literal("(Tunings)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt()).withHoverEvent(
-				new HoverEvent(HoverEvent.Action.SHOW_TEXT, getStatsBreakdown(tunings)))));
+				new HoverEvent.ShowText(getStatsBreakdown(tunings)))));
 		
 		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 	}

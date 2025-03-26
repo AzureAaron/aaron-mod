@@ -42,8 +42,6 @@ import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.HoverEvent;
-import net.minecraft.text.HoverEvent.Action;
-import net.minecraft.text.HoverEvent.ItemStackContent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -181,7 +179,7 @@ public class CroesusCommand extends SkyblockCommand {
 		
 		source.sendFeedback(Text.literal("Unclaimed Chests » " + runs.size()).withColor(colourProfile.infoColour.getAsInt()));
 		source.sendFeedback(Text.literal("Rare Loot Awaits » " + ((rareLootAwaits) ? "✓" : "✗"))
-				.styled(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent(Action.SHOW_ITEM, new ItemStackContent(bundle)))));
+				.styled(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent.ShowItem(bundle))));
 		source.sendFeedback(Text.literal(""));
 		
 		int count = 0;
@@ -196,7 +194,7 @@ public class CroesusCommand extends SkyblockCommand {
 				
 				source.sendFeedback(Text.literal("(" + floorShorthand + " • " + timeAgo + ")")
 						.styled(style -> style.withColor(colourProfile.hoverColour.getAsInt())
-								.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, Text.literal("Expires:\n" + Formatters.DATE_FORMATTER.format(Instant.ofEpochMilli(expiresAt)) + "\n(In " + TimeUnit.MILLISECONDS.toHours(expiresIn) + " hours)")
+								.withHoverEvent(new HoverEvent.ShowText(Text.literal("Expires:\n" + Formatters.DATE_FORMATTER.format(Instant.ofEpochMilli(expiresAt)) + "\n(In " + TimeUnit.MILLISECONDS.toHours(expiresIn) + " hours)")
 										.withColor(colourProfile.infoColour.getAsInt())))));
 				count++;
 			}
