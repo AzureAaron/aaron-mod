@@ -21,6 +21,7 @@
     "FireworksSparkParticleMixin",
     "GameRendererMixin",
     "GenericContainerScreenMixin",
+    "GlResourceManagerMixin",
     "HandledScreenMixin",
     "HeldItemRendererMixin",
     "InGameHudMixin",

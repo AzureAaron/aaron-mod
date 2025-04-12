@@ -30,6 +30,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
 			case String s when s.equals(MIXIN_PACKAGE + "ParticleManagerMixin") -> !OPTIFABRIC_LOADED;
 			case String s when s.equals(MIXIN_PACKAGE + "FireworksSparkParticleMixin") -> !OPTIFABRIC_LOADED;
 			case String s when s.equals(MIXIN_PACKAGE + "SkyblockerPVCollectionsGenericCategoryMixin") -> SKYBLOCKER_LOADED;
+			case String s when s.equals(MIXIN_PACKAGE + "GlResourceManagerMixin") -> SystemUtils.IS_OS_MAC && "aarch64".equalsIgnoreCase(SystemUtils.OS_ARCH);
 
 			default -> true;
 		};
