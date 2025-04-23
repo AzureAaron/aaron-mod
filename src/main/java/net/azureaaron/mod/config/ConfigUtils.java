@@ -7,12 +7,20 @@ import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
+import dev.isxander.yacl3.api.controller.IntegerFieldControllerBuilder;
 import net.minecraft.text.Text;
 
 public class ConfigUtils {
 
 	public static BooleanControllerBuilder createBooleanController(Option<Boolean> opt) {
 		return BooleanControllerBuilder.create(opt).coloured(true);
+	}
+
+	public static IntegerFieldControllerBuilder createIntPercentageFieldController(Option<Integer> opt, UnaryOperator<IntegerFieldControllerBuilder> controllerUpdater) {
+		IntegerFieldControllerBuilder builder = IntegerFieldControllerBuilder.create(opt).formatValue(i -> Text.of(i + "%"));
+		controllerUpdater.apply(builder);
+
+		return builder;
 	}
 
 	/**

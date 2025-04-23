@@ -25,6 +25,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.Window;
 
 @Mixin(value = GameRenderer.class, priority = 1100) //Inject after Fabric so that our handler also wraps the Screen API render events
@@ -54,8 +55,8 @@ public class GameRendererMixin {
 	}
 
 	@Inject(method = "render", at = @At("HEAD"))
-	private void aaronMod$timeUniform(CallbackInfo ci) {
-		ShaderUniforms.updateShaderTime();
+	private void aaronMod$timeUniform(CallbackInfo ci, @Local(argsOnly = true) RenderTickCounter tickCounter) {
+		ShaderUniforms.updateShaderTicks(tickCounter);
 	}
 
 	@WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;renderWithTooltip(Lnet/minecraft/client/gui/DrawContext;IIF)V"))

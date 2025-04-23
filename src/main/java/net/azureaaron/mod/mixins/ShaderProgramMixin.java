@@ -16,7 +16,10 @@ import net.minecraft.client.gl.ShaderProgram;
 public abstract class ShaderProgramMixin {
 	@Unique
 	@Nullable
-	private GlUniform time;
+	private GlUniform ticks;
+	@Unique
+	@Nullable
+	private GlUniform chromaSize;
 	@Unique
 	@Nullable
 	private GlUniform chromaSpeed;
@@ -29,15 +32,20 @@ public abstract class ShaderProgramMixin {
 
 	@Inject(method = "set", at = @At("TAIL"))
 	private void aaronMod$customUniformInitializer(CallbackInfo ci) {
-		time = getUniform("Time");
+		ticks = getUniform("Ticks");
+		chromaSize = getUniform("ChromaSize");
 		chromaSpeed = getUniform("ChromaSpeed");
 		chromaSaturation = getUniform("ChromaSaturation");
 	}
 
 	@Inject(method = "initializeUniforms", at = @At(value = "TAIL"))
 	private void aaronMod$updateUniforms(CallbackInfo ci) {
-		if (time != null) {
-			time.set(ShaderUniforms.getShaderTime());
+		if (ticks != null) {
+			ticks.set(ShaderUniforms.getShaderTicks());
+		}
+
+		if (chromaSize != null) {
+			chromaSize.set(ShaderUniforms.getShaderChromaSize());
 		}
 
 		if (chromaSpeed != null) {

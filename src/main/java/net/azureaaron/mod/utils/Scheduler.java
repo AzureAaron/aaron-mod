@@ -99,6 +99,10 @@ public class Scheduler {
 		profiler.pop();
 	}
 
+	public int getCurrentTick() {
+		return currentTick;
+	}
+
 	/**
 	 * Schedules a task to be run at a certain tick. Note that the caller must account for the current tick themselves.
 	 */

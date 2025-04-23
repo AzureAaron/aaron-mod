@@ -19,7 +19,8 @@ public class RenderPipelinesMixin {
 			}, require = 2)
 	private static RenderPipeline.Builder aaronMod$injectChromaShaderProperties(RenderPipeline.Builder builder) {
 		return builder.withUniform("ScreenSize", UniformType.VEC2)
-				.withUniform("Time", UniformType.FLOAT)
+				.withUniform("Ticks", UniformType.FLOAT)
+				.withUniform("ChromaSize", UniformType.FLOAT)
 				.withUniform("ChromaSaturation", UniformType.FLOAT)
 				.withUniform("ChromaSpeed", UniformType.FLOAT)
 				.withShaderDefine("AARON_MOD_CHROMA");

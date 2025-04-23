@@ -223,6 +223,9 @@ public class UIAndVisualsConfig {
 
 	public static class ChromaText {
 		@SerialEntry
+		public int chromaSize = 100;
+
+		@SerialEntry
 		public float chromaSpeed = 4f;
 
 		@SerialEntry

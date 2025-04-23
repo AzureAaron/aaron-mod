@@ -283,6 +283,14 @@ public class UIAndVisualsCategory {
 				.group(OptionGroup.createBuilder()
 						.name(Text.literal("Chroma Text"))
 						.collapsed(true)
+						.option(Option.<Integer>createBuilder()
+								.name(Text.literal("Chroma Size"))
+								.description(OptionDescription.of(Text.literal("Allows you to change the size of colours in the chroma gradient. The value must be between 1 and 200.")))
+								.binding(defaults.uiAndVisuals.chromaText.chromaSize,
+										() -> config.uiAndVisuals.chromaText.chromaSize,
+										newValue -> config.uiAndVisuals.chromaText.chromaSize = newValue)
+								.controller(opt -> ConfigUtils.createIntPercentageFieldController(opt, c -> c.range(1, 200)))
+								.build())
 						.option(Option.<Float>createBuilder()
 								.name(Text.literal("Chroma Speed"))
 								.description(OptionDescription.of(Text.literal("The speed at which the chroma text effect will move between colours. The value must be between 1 and 64.")))
