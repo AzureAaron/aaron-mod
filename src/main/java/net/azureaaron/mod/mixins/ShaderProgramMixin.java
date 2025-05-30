@@ -32,10 +32,10 @@ public abstract class ShaderProgramMixin {
 
 	@Inject(method = "set", at = @At("TAIL"))
 	private void aaronMod$customUniformInitializer(CallbackInfo ci) {
-		ticks = getUniform("Ticks");
-		chromaSize = getUniform("ChromaSize");
-		chromaSpeed = getUniform("ChromaSpeed");
-		chromaSaturation = getUniform("ChromaSaturation");
+		ticks = getUniform("AaronTicks");
+		chromaSize = getUniform("AaronChromaSize");
+		chromaSpeed = getUniform("AaronChromaSpeed");
+		chromaSaturation = getUniform("AaronChromaSaturation");
 	}
 
 	@Inject(method = "initializeUniforms", at = @At(value = "TAIL"))
