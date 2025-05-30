@@ -31,7 +31,6 @@ import net.azureaaron.mod.commands.SkyblockCommand;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.Formatters;
-import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.Skyblock;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -188,7 +187,7 @@ public class CroesusCommand extends SkyblockCommand {
 		for (RunData run : runs.values()) {
 			if (count <= 10) {
 				String floorShorthand = String.valueOf(Character.toUpperCase(run.dungeon().charAt(0))).replace('C', 'F') + run.floor();
-				String timeAgo = Functions.toMostRelative(System.currentTimeMillis() - run.timestamp());
+				String timeAgo = Formatters.toRelativeTime(System.currentTimeMillis() - run.timestamp()).atMost(2);
 				long expiresAt = run.timestamp() + TWO_DAYS;
 				long expiresIn = (run.timestamp() + TWO_DAYS) - System.currentTimeMillis();
 				

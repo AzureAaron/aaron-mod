@@ -13,7 +13,7 @@ import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.events.PlaySoundEvent;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Constants;
-import net.azureaaron.mod.utils.Functions;
+import net.azureaaron.mod.utils.Formatters;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -50,7 +50,7 @@ public class WardenWarningLevelCommand {
 
 		int warningLevel = relativeWarningLevel();
 		int warningsLeft = (warningLevel == 0) ? 3 : 3 - warningLevel;
-		String lastTriggered = (lastShriekTime == 0) ? "Unknown" : Functions.toMostRelative(System.currentTimeMillis() - lastShriekTime);
+		String lastTriggered = (lastShriekTime == 0) ? "Unknown" : Formatters.toRelativeTime(System.currentTimeMillis() - lastShriekTime).greatest();
 		String spacing = "                              ";
 
 		source.sendFeedback(Text.literal(spacing).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));

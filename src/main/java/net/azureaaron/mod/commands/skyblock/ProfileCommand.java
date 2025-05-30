@@ -103,7 +103,7 @@ public class ProfileCommand extends SkyblockCommand {
 		source.sendFeedback(startText);
 		
 		source.sendFeedback(Text.literal("Profile » " + Functions.titleCase(body.get("cute_name").getAsString())).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal("Joined » " + Functions.toMostRelative(firstJoinRelative))
+		source.sendFeedback(Text.literal("Joined » " + Formatters.toRelativeTime(firstJoinRelative).greatest())
 				.styled(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent.ShowText(Text.literal(Formatters.DATE_FORMATTER.format(Instant.ofEpochMilli(firstJoinTimestamp))).styled(style1 -> style1.withColor(colourProfile.infoColour.getAsInt()))))));
 		source.sendFeedback(Text.literal("Level » " + level).withColor(colourProfile.infoColour.getAsInt()));
 		

@@ -3,7 +3,13 @@ package net.azureaaron.mod.utils;
 import java.text.NumberFormat;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.SequencedCollection;
+import java.util.concurrent.TimeUnit;
+
+import org.jetbrains.annotations.VisibleForTesting;
 
 import com.ibm.icu.text.DateTimePatternGenerator;
 
@@ -55,6 +61,39 @@ public class Formatters {
 	public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("E MMM d yyyy " + getTimeFormat(), Locale.US).withZone(getTimeZone());
 
 	/**
+	 * Calculates the units within {@code duration}.
+	 * 
+	 * Examples: 5 years, 3 days ago; 1 year, 6 months, 3 weeks, 5 days, 1 hour, 58 minutes, 10 seconds ago; 1 minute ago;
+	 */
+	public static RelativeTime toRelativeTime(long duration) {
+		boolean future = Long.signum(duration) == -1;
+		duration = Math.abs(duration);
+
+		List<String> segments = new ArrayList<>();
+
+		for (Unit unit : Unit.UNITS) {
+			long delta = duration / unit.millis();
+
+			if (delta > 0) {
+				String segment = new StringBuilder()
+						.append(delta)
+						.append(" ")
+						.append(unit.name())
+						.append(delta > 1 ? "s" : "")
+						.toString();
+
+				segments.add(segment);
+				duration -= unit.millis() * delta;
+			}
+		}
+
+		//If there was no segments then the duration must be 0 aka now
+		String formatted = !segments.isEmpty() ? RelativeTime.joinSegments(segments, future) : "0 seconds ago";
+
+		return new RelativeTime(segments, formatted, future);
+	}
+
+	/**
 	 * Returns the formatting for the time, always returns 12 hour in text environments.
 	 */
 	private static String getTimeFormat() {
@@ -92,6 +131,48 @@ public class Formatters {
 			String timeFormat = generator.getBestPattern("j");
 
 			return timeFormat.contains("a");
+		}
+	}
+
+	@VisibleForTesting
+	protected record Unit(String name, long millis) {
+		protected static final Unit YEAR = new Unit("year", TimeUnit.DAYS.toMillis(365));
+		protected static final Unit MONTH = new Unit("month", TimeUnit.DAYS.toMillis(30));
+		protected static final Unit WEEK = new Unit("week", TimeUnit.DAYS.toMillis(7));
+		protected static final Unit DAY = new Unit("day", TimeUnit.DAYS.toMillis(1));
+		protected static final Unit HOUR = new Unit("hour", TimeUnit.HOURS.toMillis(1));
+		protected static final Unit MINUTE = new Unit("minute", TimeUnit.MINUTES.toMillis(1));
+		protected static final Unit SECOND = new Unit("second", TimeUnit.SECONDS.toMillis(1));
+		private static final List<Unit> UNITS = List.of(YEAR, MONTH, WEEK, DAY, HOUR, MINUTE, SECOND);
+	}
+
+	public record RelativeTime(SequencedCollection<String> segments, String formatted, boolean future) {
+		/**
+		 * Returns the greatest segment with formatting.
+		 */
+		public String greatest() {
+			return !this.segments.isEmpty() ? this.segments.getFirst() + (this.future ? "" : " ago") : this.formatted;
+		}
+
+		/**
+		 * Includes only a certain {@code number} of segments at most starting from the greatest ones.
+		 */
+		public String atMost(int max) {
+			if (this.segments.isEmpty()) {
+				return this.formatted;
+			} else {
+				final long min = 0L;
+				SequencedCollection<String> applicableSegments = this.segments.stream()
+						.skip(min)
+						.limit(max - min)
+						.toList();
+
+				return RelativeTime.joinSegments(applicableSegments, this.future);
+			}
+		}
+
+		private static String joinSegments(SequencedCollection<String> segments, boolean future) {
+			return String.join(", ", segments) + (future ? "" : " ago");
 		}
 	}
 }
