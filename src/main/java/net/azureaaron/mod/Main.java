@@ -27,7 +27,7 @@ public class Main implements ClientModInitializer {
 	public static final boolean OPTIFABRIC_LOADED = FabricLoader.getInstance().isModLoaded("optifabric");
 	public static final ModContainer MOD_CONTAINER = FabricLoader.getInstance().getModContainer("aaron-mod").get();
 	public static final String MOD_VERSION = MOD_CONTAINER.getMetadata().getVersion().getFriendlyString();
-	public static final String MINECRAFT_VERSION = SharedConstants.getGameVersion().getName();
+	public static final String MINECRAFT_VERSION = SharedConstants.getGameVersion().name();
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	public static final Gson GSON_PLAIN = new GsonBuilder().create();
 

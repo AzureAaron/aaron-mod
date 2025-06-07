@@ -18,11 +18,8 @@ public class RenderPipelinesMixin {
 			@At(value = "net.azureaaron.mod.utils.render.RenderPipelineInjectionPoint", target = "Lnet/minecraft/client/gl/RenderPipelines;RENDERTYPE_TEXT_POLYGON_OFFSET:Lcom/mojang/blaze3d/pipeline/RenderPipeline;", opcode = Opcodes.PUTSTATIC)
 			}, require = 2)
 	private static RenderPipeline.Builder aaronMod$injectChromaShaderProperties(RenderPipeline.Builder builder) {
-		return builder.withUniform("ScreenSize", UniformType.VEC2)
-				.withUniform("Ticks", UniformType.FLOAT)
-				.withUniform("ChromaSize", UniformType.FLOAT)
-				.withUniform("ChromaSaturation", UniformType.FLOAT)
-				.withUniform("ChromaSpeed", UniformType.FLOAT)
+		return builder.withUniform("Globals", UniformType.UNIFORM_BUFFER)
+				.withUniform("Chroma", UniformType.UNIFORM_BUFFER)
 				.withShaderDefine("AARON_MOD_CHROMA");
 	}
 }

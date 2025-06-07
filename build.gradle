@@ -69,7 +69,7 @@ dependencies {
 
 	include modImplementation("dev.isxander:yet-another-config-lib:${yacl_version}-fabric")
 
-	modImplementation "com.terraformersmc:modmenu:${modmenu_version}"
+	modCompileOnly "com.terraformersmc:modmenu:${modmenu_version}"
 
 	include modImplementation("net.azureaaron:hm-api:${hm_api_version}")
 

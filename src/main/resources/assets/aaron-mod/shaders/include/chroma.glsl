@@ -6,14 +6,12 @@ const vec3 EPSILON = vec3(0.001); // The epsilon used for checking the text's co
 const float NORMAL_VALUE = 1.0; // Full brightness used for normal text
 const float SHADOW_VALUE = 0.25; // Quarter brightness used for text shadows
 
-// In the event of a conflict, you can prevent the uniforms from being included in your shader automatically (but they all need to be declared before the import!)
-#ifndef AARON_MOD_DONT_DECLARE_UNIFORMS
-uniform vec2 ScreenSize;
-uniform float Ticks;
-uniform float ChromaSize;
-uniform float ChromaSpeed;
-uniform float ChromaSaturation;
-#endif
+layout(std140) uniform Chroma {
+	float Ticks;
+	float ChromaSize;
+	float ChromaSpeed;
+	float ChromaSaturation;
+};
 
 /// Internal Methods - may change at any time!
 

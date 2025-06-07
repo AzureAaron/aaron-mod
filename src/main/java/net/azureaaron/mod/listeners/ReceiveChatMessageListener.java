@@ -31,7 +31,7 @@ public class ReceiveChatMessageListener {
 				Matcher autoBlessingMatcher = AUTO_PICKUP_BLESSING_PATTERN.matcher(stringForm);
 				Matcher teamScoreMatcher = TEAM_SCORE_PATTERN.matcher(stringForm);
 				
-				if (AaronModConfigManager.get().skyblock.dungeons.dungeonFinderPlayerStats && partyMatcher.matches()) CLIENT.player.networkHandler.sendCommand("dungeons " + partyMatcher.group("name"));
+				if (AaronModConfigManager.get().skyblock.dungeons.dungeonFinderPlayerStats && partyMatcher.matches()) CLIENT.player.networkHandler.sendChatCommand("dungeons " + partyMatcher.group("name"));
 				
 				if (playerBlessingMatcher.matches()) Cache.incrementBlessing(playerBlessingMatcher.group("blessing"), playerBlessingMatcher.group("level"));
 

@@ -3,10 +3,11 @@ package net.azureaaron.mod.utils.render.hud;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import org.joml.Matrix3x2fStack;
+
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 
@@ -54,13 +55,13 @@ public class TextHudElement extends HudElement {
 	}
 
 	private void renderInternal(Text text, DrawContext context, int x, int y, float scale) {
-		MatrixStack matrices = context.getMatrices();
-		matrices.push();
-		matrices.scale(scale, scale, 0);
+		Matrix3x2fStack matrices = context.getMatrices();
+		matrices.pushMatrix();
+		matrices.scale(scale, scale);
 
 		//Render the text
 		context.drawText(getTextRenderer(), text, (int) (x / scale), (int) (y / scale), Colors.WHITE, false);
 
-		matrices.pop();
+		matrices.popMatrix();
 	}
 }

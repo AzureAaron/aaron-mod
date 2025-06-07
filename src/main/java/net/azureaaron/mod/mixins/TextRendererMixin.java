@@ -12,7 +12,7 @@ import net.minecraft.text.OrderedText;
 @Mixin(TextRenderer.class)
 public class TextRendererMixin {
 
-	@ModifyVariable(method = "drawInternal(Lnet/minecraft/text/OrderedText;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;IIZ)I", at = @At("HEAD"), argsOnly = true)
+	@ModifyVariable(method = "prepare(Lnet/minecraft/text/OrderedText;FFIZI)Lnet/minecraft/client/font/TextRenderer$GlyphDrawable;", at = @At("HEAD"), argsOnly = true)
 	private OrderedText aaronMod$visuallyReplaceOrderedText(OrderedText text) {
 		return AaronModConfigManager.get().textReplacer.enableTextReplacer ? TextReplacer.visuallyReplaceText(text) : text;
 	}

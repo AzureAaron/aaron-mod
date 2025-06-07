@@ -29,20 +29,20 @@ public class SeparateInventoryGuiScale {
 		return CLIENT.isRunning() ? CLIENT.getWindow().calculateScaleFactor(AUTO, CLIENT.forcesUnicodeFont()) : AUTO;
 	}
 
-	public record SavedScaleState(Window window, double originalScaleFactor) {
+	public record SavedScaleState(Window window, int originalScaleFactor) {
 
 		public static SavedScaleState create(Window window) {
 			return new SavedScaleState(window, window.getScaleFactor());
 		}
 
 		public SavedScaleState adjust() {
-			window.setScaleFactor(window.calculateScaleFactor(getInventoryGuiScale(), CLIENT.forcesUnicodeFont()));
+			this.window.setScaleFactor(this.window.calculateScaleFactor(getInventoryGuiScale(), CLIENT.forcesUnicodeFont()));
 
 			return this;
 		}
 
 		public SavedScaleState reset() {
-			window.setScaleFactor(originalScaleFactor);
+			this.window.setScaleFactor(this.originalScaleFactor);
 
 			return this;
 		}

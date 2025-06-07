@@ -11,8 +11,8 @@ import net.azureaaron.mod.events.PingResultCallback;
 import net.azureaaron.mod.utils.Scheduler;
 import net.azureaaron.mod.utils.render.hud.TextHudElement;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
-import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -31,7 +31,7 @@ public class PingHud {
 
 	@Init
 	public static void init() {
-		HudLayerRegistrationCallback.EVENT.register(d -> d.attachLayerAfter(IdentifiedLayer.STATUS_EFFECTS, ID, HUD_ELEMENT::renderHud));
+		HudElementRegistry.attachElementAfter(VanillaHudElements.STATUS_EFFECTS, ID, HUD_ELEMENT::renderHud);
 		PingResultCallback.EVENT.register(RESULTS::offer);
 		Scheduler.INSTANCE.scheduleCyclic(() -> average = (long) RESULTS.stream()
 				.mapToLong(Long::longValue)

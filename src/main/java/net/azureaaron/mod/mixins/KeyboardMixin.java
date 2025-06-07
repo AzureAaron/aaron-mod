@@ -1,27 +1,20 @@
 package net.azureaaron.mod.mixins;
 
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.minecraft.client.Keyboard;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
 @Mixin(Keyboard.class)
 public class KeyboardMixin {
-	@Shadow
-	@Final
-	private MinecraftClient client;
 
 	//Substitute since we can't redirect LOOKUPSWITCH opcodes
 	@ModifyVariable(method = "processF3", at = @At(value = "LOAD", ordinal = 0), argsOnly = true)
@@ -29,13 +22,12 @@ public class KeyboardMixin {
 		return AaronModConfigManager.get().refinements.input.alternateF3PlusNKeybind && original == InputUtil.GLFW_KEY_J ? InputUtil.GLFW_KEY_N : original;
 	}
 
-	@Inject(method = "processF3", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ChatHud;addMessage(Lnet/minecraft/text/Text;)V", ordinal = 6, shift = At.Shift.AFTER))
-	private void aaronMod$addF3PlusJMessage(CallbackInfoReturnable<Boolean> cir) {
-		if (AaronModConfigManager.get().refinements.input.alternateF3PlusNKeybind) client.inGameHud.getChatHud().addMessage(Text.literal("F3 + J = Cycle previous gamemode <-> spectator"));
-	}
-
-	@WrapWithCondition(method = "processF3", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ChatHud;addMessage(Lnet/minecraft/text/Text;)V", ordinal = 8))
-	private boolean aaronMod$removeF3PlusNMessage(ChatHud chatHud, Text text) {
-		return !AaronModConfigManager.get().refinements.input.alternateF3PlusNKeybind;
+	@WrapOperation(method = "processF3", at = @At(value = "INVOKE", target = "Lnet/minecraft/text/Text;translatable(Ljava/lang/String;)Lnet/minecraft/text/MutableText;"))
+	private MutableText aaronMod$editF3PlusNMessageForNewKeybind(String translationKey, Operation<MutableText> operation) {
+		if (AaronModConfigManager.get().refinements.input.alternateF3PlusNKeybind && translationKey.equals("debug.creative_spectator.help")) {
+			return Text.literal("F3 + J = Cycle previous gamemode <-> spectator");
+		} else {
+			return operation.call(translationKey);
+		}
 	}
 }

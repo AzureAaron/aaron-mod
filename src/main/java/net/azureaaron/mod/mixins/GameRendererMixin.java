@@ -1,6 +1,5 @@
 package net.azureaaron.mod.mixins;
 
-import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -22,22 +21,34 @@ import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.SeparateInventoryGuiScale;
 import net.azureaaron.mod.features.SeparateInventoryGuiScale.SavedScaleState;
 import net.azureaaron.mod.screens.itemmodel.CustomizeItemModelScreen;
+import net.azureaaron.mod.injected.GuiDepthStateTracker;
 import net.azureaaron.mod.utils.render.ShaderUniforms;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.render.GuiRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.client.render.fog.FogRenderer;
+import net.minecraft.client.render.fog.FogRenderer.FogType;
 import net.minecraft.client.util.Window;
 
 @Mixin(value = GameRenderer.class, priority = 1100) //Inject after Fabric so that our handler also wraps the Screen API render events
-public class GameRendererMixin {
+public class GameRendererMixin implements GuiDepthStateTracker {
 	@Shadow
 	@Final
 	MinecraftClient client;
+	@Shadow
+	@Final
+	private FogRenderer fogRenderer;
+	@Shadow
+	@Final
+	private GuiRenderer guiRenderer;
 
 	@Unique
 	private boolean cameraSmoothed = false;
+	@Unique
+	private boolean shouldUseSavedGuiDepth = false;
 
 	@ModifyReturnValue(method = "getFov", at = @At("RETURN"))
 	private float aaronMod$zoom(float fov) {
@@ -63,14 +74,24 @@ public class GameRendererMixin {
 		}
 	}
 
-	@Inject(method = "render", at = @At("HEAD"))
-	private void aaronMod$timeUniform(CallbackInfo ci, @Local(argsOnly = true) RenderTickCounter tickCounter) {
-		ShaderUniforms.updateShaderTicks(tickCounter);
+	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gl/GlobalSettings;set(IIDJLnet/minecraft/client/render/RenderTickCounter;I)V", shift = At.Shift.AFTER))
+	private void aaronMod$updateShaderUniforms(CallbackInfo ci, @Local(argsOnly = true) RenderTickCounter tickCounter) {
+		ShaderUniforms.updateShaderUniforms(tickCounter);
+	}
+
+	@Inject(method = "close", at = @At("TAIL"))
+	private void aaronMod$closeResources(CallbackInfo ci) {
+		ShaderUniforms.close();
 	}
 
 	@WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;renderWithTooltip(Lnet/minecraft/client/gui/DrawContext;IIF)V"))
-	private void aaronMod$separateGUIScaleForScreens(Screen screen, DrawContext context, int mouseX, int mouseY, float delta, Operation<Void> operation, @Local Window window, @Local Matrix4f guiProjectionMatrix) {
+	private void aaronMod$separateGUIScaleForScreens(Screen screen, DrawContext context, int mouseX, int mouseY, float delta, Operation<Void> operation) {
 		if (SeparateInventoryGuiScale.isEnabled(screen)) {
+			//Draw all stuff beforehand so that we don't interfere with the positioning or anything
+			//This must be done here since the projection matrix inside by this method indirectly (down the chain of calls it performs)
+			this.guiRenderer.render(this.fogRenderer.getFogBuffer(FogType.NONE));
+
+			Window window = this.client.getWindow();
 			SavedScaleState state = SavedScaleState.create(window).adjust();
 
 			if (!screen.wasResized()) {
@@ -80,29 +101,23 @@ public class GameRendererMixin {
 
 			int newMouseX = (int) this.client.mouse.getScaledX(window);
 			int newMouseY = (int) this.client.mouse.getScaledY(window);
-			Matrix4f screenProjectionMatrix = new Matrix4f()
-					.setOrtho(
-							0.0f,
-							(float) ((double) window.getFramebufferWidth() / window.getScaleFactor()),
-							(float) ((double) window.getFramebufferHeight() / window.getScaleFactor()),
-							0.0f,
-							1000f,
-							21000f
-					);
 
-			//Draw all stuff beforehand so that we don't interfere with the positioning or anything
-			context.draw();
-
-			//Modify the projection matrix, render the screen, then draw everything that the screen drew (if we don't then things like tooltip positions get messed up)
-			RenderSystem.setProjectionMatrix(screenProjectionMatrix, ProjectionType.ORTHOGRAPHIC);
+			//Render the screen, then draw everything that the screen drew (if we don't then things like tooltip positions get messed up)
 			operation.call(screen, context, newMouseX, newMouseY, delta);
-			context.draw();
+
+			this.shouldUseSavedGuiDepth = true;
+			this.guiRenderer.render(this.fogRenderer.getFogBuffer(FogType.NONE));
+			this.shouldUseSavedGuiDepth = false;
 
 			//Reset State
 			state.reset();
-			RenderSystem.setProjectionMatrix(guiProjectionMatrix, ProjectionType.ORTHOGRAPHIC);
 		} else {
 			operation.call(screen, context, mouseX, mouseY, delta);
 		}
+	}
+
+	@Override
+	public boolean shouldUseSavedGuiDepth() {
+		return this.shouldUseSavedGuiDepth;
 	}
 }

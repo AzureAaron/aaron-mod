@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
+import org.joml.Matrix3x2fStack;
 import org.slf4j.Logger;
 
 import com.google.common.collect.ImmutableSet;
@@ -22,13 +23,12 @@ import net.azureaaron.mod.events.ReceiveChatMessageEvent;
 import net.azureaaron.mod.utils.Http;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -119,20 +119,19 @@ public class ImagePreview {
 				CachedImage image = ImagePreview.IMAGE_CACHE.getOrDefault(fixupLink(uri.toString()), null);
 
 				if (image != null && image != CachedImage.EMPTY) {
-					MatrixStack matrices = context.getMatrices();
+					Matrix3x2fStack matrices = context.getMatrices();
 					int width = image.width();
 					int height = image.height();
 
 					//Scales the image to fit in a 16:9 ratio while ensuring that it can't get bigger
 					float scale = Math.min(1f, Math.min(getPrevWidthDiv() / width, getPrevHeightDiv() / height));
 
-					matrices.push();
-					matrices.scale(scale, scale, 1f); //The 1f is needed otherwise it'll render behind the chat (the chat's z is scaled by 1 too)
-					matrices.translate(0f, 0f, 200f);
+					matrices.pushMatrix();
+					matrices.scale(scale, scale); //The 1f is needed otherwise it'll render behind the chat (the chat's z is scaled by 1 too)
 
-					context.drawTexture(RenderLayer::getGuiTextured, image.texture(), 0, 0, 0, 0, width, height, width, height);
+					context.drawTexture(RenderPipelines.GUI_TEXTURED, image.texture(), 0, 0, 0, 0, width, height, width, height);
 
-					matrices.pop();
+					matrices.popMatrix();
 				}
 			}
 		}
