@@ -230,6 +230,9 @@ public class UIAndVisualsConfig {
 
 		@SerialEntry
 		public float chromaSaturation = 0.75f;
+
+		@SerialEntry
+		public boolean canDisableChromaPack = false;
 	}
 
 	public static class Seasonal {

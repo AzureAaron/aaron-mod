@@ -3,6 +3,7 @@ package net.azureaaron.mod.config.categories;
 import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
+import dev.isxander.yacl3.api.OptionFlag;
 import dev.isxander.yacl3.api.OptionGroup;
 import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
@@ -306,6 +307,15 @@ public class UIAndVisualsCategory {
 										() -> config.uiAndVisuals.chromaText.chromaSaturation,
 										newValue -> config.uiAndVisuals.chromaText.chromaSaturation = newValue)
 								.controller(opt -> FloatFieldControllerBuilder.create(opt).range(0f, 1f))
+								.build())
+						.option(Option.<Boolean>createBuilder()
+								.name(Text.literal("Disable Chroma Pack"))
+								.description(OptionDescription.of(Text.literal("Enabling this option allows you to disable the built-in chroma text resourcepack. Only turn this on if you actually want to turn off the pack otherwise it may misbehave and not work properly.")))
+								.binding(defaults.uiAndVisuals.chromaText.canDisableChromaPack,
+										() -> config.uiAndVisuals.chromaText.canDisableChromaPack,
+										newValue -> config.uiAndVisuals.chromaText.canDisableChromaPack = newValue)
+								.controller(ConfigUtils::createBooleanController)
+								.flag(OptionFlag.GAME_RESTART)
 								.build())
 						.build())
 
