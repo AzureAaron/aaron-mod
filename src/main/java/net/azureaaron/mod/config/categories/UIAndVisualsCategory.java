@@ -87,9 +87,9 @@ public class UIAndVisualsCategory {
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Hide Tutorials"))
 								.description(OptionDescription.of(Text.literal("Hides those pesky tutorial toasts that think that you have no idea of what you're doing.")))
-								.binding(defaults.uiAndVisuals.overlays.hideFireOverlay,
-										() -> config.uiAndVisuals.overlays.hideFireOverlay,
-										newValue -> config.uiAndVisuals.overlays.hideFireOverlay = newValue)
+								.binding(defaults.uiAndVisuals.overlays.hideTutorials,
+										() -> config.uiAndVisuals.overlays.hideTutorials,
+										newValue -> config.uiAndVisuals.overlays.hideTutorials = newValue)
 								.controller(ConfigUtils::createBooleanController)
 								.build())
 						.build())
