@@ -130,6 +130,21 @@ public class UIAndVisualsCategory {
 						.option(HudElementConfigScreen.createOption())
 						.build())
 
+				//TPS HUD
+				.group(OptionGroup.createBuilder()
+						.name(Text.literal("TPS HUD"))
+						.collapsed(true)
+						.option(Option.<Boolean>createBuilder()
+								.name(Text.literal("Enable TPS Hud"))
+								.description(OptionDescription.of(Text.literal("Displays an estimation of the server's TPS. May not always be accurate.")))
+								.binding(defaults.uiAndVisuals.tpsHud.enableTpsHud,
+										() -> config.uiAndVisuals.tpsHud.enableTpsHud,
+										newValue -> config.uiAndVisuals.tpsHud.enableTpsHud= newValue)
+								.controller(ConfigUtils::createBooleanController)
+								.build())
+						.option(HudElementConfigScreen.createOption())
+						.build())
+
 				//Debug HUD
 				.group(OptionGroup.createBuilder()
 						.name(Text.literal("Debug HUD"))

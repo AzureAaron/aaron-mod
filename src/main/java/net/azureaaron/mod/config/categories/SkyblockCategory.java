@@ -145,7 +145,7 @@ public class SkyblockCategory {
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Dragon Spawn Timers"))
-								.description(OptionDescription.of(Text.literal("Displays a timer under each statue that counts down to when the dragon spawns.")))
+								.description(OptionDescription.of(Text.literal("Displays a timer under each statue that counts down to when the dragon spawns. The timer counts down in lockstep with the server's TPS.")))
 								.binding(defaults.skyblock.m7.dragonSpawnTimers,
 										() -> config.skyblock.m7.dragonSpawnTimers,
 										newValue -> config.skyblock.m7.dragonSpawnTimers = newValue)

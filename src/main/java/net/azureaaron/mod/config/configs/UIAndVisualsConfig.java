@@ -21,6 +21,9 @@ public class UIAndVisualsConfig {
 	public PingHud pingHud = new PingHud();
 
 	@SerialEntry
+	public TpsHud tpsHud = new TpsHud();
+
+	@SerialEntry
 	public DebugHud debugHud = new DebugHud();
 
 	@SerialEntry
@@ -166,6 +169,55 @@ public class UIAndVisualsConfig {
 		@Override
 		public boolean shouldRender() {
 			return enablePingHud;
+		}
+	}
+
+	public static class TpsHud implements HudElementAccess {
+		@SerialEntry
+		public boolean enableTpsHud = false;
+
+		@SerialEntry
+		public int x = net.azureaaron.mod.features.TickHud.DEFAULT_X;
+
+		@SerialEntry
+		public int y = 2;
+
+		@SerialEntry
+		public float scale = 1f;
+
+		@Override
+		public int x() {
+			return this.x;
+		}
+
+		@Override
+		public void x(int x) {
+			this.x = x;
+		}
+
+		@Override
+		public int y() {
+			return this.y;
+		}
+
+		@Override
+		public void y(int y) {
+			this.y = y;
+		}
+
+		@Override
+		public float scale() {
+			return this.scale;
+		}
+
+		@Override
+		public void scale(float scale) {
+			this.scale = scale;
+		}
+
+		@Override
+		public boolean shouldRender() {
+			return this.enableTpsHud;
 		}
 	}
 

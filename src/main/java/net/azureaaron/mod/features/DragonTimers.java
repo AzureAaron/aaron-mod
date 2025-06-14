@@ -4,8 +4,10 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.ParticleSpawnEvent;
+import net.azureaaron.mod.events.ServerTickCallback;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Functions;
+import net.azureaaron.mod.utils.ServerTickCounter;
 import net.azureaaron.mod.utils.render.Renderer;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
@@ -31,18 +33,19 @@ public class DragonTimers {
 		map.put(Dragons.ICE, ICE_TEXT_LOCATION);
 		map.put(Dragons.SOUL, SOUL_TEXT_LOCATION);
 	});
-	
+
 	@Init
 	public static void init() {
 		WorldRenderEvents.BEFORE_DEBUG_RENDER.register(DragonTimers::renderSpawnTimers);
-		ParticleSpawnEvent.EVENT.register(DragonTimers::tick);
+		ParticleSpawnEvent.EVENT.register(DragonTimers::onParticle);
+		ServerTickCallback.EVENT.register(DragonTimers::onServerTick);
 	}
-	
+
 	private static void renderSpawnTimers(WorldRenderContext wrc) {
 		if (Functions.isOnHypixel() && AaronModConfigManager.get().skyblock.m7.dragonSpawnTimers && Cache.inM7Phase5) {
 			for (Dragons dragon : Dragons.VALUES) {
-				if (dragon.spawnStart != 0L && dragon.spawnStart + 5000 > System.currentTimeMillis()) {
-					int timeUntilSpawn = (int) (dragon.spawnStart + 5000 - System.currentTimeMillis());
+				if (dragon.spawnTime > 0) {
+					int timeUntilSpawn = (int) (dragon.spawnTime * ServerTickCounter.MILLIS_PER_TICK);
 					OrderedText spawnText = Text.literal(timeUntilSpawn + " ms").asOrderedText();
 
 					Renderer.renderText(wrc, DRAGON_SPAWN_TEXT_LOCATIONS.get(dragon), spawnText, true);
@@ -50,19 +53,29 @@ public class DragonTimers {
 			}
 		}
 	}
-	
-	private static void tick(ParticleS2CPacket packet) {
+
+	private static void onParticle(ParticleS2CPacket packet) {
 		if (Functions.isOnHypixel() && Cache.inM7Phase5 && packet.getParameters().getType().equals(ParticleTypes.ENCHANT)) {
 			for (Dragons dragon : Dragons.VALUES) {
 				int xShrinkFactor = (dragon.pos1.getX() == 41) ? 11 : 0;
 				int zShrinkFactor = (dragon.pos1.getZ() == 112) ? 0 : 11;
 				Box box = Box.enclosing(dragon.pos1.add(0, 14, 0), dragon.pos2).contract(xShrinkFactor, 0, zShrinkFactor);
-				
+
 				if (box.contains(packet.getX(), packet.getY(), packet.getZ())) {
-					if (dragon.spawnStart + 5000 < System.currentTimeMillis()) {
-						dragon.spawnStart = System.currentTimeMillis();
+					if (dragon.spawnTime <= 0) {
+						dragon.spawnTime = 5 * 20;
 						DragonNotifications.notifySpawn(dragon);
 					}
+				}
+			}
+		}
+	}
+
+	private static void onServerTick() {
+		if (Functions.isOnHypixel() && Cache.inM7Phase5) {
+			for (Dragons dragon : Dragons.VALUES) {
+				if (dragon.spawnTime > 0) {
+					dragon.spawnTime--;
 				}
 			}
 		}

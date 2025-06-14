@@ -10,6 +10,8 @@
     "BackgroundRendererMixin",
     "ChatHudMixin",
     "ChestBlockEntityRendererMixin",
+	"ClientCommonNetworkHandlerMixin",
+	"ClientConnectionMixin",
     "ClientPlayNetworkHandlerMixin",
     "ClientWorldMixin",
     "CreditsScreenMixin",
