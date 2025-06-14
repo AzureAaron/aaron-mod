@@ -37,7 +37,7 @@ public class HeldItemRendererMixin {
 			}
 
 			if (config.x != 0 || config.y != 0 || config.z != 0) {
-				matrices.translate(config.x, config.y, config.z);
+				matrices.translate((config.x / 100f) / config.scale, (config.y / 100f) / config.scale, (config.z / 100f) / config.scale);
 			}
 		}
 	}

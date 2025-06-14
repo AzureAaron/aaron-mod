@@ -31,7 +31,7 @@ public class AaronModConfigManager {
 							.registerTypeHierarchyAdapter(Identifier.class, new CodecTypeAdapter<>(Identifier.CODEC)))
 					.build())
 			.build();
-	public static final int VERSION = 2;
+	public static final int VERSION = 3;
 
 	public static void init() {
 		if (StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass() != Main.class) {

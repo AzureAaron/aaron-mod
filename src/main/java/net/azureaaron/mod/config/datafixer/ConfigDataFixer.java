@@ -88,6 +88,9 @@ public class ConfigDataFixer {
 		Schema schema2 = builder.addSchema(2, Schema::new);
 		builder.addFixer(new ConfigFixV1(schema2, true));
 
+		Schema schema3 = builder.addSchema(3, Schema::new);
+		builder.addFixer(new ConfigFixV2(schema3, true));
+
 		return builder.build().fixer();
 	}
 }
