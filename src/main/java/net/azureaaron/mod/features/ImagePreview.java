@@ -63,7 +63,7 @@ public class ImagePreview {
 			text.visit((style, stringified) -> {
 				ClickEvent clickEvent = style.getClickEvent();
 
-				if (clickEvent instanceof ClickEvent.OpenUrl(URI uri)) {
+				if (clickEvent instanceof ClickEvent.OpenUrl(URI uri) && uri != null) {
 					String url = fixupLink(uri.toString());
 
 					if (IMAGE_URL_PATTERN.matcher(url).matches()) foundImages.add(url);
@@ -115,7 +115,7 @@ public class ImagePreview {
 		if (style != null && style.getClickEvent() != null) {
 			ClickEvent clickEvent = style.getClickEvent();
 
-			if (clickEvent instanceof ClickEvent.OpenUrl(URI uri)) {
+			if (clickEvent instanceof ClickEvent.OpenUrl(URI uri) && uri != null) {
 				CachedImage image = ImagePreview.IMAGE_CACHE.getOrDefault(fixupLink(uri.toString()), null);
 
 				if (image != null && image != CachedImage.EMPTY) {
