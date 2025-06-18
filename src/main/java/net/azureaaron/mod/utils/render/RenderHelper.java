@@ -20,7 +20,7 @@ import net.minecraft.text.OrderedText;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
-public class Renderer {
+public class RenderHelper {
 	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
 	private static final BufferAllocator ALLOCATOR = new BufferAllocator(1536);
 

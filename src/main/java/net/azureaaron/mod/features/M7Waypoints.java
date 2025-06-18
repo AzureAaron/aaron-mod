@@ -4,7 +4,7 @@ import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Functions;
-import net.azureaaron.mod.utils.render.Renderer;
+import net.azureaaron.mod.utils.render.RenderHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.util.math.Vec3d;
@@ -35,20 +35,20 @@ public class M7Waypoints {
 	private static void renderWaypoints(WorldRenderContext wrc) {
 		if (Functions.isOnHypixel() && Cache.inM7Phase5) {
 			if (AaronModConfigManager.get().skyblock.m7.dragonAimWaypoints) {
-				Renderer.renderFilledBox(wrc, BLUE_SHOOT, Dragons.ICE.red, Dragons.ICE.green, Dragons.ICE.blue, ALPHA);
-				Renderer.renderFilledBox(wrc, GREEN_SHOOT, Dragons.APEX.red, Dragons.APEX.green, Dragons.APEX.blue, ALPHA);
-				Renderer.renderFilledBox(wrc, ORANGE_SHOOT, Dragons.FLAME.red, Dragons.FLAME.green, Dragons.FLAME.blue, ALPHA);
-				Renderer.renderFilledBox(wrc, PURPLE_SHOOT, Dragons.SOUL.red, Dragons.SOUL.green, Dragons.SOUL.blue, ALPHA);
-				Renderer.renderFilledBox(wrc, RED_SHOOT, Dragons.POWER.red, Dragons.POWER.green, Dragons.POWER.blue, ALPHA);
+				RenderHelper.renderFilledBox(wrc, BLUE_SHOOT, Dragons.ICE.red, Dragons.ICE.green, Dragons.ICE.blue, ALPHA);
+				RenderHelper.renderFilledBox(wrc, GREEN_SHOOT, Dragons.APEX.red, Dragons.APEX.green, Dragons.APEX.blue, ALPHA);
+				RenderHelper.renderFilledBox(wrc, ORANGE_SHOOT, Dragons.FLAME.red, Dragons.FLAME.green, Dragons.FLAME.blue, ALPHA);
+				RenderHelper.renderFilledBox(wrc, PURPLE_SHOOT, Dragons.SOUL.red, Dragons.SOUL.green, Dragons.SOUL.blue, ALPHA);
+				RenderHelper.renderFilledBox(wrc, RED_SHOOT, Dragons.POWER.red, Dragons.POWER.green, Dragons.POWER.blue, ALPHA);
 			}
 			
 			if (AaronModConfigManager.get().skyblock.m7.arrowStackWaypoints) {
-				Renderer.renderFilledBox(wrc, ORANGE_STACK, Dragons.FLAME.red, Dragons.FLAME.green, Dragons.FLAME.blue, ALPHA);
-				Renderer.renderFilledBox(wrc, BLUE_STACK, Dragons.ICE.red, Dragons.ICE.green, Dragons.ICE.blue, ALPHA);
-				Renderer.renderFilledBox(wrc, PURPLE_STACK, Dragons.SOUL.red, Dragons.SOUL.green, Dragons.SOUL.blue, ALPHA);
-				Renderer.renderFilledBox(wrc, PURPLE_STACK_ALT, Dragons.SOUL.red, Dragons.SOUL.green, Dragons.SOUL.blue, ALPHA);
-				Renderer.renderFilledBox(wrc, GREEN_STACK, Dragons.APEX.red, Dragons.APEX.green, Dragons.APEX.blue, ALPHA);
-				Renderer.renderFilledBox(wrc, RED_STACK, Dragons.POWER.red, Dragons.POWER.green, Dragons.POWER.blue, ALPHA);
+				RenderHelper.renderFilledBox(wrc, ORANGE_STACK, Dragons.FLAME.red, Dragons.FLAME.green, Dragons.FLAME.blue, ALPHA);
+				RenderHelper.renderFilledBox(wrc, BLUE_STACK, Dragons.ICE.red, Dragons.ICE.green, Dragons.ICE.blue, ALPHA);
+				RenderHelper.renderFilledBox(wrc, PURPLE_STACK, Dragons.SOUL.red, Dragons.SOUL.green, Dragons.SOUL.blue, ALPHA);
+				RenderHelper.renderFilledBox(wrc, PURPLE_STACK_ALT, Dragons.SOUL.red, Dragons.SOUL.green, Dragons.SOUL.blue, ALPHA);
+				RenderHelper.renderFilledBox(wrc, GREEN_STACK, Dragons.APEX.red, Dragons.APEX.green, Dragons.APEX.blue, ALPHA);
+				RenderHelper.renderFilledBox(wrc, RED_STACK, Dragons.POWER.red, Dragons.POWER.green, Dragons.POWER.blue, ALPHA);
 			}
 		}
 	}

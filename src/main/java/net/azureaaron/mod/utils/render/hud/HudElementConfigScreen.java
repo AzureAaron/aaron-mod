@@ -9,7 +9,7 @@ import org.lwjgl.glfw.GLFW;
 
 import dev.isxander.yacl3.api.ButtonOption;
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.utils.render.Renderer;
+import net.azureaaron.mod.utils.render.RenderHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -100,7 +100,7 @@ public final class HudElementConfigScreen extends Screen {
 				for (HudElement element : ELEMENTS) {
 					//If the HUD element was clicked and not already selected then select it
 					//this behaviour means that if two HUD elements overlap you can click to the next one - cycling is a must though if many are overlapping
-					if (Renderer.pointIsInArea(mouseX, mouseY, element.x(), element.y(), element.x() + element.width(), element.y() + element.height()) && selected != element) {
+					if (RenderHelper.pointIsInArea(mouseX, mouseY, element.x(), element.y(), element.x() + element.width(), element.y() + element.height()) && selected != element) {
 						selected = element;
 
 						//Return + don't fall through to other elements

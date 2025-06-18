@@ -8,7 +8,7 @@ import net.azureaaron.mod.events.ServerTickCallback;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.ServerTickCounter;
-import net.azureaaron.mod.utils.render.Renderer;
+import net.azureaaron.mod.utils.render.RenderHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
@@ -48,7 +48,7 @@ public class DragonTimers {
 					int timeUntilSpawn = (int) (dragon.spawnTime * ServerTickCounter.MILLIS_PER_TICK);
 					OrderedText spawnText = Text.literal(timeUntilSpawn + " ms").asOrderedText();
 
-					Renderer.renderText(wrc, DRAGON_SPAWN_TEXT_LOCATIONS.get(dragon), spawnText, true);
+					RenderHelper.renderText(wrc, DRAGON_SPAWN_TEXT_LOCATIONS.get(dragon), spawnText, true);
 				}
 			}
 		}

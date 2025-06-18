@@ -10,7 +10,7 @@ import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.mixins.accessors.ClientEntityManagerAccessor;
 import net.azureaaron.mod.mixins.accessors.ClientWorldAccessor;
 import net.azureaaron.mod.utils.Cache;
-import net.azureaaron.mod.utils.render.Renderer;
+import net.azureaaron.mod.utils.render.RenderHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
@@ -57,7 +57,7 @@ public class DragonHealth {
 										int colour = getHealthColour(hp);
 										Vec3d pos = new Vec3d(dragon.getX(), dragon.getY() - 1, dragon.getZ());
 										
-										Renderer.renderText(wrc, pos, Text.literal(healthSegment).styled(style -> style.withColor(colour)).asOrderedText(), true);
+										RenderHelper.renderText(wrc, pos, Text.literal(healthSegment).styled(style -> style.withColor(colour)).asOrderedText(), true);
 										
 										break;
 									}
