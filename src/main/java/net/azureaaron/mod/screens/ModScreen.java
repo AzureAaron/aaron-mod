@@ -19,9 +19,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Language;
 
 public class ModScreen extends Screen {
-	private static final int SPACING = 8;
-	private static final int BUTTON_WIDTH = 210;
-	private static final int HALF_BUTTON_WIDTH = 101; //Same as (210 - 8) / 2
+	public static final int SPACING = 8;
+	public static final int BUTTON_WIDTH = 210;
+	public static final int HALF_BUTTON_WIDTH = 101; //Same as (210 - 8) / 2
 	private static final Text TITLE = Text.literal("Aaron's Mod " + Main.MOD_VERSION);
 	private static final Identifier ICON = Identifier.of(Main.NAMESPACE, "icon.png");
 	private static final Text CONFIGURATION_TEXT = Text.literal("Config...");
