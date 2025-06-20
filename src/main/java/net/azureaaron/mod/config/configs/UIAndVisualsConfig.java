@@ -68,7 +68,7 @@ public class UIAndVisualsConfig {
 		public float statusEffectBackgroundAlpha = 1f;
 
 		@SerialEntry
-		public boolean hideTutorials = false;
+		public boolean hideTutorials = true;
 	}
 
 	public static class FpsHud implements HudElementAccess {
