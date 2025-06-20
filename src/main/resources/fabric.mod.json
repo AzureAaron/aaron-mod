@@ -42,6 +42,11 @@
     "modmenu": ">=13.0.2"
   },
   "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/CQH9Je8qJ9"
+      }
+	},
     "loom:injected_interfaces": {
       "net/minecraft/class_1799": [
         "net/azureaaron/mod/injected/AaronModItemMeta"

@@ -28,7 +28,7 @@ public class ModScreen extends Screen {
 	private static final Text SOURCE_TEXT = Text.literal("Source");
 	private static final Text REPORT_BUGS_TEXT = Text.translatable("menu.reportBugs");
 	private static final Text MODRINTH_TEXT = Text.literal("Modrinth");
-	private static final Text COMING_SOON = Text.literal("Coming Soon!");
+	private static final Text DISCORD_TEXT = Text.literal("Discord");
 	private static final Text THANKS = Text.literal("Thanks for using the mod!");
 	private final Screen parent;
 	private final ThreePartsLayoutWidget layout = new ThreePartsLayoutWidget(this);
@@ -50,7 +50,7 @@ public class ModScreen extends Screen {
 		adder.add(ButtonWidget.builder(SOURCE_TEXT, ConfirmLinkScreen.opening(this, "https://github.com/AzureAaron/aaron-mod")).width(HALF_BUTTON_WIDTH).build());
 		adder.add(ButtonWidget.builder(REPORT_BUGS_TEXT, ConfirmLinkScreen.opening(this, "https://github.com/AzureAaron/aaron-mod/issues")).width(HALF_BUTTON_WIDTH).build());
 		adder.add(ButtonWidget.builder(MODRINTH_TEXT, ConfirmLinkScreen.opening(this, "https://modrinth.com/mod/aaron-mod")).width(HALF_BUTTON_WIDTH).build());
-		adder.add(ButtonWidget.builder(COMING_SOON, button -> {}).width(HALF_BUTTON_WIDTH).build());
+		adder.add(ButtonWidget.builder(DISCORD_TEXT, ConfirmLinkScreen.opening(this, "https://discord.gg/CQH9Je8qJ9")).width(HALF_BUTTON_WIDTH).build());
 		adder.add(ButtonWidget.builder(ScreenTexts.DONE, button -> this.close()).width(BUTTON_WIDTH).build(), 2);
 
 		this.layout.addFooter(new TextWidget(THANKS, this.textRenderer));
