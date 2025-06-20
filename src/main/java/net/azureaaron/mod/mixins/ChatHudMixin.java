@@ -9,9 +9,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.ImagePreview;
+import net.azureaaron.mod.screens.itemmodel.CustomizeItemModelScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
 
@@ -33,6 +35,11 @@ public class ChatHudMixin {
 
 	@Inject(method = "clear", at = @At("TAIL"))
 	private void aaronMod$emptyImagePreviewCacheAndFreeMemOnChatClear(CallbackInfo ci) {
-		ImagePreview.clearCache(client);
+		ImagePreview.clearCache(this.client);
+	}
+
+	@ModifyReturnValue(method = "isChatHidden", at = @At("RETURN"))
+	private boolean aaronMod$hideChatWhileCustomizingItemModel(boolean original) {
+		return original || this.client.currentScreen instanceof CustomizeItemModelScreen;
 	}
 }
