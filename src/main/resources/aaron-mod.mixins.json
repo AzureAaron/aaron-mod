@@ -45,6 +45,7 @@
     "ParticleMixin",
     "PingMeasurerMixin",
     "PlayerSkinTextureDownloaderMixin",
+	"PostEffectPassMixin",
     "PotionItemMixin",
     "RenderPipelineMixin",
     "RenderPipelinesMixin",

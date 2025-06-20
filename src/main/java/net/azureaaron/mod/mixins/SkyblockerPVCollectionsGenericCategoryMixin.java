@@ -13,8 +13,8 @@ import net.azureaaron.mod.features.ChromaText;
 @Pseudo
 public class SkyblockerPVCollectionsGenericCategoryMixin {
 
-	@ModifyArg(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawText(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;IIIZ)I", ordinal = 1, remap = true), index = 4, require = 0)
+	@ModifyArg(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawText(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;IIIZ)V", ordinal = 1, remap = true), index = 4, require = 0)
 	private int aaronMod$maxCollectionsChromaText(int colour) {
-		return colour == Color.MAGENTA.getRGB() && ChromaText.chromaColourAvailable() ? 0xAA5500 : colour;
+		return colour == Color.MAGENTA.getRGB() && ChromaText.chromaColourAvailable() ? 0xFFAA5500 : colour;
 	}
 }

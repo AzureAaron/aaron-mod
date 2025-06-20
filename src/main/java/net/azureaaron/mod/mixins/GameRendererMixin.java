@@ -12,16 +12,13 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.mojang.blaze3d.systems.ProjectionType;
-import com.mojang.blaze3d.systems.RenderPass;
-import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.azureaaron.mod.Keybinds;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.SeparateInventoryGuiScale;
 import net.azureaaron.mod.features.SeparateInventoryGuiScale.SavedScaleState;
-import net.azureaaron.mod.screens.itemmodel.CustomizeItemModelScreen;
 import net.azureaaron.mod.injected.GuiDepthStateTracker;
+import net.azureaaron.mod.utils.render.GuiHelper;
 import net.azureaaron.mod.utils.render.ShaderUniforms;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -67,11 +64,9 @@ public class GameRendererMixin implements GuiDepthStateTracker {
 		return fov;
 	}
 
-	@Inject(method = "method_68478", at = @At("TAIL"))
-	private static void aaronMod$applyScissorToBlur(CallbackInfo ci, @Local(argsOnly = true) RenderPass renderPass) {
-		if (MinecraftClient.getInstance().currentScreen instanceof CustomizeItemModelScreen) {
-			renderPass.enableScissor(RenderSystem.SCISSOR_STATE);
-		}
+	@Inject(method = "renderBlur", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gl/PostEffectProcessor;render(Lnet/minecraft/client/gl/Framebuffer;Lnet/minecraft/client/util/ObjectAllocator;)V", shift = At.Shift.AFTER))
+	private void aaronMod$afterBlurRendered(CallbackInfo ci) {
+		GuiHelper.disableBlurScissor();
 	}
 
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gl/GlobalSettings;set(IIDJLnet/minecraft/client/render/RenderTickCounter;I)V", shift = At.Shift.AFTER))

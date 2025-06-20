@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.floats.FloatConsumer;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.config.configs.ItemModelConfig.AbstractHand;
 import net.azureaaron.mod.screens.ModScreen;
+import net.azureaaron.mod.utils.render.GuiHelper;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenPos;
 import net.minecraft.client.gui.ScreenRect;
@@ -189,7 +190,8 @@ public class CustomizeItemModelScreen extends Screen {
 		ScreenRect dimensions = this.getEffectiveDimensions(this.width, this.height);
 
 		context.enableScissor(dimensions.getLeft(), dimensions.getTop(), dimensions.getRight(), dimensions.getBottom());
-		this.applyBlur();
+		GuiHelper.enableBlurScissor(dimensions.getLeft(), dimensions.getTop(), dimensions.width(), dimensions.height());
+		this.applyBlur(context);
 		this.renderDarkening(context);
 		context.disableScissor();
 
