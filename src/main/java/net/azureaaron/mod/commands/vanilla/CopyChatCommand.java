@@ -28,22 +28,20 @@ public class CopyChatCommand {
 	private static final Text successToastDescription = Text.literal("The message was copied to your clipboard!");
 	private static final Text notFoundToastTitle = Text.literal("Not Found!");
 	private static final Text notFoundToastDescription = Text.literal("No message contained your input!");
-	
+
 	@Init
 	public static void init() {
 		ClientCommandRegistrationCallback.EVENT.register(CopyChatCommand::register);
 	}
-	
+
 	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
 		LiteralCommandNode<FabricClientCommandSource> copyChatCommand = dispatcher.register(literal("copychat")
 				.then(argument("excerpt", greedyString())
 						.executes(context -> copyMessage(context.getSource(), getString(context, "excerpt")))));
-		
+
 		dispatcher.register(literal("copymessage").redirect(copyChatCommand));
-		dispatcher.register(literal("cc").redirect(copyChatCommand));
-		dispatcher.register(literal("cm").redirect(copyChatCommand));
 	}
-	
+
 	/**
 	 * The new middle click to copy chat supersedes this feature!
 	 */
@@ -52,7 +50,7 @@ public class CopyChatCommand {
     	int maxChatHistoryLength = ChatAccessor.getMaxHistoryLength();
     	int maxIteration = (chatHistory.size() >= maxChatHistoryLength) ? maxChatHistoryLength : chatHistory.size();
     	boolean foundAMessage = false;
-    	
+
     	for(int i = 0; i < maxIteration; i++) {
     		String currentMessage = chatHistory.get(i).content().getString();
     		currentMessage = Formatting.strip(currentMessage);
