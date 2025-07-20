@@ -66,6 +66,7 @@
     "accessors.FogRendererAccessor",
     "accessors.GameRendererAccessor",
     "accessors.MinecraftClientAccessor",
+	"accessors.OutlineVertexConsumerProviderAccessor",
     "accessors.ParticleAccessor"
   ],
   "injectors": {
