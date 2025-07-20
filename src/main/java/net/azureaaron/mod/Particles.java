@@ -96,7 +96,7 @@ public class Particles {
 									() -> config.particles.scaling.getOrDefault(id, 1f),
 									newValue -> config.particles.scaling.put(id, newValue.floatValue()))
 							.available(!Main.OPTIFABRIC_LOADED)
-							.controller(opt -> FloatFieldControllerBuilder.create(opt).range(0f, 2f))
+							.controller(opt -> FloatFieldControllerBuilder.create(opt).range(0f, 20f))
 							.build())
 					.option(Option.<Float>createBuilder()
 							.name(Text.literal(name + " Opacity"))
