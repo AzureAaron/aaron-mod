@@ -36,7 +36,7 @@ public class DragonTimers {
 
 	@Init
 	public static void init() {
-		WorldRenderEvents.BEFORE_DEBUG_RENDER.register(DragonTimers::renderSpawnTimers);
+		WorldRenderEvents.AFTER_TRANSLUCENT.register(DragonTimers::renderSpawnTimers);
 		ParticleSpawnEvent.EVENT.register(DragonTimers::onParticle);
 		ServerTickCallback.EVENT.register(DragonTimers::onServerTick);
 	}

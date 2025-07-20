@@ -12,7 +12,7 @@ public class BoundingBoxes {
 	
 	@Init
 	public static void init() {
-		WorldRenderEvents.BEFORE_DEBUG_RENDER.register(BoundingBoxes::renderBoxes);
+		WorldRenderEvents.AFTER_TRANSLUCENT.register(BoundingBoxes::renderBoxes);
 	}
 	
 	private static void renderBoxes(WorldRenderContext wrc) {
