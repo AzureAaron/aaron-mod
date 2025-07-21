@@ -32,6 +32,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.ColorHelper;
 
 public class ItemModelCustomizationScreen extends Screen {
 	private static final Text TITLE = Text.literal("Item Model Customization Screen");
@@ -109,7 +110,7 @@ public class ItemModelCustomizationScreen extends Screen {
 				itemIdField.setEditableColor(TextFieldWidget.DEFAULT_EDITABLE_COLOR);
 				this.previewItem = new ItemStack(Registries.ITEM.get(id));
 			} else {
-				itemIdField.setEditableColor(Formatting.RED.getColorValue());
+				itemIdField.setEditableColor(ColorHelper.fullAlpha(Formatting.RED.getColorValue()));
 			}
 		});
 

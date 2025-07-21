@@ -165,10 +165,10 @@ public class CustomizeItemModelScreen extends Screen {
 				setter.accept(value);
 				textField.setEditableColor(TextFieldWidget.DEFAULT_EDITABLE_COLOR);
 			} else {
-				textField.setEditableColor(Formatting.RED.getColorValue());
+				textField.setEditableColor(ColorHelper.fullAlpha(Formatting.RED.getColorValue()));
 			}
 		} catch (NumberFormatException e) {
-			textField.setEditableColor(Formatting.RED.getColorValue());
+			textField.setEditableColor(ColorHelper.fullAlpha(Formatting.RED.getColorValue()));
 		}
 
 		this.hasChanges = !this.config.equals(this.backup);
