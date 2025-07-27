@@ -55,6 +55,7 @@
     "ScreenshotRecorderMixin",
     "ScrollerMixin",
     "ShaderLoaderMixin",
+	"SkyblockerCustomizeNameScreenMixin",
     "SkyblockerPVCollectionsGenericCategoryMixin",
     "TextRendererMixin",
     "TextVisitFactoryMixin",
