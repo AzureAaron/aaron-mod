@@ -246,7 +246,8 @@ public class UIAndVisualsConfig {
 		public boolean hideFog = false;
 
 		@SerialEntry
-		public boolean correctAmbientDarkness = true;
+		@Deprecated
+		public transient boolean correctAmbientDarkness = true;
 	}
 
 	public static class LegacyRevival {

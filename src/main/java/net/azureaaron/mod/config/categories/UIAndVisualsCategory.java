@@ -211,14 +211,6 @@ public class UIAndVisualsCategory {
 										newValue -> config.uiAndVisuals.world.hideFog = newValue)
 								.controller(ConfigUtils::createBooleanController)
 								.build())
-						.option(Option.<Boolean>createBuilder()
-								.name(Text.literal("Correct Ambient Darkness"))
-								.description(OptionDescription.of(Text.literal("Fixes an issue causing overlays, vignettes, and entity shadows to render as if it was always daytime (MC-259651).")))
-								.binding(defaults.uiAndVisuals.world.correctAmbientDarkness,
-										() -> config.uiAndVisuals.world.correctAmbientDarkness,
-										newValue -> config.uiAndVisuals.world.correctAmbientDarkness = newValue)
-								.controller(ConfigUtils::createBooleanController)
-								.build())
 						.build())
 
 				//Legacy Revival - "A Return to the Classics"
