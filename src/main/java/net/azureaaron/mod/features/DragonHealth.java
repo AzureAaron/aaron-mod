@@ -23,18 +23,20 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.entity.EntityIndex;
 
 public class DragonHealth {
-	private static final Pattern DRAGON_HP = Pattern.compile("﴾ Withered Dragon (?:\u16E4 )?(?<health>[0-9kKMB.]+)\\/(?<max>[0-9kKMB.]+)\u2764 ﴿");
-	
+	//﴾ (?:.+ )?Withered Dragon (?:\u16E4 )?(?<health>[\dkKMB.]+)\/(?<max>[\dkKMB.]+)\u2764 ﴿
+	private static final Pattern DRAGON_HP = Pattern.compile("﴾ (?:.+ )?Withered Dragon (?:\\u16E4 )?(?<health>[\\dkKMB.]+)\\/(?<max>[\\dkKMB.]+)\\u2764 ﴿");
+
 	@Init
 	public static void init() {
 		WorldRenderEvents.AFTER_TRANSLUCENT.register(DragonHealth::render);
 	}
-	
+
 	private static void render(WorldRenderContext wrc) {
 		try {
 			if (Cache.inM7Phase5 && AaronModConfigManager.get().skyblock.m7.dragonHealthDisplay) {
-				ClientWorld world = MinecraftClient.getInstance().world;
-				
+				MinecraftClient client = MinecraftClient.getInstance();
+				ClientWorld world = client.world;
+
 				if (world != null) {
 					for (Entity entity : world.getEntities()) {
 						if (entity instanceof EnderDragonEntity dragon) {
@@ -49,16 +51,16 @@ public class DragonHealth {
 									if (matcher.matches()) {
 										String healthSegment = matcher.group("health");
 										String maxHealthSegment = matcher.group("max");
-										
+
 										float health = (float) getHealth(healthSegment);
 										float maxHealth = (float) getHealth(maxHealthSegment);
 										float hp = (health / maxHealth) * 100f;
-										
+
 										int colour = getHealthColour(hp);
-										Vec3d pos = new Vec3d(dragon.getX(), dragon.getY() - 1, dragon.getZ());
-										
+										Vec3d pos = dragon.getLerpedPos(client.getRenderTickCounter().getTickProgress(false)).subtract(0, 1, 0);
+
 										RenderHelper.renderText(wrc, pos, Text.literal(healthSegment).styled(style -> style.withColor(colour)).asOrderedText(), true);
-										
+
 										break;
 									}
 								}
@@ -71,12 +73,12 @@ public class DragonHealth {
 			Main.LOGGER.error("[Aaron's Mod] Failed to render a dragon's health! {}", e);
 		}
 	}
-	
+
 	private static double getHealth(String health) {
 		try {
 			double multiplier = 1;
 			health = health.toUpperCase();
-			
+
 			if (health.endsWith("K")) {
 				multiplier = 1e3;
 				health = health.substring(0, health.length() - 1);
@@ -87,19 +89,19 @@ public class DragonHealth {
 				multiplier = 1e9;
 				health = health.substring(0, health.length() - 1);
 			}
-			
+
 			if (!health.contains(".")) {
 				health += ".0";
 			}
-			
+
 			return Double.parseDouble(health) * multiplier;
 		} catch (Exception e) {
 			Main.LOGGER.error("[Aaron's Mod] Failed to parse dragon health! Input: {}", health, e);
 		}
-		
+
 		return 0d;
 	}
-	
+
 	private static int getHealthColour(float percentage) {
 		return Color.HSBtoRGB(percentage / 300f, 0.9f, 0.9f);
 	}
