@@ -8,6 +8,8 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import net.azureaaron.mod.MethodReference;
+
 public class InitReadingClassVisitor extends ClassVisitor {
 	private final Map<MethodReference, Integer> methodReferences;
 	private final ClassReader classReader;

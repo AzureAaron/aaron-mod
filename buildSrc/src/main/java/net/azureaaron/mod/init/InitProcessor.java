@@ -13,9 +13,10 @@ import java.util.Objects;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
-import net.azureaaron.mod.AnnotationProcessor;
+import net.azureaaron.mod.MethodReference;
+import net.azureaaron.mod.Processor;
 
-public class InitAnnotationProcessor {
+public class InitProcessor {
 
 	/**
 	 * Finds all methods in the compiled .class files of the mod with an {@code @Init} annotation and injects
@@ -41,7 +42,7 @@ public class InitAnnotationProcessor {
 	}
 
 	private static void findInitMethods(Map<MethodReference, Integer> methodReferences) {
-		AnnotationProcessor.forEachClass(inputStream -> {
+		Processor.forEachClass(inputStream -> {
 			try {
 				ClassReader classReader = new ClassReader(inputStream);
 				classReader.accept(new InitReadingClassVisitor(classReader, methodReferences), ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
@@ -52,7 +53,7 @@ public class InitAnnotationProcessor {
 	}
 
 	private static void injectInitCalls(List<MethodReference> methodReferences) {
-		Path mainClassFile = Objects.requireNonNull(AnnotationProcessor.findClass("Main.class"), "Main class wasn't found :(").toPath();
+		Path mainClassFile = Objects.requireNonNull(Processor.findClass("Main.class"), "Main class wasn't found :(").toPath();
 
 		try (InputStream inputStream = Files.newInputStream(mainClassFile)) {
 			ClassReader classReader = new ClassReader(inputStream);

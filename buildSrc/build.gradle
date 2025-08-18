@@ -15,7 +15,7 @@ gradlePlugin {
 	plugins {
 		simplePlugin {
 			id = "net.azureaaron.mod.annotation-processor"
-			implementationClass = "net.azureaaron.mod.AnnotationProcessor"
+			implementationClass = "net.azureaaron.mod.Processor"
 		}
 	}
 }

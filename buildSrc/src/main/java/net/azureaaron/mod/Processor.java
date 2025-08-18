@@ -19,10 +19,10 @@ import org.gradle.api.tasks.compile.JavaCompile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import net.azureaaron.mod.init.InitAnnotationProcessor;
+import net.azureaaron.mod.init.InitProcessor;
 
-public class AnnotationProcessor implements Plugin<Project> {
-	public static final Logger LOGGER = Logging.getLogger(AnnotationProcessor.class);
+public class Processor implements Plugin<Project> {
+	public static final Logger LOGGER = Logging.getLogger(Processor.class);
 	/**
 	 * The directory where compiled .class files are output.
 	 */
@@ -33,7 +33,7 @@ public class AnnotationProcessor implements Plugin<Project> {
 		project.getTasks().withType(JavaCompile.class).named("compileJava").get().doLast(task -> {
 			classesDir = ((JavaCompile) task).getDestinationDirectory().get().getAsFile();
 
-			InitAnnotationProcessor.apply();
+			InitProcessor.apply();
 		});
 	}
 

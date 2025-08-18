@@ -7,6 +7,8 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.MethodNode;
 
+import net.azureaaron.mod.MethodReference;
+
 public class InitInjectingClassVisitor extends ClassVisitor {
 	private final List<MethodReference> methodReferences;
 
