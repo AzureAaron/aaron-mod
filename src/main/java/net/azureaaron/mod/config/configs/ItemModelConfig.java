@@ -1,8 +1,9 @@
 package net.azureaaron.mod.config.configs;
 
-import java.util.Objects;
-
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
+import net.azureaaron.mod.annotations.GenEquals;
+import net.azureaaron.mod.annotations.GenHashCode;
+import net.azureaaron.mod.annotations.GenToString;
 import net.minecraft.entity.LivingEntity;
 
 public class ItemModelConfig {
@@ -61,21 +62,15 @@ public class ItemModelConfig {
 		}
 
 		@Override
-		public boolean equals(Object o) {
-			return o instanceof AbstractHand other 
-					&& this.enabled == other.enabled
-					&& this.x == other.x
-					&& this.y == other.y
-					&& this.z == other.z
-					&& this.scale == other.scale
-					&& this.xRotation == other.xRotation
-					&& this.yRotation == other.yRotation
-					&& this.zRotation == other.zRotation;
-		}
+		@GenEquals
+		public native boolean equals(Object o);
 
 		@Override
-		public int hashCode() {
-			return Objects.hash(this.enabled, this.x, this.y, this.z, this.scale, this.xRotation, this.yRotation, this.zRotation);
-		}
+		@GenHashCode
+		public native int hashCode();
+
+		@Override
+		@GenToString
+		public native String toString();
 	}
 }

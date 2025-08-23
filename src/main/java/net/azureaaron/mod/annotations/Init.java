@@ -6,13 +6,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Documented
-@Retention(RetentionPolicy.CLASS)
-@Target(ElementType.METHOD)
 /**
  * Annotating a method with this will cause the method to be called upon mod initialization.
  * Initializer methods must be public, static, have no arguments, and have a return type of void.
  */
+@Documented
+@Retention(RetentionPolicy.CLASS)
+@Target(ElementType.METHOD)
 public @interface Init {
 	/**
 	 * The priority of the initializer method. Lower values will cause the initializer to run sooner

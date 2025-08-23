@@ -1,17 +1,10 @@
 package net.azureaaron.mod.init;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
 
 import net.azureaaron.mod.MethodReference;
 import net.azureaaron.mod.Processor;
@@ -42,29 +35,12 @@ public class InitProcessor {
 	}
 
 	private static void findInitMethods(Map<MethodReference, Integer> methodReferences) {
-		Processor.forEachClass(inputStream -> {
-			try {
-				ClassReader classReader = new ClassReader(inputStream);
-				classReader.accept(new InitReadingClassVisitor(classReader, methodReferences), ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		});
+		Processor.forEachClass(inputStream -> Processor.readClass(inputStream, classReader -> new InitReadingClassVisitor(classReader, methodReferences)));
 	}
 
 	private static void injectInitCalls(List<MethodReference> methodReferences) {
 		Path mainClassFile = Objects.requireNonNull(Processor.findClass("Main.class"), "Main class wasn't found :(").toPath();
 
-		try (InputStream inputStream = Files.newInputStream(mainClassFile)) {
-			ClassReader classReader = new ClassReader(inputStream);
-			ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-			classReader.accept(new InitInjectingClassVisitor(classWriter, methodReferences), 0);
-
-			try (OutputStream outputStream = Files.newOutputStream(mainClassFile)) {
-				outputStream.write(classWriter.toByteArray());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		Processor.writeClass(mainClassFile, classWriter -> new InitInjectingClassVisitor(classWriter, methodReferences));
 	}
 }

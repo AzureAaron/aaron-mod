@@ -19,8 +19,6 @@ public class InitInjectingClassVisitor extends ClassVisitor {
 
 	@Override
 	public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
-		MethodVisitor methodVisitor = super.visitMethod(access, name, descriptor, signature, exceptions);
-
 		//Only replace the Main class' init method which is private, static, has no args, and returns void
 		if ((access & Opcodes.ACC_PRIVATE) != 0 && (access & Opcodes.ACC_STATIC) != 0 && name.equals("init") && descriptor.equals("()V")) {
 			MethodNode methodNode = new MethodNode(Opcodes.ASM9, access, name, descriptor, signature, exceptions);
@@ -33,10 +31,12 @@ public class InitInjectingClassVisitor extends ClassVisitor {
 			//Return from the method
 			methodNode.visitInsn(Opcodes.RETURN);
 
-			//Replace the initFeatures method with our new methodNode
-			methodNode.accept(methodVisitor);
+			//Replace the target method with our new generated one
+			methodNode.accept(this.getDelegate());
+
+			return null;
 		}
 
-		return methodVisitor;
+		return super.visitMethod(access, name, descriptor, signature, exceptions);
 	}
 }
