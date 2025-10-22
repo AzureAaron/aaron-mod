@@ -2,6 +2,7 @@ package net.azureaaron.mod.features;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.ColorHelper;
 
 public enum Dragons {
 	POWER("Red", new BlockPos(13, 5, 45), new BlockPos(41, 34, 72), 0xe02b2b),
@@ -16,9 +17,7 @@ public enum Dragons {
 	public final Box box;
 
 	public final int colour;
-	public final float red;
-	public final float green;
-	public final float blue;
+	public final float[] colourComponents;
 
 	protected int spawnTime = 0;
 
@@ -31,9 +30,7 @@ public enum Dragons {
 		this.box = Box.enclosing(pos1, pos2);
 
 		this.colour = colour;
-		this.red = (colour >> 16) & 0xFF;
-		this.green = (colour >> 8) & 0xFF;
-		this.blue = colour & 0xFF;
+		this.colourComponents = new float[] { ColorHelper.getRedFloat(colour), ColorHelper.getGreenFloat(colour), ColorHelper.getBlueFloat(colour) };
 	}
 
 	public static void reset() {

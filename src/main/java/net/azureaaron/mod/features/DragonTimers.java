@@ -5,15 +5,13 @@ import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.ParticleSpawnEvent;
 import net.azureaaron.mod.events.ServerTickCallback;
+import net.azureaaron.mod.events.WorldRenderExtractionCallback;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.ServerTickCounter;
-import net.azureaaron.mod.utils.render.RenderHelper;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.azureaaron.mod.utils.render.primitive.PrimitiveCollector;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.Box;
@@ -36,19 +34,19 @@ public class DragonTimers {
 
 	@Init
 	public static void init() {
-		WorldRenderEvents.AFTER_TRANSLUCENT.register(DragonTimers::renderSpawnTimers);
+		WorldRenderExtractionCallback.EVENT.register(DragonTimers::extractRendering);
 		ParticleSpawnEvent.EVENT.register(DragonTimers::onParticle);
 		ServerTickCallback.EVENT.register(DragonTimers::onServerTick);
 	}
 
-	private static void renderSpawnTimers(WorldRenderContext wrc) {
+	private static void extractRendering(PrimitiveCollector collector) {
 		if (Functions.isOnHypixel() && AaronModConfigManager.get().skyblock.m7.dragonSpawnTimers && Cache.inM7Phase5) {
 			for (Dragons dragon : Dragons.VALUES) {
 				if (dragon.spawnTime > 0) {
 					int timeUntilSpawn = (int) (dragon.spawnTime * ServerTickCounter.MILLIS_PER_TICK);
-					OrderedText spawnText = Text.literal(timeUntilSpawn + " ms").asOrderedText();
+					Text spawnText = Text.literal(timeUntilSpawn + " ms");
 
-					RenderHelper.renderText(wrc, DRAGON_SPAWN_TEXT_LOCATIONS.get(dragon), spawnText, true);
+					collector.submitText(spawnText, DRAGON_SPAWN_TEXT_LOCATIONS.get(dragon), 8, true);
 				}
 			}
 		}

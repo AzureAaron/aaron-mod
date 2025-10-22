@@ -1,99 +1,53 @@
 package net.azureaaron.mod.utils.render;
 
-import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.textures.GpuTextureView;
 
-import net.azureaaron.mod.Main;
 import net.azureaaron.mod.annotations.Init;
+import net.azureaaron.mod.events.WorldRenderExtractionCallback;
+import net.azureaaron.mod.utils.render.primitive.PrimitiveCollectorImpl;
+import net.azureaaron.mod.utils.render.state.CameraRenderState;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
-import net.fabricmc.fabric.api.event.Event;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.font.TextRenderer.TextLayerType;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.LightmapTextureManager;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.VertexRendering;
-import net.minecraft.client.util.BufferAllocator;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.OrderedText;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.texture.TextureSetup;
+import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.profiler.Profilers;
 
 public class RenderHelper {
-	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
-	private static final BufferAllocator ALLOCATOR = new BufferAllocator(1536);
-	private static final Identifier AFTER_DRAWS_PHASE = Identifier.of(Main.NAMESPACE, "after_draws");
+	private static PrimitiveCollectorImpl collector;
 
 	@Init
 	public static void init() {
-		WorldRenderEvents.AFTER_TRANSLUCENT.addPhaseOrdering(Event.DEFAULT_PHASE, AFTER_DRAWS_PHASE);
-		WorldRenderEvents.AFTER_TRANSLUCENT.register(AFTER_DRAWS_PHASE, RenderHelper::afterDraws);
+		WorldRenderEvents.AFTER_SETUP.register(RenderHelper::startFrame);
+		WorldRenderEvents.AFTER_TRANSLUCENT.register(RenderHelper::executeDraws);
 	}
 
-	public static void renderBox(WorldRenderContext context, Box box, float red, float green, float blue, float alpha) {
-		renderBox(context, box, 3f, red, green, blue, alpha);
+	private static void startFrame(WorldRenderContext context) {
+		collector = new PrimitiveCollectorImpl();
+
+		WorldRenderExtractionCallback.EVENT.invoker().onExtract(collector);
+		collector.endCollection();
 	}
 
-	public static void renderBox(WorldRenderContext context, Box box, float lineWidth, float red, float green, float blue, float alpha) {
-		MatrixStack matrices = context.matrixStack();
-		Vec3d camera = context.camera().getPos();
+	private static void executeDraws(WorldRenderContext context) {
+		Profiler profiler = Profilers.get();
 
-		matrices.push();
-		matrices.translate(-camera.x, -camera.y, -camera.z);
+		profiler.push("aaronModSubmitPrimitives");
+		CameraRenderState cameraState = new CameraRenderState();
+		cameraState.pos = context.camera().getPos();
+		cameraState.rotation = new Quaternionf(context.camera().getRotation());
+		cameraState.pitch = context.camera().getPitch();
+		cameraState.yaw = context.camera().getYaw();
 
-		BufferBuilder buffer = Renderer.getBuffer(RenderPipelines.LINES, lineWidth);
-		VertexRendering.drawBox(matrices, buffer, box, red / 255f, green / 255f, blue / 255f, alpha);
+		collector.dispatchPrimitivesToRenderers(cameraState);
+		collector = null;
+		profiler.pop();
 
-		matrices.pop();
-	}
-
-	public static void renderFilledBox(WorldRenderContext context, Vec3d pos, float red, float green, float blue, float alpha) {
-		MatrixStack matrices = context.matrixStack();
-		Vec3d camera = context.camera().getPos();
-
-		matrices.push();
-		matrices.translate(-camera.x, -camera.y, -camera.z);
-
-		BufferBuilder buffer = Renderer.getBuffer(RenderPipelines.DEBUG_FILLED_BOX);
-		VertexRendering.drawFilledBox(matrices, buffer, pos.x, pos.y, pos.z, pos.x + 1, pos.y + 1, pos.z + 1, red / 255f, green / 255f, blue / 255f, alpha);
-
-		matrices.pop();
-	}
-
-	public static void renderText(WorldRenderContext context, Vec3d pos, OrderedText text, boolean seeThrough) {
-		renderText(context, pos, text, seeThrough, 8);
-	}
-
-	public static void renderText(WorldRenderContext context, Vec3d pos, OrderedText text, boolean seeThrough, float scale) {
-		Matrix4f positionMatrix = new Matrix4f();
-		Camera camera = context.camera();
-		TextRenderer textRenderer = CLIENT.textRenderer;
-
-		scale *= 0.025f;
-
-		Vec3d cameraPos = camera.getPos();
-
-		positionMatrix
-		.translate((float) (pos.getX() - cameraPos.getX()), (float) (pos.getY() - cameraPos.getY()), (float) (pos.getZ() - cameraPos.getZ()))
-		.rotate(camera.getRotation())
-		.scale(scale, -scale, scale);
-
-		float xOffset = -textRenderer.getWidth(text) / 2f;
-
-		VertexConsumerProvider.Immediate consumers = VertexConsumerProvider.immediate(ALLOCATOR);
-
-		textRenderer.draw(text, xOffset, 0, 0xFFFFFFFF, false, positionMatrix, consumers, seeThrough ? TextLayerType.SEE_THROUGH : TextLayerType.NORMAL, 0, LightmapTextureManager.MAX_LIGHT_COORDINATE);
-		consumers.draw();
-	}
-
-	private static void afterDraws(WorldRenderContext context) {
+		profiler.push("aaronModExecuteDraws");
 		Renderer.executeDraws();
+		profiler.pop();
 	}
 
 	public static boolean pointIsInArea(double x, double y, double x1, double y1, double x2, double y2) {
@@ -105,5 +59,19 @@ public class RenderHelper {
 	 */
 	public static void assertOnRenderThread(String message) {
 		if (!RenderSystem.isOnRenderThread()) throw new IllegalStateException(message);
+	}
+
+	/**
+	 * Returns a {@code TextureSetup} with a single texture input only.
+	 */
+	public static TextureSetup singleTexture(GpuTextureView texture) {
+		return TextureSetup.withoutGlTexture(texture);
+	}
+
+	/**
+	 * Returns a {@code TextureSetup} with the texture input and a lightmap.
+	 */
+	public static TextureSetup textureWithLightmap(GpuTextureView texture) {
+		return TextureSetup.of(texture);
 	}
 }

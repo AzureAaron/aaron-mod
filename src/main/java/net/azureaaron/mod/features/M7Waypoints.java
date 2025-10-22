@@ -2,53 +2,52 @@ package net.azureaaron.mod.features;
 
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.events.WorldRenderExtractionCallback;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Functions;
-import net.azureaaron.mod.utils.render.RenderHelper;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
-import net.minecraft.util.math.Vec3d;
+import net.azureaaron.mod.utils.render.primitive.PrimitiveCollector;
+import net.minecraft.util.math.BlockPos;
 
 public class M7Waypoints {
 	private static final float ALPHA = 0.5f;
 	
 	// Shoot Spots
-	private static final Vec3d BLUE_SHOOT = new Vec3d(85, 20, 94);
-	private static final Vec3d GREEN_SHOOT = new Vec3d(27, 20, 94);
-	private static final Vec3d ORANGE_SHOOT = new Vec3d(84, 20, 56);
-	private static final Vec3d PURPLE_SHOOT = new Vec3d(56, 20, 124);
-	private static final Vec3d RED_SHOOT = new Vec3d(27, 20, 59);
+	private static final BlockPos BLUE_SHOOT = new BlockPos(85, 20, 94);
+	private static final BlockPos GREEN_SHOOT = new BlockPos(27, 20, 94);
+	private static final BlockPos ORANGE_SHOOT = new BlockPos(84, 20, 56);
+	private static final BlockPos PURPLE_SHOOT = new BlockPos(56, 20, 124);
+	private static final BlockPos RED_SHOOT = new BlockPos(27, 20, 59);
 	
 	//Stack Spots
-	private static final Vec3d ORANGE_STACK = new Vec3d(48, 4, 80); // 45, 4, 82 or 48, 4, 80
-	private static final Vec3d BLUE_STACK = new Vec3d(41, 5, 108); // 41, 5, 108
-	private static final Vec3d PURPLE_STACK = new Vec3d(24, 5, 92); // 24, 5, 92
-	private static final Vec3d PURPLE_STACK_ALT = new Vec3d(88, 5, 92); // 88, 5, 92
-	private static final Vec3d GREEN_STACK = new Vec3d(62, 5, 109); // 66, 5, 109 or 62, 5, 109
-	private static final Vec3d RED_STACK = new Vec3d(16, 5, 89); //16, 5, 89
+	private static final BlockPos ORANGE_STACK = new BlockPos(48, 4, 80); // 45, 4, 82 or 48, 4, 80
+	private static final BlockPos BLUE_STACK = new BlockPos(41, 5, 108); // 41, 5, 108
+	private static final BlockPos PURPLE_STACK = new BlockPos(24, 5, 92); // 24, 5, 92
+	private static final BlockPos PURPLE_STACK_ALT = new BlockPos(88, 5, 92); // 88, 5, 92
+	private static final BlockPos GREEN_STACK = new BlockPos(62, 5, 109); // 66, 5, 109 or 62, 5, 109
+	private static final BlockPos RED_STACK = new BlockPos(16, 5, 89); //16, 5, 89
 	
 	@Init
 	public static void init() {
-		WorldRenderEvents.AFTER_TRANSLUCENT.register(M7Waypoints::renderWaypoints);
+		WorldRenderExtractionCallback.EVENT.register(M7Waypoints::extractRendering);
 	}
 	
-	private static void renderWaypoints(WorldRenderContext wrc) {
+	private static void extractRendering(PrimitiveCollector collector) {
 		if (Functions.isOnHypixel() && Cache.inM7Phase5) {
 			if (AaronModConfigManager.get().skyblock.m7.dragonAimWaypoints) {
-				RenderHelper.renderFilledBox(wrc, BLUE_SHOOT, Dragons.ICE.red, Dragons.ICE.green, Dragons.ICE.blue, ALPHA);
-				RenderHelper.renderFilledBox(wrc, GREEN_SHOOT, Dragons.APEX.red, Dragons.APEX.green, Dragons.APEX.blue, ALPHA);
-				RenderHelper.renderFilledBox(wrc, ORANGE_SHOOT, Dragons.FLAME.red, Dragons.FLAME.green, Dragons.FLAME.blue, ALPHA);
-				RenderHelper.renderFilledBox(wrc, PURPLE_SHOOT, Dragons.SOUL.red, Dragons.SOUL.green, Dragons.SOUL.blue, ALPHA);
-				RenderHelper.renderFilledBox(wrc, RED_SHOOT, Dragons.POWER.red, Dragons.POWER.green, Dragons.POWER.blue, ALPHA);
+				collector.submitFilledBox(BLUE_SHOOT, Dragons.ICE.colourComponents, ALPHA, false);
+				collector.submitFilledBox(GREEN_SHOOT, Dragons.APEX.colourComponents, ALPHA, false);
+				collector.submitFilledBox(ORANGE_SHOOT, Dragons.FLAME.colourComponents, ALPHA, false);
+				collector.submitFilledBox(PURPLE_SHOOT, Dragons.SOUL.colourComponents, ALPHA, false);
+				collector.submitFilledBox(RED_SHOOT, Dragons.POWER.colourComponents, ALPHA, false);
 			}
 			
 			if (AaronModConfigManager.get().skyblock.m7.arrowStackWaypoints) {
-				RenderHelper.renderFilledBox(wrc, ORANGE_STACK, Dragons.FLAME.red, Dragons.FLAME.green, Dragons.FLAME.blue, ALPHA);
-				RenderHelper.renderFilledBox(wrc, BLUE_STACK, Dragons.ICE.red, Dragons.ICE.green, Dragons.ICE.blue, ALPHA);
-				RenderHelper.renderFilledBox(wrc, PURPLE_STACK, Dragons.SOUL.red, Dragons.SOUL.green, Dragons.SOUL.blue, ALPHA);
-				RenderHelper.renderFilledBox(wrc, PURPLE_STACK_ALT, Dragons.SOUL.red, Dragons.SOUL.green, Dragons.SOUL.blue, ALPHA);
-				RenderHelper.renderFilledBox(wrc, GREEN_STACK, Dragons.APEX.red, Dragons.APEX.green, Dragons.APEX.blue, ALPHA);
-				RenderHelper.renderFilledBox(wrc, RED_STACK, Dragons.POWER.red, Dragons.POWER.green, Dragons.POWER.blue, ALPHA);
+				collector.submitFilledBox(ORANGE_STACK, Dragons.FLAME.colourComponents, ALPHA, false);
+				collector.submitFilledBox(BLUE_STACK, Dragons.ICE.colourComponents, ALPHA, false);
+				collector.submitFilledBox(PURPLE_STACK, Dragons.SOUL.colourComponents, ALPHA, false);
+				collector.submitFilledBox(PURPLE_STACK_ALT, Dragons.SOUL.colourComponents, ALPHA, false);
+				collector.submitFilledBox(GREEN_STACK, Dragons.APEX.colourComponents, ALPHA, false);
+				collector.submitFilledBox(RED_STACK, Dragons.POWER.colourComponents, ALPHA, false);
 			}
 		}
 	}

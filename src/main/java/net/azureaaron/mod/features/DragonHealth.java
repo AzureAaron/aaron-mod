@@ -7,12 +7,11 @@ import java.util.regex.Pattern;
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
+import net.azureaaron.mod.events.WorldRenderExtractionCallback;
 import net.azureaaron.mod.mixins.accessors.ClientEntityManagerAccessor;
 import net.azureaaron.mod.mixins.accessors.ClientWorldAccessor;
 import net.azureaaron.mod.utils.Cache;
-import net.azureaaron.mod.utils.render.RenderHelper;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.azureaaron.mod.utils.render.primitive.PrimitiveCollector;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -28,10 +27,10 @@ public class DragonHealth {
 
 	@Init
 	public static void init() {
-		WorldRenderEvents.AFTER_TRANSLUCENT.register(DragonHealth::render);
+		WorldRenderExtractionCallback.EVENT.register(DragonHealth::extractRendering);
 	}
 
-	private static void render(WorldRenderContext wrc) {
+	private static void extractRendering(PrimitiveCollector collector) {
 		try {
 			if (Cache.inM7Phase5 && AaronModConfigManager.get().skyblock.m7.dragonHealthDisplay) {
 				MinecraftClient client = MinecraftClient.getInstance();
@@ -59,7 +58,7 @@ public class DragonHealth {
 										int colour = getHealthColour(hp);
 										Vec3d pos = dragon.getLerpedPos(client.getRenderTickCounter().getTickProgress(false)).subtract(0, 1, 0);
 
-										RenderHelper.renderText(wrc, pos, Text.literal(healthSegment).styled(style -> style.withColor(colour)).asOrderedText(), true);
+										collector.submitText(Text.literal(healthSegment).styled(style -> style.withColor(colour)), pos, 8, true);
 
 										break;
 									}
