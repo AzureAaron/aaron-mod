@@ -7,7 +7,7 @@ import java.util.Objects;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
-import dev.isxander.yacl3.api.ButtonOption;
+import net.azureaaron.dandelion.systems.ButtonOption;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.render.RenderHelper;
 import net.minecraft.client.MinecraftClient;
@@ -47,8 +47,8 @@ public final class HudElementConfigScreen extends Screen {
 	public static ButtonOption createOption() {
 		return ButtonOption.createBuilder()
 				.name(Text.literal("HUD Manager"))
-				.text(Text.literal("Open"))
-				.action((screen, opt) -> MinecraftClient.getInstance().setScreen(new HudElementConfigScreen(screen)))
+				.prompt(Text.literal("Open"))
+				.action(screen -> MinecraftClient.getInstance().setScreen(new HudElementConfigScreen(screen)))
 				.build();
 	}
 

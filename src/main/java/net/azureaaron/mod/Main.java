@@ -61,4 +61,8 @@ public class Main implements ClientModInitializer {
 		//I used to cheat the translation key system but now I abide by it :)
 		Keybinds.zoomKeybind = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.aaron-mod.zoom", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_C, KEYBINDING_CATEGORY));
 	}
+
+	public static Identifier id(String path) {
+		return Identifier.of(NAMESPACE, path);
+	}
 }

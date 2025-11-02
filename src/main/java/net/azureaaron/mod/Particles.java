@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import dev.isxander.yacl3.api.Option;
-import dev.isxander.yacl3.api.OptionDescription;
-import dev.isxander.yacl3.api.OptionGroup;
-import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
-import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+import net.azureaaron.dandelion.systems.Option;
+import net.azureaaron.dandelion.systems.OptionGroup;
+import net.azureaaron.dandelion.systems.controllers.FloatController;
 import net.azureaaron.mod.config.AaronModConfig;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.config.ConfigUtils;
@@ -81,7 +79,7 @@ public class Particles {
 
 			String name = getParticleDisplayName(id.getPath());
 			String namespaceName = getParticleDisplayName(id.getNamespace());
-			OptionDescription description = PARTICLE_DESCRIPTIONS.containsKey(particleType) ? OptionDescription.of(Text.literal(PARTICLE_DESCRIPTIONS.get(particleType))) : OptionDescription.EMPTY;
+			Text description = PARTICLE_DESCRIPTIONS.containsKey(particleType) ? Text.literal(PARTICLE_DESCRIPTIONS.get(particleType)) : Text.empty();
 
 			list.add(OptionGroup.createBuilder()
 					.name(Text.literal(name + " Particles (" + namespaceName + ")"))
@@ -94,26 +92,24 @@ public class Particles {
 							.binding(true,
 									() -> config.particles.states.getOrDefault(id, true),
 									newValue -> config.particles.states.put(id, newValue.booleanValue()))
-							.available(!Main.OPTIFABRIC_LOADED)
-							.controller(ConfigUtils::createBooleanController)
+							.modifiable(!Main.OPTIFABRIC_LOADED)
+							.controller(ConfigUtils.createBooleanController())
 							.build())
-
-					//Scale Multiplier
 					.option(Option.<Float>createBuilder()
 							.name(Text.literal(name + " Scale Multiplier"))
 							.binding(1f,
 									() -> config.particles.scaling.getOrDefault(id, 1f),
 									newValue -> config.particles.scaling.put(id, newValue.floatValue()))
-							.available(!Main.OPTIFABRIC_LOADED)
-							.controller(opt -> FloatFieldControllerBuilder.create(opt).range(0f, 20f))
+							.modifiable(!Main.OPTIFABRIC_LOADED)
+							.controller(FloatController.createBuilder().range(0f, 20f).build())
 							.build())
 					.option(Option.<Float>createBuilder()
 							.name(Text.literal(name + " Opacity"))
 							.binding(1f,
 									() -> config.particles.alphas.getOrDefault(id, 1f),
 									newValue -> config.particles.alphas.put(id, newValue.floatValue()))
-							.controller(opt -> FloatSliderControllerBuilder.create(opt).range(0.15f, 1f).step(0.05f))
-							.available(!Main.OPTIFABRIC_LOADED)
+							.controller(FloatController.createBuilder().range(0.15f, 1f).slider(0.05f).build())
+							.modifiable(!Main.OPTIFABRIC_LOADED)
 							.build())
 					.build());
 		}
