@@ -15,7 +15,6 @@ public enum Dragons {
 	public final BlockPos pos1;
 	public final BlockPos pos2;
 	public final Box box;
-
 	public final int colour;
 	public final float[] colourComponents;
 

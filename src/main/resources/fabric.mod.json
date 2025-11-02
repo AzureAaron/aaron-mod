@@ -31,11 +31,11 @@
   ],
   "accessWidener": "aaron-mod.accesswidener",
   "depends": {
-    "fabricloader": ">=0.17.2",
-    "fabric-api": ">=0.127.0+1.21.6",
-    "minecraft": "~1.21.6",
+    "fabricloader": ">=0.17.3",
+    "fabric-api": ">=0.136.0+1.21.10",
+    "minecraft": "~1.21.9",
     "java": ">=21",
-    "yet_another_config_lib_v3": ">=3.7.1+1.21.6",
+    "yet_another_config_lib_v3": ">=3.8.0+1.21.9",
     "hm-api": ">=1.0.1+1.21.2"
   },
   "suggests": {
@@ -60,12 +60,21 @@
       "net/minecraft/class_1011": [
         "net/azureaaron/mod/injected/NativeImageMarker"
       ],
-      "net/minecraft/class_703": [
+      "net/minecraft/class_3940": [
         "net/azureaaron/mod/injected/ParticleAlphaMarker"
       ],
-      "net/minecraft/class_757": [
-      	"net/azureaaron/mod/injected/GuiDepthStateTracker"
-      ]
+	  "net/minecraft/class_898": [
+		"net/azureaaron/mod/injected/EntityRenderMarker"
+	  ],
+	  "net/minecraft/class_11661\u0024class_11668": [
+		"net/azureaaron/mod/injected/CustomGlowState"
+	  ],
+	  "net/minecraft/class_11661\u0024class_11789": [
+		"net/azureaaron/mod/injected/CustomGlowState"
+	  ],
+	  "net/minecraft/class_11661\u0024class_11670": [
+		"net/azureaaron/mod/injected/CustomGlowState"
+	  ]
     }
   }
 }

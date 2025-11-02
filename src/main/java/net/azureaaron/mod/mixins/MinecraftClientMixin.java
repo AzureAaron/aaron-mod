@@ -18,7 +18,7 @@ public class MinecraftClientMixin {
 	@Shadow
 	private Screen currentScreen;
 
-	@WrapWithCondition(method = "reset", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/SoundManager;stopAll()V", ordinal = 0))
+	@WrapWithCondition(method = "setWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/SoundManager;stopAll()V"))
 	private boolean aaronMod$onWorldChange(SoundManager soundManager) {
 		return !AaronModConfigManager.get().refinements.music.uninterruptedMusic;
 	}

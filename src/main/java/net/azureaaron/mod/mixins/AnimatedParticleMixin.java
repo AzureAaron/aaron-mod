@@ -11,18 +11,19 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.minecraft.client.particle.AnimatedParticle;
+import net.minecraft.client.particle.BillboardParticle;
 import net.minecraft.client.particle.EndRodParticle;
 import net.minecraft.client.particle.FireworksSparkParticle;
-import net.minecraft.client.particle.SpriteBillboardParticle;
 import net.minecraft.client.particle.SquidInkParticle;
 import net.minecraft.client.particle.TotemParticle;
+import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
 @Mixin(AnimatedParticle.class)
-public abstract class AnimatedParticleMixin extends SpriteBillboardParticle {
+public abstract class AnimatedParticleMixin extends BillboardParticle {
 	@Unique
 	private static final Identifier END_ROD = Objects.requireNonNull(Registries.PARTICLE_TYPE.getId(ParticleTypes.END_ROD));
 	@Unique
@@ -34,8 +35,8 @@ public abstract class AnimatedParticleMixin extends SpriteBillboardParticle {
 	@Unique
 	private static final Identifier TOTEM = Objects.requireNonNull(Registries.PARTICLE_TYPE.getId(ParticleTypes.TOTEM_OF_UNDYING));
 
-	protected AnimatedParticleMixin(ClientWorld world, double x, double y, double z) {
-		super(world, x, y, z);
+	protected AnimatedParticleMixin(ClientWorld world, double x, double y, double z, Sprite sprite) {
+		super(world, x, y, z, sprite);
 	}
 
 	@ModifyExpressionValue(method = "tick", at = @At(value = "CONSTANT", args = "floatValue=1.0"))

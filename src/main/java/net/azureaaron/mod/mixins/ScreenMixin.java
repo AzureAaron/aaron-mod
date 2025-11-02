@@ -11,9 +11,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.injected.ScreenResizeMarker;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.DownloadingTerrainScreen;
 import net.minecraft.client.gui.screen.ReconfiguringScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.world.LevelLoadingScreen;
 import net.minecraft.client.util.InputUtil;
 
 @Mixin(Screen.class)
@@ -37,9 +37,9 @@ public class ScreenMixin implements ScreenResizeMarker {
 	private void aaronMod$hideCursor(CallbackInfo ci) {
 		Object instance = (Object) this;
 
-		if ((instance instanceof DownloadingTerrainScreen || instance instanceof ReconfiguringScreen) && AaronModConfigManager.get().uiAndVisuals.world.hideWorldLoadingScreen) {
+		if ((instance instanceof LevelLoadingScreen || instance instanceof ReconfiguringScreen) && AaronModConfigManager.get().uiAndVisuals.world.hideWorldLoadingScreen) {
 			//Prevents the mouse from being movable while we cancel the rendering of the screen
-			InputUtil.setCursorParameters(this.client.getWindow().getHandle(), GLFW.GLFW_CURSOR_DISABLED, this.client.mouse.getX(), this.client.mouse.getY());
+			InputUtil.setCursorParameters(this.client.getWindow(), GLFW.GLFW_CURSOR_DISABLED, this.client.mouse.getX(), this.client.mouse.getY());
 		}
 	}
 

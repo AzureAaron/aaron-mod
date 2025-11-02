@@ -223,7 +223,8 @@ public class UIAndVisualsConfig {
 
 	public static class DebugHud {
 		@SerialEntry
-		public boolean extraDebugInfo = true;
+		@Deprecated
+		public transient boolean extraDebugInfo = true;
 
 		@SerialEntry
 		public boolean alwaysShowDayInF3 = false;

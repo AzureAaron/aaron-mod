@@ -50,12 +50,12 @@ public class Http {
 		if (apiToken != null) requestBuilder.header("Authorization", "Bearer " + apiToken);
 
 		HttpResponse<InputStream> response = HTTP_CLIENT.send(requestBuilder.build(), BodyHandlers.ofInputStream());
-		InputStream decodedInputStream = getDecodedInputStream(response);
 
-		String body = new String(decodedInputStream.readAllBytes());
-		decodedInputStream.close();
+		try (InputStream decodedInputStream = getDecodedInputStream(response)) {
+			String body = new String(decodedInputStream.readAllBytes());
 
-		return new ApiResponse(body, response.statusCode(), url, response.headers());
+			return new ApiResponse(body, response.statusCode(), url, response.headers());
+		}
 	}
 
 	public static String sendGetRequest(@NotNull String url) throws IOException, InterruptedException {
@@ -88,12 +88,12 @@ public class Http {
 				.build();
 
 		HttpResponse<InputStream> response = HTTP_CLIENT.send(request, BodyHandlers.ofInputStream());
-		InputStream decodedInputStream = getDecodedInputStream(response);
 
-		String body = new String(decodedInputStream.readAllBytes());
-		decodedInputStream.close();
+		try (InputStream decodedInputStream = getDecodedInputStream(response)) {
+			String body = new String(decodedInputStream.readAllBytes());
 
-		return body;
+			return body;
+		}
 	}
 
 	public static InputStream sendGenericH2Request(URI uri, ImmutableSet<String> expectedContentTypes) throws IOException, InterruptedException {

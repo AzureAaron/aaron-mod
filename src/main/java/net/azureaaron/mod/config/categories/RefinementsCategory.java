@@ -9,7 +9,7 @@ import net.azureaaron.mod.Colour;
 import net.azureaaron.mod.config.AaronModConfig;
 import net.azureaaron.mod.config.ConfigUtils;
 import net.azureaaron.mod.config.configs.RefinementsConfig;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.input.SystemKeycodes;
 import net.minecraft.text.Text;
 
 public class RefinementsCategory {
@@ -105,7 +105,7 @@ public class RefinementsCategory {
 										() -> config.refinements.input.alternateF3PlusNKeybind,
 										newValue -> config.refinements.input.alternateF3PlusNKeybind = newValue)
 								.controller(ConfigUtils::createBooleanController)
-								.available(MinecraftClient.IS_SYSTEM_MAC)
+								.available(SystemKeycodes.IS_MAC_OS)
 								.build())
 						.build())
 

@@ -1,6 +1,6 @@
 package net.azureaaron.mod.utils.render.primitive;
 
-import net.azureaaron.mod.utils.render.state.CameraRenderState;
+import net.minecraft.client.render.state.CameraRenderState;
 
 /**
  * Interface to represent a class that renders simple primitives in the world. Implementations

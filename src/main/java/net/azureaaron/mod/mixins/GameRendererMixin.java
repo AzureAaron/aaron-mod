@@ -17,7 +17,6 @@ import net.azureaaron.mod.Keybinds;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.SeparateInventoryGuiScale;
 import net.azureaaron.mod.features.SeparateInventoryGuiScale.SavedScaleState;
-import net.azureaaron.mod.injected.GuiDepthStateTracker;
 import net.azureaaron.mod.utils.render.GuiHelper;
 import net.azureaaron.mod.utils.render.ShaderUniforms;
 import net.minecraft.client.MinecraftClient;
@@ -31,7 +30,7 @@ import net.minecraft.client.render.fog.FogRenderer.FogType;
 import net.minecraft.client.util.Window;
 
 @Mixin(value = GameRenderer.class, priority = 1100) //Inject after Fabric so that our handler also wraps the Screen API render events
-public class GameRendererMixin implements GuiDepthStateTracker {
+public class GameRendererMixin {
 	@Shadow
 	@Final
 	MinecraftClient client;
@@ -44,8 +43,6 @@ public class GameRendererMixin implements GuiDepthStateTracker {
 
 	@Unique
 	private boolean cameraSmoothed = false;
-	@Unique
-	private boolean shouldUseSavedGuiDepth = false;
 
 	@ModifyReturnValue(method = "getFov", at = @At("RETURN"))
 	private float aaronMod$zoom(float fov) {
@@ -100,19 +97,12 @@ public class GameRendererMixin implements GuiDepthStateTracker {
 			//Render the screen, then draw everything that the screen drew (if we don't then things like tooltip positions get messed up)
 			operation.call(screen, context, newMouseX, newMouseY, delta);
 
-			this.shouldUseSavedGuiDepth = true;
 			this.guiRenderer.render(this.fogRenderer.getFogBuffer(FogType.NONE));
-			this.shouldUseSavedGuiDepth = false;
 
 			//Reset State
 			state.reset();
 		} else {
 			operation.call(screen, context, mouseX, mouseY, delta);
 		}
-	}
-
-	@Override
-	public boolean shouldUseSavedGuiDepth() {
-		return this.shouldUseSavedGuiDepth;
 	}
 }

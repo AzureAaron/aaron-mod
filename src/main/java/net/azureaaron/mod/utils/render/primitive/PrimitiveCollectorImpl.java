@@ -3,12 +3,15 @@ package net.azureaaron.mod.utils.render.primitive;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.azureaaron.mod.utils.render.state.CameraRenderState;
+import net.azureaaron.mod.utils.render.FrustumUtils;
 import net.azureaaron.mod.utils.render.state.FilledBoxRenderState;
 import net.azureaaron.mod.utils.render.state.OutlinedBoxRenderState;
 import net.azureaaron.mod.utils.render.state.TextRenderState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.render.Frustum;
+import net.minecraft.client.render.state.CameraRenderState;
+import net.minecraft.client.render.state.WorldRenderState;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
@@ -19,12 +22,18 @@ import net.minecraft.util.math.Vec3d;
 public final class PrimitiveCollectorImpl implements PrimitiveCollector {
 	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
 	protected static final int MAX_OVERWORLD_BUILD_HEIGHT = 319;
+	@SuppressWarnings("unused")
+	private final WorldRenderState worldState;
+	private final Frustum frustum;
 	private List<FilledBoxRenderState> filledBoxStates = null;
 	private List<OutlinedBoxRenderState> outlinedBoxStates = null;
 	private List<TextRenderState> textStates = null;
 	private boolean frozen = false;
 
-	public PrimitiveCollectorImpl() {}
+	public PrimitiveCollectorImpl(WorldRenderState worldState, Frustum frustum) {
+		this.worldState = worldState;
+		this.frustum = frustum;
+	}
 
 	@Override
 	public void submitFilledBox(BlockPos pos, float[] colourComponents, float alpha, boolean throughWalls) {
@@ -45,7 +54,9 @@ public final class PrimitiveCollectorImpl implements PrimitiveCollector {
 		ensureNotFrozen();
 
 		// Ensure the box is in view
-		// FIXME Frustum test
+		if (!FrustumUtils.isVisible(this.frustum, minX, minY, minZ, maxX, maxY, maxZ)) {
+			return;
+		}
 
 		if (this.filledBoxStates == null) {
 			this.filledBoxStates = new ArrayList<>();
@@ -74,7 +85,9 @@ public final class PrimitiveCollectorImpl implements PrimitiveCollector {
 		ensureNotFrozen();
 
 		// Ensure the box is in view
-		// FIXME Frustum test
+		if (!FrustumUtils.isVisible(this.frustum, minX, minY, minZ, maxX, maxY, maxZ)) {
+			return;
+		}
 
 		if (this.outlinedBoxStates == null) {
 			this.outlinedBoxStates = new ArrayList<>();

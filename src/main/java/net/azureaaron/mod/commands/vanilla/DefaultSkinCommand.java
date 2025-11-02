@@ -20,9 +20,9 @@ import net.azureaaron.mod.utils.Functions;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.util.DefaultSkinHelper;
-import net.minecraft.client.util.SkinTextures;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
+import net.minecraft.entity.player.SkinTextures;
 import net.minecraft.text.Text;
 
 public class DefaultSkinCommand extends VanillaCommand {
@@ -48,8 +48,8 @@ public class DefaultSkinCommand extends VanillaCommand {
 		
 		UUID formattedUuid = UndashedUuid.fromString(uuid);
 		SkinTextures skinTexture = DefaultSkinHelper.getSkinTextures(formattedUuid);
-		String skinName = Functions.titleCase(skinTexture.texture().toString().replaceAll("minecraft:textures\\/entity\\/player\\/(wide|slim)\\/", "").replace(".png", ""));
-		String skinModel = Functions.titleCase(DefaultSkinHelper.getSkinTextures(formattedUuid).model().getName());
+		String skinName = Functions.titleCase(skinTexture.body().id().toString().replaceAll("minecraft:textures\\/entity\\/player\\/(wide|slim)\\/", "").replace(".png", ""));
+		String skinModel = Functions.titleCase(DefaultSkinHelper.getSkinTextures(formattedUuid).model().asString());
 				
 		source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Default Skin » ").withColor(colourProfile.primaryColour.getAsInt())
 				.append(Text.literal(skinName + " (" + skinModel + ")").withColor(colourProfile.secondaryColour.getAsInt())));

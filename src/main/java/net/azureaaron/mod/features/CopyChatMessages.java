@@ -3,6 +3,7 @@ package net.azureaaron.mod.features;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.lwjgl.glfw.GLFW;
 
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
@@ -10,15 +11,17 @@ import com.mojang.serialization.JsonOps;
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.config.configs.RefinementsConfig;
-import net.azureaaron.mod.events.MouseInputEvent;
 import net.azureaaron.mod.mixins.accessors.ChatAccessor;
 import net.azureaaron.mod.utils.ItemUtils;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.hud.ChatHudLine;
+import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.client.toast.ToastManager;
-import net.minecraft.client.util.Window;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextCodecs;
@@ -33,21 +36,20 @@ public class CopyChatMessages {
 
 	@Init
 	public static void init() {
-		MouseInputEvent.EVENT.register(CopyChatMessages::onMouseInput);
-	}	
+		ScreenEvents.AFTER_INIT.register((_client, screen, scaledWidth, scaledHeight) -> {
+			if (screen instanceof ChatScreen chat) {
+				ScreenMouseEvents.afterMouseClick(chat).register(CopyChatMessages::onMouseInput);
+			}
+		});
+	}
 
-	private static void onMouseInput(int button, int action, int mods) {
-		//Button 0 = left click, Button 1 = right click, Button 2 = middle click & others are fancy mouse buttons
-		int configuredButton = AaronModConfigManager.get().refinements.chat.copyChatMouseButton == RefinementsConfig.MouseButton.MIDDLE ? 2 : 1;
+	private static boolean onMouseInput(Screen screen, Click click, boolean consumed) {
+		int configuredButton = AaronModConfigManager.get().refinements.chat.copyChatMouseButton == RefinementsConfig.MouseButton.MIDDLE ? GLFW.GLFW_MOUSE_BUTTON_MIDDLE : GLFW.GLFW_MOUSE_BUTTON_LEFT;
 		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.inGameHud.getChatHud());
-		boolean isChatOpen = chatAccessor.invokeIsChatFocused();
 
-		if (button == configuredButton && action == 1 && isChatOpen && AaronModConfigManager.get().refinements.chat.copyChatMessages) {
-			Window window = CLIENT.getWindow();
-			int mouseX = (int) (CLIENT.mouse.getX() * window.getScaledWidth() / window.getWidth());
-			int mouseY = (int) (CLIENT.mouse.getY() * window.getScaledHeight() / window.getHeight());
-			double chatLineX = chatAccessor.invokeToChatLineX(mouseX);
-			double chatLineY = chatAccessor.invokeToChatLineY(mouseY);
+		if (click.button() == configuredButton && AaronModConfigManager.get().refinements.chat.copyChatMessages) {
+			double chatLineX = chatAccessor.invokeToChatLineX(click.x());
+			double chatLineY = chatAccessor.invokeToChatLineY(click.y());
 
 			switch (AaronModConfigManager.get().refinements.chat.copyChatMode) {
 				case SINGLE_LINE -> {
@@ -65,6 +67,8 @@ public class CopyChatMessages {
 
 						CLIENT.keyboard.setClipboard(message.toString());
 						sendToast(true);
+
+						return true;
 					} else {
 						sendToast(false);
 					}
@@ -76,17 +80,21 @@ public class CopyChatMessages {
 
 					if (messageIndex > -1 && messageIndex < messages.size()) {
 						Text message = messages.get(messageIndex).content();
-						String text2Copy = !Screen.hasAltDown() ? Formatting.strip(message.getString()) : TextCodecs.CODEC.encodeStart(ItemUtils.getRegistryLookup().getOps(JsonOps.INSTANCE), message)
+						String text2Copy = !click.hasAlt() ? Formatting.strip(message.getString()) : TextCodecs.CODEC.encodeStart(ItemUtils.getRegistryLookup().getOps(JsonOps.INSTANCE), message)
 								.mapOrElse(JsonElement::toString, e -> "Error while encoding JSON text: " + e.message());
 
 						CLIENT.keyboard.setClipboard(text2Copy);
 						sendToast(true);
+
+						return true;
 					} else {
 						sendToast(false);
 					}
 				}
 			}
 		}
+
+		return false;
 	}
 
 	private static void sendToast(boolean success) {

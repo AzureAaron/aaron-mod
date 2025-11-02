@@ -1,33 +1,35 @@
 package net.azureaaron.mod.mixins;
 
+import org.objectweb.asm.Opcodes;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 
-import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.utils.Cache;
+import net.azureaaron.mod.skyblock.entity.MobGlow;
 import net.azureaaron.mod.utils.render.GlowRenderer;
-import net.minecraft.client.render.OutlineVertexConsumerProvider;
+import net.azureaaron.mod.utils.render.RenderHelper;
+import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.WorldRenderer;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+import net.minecraft.client.render.entity.state.EntityRenderState;
+import net.minecraft.client.render.state.WorldRenderState;
 
 @Mixin(WorldRenderer.class)
 public class WorldRendererMixin {
-	@Unique
-	private boolean hasGlowThisFrame = false;
+	@Shadow
+	@Final
+	private WorldRenderState worldRenderState;
 
-	@ModifyArg(method = "getEntitiesToRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;hasOutline(Lnet/minecraft/entity/Entity;)Z"))
-	private Entity aaronMod$markIfGlowRendering(Entity entity) {
-		this.hasGlowThisFrame |= shouldEntityGlow(entity);
-		return entity;
+	@Inject(method = "fillEntityRenderStates", at = @At(value = "FIELD", target = "Lnet/minecraft/client/render/state/WorldRenderState;hasOutline:Z", opcode = Opcodes.PUTFIELD))
+	private void aaronMod$markIfCustomGlowUsedThisFrame(CallbackInfo ci, @Local EntityRenderState entityRenderState) {
+		if (entityRenderState.getDataOrDefault(MobGlow.ENTITY_HAS_CUSTOM_GLOW, false)) {
+			this.worldRenderState.setData(MobGlow.FRAME_USES_CUSTOM_GLOW, true);
+		}
 	}
 
 	@Inject(method = "method_62214",
@@ -35,16 +37,9 @@ public class WorldRendererMixin {
 			at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/CommandEncoder;clearColorAndDepthTextures(Lcom/mojang/blaze3d/textures/GpuTexture;ILcom/mojang/blaze3d/textures/GpuTexture;D)V", ordinal = 0, shift = At.Shift.AFTER)
 	)
 	private void aaronMod$updateGlowDepthTexDepth(CallbackInfo ci) {
-		if (this.hasGlowThisFrame) {
+		if (this.worldRenderState.getDataOrDefault(MobGlow.FRAME_USES_CUSTOM_GLOW, false)) {
 			GlowRenderer.getInstance().updateGlowDepthTexDepth();
-			//We can set this to false now since we just use this to know if we should update the depth texture or not
-			this.hasGlowThisFrame = false;
 		}
-	}
-
-	@ModifyExpressionValue(method = "renderEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/BufferBuilderStorage;getOutlineVertexConsumers()Lnet/minecraft/client/render/OutlineVertexConsumerProvider;"))
-	private OutlineVertexConsumerProvider aaronMod$useCustomGlowOutlineVertexConsumers(OutlineVertexConsumerProvider original, @Local Entity entity) {
-		return shouldEntityGlow(entity) ? GlowRenderer.getInstance().getGlowVertexConsumers() : original;
 	}
 
 	@Inject(method = "method_62214", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/OutlineVertexConsumerProvider;draw()V"))
@@ -52,8 +47,13 @@ public class WorldRendererMixin {
 		GlowRenderer.getInstance().getGlowVertexConsumers().draw();
 	}
 
-	@Unique
-	private boolean shouldEntityGlow(Entity entity) {
-		return entity instanceof EnderDragonEntity && Cache.inM7Phase5 && AaronModConfigManager.get().skyblock.m7.glowingDragons;
+	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/WorldBorderRendering;updateRenderState(Lnet/minecraft/world/border/WorldBorder;Lnet/minecraft/util/math/Vec3d;DLnet/minecraft/client/render/state/WorldBorderRenderState;)V", shift = At.Shift.AFTER))
+	private void aaronMod$extractWorldRendering(CallbackInfo ci, @Local Frustum frustum) {
+		RenderHelper.startExtraction(this.worldRenderState, frustum);
+	}
+
+	@Inject(method = "method_62214", at = @At(value = "CONSTANT", args = "stringValue=translucent", shift = At.Shift.AFTER))
+	private void aaronMod$beforeTranslucent(CallbackInfo ci) {
+		RenderHelper.executeDraws(this.worldRenderState);
 	}
 }

@@ -1,33 +1,33 @@
 package net.azureaaron.mod.mixins;
 
-import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.features.TextReplacer;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.font.TextRenderer.TextLayerType;
-import net.minecraft.client.render.VertexConsumerProvider;
+import com.llamalad7.mixinextras.sugar.Local;
+
+import net.azureaaron.mod.skyblock.entity.MobGlow;
 import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.Text;
+import net.minecraft.client.render.entity.state.EntityRenderState;
+import net.minecraft.entity.Entity;
 
 @Mixin(EntityRenderer.class)
 public class EntityRendererMixin {
 
-	@Redirect(method = "renderLabelIfPresent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/text/Text;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;II)V"))
-	private void aaronMod$shadowedNametags(TextRenderer textRenderer, Text text, float x, float y, int colour, boolean shadow, Matrix4f matrix, VertexConsumerProvider vertexConsumers, TextLayerType layerType, int backgroundColour, int light) {
-		OrderedText orderedText = text.asOrderedText();
-		backgroundColour = (AaronModConfigManager.get().uiAndVisuals.nameTags.hideNameTagBackground) ? 0 : backgroundColour;
+	/**
+	 * Vanilla infers whether an entity should glow based off it's outline colour so we do not need to
+	 * do any more in this department thankfully.
+	 */
+	@Inject(method = "updateRenderState", at = @At("TAIL"))
+	private void aaronMod$customGlow(CallbackInfo ci, @Local(argsOnly = true) Entity entity, @Local(argsOnly = true) EntityRenderState state) {
+		if (MobGlow.hasOrComputeMobGlow(entity)) {
+			// Only apply custom flag if it doesn't have vanilla glow (so we can change Hypixel's glow colours without changing the glow's visibility)
+			if (!entity.isGlowing()) {
+				state.setData(MobGlow.ENTITY_HAS_CUSTOM_GLOW, true);
+			}
 
-		if (AaronModConfigManager.get().textReplacer.enableTextReplacer) {
-			x = -textRenderer.getWidth(TextReplacer.visuallyReplaceText(orderedText)) / 2; //Fix x offset
+			state.outlineColor = MobGlow.getMobGlowOrDefault(entity, MobGlow.NO_GLOW);
 		}
-
-		//We could save the ordered text from the operation above but there is not much point since we do the whole thing again in this method we're calling
-		//Trying to double replace could also cause weird issues/behaviour
-		textRenderer.draw(orderedText, x, y, colour, AaronModConfigManager.get().uiAndVisuals.nameTags.shadowedNameTags, matrix, vertexConsumers, layerType, backgroundColour, light);
 	}
 }

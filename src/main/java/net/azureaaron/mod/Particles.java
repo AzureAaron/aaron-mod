@@ -2,7 +2,6 @@ package net.azureaaron.mod;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import dev.isxander.yacl3.api.Option;
@@ -12,14 +11,16 @@ import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.azureaaron.mod.config.AaronModConfig;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.config.ConfigUtils;
+import net.azureaaron.mod.mixins.accessors.BillboardParticleAccessor;
 import net.azureaaron.mod.utils.Functions;
-import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
+import net.minecraft.client.particle.BillboardParticle;
+import net.minecraft.client.particle.Particle;
 import net.minecraft.particle.ParticleType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
@@ -41,44 +42,52 @@ public class Particles {
 		descriptions.put(ParticleTypes.FALLING_SPORE_BLOSSOM, "The particles that fall down beneath spore blossoms.");
 		descriptions.put(ParticleTypes.WHITE_ASH, "White Ash can be frequently found in the Basalt Deltas!");
 	});
-	
-	//Create a "synthetic" particle to work better with registries without registering it
-	public static final Identifier BLOCK_BREAKING = Identifier.ofVanilla("block_breaking");
-	private static final ParticleType<?> BLOCK_BREAKING_TYPE = FabricParticleTypes.simple();
-	private static final RegistryKey<ParticleType<?>> BLOCK_BREAKING_REGISTRY_KEY = RegistryKey.of(RegistryKeys.PARTICLE_TYPE, BLOCK_BREAKING);
-	
+
+	/**
+	 * Applies modifications to particles including scaling and alpha.
+	 */
+	public static Particle modifyParticle(Particle particle, Identifier id) {
+		float alpha = AaronModConfigManager.get().particles.alphas.getOrDefault(id, 1f);
+		float scale = AaronModConfigManager.get().particles.scaling.getOrDefault(id, 1f);
+
+		//Only set the alpha if won't result in the particle being discarded by the fragment shader or if its not greater than the default
+		if (particle instanceof BillboardParticle billboard && billboard instanceof BillboardParticleAccessor accessor && alpha > 0.1f && alpha < accessor.getAlpha()) {
+			accessor.invokeSetAlpha(alpha);
+			billboard.markHasCustomAlpha();
+		}
+
+		return (scale != 1f) ? particle.scale(scale) : particle;
+	}
+
 	private static String getParticleDisplayName(String id) {
 		return Functions.titleCase(id.toString().replace("_", " "));
 	}
-	
+
 	public static List<OptionGroup> getOptionGroups(AaronModConfig config) {
 		List<OptionGroup> list = new ArrayList<>();
 		List<Entry<RegistryKey<ParticleType<?>>, ParticleType<?>>> entryList = new ArrayList<>(Registries.PARTICLE_TYPE.getEntrySet());
-		
-		//Add the "synthetic" block breaking particle
-		entryList.add(Map.entry(BLOCK_BREAKING_REGISTRY_KEY, BLOCK_BREAKING_TYPE));
 
-		//Alphabetically sort the entries for logical ordering
+		// Alphabetically sort the entries for logical ordering
 		entryList.sort((o1, o2) -> {
 			String o1Name = getParticleDisplayName(o1.getKey().getValue().toString());
 			String o2Name = getParticleDisplayName(o2.getKey().getValue().toString());
-			
+
 			return o1Name.compareTo(o2Name);
 		});
-		
+
 		for (Entry<RegistryKey<ParticleType<?>>, ParticleType<?>> entry : entryList) {
 			ParticleType<?> particleType = entry.getValue();
 			Identifier id = entry.getKey().getValue();
-			
+
 			String name = getParticleDisplayName(id.getPath());
 			String namespaceName = getParticleDisplayName(id.getNamespace());
 			OptionDescription description = PARTICLE_DESCRIPTIONS.containsKey(particleType) ? OptionDescription.of(Text.literal(PARTICLE_DESCRIPTIONS.get(particleType))) : OptionDescription.EMPTY;
-			
+
 			list.add(OptionGroup.createBuilder()
 					.name(Text.literal(name + " Particles (" + namespaceName + ")"))
 					.description(description)
 					.collapsed(true)
-					
+
 					//Toggle
 					.option(Option.<Boolean>createBuilder()
 							.name(Text.literal("Enable " + name))
@@ -88,7 +97,7 @@ public class Particles {
 							.available(!Main.OPTIFABRIC_LOADED)
 							.controller(ConfigUtils::createBooleanController)
 							.build())
-					
+
 					//Scale Multiplier
 					.option(Option.<Float>createBuilder()
 							.name(Text.literal(name + " Scale Multiplier"))
@@ -108,7 +117,7 @@ public class Particles {
 							.build())
 					.build());
 		}
-		
+
 		return list;
 	}
 }

@@ -44,6 +44,6 @@ public abstract class ClientPlayNetworkHandlerMixin extends ClientCommonNetworkH
 
 	@ModifyExpressionValue(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/DebugHud;shouldShowPacketSizeAndPingCharts()Z"))
 	private boolean aaronMod$sendPingPackets4PingDisplay(boolean original) {
-		return client.getDebugHud().shouldShowDebugHud() ? original : original || AaronModConfigManager.get().uiAndVisuals.pingHud.enablePingHud;
+		return this.client.getDebugHud().shouldShowDebugHud() ? original : original || AaronModConfigManager.get().uiAndVisuals.pingHud.enablePingHud;
 	}
 }

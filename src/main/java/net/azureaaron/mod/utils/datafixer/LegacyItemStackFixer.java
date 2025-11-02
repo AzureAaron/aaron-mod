@@ -34,7 +34,6 @@ public class LegacyItemStackFixer {
 	@Deprecated(forRemoval = true)
 	private static boolean shouldLog = FabricLoader.getInstance().isDevelopmentEnvironment();
 
-	@SuppressWarnings("deprecation")
 	public static ItemStack fixLegacyStack(NbtCompound nbt) {
 		if (nbt.getInt("id", 0) == 0) return ItemStack.EMPTY;
 
@@ -61,7 +60,7 @@ public class LegacyItemStackFixer {
 
 		//Remap Custom Data
 		if (stack.contains(DataComponentTypes.CUSTOM_DATA)) {
-			stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(stack.get(DataComponentTypes.CUSTOM_DATA).getNbt().getCompoundOrEmpty("ExtraAttributes")));
+			stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(stack.get(DataComponentTypes.CUSTOM_DATA).copyNbt().getCompoundOrEmpty("ExtraAttributes")));
 		}
 
 		//Hide Attributes & Vanilla Enchantments		

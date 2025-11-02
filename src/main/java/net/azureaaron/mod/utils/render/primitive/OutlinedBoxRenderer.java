@@ -5,11 +5,11 @@ import org.joml.Matrix4f;
 import net.azureaaron.mod.utils.render.AaronModRenderPipelines;
 import net.azureaaron.mod.utils.render.MatrixHelper;
 import net.azureaaron.mod.utils.render.Renderer;
-import net.azureaaron.mod.utils.render.state.CameraRenderState;
 import net.azureaaron.mod.utils.render.state.OutlinedBoxRenderState;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.VertexRendering;
+import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 
 public final class OutlinedBoxRenderer implements PrimitiveRenderer<OutlinedBoxRenderState> {
@@ -24,6 +24,6 @@ public final class OutlinedBoxRenderer implements PrimitiveRenderer<OutlinedBoxR
 				.translate((float) -cameraState.pos.x, (float) -cameraState.pos.y, (float) -cameraState.pos.z);
 		MatrixStack matrices = MatrixHelper.toStack(positionMatrix);
 
-		VertexRendering.drawBox(matrices, buffer, state.minX, state.minY, state.minZ, state.maxX, state.maxY, state.maxZ, state.colourComponents[0], state.colourComponents[1], state.colourComponents[2], state.alpha);
+		VertexRendering.drawBox(matrices.peek(), buffer, state.minX, state.minY, state.minZ, state.maxX, state.maxY, state.maxZ, state.colourComponents[0], state.colourComponents[1], state.colourComponents[2], state.alpha);
 	}
 }

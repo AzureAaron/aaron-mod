@@ -2,8 +2,8 @@ package net.azureaaron.mod.mixins;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
@@ -17,7 +17,7 @@ import net.minecraft.text.Text;
 public class KeyboardMixin {
 
 	//Substitute since we can't redirect LOOKUPSWITCH opcodes
-	@ModifyVariable(method = "processF3", at = @At(value = "LOAD", ordinal = 0), argsOnly = true)
+	@ModifyExpressionValue(method = "processF3", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/input/KeyInput;key()I", ordinal = 1))
 	private int aaronMod$fixF3PlusN(int original) {
 		return AaronModConfigManager.get().refinements.input.alternateF3PlusNKeybind && original == InputUtil.GLFW_KEY_J ? InputUtil.GLFW_KEY_N : original;
 	}

@@ -64,7 +64,7 @@ public class ApiUtils {
 			ApiResponse response = isUuid ? Http.sendUuidToNameRequest(key) : Http.sendNameToUuidRequest(key);
 
 			if (response.ok()) {
-				GameProfile profile = Codecs.GAME_PROFILE_WITH_PROPERTIES.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).getOrThrow();
+				GameProfile profile = Codecs.GAME_PROFILE_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).getOrThrow();
 
 				return new ProfileResult(profile);
 			} else if (response.ratelimited() && retries < 3) {

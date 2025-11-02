@@ -22,9 +22,6 @@ public interface ChatAccessor {
     @Accessor("visibleMessages")
     List<ChatHudLine.Visible> getVisibleMessages();
 
-    @Invoker("isChatFocused")
-    boolean invokeIsChatFocused();
-
     @Invoker("toChatLineX")
     double invokeToChatLineX(double x);
 

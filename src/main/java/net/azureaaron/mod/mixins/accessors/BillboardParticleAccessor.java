@@ -4,10 +4,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.BillboardParticle;
 
-@Mixin(Particle.class)
-public interface ParticleAccessor {
+@Mixin(BillboardParticle.class)
+public interface BillboardParticleAccessor {
 
 	@Accessor
 	float getAlpha();

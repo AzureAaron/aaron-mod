@@ -15,8 +15,9 @@ public class RenderPipelinesMixin {
 
 	@ModifyReceiver(method = "<clinit>", at = {
 			@At(value = "net.azureaaron.mod.utils.render.RenderPipelineInjectionPoint", target = "Lnet/minecraft/client/gl/RenderPipelines;RENDERTYPE_TEXT:Lcom/mojang/blaze3d/pipeline/RenderPipeline;", opcode = Opcodes.PUTSTATIC),
-			@At(value = "net.azureaaron.mod.utils.render.RenderPipelineInjectionPoint", target = "Lnet/minecraft/client/gl/RenderPipelines;RENDERTYPE_TEXT_POLYGON_OFFSET:Lcom/mojang/blaze3d/pipeline/RenderPipeline;", opcode = Opcodes.PUTSTATIC)
-			}, require = 2)
+			@At(value = "net.azureaaron.mod.utils.render.RenderPipelineInjectionPoint", target = "Lnet/minecraft/client/gl/RenderPipelines;RENDERTYPE_TEXT_POLYGON_OFFSET:Lcom/mojang/blaze3d/pipeline/RenderPipeline;", opcode = Opcodes.PUTSTATIC),
+			@At(value = "net.azureaaron.mod.utils.render.RenderPipelineInjectionPoint", target = "Lnet/minecraft/client/gl/RenderPipelines;GUI_TEXT:Lcom/mojang/blaze3d/pipeline/RenderPipeline;", opcode = Opcodes.PUTSTATIC )
+			}, require = 3)
 	private static RenderPipeline.Builder aaronMod$injectChromaShaderProperties(RenderPipeline.Builder builder) {
 		return builder.withUniform("Globals", UniformType.UNIFORM_BUFFER)
 				.withUniform("Chroma", UniformType.UNIFORM_BUFFER)

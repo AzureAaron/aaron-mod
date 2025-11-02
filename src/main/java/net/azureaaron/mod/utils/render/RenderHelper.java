@@ -1,16 +1,13 @@
 package net.azureaaron.mod.utils.render;
 
-import org.joml.Quaternionf;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.GpuTextureView;
 
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.events.WorldRenderExtractionCallback;
 import net.azureaaron.mod.utils.render.primitive.PrimitiveCollectorImpl;
-import net.azureaaron.mod.utils.render.state.CameraRenderState;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.minecraft.client.render.Frustum;
+import net.minecraft.client.render.state.WorldRenderState;
 import net.minecraft.client.texture.TextureSetup;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.profiler.Profilers;
@@ -20,28 +17,25 @@ public class RenderHelper {
 
 	@Init
 	public static void init() {
-		WorldRenderEvents.AFTER_SETUP.register(RenderHelper::startFrame);
-		WorldRenderEvents.AFTER_TRANSLUCENT.register(RenderHelper::executeDraws);
+		//WorldRenderEvents.AFTER_SETUP.register(RenderHelper::startFrame);
+		//WorldRenderEvents.AFTER_TRANSLUCENT.register(RenderHelper::executeDraws);
 	}
 
-	private static void startFrame(WorldRenderContext context) {
-		collector = new PrimitiveCollectorImpl();
+	public static void startExtraction(WorldRenderState worldState, Frustum frustum) {
+		Profiler profiler = Profilers.get();
+		profiler.push("aaronModPrimitiveCollection");
+		collector = new PrimitiveCollectorImpl(worldState, frustum);
 
 		WorldRenderExtractionCallback.EVENT.invoker().onExtract(collector);
 		collector.endCollection();
+		profiler.pop();
 	}
 
-	private static void executeDraws(WorldRenderContext context) {
+	public static void executeDraws(WorldRenderState worldState) {
 		Profiler profiler = Profilers.get();
 
 		profiler.push("aaronModSubmitPrimitives");
-		CameraRenderState cameraState = new CameraRenderState();
-		cameraState.pos = context.camera().getPos();
-		cameraState.rotation = new Quaternionf(context.camera().getRotation());
-		cameraState.pitch = context.camera().getPitch();
-		cameraState.yaw = context.camera().getYaw();
-
-		collector.dispatchPrimitivesToRenderers(cameraState);
+		collector.dispatchPrimitivesToRenderers(worldState.cameraRenderState);
 		collector = null;
 		profiler.pop();
 

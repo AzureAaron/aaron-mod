@@ -20,6 +20,7 @@ import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.GridWidget;
 import net.minecraft.client.gui.widget.PressableWidget;
+import net.minecraft.client.input.AbstractInput;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -54,7 +55,7 @@ public abstract class SkyblockerCustomizeNameScreenMixin extends Screen {
 		}
 
 		@Override
-		public void onPress() {
+		public void onPress(AbstractInput input) {
 			SkyblockerCustomizeNameScreenMixin.this.setStyle(Style.EMPTY.withColor(0xAA5500));
 		}
 

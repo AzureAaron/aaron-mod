@@ -150,14 +150,6 @@ public class UIAndVisualsCategory {
 						.name(Text.literal("Debug HUD"))
 						.collapsed(true)
 						.option(Option.<Boolean>createBuilder()
-								.name(Text.literal("Extra Debug Info"))
-								.description(OptionDescription.of(Text.literal("Displays some extra information about the system and process in the Debug HUD.")))
-								.binding(defaults.uiAndVisuals.debugHud.extraDebugInfo,
-										() -> config.uiAndVisuals.debugHud.extraDebugInfo,
-										newValue -> config.uiAndVisuals.debugHud.extraDebugInfo = newValue)
-								.controller(ConfigUtils::createBooleanController)
-								.build())
-						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Always Show Day In F3"))
 								.description(OptionDescription.of(Text.literal("Due to an oversight in the fix of MC-230732, the world's day counter in the F3 menu is hidden outside of singleplayer; this option brings it back when outside of singleplayer.")))
 								.binding(defaults.uiAndVisuals.debugHud.alwaysShowDayInF3,

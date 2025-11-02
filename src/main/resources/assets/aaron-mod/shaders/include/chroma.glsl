@@ -1,4 +1,4 @@
-#version 150
+#version 330
 
 const vec3 BROWN = vec3(170.0, 85.0, 0.0) / 255.0;
 const vec3 SHADOWED_BROWN = vec3(42.0, 21.0, 0.0) / 255.0; // The colour of the text shadow is the text's colour divided by 4

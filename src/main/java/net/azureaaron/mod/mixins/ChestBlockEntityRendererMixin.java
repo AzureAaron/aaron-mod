@@ -13,9 +13,10 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.LidOpenable;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.ChestBlockEntityRenderer;
+import net.minecraft.client.render.block.entity.state.ChestBlockEntityRenderState;
 
 @Mixin(ChestBlockEntityRenderer.class)
-public abstract class ChestBlockEntityRendererMixin<T extends BlockEntity & LidOpenable> implements BlockEntityRenderer<T> {
+public abstract class ChestBlockEntityRendererMixin<T extends BlockEntity & LidOpenable> implements BlockEntityRenderer<T, ChestBlockEntityRenderState> {
 
 	@ModifyReturnValue(method = "isAroundChristmas", at = @At("RETURN"))
 	private static boolean aaronMod$decemberChristmasChests(boolean isAroundChristmas, @Local Calendar calendar) {

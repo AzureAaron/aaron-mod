@@ -171,7 +171,7 @@ public class CommandSystem {
 		GameProfile profile = ApiUtils.getProfile(player);
 
 		if (profile != null) {
-			return new CommandPlayerData(profile.getName(), UndashedUuid.toString(profile.getId()));
+			return new CommandPlayerData(profile.name(), UndashedUuid.toString(profile.id()));
 		} else {
 			throw new IllegalStateException("Failed to fetch the GameProfile for " + player);
 		}

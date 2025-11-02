@@ -21,15 +21,15 @@ public class GuiHelper {
 	}
 
 	public static void applyBlurScissorToRenderPass(RenderPass renderPass) {
-		if (BLUR_SCISSOR_STATE.method_72091()) {
+		if (BLUR_SCISSOR_STATE.isEnabled()) {
 			Window window = MinecraftClient.getInstance().getWindow();
 			int framebufferHeight = window.getFramebufferHeight();
 			double scaleFactor = window.getScaleFactor();
 
-			double x = BLUR_SCISSOR_STATE.method_72092() * scaleFactor;
-			double y = framebufferHeight - (BLUR_SCISSOR_STATE.method_72093() + BLUR_SCISSOR_STATE.method_72095()) * scaleFactor;
-			double width = BLUR_SCISSOR_STATE.method_72094() * scaleFactor;
-			double height = BLUR_SCISSOR_STATE.method_72095() * scaleFactor;
+			double x = BLUR_SCISSOR_STATE.getX() * scaleFactor;
+			double y = framebufferHeight - (BLUR_SCISSOR_STATE.getY() + BLUR_SCISSOR_STATE.getHeight()) * scaleFactor;
+			double width = BLUR_SCISSOR_STATE.getWidth() * scaleFactor;
+			double height = BLUR_SCISSOR_STATE.getHeight() * scaleFactor;
 
 			renderPass.enableScissor((int) x, (int) y, Math.max(0, (int) width), Math.max(0, (int) height));
 		}

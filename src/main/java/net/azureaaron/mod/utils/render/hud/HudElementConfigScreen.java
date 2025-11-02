@@ -11,8 +11,10 @@ import dev.isxander.yacl3.api.ButtonOption;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.render.RenderHelper;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 
@@ -93,14 +95,14 @@ public final class HudElementConfigScreen extends Screen {
 	}
 
 	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		switch (button) {
+	public boolean mouseClicked(Click click, boolean doubled) {
+		switch (click.button()) {
 			//Select HUD element via left click
 			case GLFW.GLFW_MOUSE_BUTTON_LEFT -> {
 				for (HudElement element : ELEMENTS) {
 					//If the HUD element was clicked and not already selected then select it
 					//this behaviour means that if two HUD elements overlap you can click to the next one - cycling is a must though if many are overlapping
-					if (RenderHelper.pointIsInArea(mouseX, mouseY, element.x(), element.y(), element.x() + element.width(), element.y() + element.height()) && selected != element) {
+					if (RenderHelper.pointIsInArea(click.x(), click.y(), element.x(), element.y(), element.x() + element.width(), element.y() + element.height()) && selected != element) {
 						selected = element;
 
 						//Return + don't fall through to other elements
@@ -117,26 +119,26 @@ public final class HudElementConfigScreen extends Screen {
 			}
 		}
 
-		return super.mouseClicked(mouseX, mouseY, button);
+		return super.mouseClicked(click, doubled);
 	}
 
 	@Override
-	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-		if (selected != null && button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-			selected.x((int) Math.clamp(mouseX - (selected.width() >> 1), 0, this.width - selected.width()));
-			selected.y((int) Math.clamp(mouseY - (selected.height() >> 1), 0, this.height - selected.height()));
+	public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+		if (selected != null && click.button() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+			selected.x((int) Math.clamp(click.x() - (selected.width() >> 1), 0, this.width - selected.width()));
+			selected.y((int) Math.clamp(click.y() - (selected.height() >> 1), 0, this.height - selected.height()));
 		}
 
-		return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+		return super.mouseDragged(click, offsetX, offsetY);
 	}
 
 	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		switch (keyCode) {
+	public boolean keyPressed(KeyInput input) {
+		switch (input.key()) {
 			//Scale up
 			case GLFW.GLFW_KEY_EQUAL -> {
 				//Ensure this was from the + key and not just =
-				if (selected != null && (modifiers & GLFW.GLFW_MOD_SHIFT) != 0) {	
+				if (selected != null && (input.modifiers() & GLFW.GLFW_MOD_SHIFT) != 0) {	
 					selected.scale(selected.scale() + 0.1f);
 
 					return true;
@@ -146,7 +148,7 @@ public final class HudElementConfigScreen extends Screen {
 			//Scale down
 			case GLFW.GLFW_KEY_MINUS -> {
 				//Ensure _ wasn't the key pressed
-				if (selected != null && (modifiers & GLFW.GLFW_MOD_SHIFT) == 0) {
+				if (selected != null && (input.modifiers() & GLFW.GLFW_MOD_SHIFT) == 0) {
 					selected.scale(selected.scale() - 0.1f);
 
 					return true;
@@ -180,7 +182,7 @@ public final class HudElementConfigScreen extends Screen {
 			}
 		}
 
-		return super.keyPressed(keyCode, scanCode, modifiers);
+		return super.keyPressed(input);
 	}
 
 	@Override

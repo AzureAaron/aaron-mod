@@ -48,10 +48,9 @@ public class ItemUtils {
 				.toList();
 	}
 
-	@SuppressWarnings("deprecation")
 	@NotNull
 	public static NbtCompound getCustomData(ComponentHolder stack) {
-		return stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).getNbt();
+		return stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
 	}
 
 	@NotNull

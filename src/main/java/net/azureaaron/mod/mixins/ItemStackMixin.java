@@ -227,11 +227,10 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 		return ItemUtils.getCustomData(this).getCompoundOrEmpty(Main.NAMESPACE).getBoolean("alwaysDisplaySkyblockInfo", false);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void setAlwaysDisplaySkyblockInfo(boolean value) {
 		NbtComponent component = contains(DataComponentTypes.CUSTOM_DATA) ? get(DataComponentTypes.CUSTOM_DATA) : NbtComponent.of(new NbtCompound());
-		NbtCompound compound = component.getNbt();
+		NbtCompound compound = component.copyNbt();
 
 		if (!compound.contains(Main.NAMESPACE)) {
 			compound.put(Main.NAMESPACE, new NbtCompound());
@@ -240,7 +239,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 		compound.getCompoundOrEmpty(Main.NAMESPACE).putBoolean("alwaysDisplaySkyblockInfo", value);
 
 		if (!contains(DataComponentTypes.CUSTOM_DATA)) {
-			set(DataComponentTypes.CUSTOM_DATA, component);
+			set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(compound));
 		}
 	}
 }

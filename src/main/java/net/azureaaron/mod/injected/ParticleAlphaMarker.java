@@ -2,10 +2,7 @@ package net.azureaaron.mod.injected;
 
 public interface ParticleAlphaMarker {
 
-	default void markHasCustomAlpha() {	
-	}
-
-	default boolean hasCustomAlpha() {
-		return false;
+	default void markHasCustomAlpha() {
+		throw new UnsupportedOperationException("Implemented via Mixin");
 	}
 }

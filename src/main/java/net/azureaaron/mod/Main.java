@@ -20,6 +20,7 @@ import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.util.Identifier;
 
 public class Main implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("aaron-mod");
@@ -30,6 +31,7 @@ public class Main implements ClientModInitializer {
 	public static final String MINECRAFT_VERSION = SharedConstants.getGameVersion().name();
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	public static final Gson GSON_PLAIN = new GsonBuilder().create();
+	public static final KeyBinding.Category KEYBINDING_CATEGORY = KeyBinding.Category.create(Identifier.of(NAMESPACE, "main"));
 
 	@Override
 	public void onInitializeClient() {
@@ -57,6 +59,6 @@ public class Main implements ClientModInitializer {
 	@Init
 	public static void registerKeybindings() {
 		//I used to cheat the translation key system but now I abide by it :)
-		Keybinds.zoomKeybind = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.aaron-mod.zoom", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_C, "category.aaron-mod.main"));
+		Keybinds.zoomKeybind = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.aaron-mod.zoom", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_C, KEYBINDING_CATEGORY));
 	}
 }

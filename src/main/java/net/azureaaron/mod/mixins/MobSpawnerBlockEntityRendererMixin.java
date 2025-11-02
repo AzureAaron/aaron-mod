@@ -9,9 +9,10 @@ import net.azureaaron.mod.config.AaronModConfigManager;
 import net.minecraft.block.entity.MobSpawnerBlockEntity;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.MobSpawnerBlockEntityRenderer;
+import net.minecraft.client.render.block.entity.state.MobSpawnerBlockEntityRenderState;
 
 @Mixin(MobSpawnerBlockEntityRenderer.class)
-public abstract class MobSpawnerBlockEntityRendererMixin implements BlockEntityRenderer<MobSpawnerBlockEntity> {
+public abstract class MobSpawnerBlockEntityRendererMixin implements BlockEntityRenderer<MobSpawnerBlockEntity, MobSpawnerBlockEntityRenderState> {
 
 	@Inject(method = "render", at = @At("HEAD"), cancellable = true)
 	private void aaronMod$hideSpinningMobInSpawner(CallbackInfo ci) {
