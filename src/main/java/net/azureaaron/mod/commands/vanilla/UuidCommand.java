@@ -14,6 +14,7 @@ import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.commands.VanillaCommand;
 import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.Functions;
+import net.azureaaron.mod.utils.render.RenderHelper;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
@@ -41,11 +42,13 @@ public class UuidCommand extends VanillaCommand {
 
 	@Override
 	public void print(FabricClientCommandSource source, String name, String uuid) {
-		ColourProfiles colourProfile = Constants.PROFILE.get();
-		
-		source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Uuid » ").withColor(colourProfile.primaryColour.getAsInt())
-				.append(Text.literal(uuid).withColor(colourProfile.secondaryColour.getAsInt()))
-				.append("").styled(style -> style.withHoverEvent(new HoverEvent.ShowText(Text.translatable("chat.copy.click")))
-						.withClickEvent(new ClickEvent.CopyToClipboard(uuid))));
+		RenderHelper.runOnRenderThread(() -> {
+			ColourProfiles colourProfile = Constants.PROFILE.get();
+			
+			source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Uuid » ").withColor(colourProfile.primaryColour.getAsInt())
+					.append(Text.literal(uuid).withColor(colourProfile.secondaryColour.getAsInt()))
+					.append("").styled(style -> style.withHoverEvent(new HoverEvent.ShowText(Text.translatable("chat.copy.click")))
+							.withClickEvent(new ClickEvent.CopyToClipboard(uuid))));
+		});
 	}
 }

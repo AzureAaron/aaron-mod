@@ -14,6 +14,7 @@ import net.azureaaron.mod.events.PlaySoundEvent;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.Formatters;
+import net.azureaaron.mod.utils.render.RenderHelper;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -53,14 +54,16 @@ public class WardenWarningLevelCommand {
 		String lastTriggered = (lastShriekTime == 0) ? "Unknown" : Formatters.toRelativeTime(System.currentTimeMillis() - lastShriekTime).greatest();
 		String spacing = "                              ";
 
-		source.sendFeedback(Text.literal(spacing).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+		RenderHelper.runOnRenderThread(() -> {
+			source.sendFeedback(Text.literal(spacing).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 
-		source.sendFeedback(Text.literal("Warning Level » " + warningLevel).styled(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent.ShowText(DISCLAIMER.get()))));
-		source.sendFeedback(Text.literal(""));
-		source.sendFeedback(Text.literal("Warnings Left » " + warningsLeft).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())));
-		source.sendFeedback(Text.literal("Last Triggered Shrieker » " + lastTriggered).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())));
+			source.sendFeedback(Text.literal("Warning Level » " + warningLevel).styled(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent.ShowText(DISCLAIMER.get()))));
+			source.sendFeedback(Text.literal(""));
+			source.sendFeedback(Text.literal("Warnings Left » " + warningsLeft).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())));
+			source.sendFeedback(Text.literal("Last Triggered Shrieker » " + lastTriggered).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())));
 
-		source.sendFeedback(Text.literal(spacing).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+			source.sendFeedback(Text.literal(spacing).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+		});
 
 		return Command.SINGLE_SUCCESS;
 	}

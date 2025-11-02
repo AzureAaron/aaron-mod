@@ -40,6 +40,7 @@ import net.azureaaron.mod.utils.JsonHelper;
 import net.azureaaron.mod.utils.Messages;
 import net.azureaaron.mod.utils.Skyblock;
 import net.azureaaron.mod.utils.networth.NetworthCalculator;
+import net.azureaaron.mod.utils.render.RenderHelper;
 import net.azureaaron.networth.PetCalculator;
 import net.azureaaron.networth.item.PetInfo;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -170,32 +171,34 @@ public class NetworthCommand extends SkyblockCommand {
 
 		double overallValue = armourValue + equipmentValue + inventoryValue + enderChestsValue + storageValue + accessoriesValue + petsValue + wardrobeValue + sacksValue + essenceValue + purse + bank;
 
-		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
-				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
-				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
-				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
-				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
+		RenderHelper.runOnRenderThread(() -> {
+			Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
+					.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
+					.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
+					.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
+					.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
 
-		source.sendFeedback(startText);
+			source.sendFeedback(startText);
 
-		source.sendFeedback(Text.literal("Networth » " + Formatters.INTEGER_NUMBERS.format(overallValue) + " (" + Formatters.SHORT_FLOAT_NUMBERS.format(overallValue) + ")").withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal(""));
-		source.sendFeedback(Text.literal("Armour » " + Formatters.SHORT_FLOAT_NUMBERS.format(armourValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(armourValue, armour, ItemStack::getName))));
-		source.sendFeedback(Text.literal("Equipment » " + Formatters.SHORT_FLOAT_NUMBERS.format(equipmentValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(equipmentValue, equipment, ItemStack::getName))));
-		source.sendFeedback(Text.literal("Inventory » " + Formatters.SHORT_FLOAT_NUMBERS.format(inventoryValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(inventoryValue, inventory, ItemStack::getName))));
-		source.sendFeedback(Text.literal("Ender Chests » " + Formatters.SHORT_FLOAT_NUMBERS.format(enderChestsValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(enderChestsValue, enderChests, ItemStack::getName))));
-		source.sendFeedback(Text.literal("Storage » " + Formatters.SHORT_FLOAT_NUMBERS.format(storageValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(storageValue, storage, ItemStack::getName))));
-		source.sendFeedback(Text.literal("Accessories » " + Formatters.SHORT_FLOAT_NUMBERS.format(accessoriesValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(accessoriesValue, accessories, ItemStack::getName))));
-		source.sendFeedback(Text.literal("Pets » " + Formatters.SHORT_FLOAT_NUMBERS.format(petsValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(petsValue, pets, NetworthCommand::formatPet))));
-		source.sendFeedback(Text.literal("Wardrobe » " + Formatters.SHORT_FLOAT_NUMBERS.format(wardrobeValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(wardrobeValue, wardrobe, ItemStack::getName))));
-		source.sendFeedback(Text.literal("Sacks » " + Formatters.SHORT_FLOAT_NUMBERS.format(sacksValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(sacksValue, sacks, NetworthCommand::formatSacks))));
-		source.sendFeedback(Text.literal("Essence » " + Formatters.SHORT_FLOAT_NUMBERS.format(essenceValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(essenceValue, essence, NetworthCommand::formatEssence))));
+			source.sendFeedback(Text.literal("Networth » " + Formatters.INTEGER_NUMBERS.format(overallValue) + " (" + Formatters.SHORT_FLOAT_NUMBERS.format(overallValue) + ")").withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Text.literal(""));
+			source.sendFeedback(Text.literal("Armour » " + Formatters.SHORT_FLOAT_NUMBERS.format(armourValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(armourValue, armour, ItemStack::getName))));
+			source.sendFeedback(Text.literal("Equipment » " + Formatters.SHORT_FLOAT_NUMBERS.format(equipmentValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(equipmentValue, equipment, ItemStack::getName))));
+			source.sendFeedback(Text.literal("Inventory » " + Formatters.SHORT_FLOAT_NUMBERS.format(inventoryValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(inventoryValue, inventory, ItemStack::getName))));
+			source.sendFeedback(Text.literal("Ender Chests » " + Formatters.SHORT_FLOAT_NUMBERS.format(enderChestsValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(enderChestsValue, enderChests, ItemStack::getName))));
+			source.sendFeedback(Text.literal("Storage » " + Formatters.SHORT_FLOAT_NUMBERS.format(storageValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(storageValue, storage, ItemStack::getName))));
+			source.sendFeedback(Text.literal("Accessories » " + Formatters.SHORT_FLOAT_NUMBERS.format(accessoriesValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(accessoriesValue, accessories, ItemStack::getName))));
+			source.sendFeedback(Text.literal("Pets » " + Formatters.SHORT_FLOAT_NUMBERS.format(petsValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(petsValue, pets, NetworthCommand::formatPet))));
+			source.sendFeedback(Text.literal("Wardrobe » " + Formatters.SHORT_FLOAT_NUMBERS.format(wardrobeValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(wardrobeValue, wardrobe, ItemStack::getName))));
+			source.sendFeedback(Text.literal("Sacks » " + Formatters.SHORT_FLOAT_NUMBERS.format(sacksValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(sacksValue, sacks, NetworthCommand::formatSacks))));
+			source.sendFeedback(Text.literal("Essence » " + Formatters.SHORT_FLOAT_NUMBERS.format(essenceValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(essenceValue, essence, NetworthCommand::formatEssence))));
 
-		source.sendFeedback(Text.literal(""));
-		source.sendFeedback(Text.literal("Bank » " + Formatters.SHORT_FLOAT_NUMBERS.format(bank)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(bank, null, null))));
-		source.sendFeedback(Text.literal("Purse » " + Formatters.SHORT_FLOAT_NUMBERS.format(purse)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(purse, null, null))));
+			source.sendFeedback(Text.literal(""));
+			source.sendFeedback(Text.literal("Bank » " + Formatters.SHORT_FLOAT_NUMBERS.format(bank)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(bank, null, null))));
+			source.sendFeedback(Text.literal("Purse » " + Formatters.SHORT_FLOAT_NUMBERS.format(purse)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(purse, null, null))));
 
-		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+			source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+		});
 	}
 
 	private static Object2DoubleMap<ItemStack> calculateNetworth4Items(List<ItemStack> items) {

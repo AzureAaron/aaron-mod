@@ -17,6 +17,7 @@ import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.Formatters;
 import net.azureaaron.mod.utils.JsonHelper;
+import net.azureaaron.mod.utils.render.RenderHelper;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
@@ -56,24 +57,26 @@ public class EssenceCommand extends SkyblockCommand {
 		int diamondEssence = JsonHelper.getInt(currencies, "essence.DIAMOND.current").orElse(0);
 		int iceEssence = JsonHelper.getInt(currencies, "essence.ICE.current").orElse(0);
 		int crimsonEssence = JsonHelper.getInt(currencies, "essence.CRIMSON.current").orElse(0);
-		
-		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
-				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
-				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
-				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
-				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
-		
-		source.sendFeedback(startText);
-		
-		source.sendFeedback(Text.literal("Wither » " + Formatters.INTEGER_NUMBERS.format(witherEssence)).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal("Spider » " + Formatters.INTEGER_NUMBERS.format(spiderEssence)).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal("Undead » " + Formatters.INTEGER_NUMBERS.format(undeadEssence)).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal("Dragon » " + Formatters.INTEGER_NUMBERS.format(dragonEssence)).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal("Gold » " + Formatters.INTEGER_NUMBERS.format(goldEssence)).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal("Diamond » " + Formatters.INTEGER_NUMBERS.format(diamondEssence)).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal("Ice » " + Formatters.INTEGER_NUMBERS.format(iceEssence)).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal("Crimson » " + Formatters.INTEGER_NUMBERS.format(crimsonEssence)).withColor(colourProfile.infoColour.getAsInt()));
-		
-		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+
+		RenderHelper.runOnRenderThread(() -> {
+			Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
+					.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
+					.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
+					.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
+					.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
+			
+			source.sendFeedback(startText);
+			
+			source.sendFeedback(Text.literal("Wither » " + Formatters.INTEGER_NUMBERS.format(witherEssence)).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Text.literal("Spider » " + Formatters.INTEGER_NUMBERS.format(spiderEssence)).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Text.literal("Undead » " + Formatters.INTEGER_NUMBERS.format(undeadEssence)).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Text.literal("Dragon » " + Formatters.INTEGER_NUMBERS.format(dragonEssence)).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Text.literal("Gold » " + Formatters.INTEGER_NUMBERS.format(goldEssence)).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Text.literal("Diamond » " + Formatters.INTEGER_NUMBERS.format(diamondEssence)).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Text.literal("Ice » " + Formatters.INTEGER_NUMBERS.format(iceEssence)).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Text.literal("Crimson » " + Formatters.INTEGER_NUMBERS.format(crimsonEssence)).withColor(colourProfile.infoColour.getAsInt()));
+			
+			source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+		});
 	}
 }

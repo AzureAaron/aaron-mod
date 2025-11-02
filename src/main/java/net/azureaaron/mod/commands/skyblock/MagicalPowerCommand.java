@@ -50,6 +50,7 @@ import net.azureaaron.mod.utils.ItemUtils;
 import net.azureaaron.mod.utils.JsonHelper;
 import net.azureaaron.mod.utils.Messages;
 import net.azureaaron.mod.utils.Skyblock;
+import net.azureaaron.mod.utils.render.RenderHelper;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
@@ -323,44 +324,50 @@ public class MagicalPowerCommand extends SkyblockCommand {
 		
 		//Item Rarity Counts - Maybe I'll make this happen later (I'd really need an ItemRarity enum to reduce code duplication/hackiness)
 		//List<Text> rarities = collectedAccessories.entrySet().stream().map(entry -> getRarityBreakdownText(entry.getValue(), collectedAccessories)).collect(Collectors.toList());
+
+		int finalMagicalPower = magicalPower;
+		Object2FloatOpenHashMap<String> finalStats = stats;
+		Object2FloatOpenHashMap<String> finalBonus = bonus;
+
+		RenderHelper.runOnRenderThread(() -> {
+			Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
+					.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
+					.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
+					.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
+					.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
+			
+			source.sendFeedback(startText);
+			
+			source.sendFeedback(Text.literal("Magical Power » ").withColor(colourProfile.infoColour.getAsInt())
+					.append(Text.literal(Formatters.INTEGER_NUMBERS.format(finalMagicalPower)).withColor(colourProfile.highlightColour.getAsInt())));
+			source.sendFeedback(Text.literal("Selected Power » " + Functions.titleCase(selectedPower)).withColor(colourProfile.infoColour.getAsInt()));
+			
+			//If the power data isn't null then print out the stats
+			if (powerData != null) {
+				source.sendFeedback(Text.literal(""));
 				
-		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
-				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
-				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
-				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
-				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
-		
-		source.sendFeedback(startText);
-		
-		source.sendFeedback(Text.literal("Magical Power » ").withColor(colourProfile.infoColour.getAsInt())
-				.append(Text.literal(Formatters.INTEGER_NUMBERS.format(magicalPower)).withColor(colourProfile.highlightColour.getAsInt())));
-		source.sendFeedback(Text.literal("Selected Power » " + Functions.titleCase(selectedPower)).withColor(colourProfile.infoColour.getAsInt()));
-		
-		//If the power data isn't null then print out the stats
-		if (powerData != null) {
-			source.sendFeedback(Text.literal(""));
-			
-			stats.object2FloatEntrySet().stream()
-					.sorted(MagicalPowerCommand::compareStats)
-					.map(e -> formatStatText(e.getKey(), e.getFloatValue()))
-					.forEachOrdered(source::sendFeedback);
-			
-			source.sendFeedback(Text.literal(""));
-			
-			if (bonus.size() > 0) {
-				List<Text> bonuses = bonus.clone().object2FloatEntrySet().stream().map(e -> formatStatText(e.getKey(), e.getFloatValue())).collect(Collectors.toList());
+				finalStats.object2FloatEntrySet().stream()
+						.sorted(MagicalPowerCommand::compareStats)
+						.map(e -> formatStatText(e.getKey(), e.getFloatValue()))
+						.forEachOrdered(source::sendFeedback);
 				
-				source.sendFeedback(Text.literal("(Unique Power Bonus)").withColor(colourProfile.hoverColour.getAsInt()).styled(style -> style.withHoverEvent(
-						new HoverEvent.ShowText(getStatsBreakdown(bonuses)))));
+				source.sendFeedback(Text.literal(""));
+				
+				if (finalBonus.size() > 0) {
+					List<Text> bonuses = finalBonus.clone().object2FloatEntrySet().stream().map(e -> formatStatText(e.getKey(), e.getFloatValue())).collect(Collectors.toList());
+					
+					source.sendFeedback(Text.literal("(Unique Power Bonus)").withColor(colourProfile.hoverColour.getAsInt()).styled(style -> style.withHoverEvent(
+							new HoverEvent.ShowText(getStatsBreakdown(bonuses)))));
+				}
+			} else {
+				source.sendFeedback(Text.literal(""));
 			}
-		} else {
-			source.sendFeedback(Text.literal(""));
-		}
-		
-		source.sendFeedback(Text.literal("(Tunings)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt()).withHoverEvent(
-				new HoverEvent.ShowText(getStatsBreakdown(tunings)))));
-		
-		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+			
+			source.sendFeedback(Text.literal("(Tunings)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt()).withHoverEvent(
+					new HoverEvent.ShowText(getStatsBreakdown(tunings)))));
+			
+			source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+		});
 	}
 	
 	private static Text formatTuningStat(String stat, int tuningAmount) {

@@ -6,6 +6,7 @@ import com.mojang.blaze3d.textures.GpuTextureView;
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.events.WorldRenderExtractionCallback;
 import net.azureaaron.mod.utils.render.primitive.PrimitiveCollectorImpl;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.state.WorldRenderState;
 import net.minecraft.client.texture.TextureSetup;
@@ -53,6 +54,14 @@ public class RenderHelper {
 	 */
 	public static void assertOnRenderThread(String message) {
 		if (!RenderSystem.isOnRenderThread()) throw new IllegalStateException(message);
+	}
+
+	public static void runOnRenderThread(Runnable runnable) {
+		if (RenderSystem.isOnRenderThread()) {
+			runnable.run();
+		} else {
+			MinecraftClient.getInstance().execute(runnable);
+		}
 	}
 
 	/**

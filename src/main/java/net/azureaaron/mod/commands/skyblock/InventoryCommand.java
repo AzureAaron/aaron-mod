@@ -28,6 +28,7 @@ import net.azureaaron.mod.utils.ItemUtils;
 import net.azureaaron.mod.utils.JsonHelper;
 import net.azureaaron.mod.utils.Messages;
 import net.azureaaron.mod.utils.Skyblock;
+import net.azureaaron.mod.utils.render.RenderHelper;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
@@ -130,40 +131,43 @@ public class InventoryCommand extends SkyblockCommand {
 
 		//Sort key items by name
 		keyItems.sort(Comparator.comparing(id -> id.stack().getName().getString()));
+		List<ItemStack> equipmentFinal = equipment;
 
-		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
-				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
-				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
-				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
-				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
-		
-		source.sendFeedback(startText);
-		
-		source.sendFeedback(Text.literal("Inventory API » " + ((inventoryEnabled) ? "✓" : "✗")).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal(""));
-		source.sendFeedback(helmet.feedbackMessage());
-		source.sendFeedback(chestplate.feedbackMessage());
-		source.sendFeedback(leggings.feedbackMessage());
-		source.sendFeedback(boots.feedbackMessage());
-		
-		if (equipment != null) {
-			source.sendFeedback(Text.literal(""));
+		RenderHelper.runOnRenderThread(() -> {
+			Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
+					.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
+					.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
+					.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
+					.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
 			
-			source.sendFeedback(equipmentPieces[0].feedbackMessage());
-			source.sendFeedback(equipmentPieces[1].feedbackMessage());
-			source.sendFeedback(equipmentPieces[2].feedbackMessage());
-			source.sendFeedback(equipmentPieces[3].feedbackMessage());
-		}
-		
-		//Print feedback
-		if (keyItems.size() > 0) {
+			source.sendFeedback(startText);
+			
+			source.sendFeedback(Text.literal("Inventory API » " + ((inventoryEnabled) ? "✓" : "✗")).withColor(colourProfile.infoColour.getAsInt()));
 			source.sendFeedback(Text.literal(""));
-
-			for (ItemData4 item : keyItems) {
-				source.sendFeedback(item.feedbackMessage());
+			source.sendFeedback(helmet.feedbackMessage());
+			source.sendFeedback(chestplate.feedbackMessage());
+			source.sendFeedback(leggings.feedbackMessage());
+			source.sendFeedback(boots.feedbackMessage());
+			
+			if (equipmentFinal != null) {
+				source.sendFeedback(Text.literal(""));
+				
+				source.sendFeedback(equipmentPieces[0].feedbackMessage());
+				source.sendFeedback(equipmentPieces[1].feedbackMessage());
+				source.sendFeedback(equipmentPieces[2].feedbackMessage());
+				source.sendFeedback(equipmentPieces[3].feedbackMessage());
 			}
-		}
+			
+			//Print feedback
+			if (keyItems.size() > 0) {
+				source.sendFeedback(Text.literal(""));
 
-		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+				for (ItemData4 item : keyItems) {
+					source.sendFeedback(item.feedbackMessage());
+				}
+			}
+
+			source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+		});
 	}
 }

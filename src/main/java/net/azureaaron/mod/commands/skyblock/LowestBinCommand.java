@@ -26,6 +26,7 @@ import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.Formatters;
 import net.azureaaron.mod.utils.Http;
 import net.azureaaron.mod.utils.Messages;
+import net.azureaaron.mod.utils.render.RenderHelper;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
@@ -143,21 +144,22 @@ public class LowestBinCommand {
 	}
 	
 	private static void printLowestBin(FabricClientCommandSource source, JsonObject data, String itemName, String desc) {
-		ColourProfiles colourProfile = Constants.PROFILE.get();
-		
-		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
-				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
-				.append(Text.literal(itemName).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
-				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
-				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
-		
-		source.sendFeedback(startText);
-		
-		source.sendFeedback(Text.literal("Lowest BIN Price » " + Formatters.INTEGER_NUMBERS.format(data.get("price").getAsLong())).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal(""));
-		source.sendFeedback(Text.literal(desc + " Price » " + Formatters.INTEGER_NUMBERS.format(data.get("dayAverage").getAsLong())).withColor(colourProfile.infoColour.getAsInt()));
-		
-		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
-		return;
+		RenderHelper.runOnRenderThread(() -> {
+			ColourProfiles colourProfile = Constants.PROFILE.get();
+			
+			Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
+					.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
+					.append(Text.literal(itemName).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
+					.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
+					.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
+			
+			source.sendFeedback(startText);
+			
+			source.sendFeedback(Text.literal("Lowest BIN Price » " + Formatters.INTEGER_NUMBERS.format(data.get("price").getAsLong())).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Text.literal(""));
+			source.sendFeedback(Text.literal(desc + " Price » " + Formatters.INTEGER_NUMBERS.format(data.get("dayAverage").getAsLong())).withColor(colourProfile.infoColour.getAsInt()));
+			
+			source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+		});
 	}
 }

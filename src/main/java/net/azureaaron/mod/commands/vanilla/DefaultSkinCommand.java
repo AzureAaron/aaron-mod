@@ -17,6 +17,7 @@ import net.azureaaron.mod.commands.CommandSystem;
 import net.azureaaron.mod.commands.VanillaCommand;
 import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.Functions;
+import net.azureaaron.mod.utils.render.RenderHelper;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.util.DefaultSkinHelper;
@@ -44,14 +45,16 @@ public class DefaultSkinCommand extends VanillaCommand {
 
 	@Override
 	public void print(FabricClientCommandSource source, String name, String uuid) {
-		ColourProfiles colourProfile = Constants.PROFILE.get();
-		
-		UUID formattedUuid = UndashedUuid.fromString(uuid);
-		SkinTextures skinTexture = DefaultSkinHelper.getSkinTextures(formattedUuid);
-		String skinName = Functions.titleCase(skinTexture.body().id().toString().replaceAll("minecraft:textures\\/entity\\/player\\/(wide|slim)\\/", "").replace(".png", ""));
-		String skinModel = Functions.titleCase(DefaultSkinHelper.getSkinTextures(formattedUuid).model().asString());
-				
-		source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Default Skin » ").withColor(colourProfile.primaryColour.getAsInt())
-				.append(Text.literal(skinName + " (" + skinModel + ")").withColor(colourProfile.secondaryColour.getAsInt())));
+		RenderHelper.runOnRenderThread(() -> {
+			ColourProfiles colourProfile = Constants.PROFILE.get();
+			
+			UUID formattedUuid = UndashedUuid.fromString(uuid);
+			SkinTextures skinTexture = DefaultSkinHelper.getSkinTextures(formattedUuid);
+			String skinName = Functions.titleCase(skinTexture.body().id().toString().replaceAll("minecraft:textures\\/entity\\/player\\/(wide|slim)\\/", "").replace(".png", ""));
+			String skinModel = Functions.titleCase(DefaultSkinHelper.getSkinTextures(formattedUuid).model().asString());
+					
+			source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Default Skin » ").withColor(colourProfile.primaryColour.getAsInt())
+					.append(Text.literal(skinName + " (" + skinModel + ")").withColor(colourProfile.secondaryColour.getAsInt())));
+		});
 	}
 }

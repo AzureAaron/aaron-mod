@@ -32,6 +32,7 @@ import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Constants;
 import net.azureaaron.mod.utils.Formatters;
 import net.azureaaron.mod.utils.Skyblock;
+import net.azureaaron.mod.utils.render.RenderHelper;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
@@ -167,41 +168,43 @@ public class CroesusCommand extends SkyblockCommand {
 		}
 
 		bundle.set(DataComponentTypes.BUNDLE_CONTENTS, new BundleContentsComponent(new ArrayList<>(stacks.values())));
-				
-		Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
-				.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
-				.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
-				.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
-				.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
-		
-		source.sendFeedback(startText);
-		
-		source.sendFeedback(Text.literal("Unclaimed Chests » " + runs.size()).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal("Rare Loot Awaits » " + ((rareLootAwaits) ? "✓" : "✗"))
-				.styled(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent.ShowItem(bundle))));
-		source.sendFeedback(Text.literal(""));
-		
-		int count = 0;
-		
-		//TODO Refactor with regular loop using Math.min(runs.size(), 10)
-		for (RunData run : runs.values()) {
-			if (count <= 10) {
-				String floorShorthand = String.valueOf(Character.toUpperCase(run.dungeon().charAt(0))).replace('C', 'F') + run.floor();
-				String timeAgo = Formatters.toRelativeTime(System.currentTimeMillis() - run.timestamp()).atMost(2);
-				long expiresAt = run.timestamp() + TWO_DAYS;
-				long expiresIn = (run.timestamp() + TWO_DAYS) - System.currentTimeMillis();
-				
-				source.sendFeedback(Text.literal("(" + floorShorthand + " • " + timeAgo + ")")
-						.styled(style -> style.withColor(colourProfile.hoverColour.getAsInt())
-								.withHoverEvent(new HoverEvent.ShowText(Text.literal("Expires:\n" + Formatters.DATE_FORMATTER.format(Instant.ofEpochMilli(expiresAt)) + "\n(In " + TimeUnit.MILLISECONDS.toHours(expiresIn) + " hours)")
-										.withColor(colourProfile.infoColour.getAsInt())))));
-				count++;
+
+		RenderHelper.runOnRenderThread(() -> {
+			Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
+					.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
+					.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
+					.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
+					.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
+			
+			source.sendFeedback(startText);
+			
+			source.sendFeedback(Text.literal("Unclaimed Chests » " + runs.size()).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Text.literal("Rare Loot Awaits » " + ((rareLootAwaits) ? "✓" : "✗"))
+					.styled(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent.ShowItem(bundle))));
+			source.sendFeedback(Text.literal(""));
+			
+			int count = 0;
+			
+			//TODO Refactor with regular loop using Math.min(runs.size(), 10)
+			for (RunData run : runs.values()) {
+				if (count <= 10) {
+					String floorShorthand = String.valueOf(Character.toUpperCase(run.dungeon().charAt(0))).replace('C', 'F') + run.floor();
+					String timeAgo = Formatters.toRelativeTime(System.currentTimeMillis() - run.timestamp()).atMost(2);
+					long expiresAt = run.timestamp() + TWO_DAYS;
+					long expiresIn = (run.timestamp() + TWO_DAYS) - System.currentTimeMillis();
+					
+					source.sendFeedback(Text.literal("(" + floorShorthand + " • " + timeAgo + ")")
+							.styled(style -> style.withColor(colourProfile.hoverColour.getAsInt())
+									.withHoverEvent(new HoverEvent.ShowText(Text.literal("Expires:\n" + Formatters.DATE_FORMATTER.format(Instant.ofEpochMilli(expiresAt)) + "\n(In " + TimeUnit.MILLISECONDS.toHours(expiresIn) + " hours)")
+											.withColor(colourProfile.infoColour.getAsInt())))));
+					count++;
+				}
 			}
-		}
-		
-		if (count > 10) source.sendFeedback(Text.literal("and " + (runs.size() - 10) + " more...").styled(style -> style.withColor(colourProfile.supportingInfoColour.getAsInt()).withItalic(true)));
-		
-		source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+			
+			if (count > 10) source.sendFeedback(Text.literal("and " + (runs.size() - 10) + " more...").styled(style -> style.withColor(colourProfile.supportingInfoColour.getAsInt()).withItalic(true)));
+			
+			source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+		});
 	}
 
 	private record ChestData(String runId, String type, JsonArray rewards) {}
