@@ -28,8 +28,8 @@ public class BatchingRenderCommandQueueMixin {
 	private void aaronMod$markCustomGlow(@Coerce Object commandList, RenderLayer layer, @Coerce CustomGlowState command, Operation<Void> operation) {
 		EntityRenderState entityStateBeingRendered = MinecraftClient.getInstance().getEntityRenderDispatcher().aaronMod$getEntityStateBeingRendered();
 
-		if (entityStateBeingRendered != null && entityStateBeingRendered.getDataOrDefault(MobGlow.ENTITY_HAS_CUSTOM_GLOW, false)) {
-			command.aaronMod$markCustomGlow();
+		if (entityStateBeingRendered != null && entityStateBeingRendered.getDataOrDefault(MobGlow.ENTITY_CUSTOM_GLOW_COLOUR, MobGlow.NO_GLOW) != MobGlow.NO_GLOW) {
+			command.aaronMod$setCustomGlowColour(entityStateBeingRendered.getData(MobGlow.ENTITY_CUSTOM_GLOW_COLOUR));
 		}
 
 		operation.call(commandList, layer, command);
@@ -39,8 +39,8 @@ public class BatchingRenderCommandQueueMixin {
 	private Object aaronMod$markCustomGlow(Object command) {
 		EntityRenderState entityStateBeingRendered = MinecraftClient.getInstance().getEntityRenderDispatcher().aaronMod$getEntityStateBeingRendered();
 
-		if (entityStateBeingRendered != null && entityStateBeingRendered.getDataOrDefault(MobGlow.ENTITY_HAS_CUSTOM_GLOW, false)) {
-			((OrderedRenderCommandQueueImpl.ItemCommand) command).aaronMod$markCustomGlow();
+		if (entityStateBeingRendered != null && entityStateBeingRendered.getDataOrDefault(MobGlow.ENTITY_CUSTOM_GLOW_COLOUR, MobGlow.NO_GLOW) != MobGlow.NO_GLOW) {
+			((OrderedRenderCommandQueueImpl.ItemCommand) command).aaronMod$setCustomGlowColour(entityStateBeingRendered.getData(MobGlow.ENTITY_CUSTOM_GLOW_COLOUR));
 		}
 
 		return command;

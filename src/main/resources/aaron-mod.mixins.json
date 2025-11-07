@@ -7,7 +7,6 @@
   "client": [
     "AbstractSignBlockEntityRendererMixin",
     "AnimatedParticleMixin",
-	"ArmorStandEntityRendererMixin",
 	"BatchingRenderCommandQueueMixin",
 	"BillboardParticleMixin",
     "ChatHudMixin",

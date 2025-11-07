@@ -2,11 +2,11 @@ package net.azureaaron.mod.injected;
 
 public interface CustomGlowState {
 
-	default void aaronMod$markCustomGlow() {
+	default void aaronMod$setCustomGlowColour(int glowColour) {
 		throw new UnsupportedOperationException("Implemented via Mixin");
 	}
 
-	default boolean aaronMod$hasCustomGlow() {
+	default int aaronMod$getCustomGlowColour() {
 		throw new UnsupportedOperationException("Implemented via Mixin");
 	}
 }

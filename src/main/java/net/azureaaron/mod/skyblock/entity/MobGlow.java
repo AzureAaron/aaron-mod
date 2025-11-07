@@ -19,9 +19,9 @@ public class MobGlow {
 	 */
 	public static final int NO_GLOW = EntityRenderState.NO_OUTLINE;
 	/**
-	 * Attached to {@code EntityRenderState}s to indicate that they have the custom glow applied.
+	 * Attached to {@code EntityRenderState}s to apply the custom glow colour.
 	 */
-	public static final RenderStateDataKey<Boolean> ENTITY_HAS_CUSTOM_GLOW = RenderStateDataKey.create(() -> "Aaron Mod entity has custom glow");
+	public static final RenderStateDataKey<Integer> ENTITY_CUSTOM_GLOW_COLOUR = RenderStateDataKey.create(() -> "Aaron Mod custom glow colour");
 	/**
 	 * Attached to {@code WorldRenderState}s to indicate that the custom glow is being used this frame.
 	 */
@@ -58,6 +58,10 @@ public class MobGlow {
 
 	public static int getMobGlowOrDefault(Entity entity, int defaultColour) {
 		return CACHE.getOrDefault(entity, defaultColour);
+	}
+
+	public static int getMobGlow(Entity entity) {
+		return CACHE.getInt(entity);
 	}
 
 	/**
