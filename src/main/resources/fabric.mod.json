@@ -32,7 +32,7 @@
   "accessWidener": "aaron-mod.accesswidener",
   "depends": {
     "fabricloader": ">=0.17.3",
-    "fabric-api": ">=0.136.0+1.21.10",
+    "fabric-api": ">=0.137.0+1.21.10",
     "fabric-language-kotlin": "*",
     "minecraft": "~1.21.9",
     "java": ">=21",

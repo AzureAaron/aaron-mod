@@ -6,9 +6,10 @@ import com.mojang.blaze3d.textures.GpuTextureView;
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.events.WorldRenderExtractionCallback;
 import net.azureaaron.mod.utils.render.primitive.PrimitiveCollectorImpl;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldExtractionContext;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.Frustum;
-import net.minecraft.client.render.state.WorldRenderState;
 import net.minecraft.client.texture.TextureSetup;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.profiler.Profilers;
@@ -18,25 +19,25 @@ public class RenderHelper {
 
 	@Init
 	public static void init() {
-		//WorldRenderEvents.AFTER_SETUP.register(RenderHelper::startFrame);
-		//WorldRenderEvents.AFTER_TRANSLUCENT.register(RenderHelper::executeDraws);
+		WorldRenderEvents.END_EXTRACTION.register(RenderHelper::startExtraction);
+		WorldRenderEvents.END_MAIN.register(RenderHelper::executeDraws);
 	}
 
-	public static void startExtraction(WorldRenderState worldState, Frustum frustum) {
+	public static void startExtraction(WorldExtractionContext context) {
 		Profiler profiler = Profilers.get();
 		profiler.push("aaronModPrimitiveCollection");
-		collector = new PrimitiveCollectorImpl(worldState, frustum);
+		collector = new PrimitiveCollectorImpl(context.worldState(), context.frustum());
 
 		WorldRenderExtractionCallback.EVENT.invoker().onExtract(collector);
 		collector.endCollection();
 		profiler.pop();
 	}
 
-	public static void executeDraws(WorldRenderState worldState) {
+	public static void executeDraws(WorldRenderContext context) {
 		Profiler profiler = Profilers.get();
 
 		profiler.push("aaronModSubmitPrimitives");
-		collector.dispatchPrimitivesToRenderers(worldState.cameraRenderState);
+		collector.dispatchPrimitivesToRenderers(context.worldState().cameraRenderState);
 		collector = null;
 		profiler.pop();
 

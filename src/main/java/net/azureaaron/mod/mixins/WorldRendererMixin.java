@@ -13,8 +13,6 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import net.azureaaron.mod.skyblock.entity.MobGlow;
 import net.azureaaron.mod.utils.render.GlowRenderer;
-import net.azureaaron.mod.utils.render.RenderHelper;
-import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.render.state.WorldRenderState;
@@ -49,15 +47,5 @@ public class WorldRendererMixin {
 	@Inject(method = "method_62214", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/OutlineVertexConsumerProvider;draw()V"))
 	private void aaronMod$drawGlowVertexConsumers(CallbackInfo ci) {
 		GlowRenderer.getInstance().getGlowVertexConsumers().draw();
-	}
-
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/WorldBorderRendering;updateRenderState(Lnet/minecraft/world/border/WorldBorder;Lnet/minecraft/util/math/Vec3d;DLnet/minecraft/client/render/state/WorldBorderRenderState;)V", shift = At.Shift.AFTER))
-	private void aaronMod$extractWorldRendering(CallbackInfo ci, @Local Frustum frustum) {
-		RenderHelper.startExtraction(this.worldRenderState, frustum);
-	}
-
-	@Inject(method = "method_62214", at = @At(value = "CONSTANT", args = "stringValue=translucent", shift = At.Shift.AFTER))
-	private void aaronMod$beforeTranslucent(CallbackInfo ci) {
-		RenderHelper.executeDraws(this.worldRenderState);
 	}
 }
