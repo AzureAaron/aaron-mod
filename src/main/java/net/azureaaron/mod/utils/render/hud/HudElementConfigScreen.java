@@ -137,8 +137,8 @@ public final class HudElementConfigScreen extends Screen {
 		switch (input.key()) {
 			//Scale up
 			case GLFW.GLFW_KEY_EQUAL -> {
-				//Ensure this was from the + key and not just =
-				if (selected != null && (input.modifiers() & GLFW.GLFW_MOD_SHIFT) != 0) {	
+				//Ensure this was from the + key or = (for easier scaling)
+				if (selected != null) {	
 					selected.scale(selected.scale() + 0.1f);
 
 					return true;
@@ -148,7 +148,7 @@ public final class HudElementConfigScreen extends Screen {
 			//Scale down
 			case GLFW.GLFW_KEY_MINUS -> {
 				//Ensure _ wasn't the key pressed
-				if (selected != null && (input.modifiers() & GLFW.GLFW_MOD_SHIFT) == 0) {
+				if (selected != null && !input.hasShift()) {
 					selected.scale(selected.scale() - 0.1f);
 
 					return true;
