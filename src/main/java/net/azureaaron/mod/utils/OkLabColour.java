@@ -2,7 +2,7 @@ package net.azureaaron.mod.utils;
 
 /**
  * Implements colour interpolation in the OkLab colour space.
- * 
+ *
  * @see <a href="https://bottosson.github.io/posts/oklab">OkLab Colour Space</a>
  * @see <a href="https://www.sjbrown.co.uk/posts/gamma-correct-rendering/">Gamma Correct Rendering</a>
  */
@@ -10,7 +10,7 @@ public class OkLabColour {
 
 	/**
 	 * Converts a linear SRGB colour to the OkLab colour space.
-	 * 
+	 *
 	 * @param r the linearized red channel
 	 * @param g the linearized green channel
 	 * @param b the linearized blue channel
@@ -66,11 +66,11 @@ public class OkLabColour {
 
 	/**
 	 * Interpolates two colours using the OkLab colour space.
-	 * 
+	 *
 	 * @param firstColour  the RGB colour at the left end of the gradient
 	 * @param secondColour the RGB colour at the right end of the gradient
 	 * @param progress     a float from [0, 1] representing the position in the gradient
-	 * 
+	 *
 	 * @return the interpolated colour in the RGB format
 	 */
 	//Escape analysis should hopefully take care of the objects :')

@@ -44,11 +44,11 @@ public class EssenceCommand extends SkyblockCommand {
 	@Override
 	public void print(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
 		ColourProfiles colourProfile = Constants.PROFILE.get();
-		
+
 		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);
-		
+
 		JsonObject currencies = profile.getAsJsonObject("currencies");
-		
+
 		int witherEssence = JsonHelper.getInt(currencies, "essence.WITHER.current").orElse(0);
 		int spiderEssence = JsonHelper.getInt(currencies, "essence.SPIDER.current").orElse(0);
 		int undeadEssence = JsonHelper.getInt(currencies, "essence.UNDEAD.current").orElse(0);
@@ -64,9 +64,9 @@ public class EssenceCommand extends SkyblockCommand {
 					.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
 					.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
 					.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
-			
+
 			source.sendFeedback(startText);
-			
+
 			source.sendFeedback(Text.literal("Wither » " + Formatters.INTEGER_NUMBERS.format(witherEssence)).withColor(colourProfile.infoColour.getAsInt()));
 			source.sendFeedback(Text.literal("Spider » " + Formatters.INTEGER_NUMBERS.format(spiderEssence)).withColor(colourProfile.infoColour.getAsInt()));
 			source.sendFeedback(Text.literal("Undead » " + Formatters.INTEGER_NUMBERS.format(undeadEssence)).withColor(colourProfile.infoColour.getAsInt()));
@@ -75,7 +75,7 @@ public class EssenceCommand extends SkyblockCommand {
 			source.sendFeedback(Text.literal("Diamond » " + Formatters.INTEGER_NUMBERS.format(diamondEssence)).withColor(colourProfile.infoColour.getAsInt()));
 			source.sendFeedback(Text.literal("Ice » " + Formatters.INTEGER_NUMBERS.format(iceEssence)).withColor(colourProfile.infoColour.getAsInt()));
 			source.sendFeedback(Text.literal("Crimson » " + Formatters.INTEGER_NUMBERS.format(crimsonEssence)).withColor(colourProfile.infoColour.getAsInt()));
-			
+
 			source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 		});
 	}

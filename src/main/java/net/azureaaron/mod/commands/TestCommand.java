@@ -32,14 +32,14 @@ public class TestCommand {
 							.executes(context -> printTest(context.getSource(), getString(context, "option")))));
 		}
 	}
-			
-    private static int printTest(FabricClientCommandSource source) {
-    	source.sendFeedback(Texts.bracketedCopyable("test!"));
-        return Command.SINGLE_SUCCESS;
-    }
-    
-    private static int printTest(FabricClientCommandSource source, String option) {
-    	source.sendFeedback(Text.literal("No tests to be done right now!"));
-    	return Command.SINGLE_SUCCESS;
-    }
+
+	private static int printTest(FabricClientCommandSource source) {
+		source.sendFeedback(Texts.bracketedCopyable("test!"));
+		return Command.SINGLE_SUCCESS;
+	}
+
+	private static int printTest(FabricClientCommandSource source, String option) {
+		source.sendFeedback(Text.literal("No tests to be done right now!"));
+		return Command.SINGLE_SUCCESS;
+	}
 }

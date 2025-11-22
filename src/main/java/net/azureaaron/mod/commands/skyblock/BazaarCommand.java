@@ -50,23 +50,23 @@ public class BazaarCommand {
 				.then(argument("product", greedyString())
 						.suggests((context, builder) -> CommandSource.suggestMatching(Cache.PRODUCTS_LIST, builder))
 						.executes(context -> handleCommand(context.getSource(), getString(context, "product")))));
-		
+
 		dispatcher.register(literal("bzprice").redirect(bazaarCommand));
 	}
-	
+
 	private static int handleCommand(FabricClientCommandSource source, String product) {
 		//TODO lazy load this
 		if (!Cache.PRODUCTS_LIST.contains(product)) {
 			source.sendError(NON_EXISTENT_PRODUCT_ERROR.get());
-			
+
 			return Command.SINGLE_SUCCESS;
 		}
-		
+
 		CompletableFuture.supplyAsync(() -> {
 			try {
 				String response = Http.sendGetRequest("https://api.hypixel.net/v2/skyblock/bazaar");
 				JsonObject data = JsonParser.parseString(response).getAsJsonObject();
-				
+
 				return data.get("products").getAsJsonObject().get(Cache.PRODUCTS_MAP.get(product)).getAsJsonObject().get("quick_status").getAsJsonObject();
 			} catch (Exception e) {
 				source.sendError(BAZAAR_FETCH_ERROR.get());
@@ -84,10 +84,10 @@ public class BazaarCommand {
 				}
 			}
 		});
-		
+
 		return Command.SINGLE_SUCCESS;
 	}
-	
+
 	private static void printBazaar(FabricClientCommandSource source, JsonObject productData, String productName) {
 		RenderHelper.runOnRenderThread(() -> {
 			ColourProfiles colourProfile = Constants.PROFILE.get();
@@ -97,19 +97,19 @@ public class BazaarCommand {
 					.append(Text.literal(productName).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
 					.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
 					.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
-			
+
 			source.sendFeedback(startText);
-			
+
 			source.sendFeedback(Text.literal("Buy Price » " + Formatters.DOUBLE_NUMBERS.format(productData.get("buyPrice").getAsDouble())).withColor(colourProfile.infoColour.getAsInt()));
 			source.sendFeedback(Text.literal(Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("buyVolume").getAsInt()) + " in " + Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("buyOrders").getAsInt()) + " offers").withColor(colourProfile.supportingInfoColour.getAsInt()));
 			source.sendFeedback(Text.literal(Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("buyMovingWeek").getAsInt()) + " insta-buys in 7 days").withColor(colourProfile.supportingInfoColour.getAsInt()));
-			
+
 			source.sendFeedback(Text.literal(""));
-			
+
 			source.sendFeedback(Text.literal("Sell Price » " + Formatters.DOUBLE_NUMBERS.format(productData.get("sellPrice").getAsDouble())).withColor(colourProfile.infoColour.getAsInt()));
 			source.sendFeedback(Text.literal(Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("sellVolume").getAsInt()) + " in " + Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("sellOrders").getAsInt()) + " orders").withColor(colourProfile.supportingInfoColour.getAsInt()));
 			source.sendFeedback(Text.literal(Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("sellMovingWeek").getAsInt()) + " insta-sells in 7 days").withColor(colourProfile.supportingInfoColour.getAsInt()));
-			
+
 			source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 		});
 	}

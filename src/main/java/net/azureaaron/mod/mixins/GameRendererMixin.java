@@ -48,8 +48,8 @@ public class GameRendererMixin {
 	private float aaronMod$zoom(float fov) {
 		if (Keybinds.zoomKeybind.isPressed()) {
 			if (!this.cameraSmoothed) {
-				this.cameraSmoothed = true; 
-				this.client.options.smoothCameraEnabled = true; 
+				this.cameraSmoothed = true;
+				this.client.options.smoothCameraEnabled = true;
 			}
 
 			return (float) (fov * AaronModConfigManager.get().uiAndVisuals.world.zoomMultiplier);

@@ -14,7 +14,7 @@ import net.minecraft.util.Formatting;
 /**
  * This class is used to cache & save values that are related to the mod's operations.<br><br>
  * It also contains some methods related to caching values as well.
- * 
+ *
  * @author Aaron
  */
 public class Cache {
@@ -28,11 +28,11 @@ public class Cache {
 	public static int stoneBlessing = 0;
 	@Deprecated(forRemoval = true)
 	public static boolean timeBlessing = false;
-	
+
 	@Deprecated(forRemoval = true)
 	public static long lastTwoHundredSeventyScore = 0L;
 	@Deprecated(forRemoval = true)
-	public static long lastThreeHundredScore = 0L;	
+	public static long lastThreeHundredScore = 0L;
 	public static boolean inM7Phase5 = false;
 	@Deprecated(forRemoval = true)
 	public static volatile boolean inDungeonBossRoom = false;
@@ -43,7 +43,7 @@ public class Cache {
 	public static String lastServerAddress = "";
 
 	public static void incrementBlessing(String blessing, String level) {
-		switch(blessing) {
+		switch (blessing) {
 			case "Power" -> powerBlessing += Functions.romanToInt(level);
 			case "Wisdom" -> wisdomBlessing += Functions.romanToInt(level);
 			case "Life" -> lifeBlessing += Functions.romanToInt(level);
@@ -51,7 +51,7 @@ public class Cache {
 			case "Time" -> timeBlessing = true;
 		}
 	}
-	
+
 	public static void resetBlessings() {
 		powerBlessing = 0;
 		wisdomBlessing = 0;
@@ -59,33 +59,33 @@ public class Cache {
 		stoneBlessing = 0;
 		timeBlessing = false;
 	}
-	
+
 	/**{@link HashSet} containing bazaar product names. Example: {@code Fifth Master Star}*/
 	public static final HashSet<String> PRODUCTS_LIST = new HashSet<>();
-	
+
 	/**{@link HashMap} used for mapping product names to skyblock item ids. Example: {@code Fifth Master Star → FIFTH_MASTER_STAR}*/
 	public static final HashMap<String, String> PRODUCTS_MAP = new HashMap<>();
-	
+
 	/**{@link HashSet} containing a list of item names. Example: {@code Astraea}*/
 	public static final HashSet<String> ITEMS_LIST = new HashSet<>();
-	
+
 	/**{@link HashMap} used for mapping item names to skyblock item ids. Example: {@code Astraea → ASTRAEA}*/
 	public static final HashMap<String, String> ITEM_NAMES = new HashMap<>();
-	
+
 	public static void populate(JsonArray itemsData) {
 		//HashMap used for mapping item ids to item names
 		HashMap<String, String> items = new HashMap<>();
-		
+
 		CompletableFuture.supplyAsync(() -> {
 			//Populate skyblock items cache
-			try {				
+			try {
 				for (JsonElement item : itemsData) {
 					String itemName = Formatting.strip(item.getAsJsonObject().get("name").getAsString());
 					String itemId = item.getAsJsonObject().get("id").getAsString();
 
 					//Exclude items that aren't salable
 					if (itemName.contains("Minion") || item.getAsJsonObject().get("soulbound") != null) continue;
-					
+
 					ITEMS_LIST.add(itemName);
 					ITEM_NAMES.put(itemName, itemId);
 					items.put(itemId, itemName);
@@ -118,7 +118,7 @@ public class Cache {
 
 							default -> {}
 						}
-						
+
 						PRODUCTS_LIST.add(itemName);
 						PRODUCTS_MAP.put(itemName, key);
 					} else {

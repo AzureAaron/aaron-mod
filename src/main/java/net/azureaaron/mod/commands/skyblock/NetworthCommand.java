@@ -69,7 +69,7 @@ public class NetworthCommand extends SkyblockCommand {
 				.then(argument("player", word())
 						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
 						.executes(context -> CommandSystem.handlePlayer4Skyblock(this, context.getSource(), getString(context, "player")))));
-		
+
 		dispatcher.register(literal("nw")
 				.executes(context -> CommandSystem.handleSelf4Skyblock(this, context.getSource()))
 				.then(argument("player", word())
@@ -259,14 +259,14 @@ public class NetworthCommand extends SkyblockCommand {
 
 	private static Text formatEssence(String essenceType) {
 		int essenceColour = switch (essenceType) {
-			case "WITHER" -> 0x2b2b2a;
-			case "SPIDER" -> 0x4b647a;
-			case "UNDEAD" -> 0xbf7a8e;
-			case "DRAGON" -> 0xf52f2f;
-			case "GOLD" -> 0xedbd39;
-			case "DIAMOND" -> 0x75ecf0;
-			case "ICE" -> 0x94d6f7;
-			case "CRIMSON" -> 0xf26411;
+			case "WITHER" -> 0x2B2B2A;
+			case "SPIDER" -> 0x4B647A;
+			case "UNDEAD" -> 0xBF7A8E;
+			case "DRAGON" -> 0xF52F2F;
+			case "GOLD" -> 0xEDBD39;
+			case "DIAMOND" -> 0x75ECF0;
+			case "ICE" -> 0x94D6F7;
+			case "CRIMSON" -> 0xF26411;
 
 			default -> 0;
 		};

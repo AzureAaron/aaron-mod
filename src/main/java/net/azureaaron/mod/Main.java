@@ -51,7 +51,7 @@ public class Main implements ClientModInitializer {
 	/**
 	 * The content of this method is completely overwritten by ASM at compile time, any statements added to this method will do nothing.
 	 * To initialize your class, annotate its initializer method with {@code @Init}
-	 * 
+	 *
 	 * @see Init
 	 */
 	private static void init() {}

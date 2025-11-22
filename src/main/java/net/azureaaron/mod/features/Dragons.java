@@ -5,11 +5,11 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.ColorHelper;
 
 public enum Dragons {
-	POWER("Red", new BlockPos(13, 5, 45), new BlockPos(41, 34, 72), 0xe02b2b),
-	FLAME("Orange", new BlockPos(71, 5, 45), new BlockPos(102, 34, 72), 0xe87c46),
-	APEX("Green", new BlockPos(13, 5, 80), new BlockPos(41, 34, 107), 0x168a16),
-	ICE("Blue", new BlockPos(71, 5, 80), new BlockPos(102, 34, 107), 0x18d2db),
-	SOUL("Purple", new BlockPos(41, 5, 112), new BlockPos(71, 34, 145), 0x8d18db);
+	POWER("Red", new BlockPos(13, 5, 45), new BlockPos(41, 34, 72), 0xE02B2B),
+	FLAME("Orange", new BlockPos(71, 5, 45), new BlockPos(102, 34, 72), 0xE87C46),
+	APEX("Green", new BlockPos(13, 5, 80), new BlockPos(41, 34, 107), 0x168A16),
+	ICE("Blue", new BlockPos(71, 5, 80), new BlockPos(102, 34, 107), 0x18D2DB),
+	SOUL("Purple", new BlockPos(41, 5, 112), new BlockPos(71, 34, 145), 0x8D18DB);
 
 	public final String name;
 	public final BlockPos pos1;

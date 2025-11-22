@@ -43,7 +43,7 @@ public abstract class SkyblockerCustomizeNameWidgetMixin {
 
 	private class ChromaColourButton extends PressableWidget {
 
-		public ChromaColourButton() {
+		ChromaColourButton() {
 			super(0, 0, 16, 16, Text.literal("Chroma"));
 			this.setTooltip(Tooltip.of(getMessage()));
 		}

@@ -223,7 +223,7 @@ public class ConfigFixV1 extends DataFix {
 		//Convert enums to booleans since I don't think the enum will be needed anymore and booleans are better for the toggle in the config
 		Dynamic<?> particleStates = dynamic.get("particles").orElseEmptyMap().updateMapValues(pair -> {
 			String state = pair.getSecond().asString("FULL");
-			boolean booleanified = state.equals("NONE") ? false : true;
+			boolean booleanified = !state.equals("NONE");
 
 			return pair.mapSecond(valueDynamic -> valueDynamic.createBoolean(booleanified));
 		});

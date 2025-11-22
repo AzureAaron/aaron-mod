@@ -13,9 +13,9 @@ import net.minecraft.util.annotation.MethodsReturnNonnullByDefault;
 
 /**
  * Helper methods to assist in retrieving values nested in JSON objects.
- * 
+ *
  * All methods are fully null safe, whether it be from passing a {@code null} root object or from encountering a nonexistent or null object/value.
- * 
+ *
  * @implNote While this provides null safety, it does not provide type safety. The caller must know the target type of the target JSON element.
  */
 @MethodsReturnNonnullByDefault
@@ -71,7 +71,7 @@ public class JsonHelper {
 
 		JsonObject currentLevel = root;
 
-		for (String objectName : objects2Traverse) {			
+		for (String objectName : objects2Traverse) {
 			if (currentLevel.has(objectName) && !currentLevel.get(objectName).isJsonNull()) {
 				currentLevel = currentLevel.getAsJsonObject(objectName);
 			} else {
@@ -89,7 +89,7 @@ public class JsonHelper {
 
 	/**
 	 * Clears all null values from a {@link JsonElement} as a workaround for JsonOps not handling JsonNulls correctly.
-	 * 
+	 *
 	 * Credit to ResourcefulLib for the original implementation this was based off
 	 */
 	public static JsonElement clearNullValues(JsonElement rootElement) {

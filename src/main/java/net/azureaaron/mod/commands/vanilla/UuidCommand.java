@@ -44,7 +44,7 @@ public class UuidCommand extends VanillaCommand {
 	public void print(FabricClientCommandSource source, String name, String uuid) {
 		RenderHelper.runOnRenderThread(() -> {
 			ColourProfiles colourProfile = Constants.PROFILE.get();
-			
+
 			source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Uuid » ").withColor(colourProfile.primaryColour.getAsInt())
 					.append(Text.literal(uuid).withColor(colourProfile.secondaryColour.getAsInt()))
 					.append("").styled(style -> style.withHoverEvent(new HoverEvent.ShowText(Text.translatable("chat.copy.click")))

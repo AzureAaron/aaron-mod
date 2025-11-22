@@ -138,7 +138,7 @@ public class UIAndVisualsCategory {
 								.description(Text.literal("Displays an estimation of the server's TPS. May not always be accurate."))
 								.binding(defaults.uiAndVisuals.tpsHud.enableTpsHud,
 										() -> config.uiAndVisuals.tpsHud.enableTpsHud,
-										newValue -> config.uiAndVisuals.tpsHud.enableTpsHud= newValue)
+										newValue -> config.uiAndVisuals.tpsHud.enableTpsHud = newValue)
 								.controller(ConfigUtils.createBooleanController())
 								.build())
 						.option(HudElementConfigScreen.createOption())
@@ -211,9 +211,9 @@ public class UIAndVisualsCategory {
 						.option(Option.<Boolean>createBuilder()
 								.name(Text.literal("Old Message Trust Indicator Colours"))
 								.description(Text.literal("Changes the colour used for the ")
-										.append(Text.literal("Not Secure").withColor(0xe84f58))
+										.append(Text.literal("Not Secure").withColor(0xE84F58))
 										.append(Text.literal(" and "))
-										.append(Text.literal("Modified").withColor(0xeac864))
+										.append(Text.literal("Modified").withColor(0xEAC864))
 										.append(Text.literal(" trust indicators to what they were in 1.19.2 for better visual distinction.")))
 								.binding(defaults.uiAndVisuals.legacyRevival.oldMessageTrustIndicatorColours,
 										() -> config.uiAndVisuals.legacyRevival.oldMessageTrustIndicatorColours,

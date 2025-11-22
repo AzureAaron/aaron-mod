@@ -35,7 +35,7 @@ public class PingCommand {
 
 	private static int handleCommand(FabricClientCommandSource source) {
 		ColourProfiles colourProfile = Constants.PROFILE.get();
-		
+
 		MinecraftClient client = source.getClient();
 		ClientPlayNetworkHandler networkHandler = client.getNetworkHandler();
 
@@ -50,7 +50,7 @@ public class PingCommand {
 
 	private static int printPing(MinecraftClient client, long ping) {
 		ColourProfiles colourProfile = Constants.PROFILE.get();
-		
+
 		client.player.sendMessage(Text.literal("Ping » ").withColor(colourProfile.primaryColour.getAsInt())
 				.append(Text.literal(ping + " ms").withColor(colourProfile.secondaryColour.getAsInt())), false);
 

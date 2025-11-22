@@ -1,27 +1,27 @@
 package net.azureaaron.mod.utils;
 
 public class Levelling {
-	
+
 	public enum Skills {
-		ALCHEMY(50), 
-		CARPENTRY(50), 
-		COMBAT(60), 
-		ENCHANTING(60), 
-		FARMING(50), 
-		FISHING(50), 
-		FORAGING(50), 
+		ALCHEMY(50),
+		CARPENTRY(50),
+		COMBAT(60),
+		ENCHANTING(60),
+		FARMING(50),
+		FISHING(50),
+		FORAGING(50),
 		MINING(60),
-		RUNECRAFTING(25), 
-		SOCIAL(25), 
+		RUNECRAFTING(25),
+		SOCIAL(25),
 		TAMING(50);
-		
+
 		private final int cap;
-		
+
 		Skills(int cap) {
 			this.cap = cap;
 		}
 	}
-	
+
 	public enum Slayers {
 		REVENANT_HORROR(new int[] { 5, 15, 200, 1000, 5000, 20000, 100000, 400000, 1000000 }),
 		TARANTULA_BROODFATHER(new int[] { 5, 25, 200, 1000, 5000, 20000, 100000, 400000, 1000000 }),
@@ -29,9 +29,9 @@ public class Levelling {
 		VOIDGLOOM_SERAPH(new int[] { 10, 30, 250, 1500, 5000, 20000, 100000, 400000, 1000000 }),
 		INFERNO_DEMONLORD(new int[] { 10, 30, 250, 1500, 5000, 20000, 100000, 400000, 1000000 }),
 		RIFTSTALKER_BLOODFIEND(new int[] { 20, 75, 240, 840, 2400 });
-		
+
 		private final int[] xpChart;
-		
+
 		Slayers(int[] xpChart) {
 			this.xpChart = xpChart;
 		}
@@ -72,7 +72,7 @@ public class Levelling {
 				1100000, 1200000, 1300000, 1400000, 1500000, 1600000, 1700000, 1800000, 1900000, 2000000, 2100000,
 				2200000, 2300000, 2400000, 2500000, 2600000, 2750000, 2900000, 3100000, 3400000, 3700000, 4000000,
 				4300000, 4600000, 4900000, 5200000, 5500000, 5800000, 6100000, 6400000, 6700000, 7000000 };
-		
+
 		int[] runecraftingXpChart = { 50, 100, 125, 160, 200, 250, 315, 400, 500, 625, 785, 1000, 1250, 1600, 2000,
 				2465, 3125, 4000, 5000, 6200, 7800, 9800, 12200, 15300, 19050 };
 
@@ -80,11 +80,11 @@ public class Levelling {
 				10000, 12500, 15000, 20000, 25000, 30000, 35000, 40000, 50000 };
 
 		int levelCap = skill.cap + capIncrease;
-		
+
 		int[] xpChart = switch (skill) {
 			case RUNECRAFTING -> runecraftingXpChart;
 			case SOCIAL -> socialXpChart;
-			
+
 			default -> regularXpChart;
 		};
 
@@ -103,19 +103,19 @@ public class Levelling {
 		return Math.min(level, levelCap);
 
 	};
-	
+
 	public static int getSkyblockLevel(int xp) {
 		int xpLeft = xp;
 		int level = 0;
-				
+
 		while (xpLeft >= 100) {
 			level++;
 			xpLeft -= 100;
 		}
-		
+
 		return level;
 	}
-	
+
 	public static int getSlayerLevel(int xp, Slayers slayer) {
 		int[] xpChart = slayer.xpChart;
 

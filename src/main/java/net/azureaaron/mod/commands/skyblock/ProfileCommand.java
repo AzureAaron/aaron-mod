@@ -53,26 +53,26 @@ public class ProfileCommand extends SkyblockCommand {
 	@Override
 	public void print(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
 		ColourProfiles colourProfile = Constants.PROFILE.get();
-		
+
 		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);
-		
+
 		//Check if apis enabled
 		boolean bankingEnabled = body.has("banking");
 		boolean skillsEnabled = Skyblock.isSkillsApiEnabled(profile);
-		
+
 		int farmingLevelCap = JsonHelper.getInt(profile, "jacobs_contest.perks.farming_level_cap").orElse(0);
 		int tamingLevelCap = JsonHelper.getArray(profile, "pets_data.pet_care.pet_types_sacrificed").orElseGet(JsonArray::new).size();
 
 		String bank = Formatters.DOUBLE_NUMBERS.format(JsonHelper.getLong(body, "banking.balance").orElse(0L));
 		String purse = Formatters.DOUBLE_NUMBERS.format(JsonHelper.getLong(profile, "currencies.coin_purse").orElse(0L));
-		
+
 		long firstJoinTimestamp = profile.getAsJsonObject("profile").get("first_join").getAsLong();
 		long firstJoinRelative = System.currentTimeMillis() - firstJoinTimestamp;
-		
+
 		int level = Levelling.getSkyblockLevel(JsonHelper.getInt(profile, "leveling.experience").orElse(0));
-		
+
 		JsonObject playerData = profile.getAsJsonObject("player_data");
-		
+
 		int alchemyLevel = Levelling.getSkillLevel(JsonHelper.getLong(playerData, "experience.SKILL_ALCHEMY").orElse(0L), Skills.ALCHEMY, 0);
 		int carpentryLevel = Levelling.getSkillLevel(JsonHelper.getLong(playerData, "experience.SKILL_CARPENTRY").orElse(0L), Skills.CARPENTRY, 0);
 		int combatLevel = Levelling.getSkillLevel(JsonHelper.getLong(playerData, "experience.SKILL_COMBAT").orElse(0L), Skills.COMBAT, 0);
@@ -85,9 +85,9 @@ public class ProfileCommand extends SkyblockCommand {
 		int socialLevel = Levelling.getSkillLevel(Skyblock.calculateProfileSocialXp(body), Skills.SOCIAL, 0);
 		int tamingLevel = Levelling.getSkillLevel(JsonHelper.getLong(playerData, "experience.SKILL_TAMING").orElse(0L), Skills.TAMING, tamingLevelCap);
 		float skillAverage = (float) (alchemyLevel + carpentryLevel + combatLevel + enchantingLevel + farmingLevel + fishingLevel + foragingLevel + miningLevel + tamingLevel) / 9;
-		
+
 		JsonObject slayerBosses = profile.has("slayer") ? profile.getAsJsonObject("slayer").getAsJsonObject("slayer_bosses") : null;
-		
+
 		int revenantHorrorLevel = Levelling.getSlayerLevel(JsonHelper.getInt(slayerBosses, "zombie.xp").orElse(0), Slayers.REVENANT_HORROR);
 		int tarantulaBroodfatherLevel = Levelling.getSlayerLevel(JsonHelper.getInt(slayerBosses, "spider.xp").orElse(0), Slayers.TARANTULA_BROODFATHER);
 		int svenPackmasterLevel = Levelling.getSlayerLevel(JsonHelper.getInt(slayerBosses, "wolf.xp").orElse(0), Slayers.SVEN_PACKMASTER);
@@ -101,16 +101,16 @@ public class ProfileCommand extends SkyblockCommand {
 					.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
 					.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
 					.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
-			
+
 			source.sendFeedback(startText);
-			
+
 			source.sendFeedback(Text.literal("Profile » " + Functions.titleCase(body.get("cute_name").getAsString())).withColor(colourProfile.infoColour.getAsInt()));
 			source.sendFeedback(Text.literal("Joined » " + Formatters.toRelativeTime(firstJoinRelative).greatest())
 					.styled(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent.ShowText(Text.literal(Formatters.DATE_FORMATTER.format(Instant.ofEpochMilli(firstJoinTimestamp))).styled(style1 -> style1.withColor(colourProfile.infoColour.getAsInt()))))));
 			source.sendFeedback(Text.literal("Level » " + level).withColor(colourProfile.infoColour.getAsInt()));
-			
+
 			source.sendFeedback(Text.literal(""));
-			
+
 			if (bankingEnabled) {
 				source.sendFeedback(Text.literal("Bank » " + bank).withColor(colourProfile.infoColour.getAsInt()));
 			} else {
@@ -118,9 +118,9 @@ public class ProfileCommand extends SkyblockCommand {
 						.append(Text.literal("Api Disabled!")));
 			}
 			source.sendFeedback(Text.literal("Purse » " + purse).withColor(colourProfile.infoColour.getAsInt()));
-					
+
 			source.sendFeedback(Text.literal(""));
-			
+
 			if (skillsEnabled) {
 				source.sendFeedback(Text.literal("Skill Average » " + Formatters.FLOAT_NUMBERS.format(skillAverage)).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())
 						.withHoverEvent(new HoverEvent.ShowText(Text.literal("Alchemy » " + String.valueOf(alchemyLevel) + "\n").withColor(colourProfile.infoColour.getAsInt())
@@ -132,28 +132,28 @@ public class ProfileCommand extends SkyblockCommand {
 								.append("Foraging » " + foragingLevel + "\n")
 								.append("Mining » " + miningLevel + "\n")
 								.append("Taming » " + tamingLevel)))));
-				
+
 				source.sendFeedback(Text.literal("(Cosmetic Skills)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt()).withItalic(true)
 						.withHoverEvent(new HoverEvent.ShowText(Text.literal("Runecrafting » " + runecraftingLevel + "\n").styled(style1 -> style1.withColor(colourProfile.infoColour.getAsInt()).withItalic(false))
 								.append("Social » " + socialLevel)))));
 			} else {
 				source.sendFeedback(Text.literal("Skill Average » ").withColor(colourProfile.infoColour.getAsInt())
 						.append(Text.literal("Api Disabled!")));
-				
+
 				source.sendFeedback(Text.literal("(Cosmetic Skills)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt()).withItalic(true)
 						.withHoverEvent(new HoverEvent.ShowText(Text.literal("Api Disabled!").styled(style1 -> style1.withColor(colourProfile.infoColour.getAsInt()).withItalic(false))))));
 			}
-			
+
 			source.sendFeedback(Text.literal(""));
-			
-			source.sendFeedback(Text.literal("Slayers » " + revenantHorrorLevel + " • " + tarantulaBroodfatherLevel + 
+
+			source.sendFeedback(Text.literal("Slayers » " + revenantHorrorLevel + " • " + tarantulaBroodfatherLevel +
 					" • " + svenPackmasterLevel + " • " + voidgloomSeraphLevel + " • " + infernoDemonlordLevel + " • " + riftstalkerBloodfiendLevel).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())
 							.withHoverEvent(new HoverEvent.ShowText(Text.literal("Revenant Horror » " + revenantHorrorLevel + "\n").withColor(colourProfile.infoColour.getAsInt())
 									.append("Tarantula Broodfather » " + tarantulaBroodfatherLevel + "\n")
 									.append("Sven Packmaster » " + svenPackmasterLevel + "\n")
 									.append("Voidgloom Seraph » " + voidgloomSeraphLevel + "\n")
 									.append("Inferno Demonlord » " + infernoDemonlordLevel + "\n")
-									.append("Riftstalker Bloodfiend » " + riftstalkerBloodfiendLevel)))));	
+									.append("Riftstalker Bloodfiend » " + riftstalkerBloodfiendLevel)))));
 			source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 		});
 	}

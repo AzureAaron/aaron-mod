@@ -46,28 +46,28 @@ public class LowestBinCommand {
 	public static void init() {
 		if (AaronModConfigManager.get().skyblock.commands.enableSkyblockCommands) ClientCommandRegistrationCallback.EVENT.register(LowestBinCommand::register);
 	}
-	
+
 	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
 		final LiteralCommandNode<FabricClientCommandSource> lowestBinCommand = dispatcher.register(literal("lowestbin")
 				.then(argument("item", greedyString())
 						.suggests((context, builder) -> CommandSource.suggestMatching(Cache.ITEMS_LIST, builder))
 						.executes(context -> handleCommand(context.getSource(), getString(context, "item")))));
-		
+
 		dispatcher.register(literal("lbin").redirect(lowestBinCommand));
 	}
-	
+
 	private static int handleCommand(FabricClientCommandSource source, String item) {
 		String itemId = Cache.ITEM_NAMES.get(item);
-		
+
 		if (!Cache.ITEMS_LIST.contains(item)) {
 			source.sendError(NON_EXISTENT_ITEM_ERROR.get());
-			
+
 			return Command.SINGLE_SUCCESS;
 		}
-		
+
 		int average;
 		String averageDescription;
-		
+
 		switch (AaronModConfigManager.get().skyblock.commands.lbinPriceDayAverage) {
 			case ONE_DAY -> {
 				average = 1;
@@ -86,47 +86,47 @@ public class LowestBinCommand {
 				averageDescription = "3 Day Avg.";
 			}
 		}
-		
+
 		CompletableFuture.supplyAsync(() -> {
 			try {
 				String lowestBinResponse = Http.sendGetRequest("https://moulberry.codes/lowestbin.json");
-				JsonObject lowestBin = JsonParser.parseString(lowestBinResponse).getAsJsonObject();	
+				JsonObject lowestBin = JsonParser.parseString(lowestBinResponse).getAsJsonObject();
 				JsonObject priceObject = new JsonObject();
-				
+
 				priceObject.addProperty("price", lowestBin.get(itemId).getAsLong());
-				
+
 				return priceObject;
 			} catch (Exception e) {
 				source.sendError(LOWEST_BIN_FETCH_ERROR.get());
 				LOGGER.error("[Aaron's Mod] Encountered an exception while fetching lbin prices!", e);
 			}
-			
+
 			return null;
 		})
 		.thenApply(itemPrice -> {
 			if (itemPrice == null) return null;
-			
+
 			//TODO proper error msg for when there is no day average for an item (bc it hasn't been auctioned recently)
 			try {
 				String dayAverageResponse = Http.sendGetRequest("https://moulberry.codes/auction_averages_lbin/" + average + "day.json");
 				JsonObject dayAverage = JsonParser.parseString(dayAverageResponse).getAsJsonObject();
-				
+
 				if (dayAverage.get(itemId) == null) { //Does this even work?
 					source.sendError(NO_AVERAGE_PRICE_FOR_ITEM_ERROR.get());
-					
+
 					return null;
 				}
-								
+
 				JsonObject response = new JsonObject();
 				response.addProperty("price", itemPrice.get("price").getAsLong());
 				response.addProperty("dayAverage", dayAverage.get(itemId).getAsLong());
-				
+
 				return response;
 			} catch (Exception e) {
 				source.sendError(DAY_AVERAGE_FETCH_ERROR.get());
 				LOGGER.error("[Aaron's Mod] Encountered an exception while fetching lbin day average prices!", e);
 			}
-			
+
 			return null;
 		})
 		.thenAccept(data -> {
@@ -139,26 +139,26 @@ public class LowestBinCommand {
 				}
 			}
 		});
-		
+
 		return Command.SINGLE_SUCCESS;
 	}
-	
+
 	private static void printLowestBin(FabricClientCommandSource source, JsonObject data, String itemName, String desc) {
 		RenderHelper.runOnRenderThread(() -> {
 			ColourProfiles colourProfile = Constants.PROFILE.get();
-			
+
 			Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
 					.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
 					.append(Text.literal(itemName).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
 					.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
 					.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
-			
+
 			source.sendFeedback(startText);
-			
+
 			source.sendFeedback(Text.literal("Lowest BIN Price » " + Formatters.INTEGER_NUMBERS.format(data.get("price").getAsLong())).withColor(colourProfile.infoColour.getAsInt()));
 			source.sendFeedback(Text.literal(""));
 			source.sendFeedback(Text.literal(desc + " Price » " + Formatters.INTEGER_NUMBERS.format(data.get("dayAverage").getAsLong())).withColor(colourProfile.infoColour.getAsInt()));
-			
+
 			source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 		});
 	}

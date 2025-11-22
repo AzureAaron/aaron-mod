@@ -169,7 +169,7 @@ public class ImagePreview {
 		return (9f * 16f) * AaronModConfigManager.get().uiAndVisuals.imagePreview.scale;
 	}
 
-	private static record CachedImage(long creationTime, Identifier texture, int width, int height) {
+	private record CachedImage(long creationTime, Identifier texture, int width, int height) {
 		private static final CachedImage EMPTY = new CachedImage(0, null, 0, 0);
 	}
 }

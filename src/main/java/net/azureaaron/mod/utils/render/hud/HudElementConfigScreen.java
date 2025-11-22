@@ -138,7 +138,7 @@ public final class HudElementConfigScreen extends Screen {
 			//Scale up
 			case GLFW.GLFW_KEY_EQUAL -> {
 				//Ensure this was from the + key or = (for easier scaling)
-				if (selected != null) {	
+				if (selected != null) {
 					selected.scale(selected.scale() + 0.1f);
 
 					return true;

@@ -34,9 +34,9 @@ public class ApiUtils {
 
 	/**
 	 * Fetches the given user's {@link GameProfile}.
-	 * 
+	 *
 	 * @param nameOrUuid The user's name or {@link UUID} in string format.
-	 * 
+	 *
 	 * @return The user's {@link GameProfile} with their name and id only, or {@code null} if the lookup failed.
 	 */
 	@Nullable

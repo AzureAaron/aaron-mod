@@ -33,7 +33,7 @@ public class Skyblock {
 		ClientLifecycleEvents.CLIENT_STARTED.register(client -> CompletableFuture.allOf(loadRareLootItems(client))
 				.whenComplete((_result, _throwable) -> loaded = true));
 	}
-	
+
 	private static CompletableFuture<Void> loadRareLootItems(MinecraftClient client) {
 		return CompletableFuture.supplyAsync(() -> {
 			try (BufferedReader reader = client.getResourceManager().openAsReader(Identifier.of(Main.NAMESPACE, "skyblock/rare_loot_items.json"))) {
@@ -42,41 +42,41 @@ public class Skyblock {
 				return RARE_LOOT_CODEC.parse(ops, JsonParser.parseReader(reader)).getOrThrow();
 			} catch (Exception e) {
 				LOGGER.error("[Aaron's Mod] Failed to load rare loot items file!", e);
-				
+
 				return Map.<String, ItemStack>of();
 			}
 		}).thenAccept(RARE_LOOT_ITEMS::putAll);
 	}
-	
+
 	public static Map<String, ItemStack> getRareLootItems() {
 		return loaded ? RARE_LOOT_ITEMS : Map.of();
 	}
-	
+
 	public static JsonObject getSelectedProfile2(String profiles) throws IllegalStateException {
 		if (profiles == null) return null;
-		
+
 		JsonObject skyblockData = JsonParser.parseString(profiles).getAsJsonObject();
-		
+
 		if (skyblockData.get("profiles").isJsonNull()) throw new IllegalStateException(Messages.NO_SKYBLOCK_PROFILES_ERROR.get().getString()); //If the player's profile hasn't been migrated or they got wiped
-		
+
 		JsonArray profilesArray = skyblockData.getAsJsonArray("profiles");
-				
+
 		for (JsonElement profile : profilesArray) {
 			JsonObject iteratedProfile = profile.getAsJsonObject();
 			if (iteratedProfile.get("selected").getAsBoolean()) return iteratedProfile;
 		}
-		
+
 		throw new IllegalStateException(Messages.PROFILES_NOT_MIGRATED_ERROR.get().getString()); //After the migration players can apparently have no selected profile
 	}
-	
+
 	public static boolean isInventoryApiEnabled(JsonObject inventoryData) {
 		return inventoryData != null && inventoryData.has("inv_contents");
 	}
-	
+
 	public static boolean isSkillsApiEnabled(JsonObject profile) {
 		return profile.getAsJsonObject("player_data").has("experience");
 	}
-	
+
 	public static String getDojoGrade(int score) {
 		return switch ((Integer) score) {
 			case Integer ignored5 when score == 0 -> "None";
@@ -88,16 +88,16 @@ public class Skyblock {
 			default -> "F";
 		};
 	}
-	
+
 	public static int calculateProfileSocialXp(JsonObject profile) {
 		int socialXp = 0;
 		JsonObject members = profile.getAsJsonObject("members");
-		
+
 		for (String uuid : members.keySet()) {
 			JsonObject member = members.getAsJsonObject(uuid);
 			socialXp += JsonHelper.getInt(member, "player_data.experience.SKILL_SOCIAL").orElse(0);
 		}
-		
+
 		return socialXp;
 	}
 }

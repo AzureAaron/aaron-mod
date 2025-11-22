@@ -12,6 +12,6 @@ public interface PlaySoundEvent {
 					listener.onPlaySound(packet);
 				}
 			});
-	
+
 	void onPlaySound(PlaySoundS2CPacket packet);
 }

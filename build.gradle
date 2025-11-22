@@ -2,6 +2,8 @@ plugins {
 	id 'fabric-loom' version "${loom_version}"
 	id 'maven-publish'
 	id 'net.azureaaron.mod.annotation-processor'
+	id "com.diffplug.spotless" version "${spotless_version}"
+	id "checkstyle"
 }
 
 version = "${project.mod_version}+${project.minecraft_version}"
@@ -87,7 +89,7 @@ dependencies {
 	include modImplementation("net.azureaaron:hm-api:${hm_api_version}")
 
 	include implementation("net.azureaaron:networth-calculator:${networth_calculator_version}")
-	
+
 	include implementation("net.azureaaron:legacy-item-dfu:${legacy_item_dfu_version}")
 
 	// Fabric Language Kotlin for using MoulConfig - we are still a Java-exclusive mod
@@ -141,6 +143,30 @@ jar {
 	}
 }
 
+spotless {
+	lineEndings = com.diffplug.spotless.LineEnding.UNIX
+
+	java {
+		removeUnusedImports()
+		leadingSpacesToTabs()
+		trimTrailingWhitespace()
+		endWithNewline()
+	}
+
+	groovyGradle {
+		target 'src/**/*.gradle', '*.gradle', 'gradle/*.gradle'
+		greclipse().configProperties \
+				'groovy.formatter.multiline.indentation=2', // Default
+				'groovy.formatter.line.maxlength=999',
+				'groovy.formatter.longListLength=999',
+				'groovy.formatter.remove.unnecessary.semicolons=true'
+	}
+}
+
+checkstyle {
+	toolVersion = "${checkstyle_version}"
+	configFile = rootProject.file("checkstyle.xml")
+}
 
 // configure the maven publication
 publishing {

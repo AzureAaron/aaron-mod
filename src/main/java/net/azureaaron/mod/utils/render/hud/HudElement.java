@@ -8,7 +8,7 @@ import net.minecraft.client.render.RenderTickCounter;
 
 /**
  * An abstract representation of a HUD element. Extend this or use built-in subclasses to implement HUD elements.
- * 
+ *
  * Note that this currently only covers the configuration aspect of the HUD element and not the actual rendering
  * of it to the HUD.
  */
@@ -88,7 +88,7 @@ public abstract class HudElement {
 
 	/**
 	 * Used for rendering this element to the HUD with Fabric's HUD layer rendering system.
-	 * 
+	 *
 	 * @implSpec The signature of this method must match the {@link net.minecraft.client.gui.LayeredDrawer.Layer#render(DrawContext, RenderTickCounter) LayeredDrawer$Layer#render} method.
 	 */
 	public abstract void renderHud(DrawContext context, RenderTickCounter tickCounter);

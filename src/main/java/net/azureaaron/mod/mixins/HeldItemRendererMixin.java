@@ -30,7 +30,7 @@ public class HeldItemRendererMixin {
 	@Final
 	private MinecraftClient client;
 
-	@Inject(method = "renderFirstPersonItem" , at = @At("HEAD"))
+	@Inject(method = "renderFirstPersonItem", at = @At("HEAD"))
 	private void aaronMod$changeVariablesForPreviewScreen(CallbackInfo ci, @Local(argsOnly = true) LocalRef<Hand> hand, @Local(argsOnly = true, ordinal = 2) LocalFloatRef swingProgress, @Local LocalRef<ItemStack> stack, @Local(argsOnly = true, ordinal = 3) LocalFloatRef equipProgress, @Local(argsOnly = true) LocalIntRef light) {
 		if (this.client.currentScreen instanceof CustomizeItemModelScreen itemModelScreen) {
 			hand.set(itemModelScreen.hand);

@@ -21,8 +21,8 @@ public class SkyblockConfig {
 	}
 
 	public enum DayAverage {
-		ONE_DAY, 
-		THREE_DAY, 
+		ONE_DAY,
+		THREE_DAY,
 		SEVEN_DAY;
 
 		@Override

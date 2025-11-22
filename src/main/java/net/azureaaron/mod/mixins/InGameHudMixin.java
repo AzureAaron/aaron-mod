@@ -29,22 +29,22 @@ public class InGameHudMixin {
 		return AaronModConfigManager.get().uiAndVisuals.scoreboard.hideScore ? BlankNumberFormat.INSTANCE : format;
 	}
 
-    @WrapOperation(method = "renderScoreboardSidebar(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/scoreboard/ScoreboardObjective;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawText(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;IIIZ)V"))
-    private void aaronMod$shadowEntryTitleAndScoreText(DrawContext context, TextRenderer textRenderer, Text text, int x, int y, int colour, boolean shadow, Operation<Integer> operation) {
-    	if (AaronModConfigManager.get().uiAndVisuals.scoreboard.shadowedScoreboardText) {
-    		context.drawTextWithShadow(textRenderer, text, x, y, colour);
-    	} else {
-    		operation.call(context, textRenderer, text, x, y, colour, shadow);
-    	}
-    }
+	@WrapOperation(method = "renderScoreboardSidebar(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/scoreboard/ScoreboardObjective;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawText(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;IIIZ)V"))
+	private void aaronMod$shadowEntryTitleAndScoreText(DrawContext context, TextRenderer textRenderer, Text text, int x, int y, int colour, boolean shadow, Operation<Integer> operation) {
+		if (AaronModConfigManager.get().uiAndVisuals.scoreboard.shadowedScoreboardText) {
+			context.drawTextWithShadow(textRenderer, text, x, y, colour);
+		} else {
+			operation.call(context, textRenderer, text, x, y, colour, shadow);
+		}
+	}
 
-    @WrapOperation(method = "renderHeldItemTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;getWidth(Lnet/minecraft/text/StringVisitable;)I"))
-    private int aaronMod$correctXValue(TextRenderer textRenderer, StringVisitable text, Operation<Integer> operation) {
-    	return AaronModConfigManager.get().textReplacer.enableTextReplacer ? textRenderer.getWidth(TextReplacer.visuallyReplaceText(((MutableText) text).asOrderedText())) : operation.call(textRenderer, text);
-    }
+	@WrapOperation(method = "renderHeldItemTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;getWidth(Lnet/minecraft/text/StringVisitable;)I"))
+	private int aaronMod$correctXValue(TextRenderer textRenderer, StringVisitable text, Operation<Integer> operation) {
+		return AaronModConfigManager.get().textReplacer.enableTextReplacer ? textRenderer.getWidth(TextReplacer.visuallyReplaceText(((MutableText) text).asOrderedText())) : operation.call(textRenderer, text);
+	}
 
-    @Redirect(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawGuiTexture(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/util/Identifier;IIII)V"))
-    private void aaronMod$statusEffectBackgroundAlpha(DrawContext context, RenderPipeline pipeline, Identifier sprite, int x, int y, int width, int height) {
-        context.drawGuiTexture(pipeline, sprite, x, y, width, height, AaronModConfigManager.get().uiAndVisuals.overlays.statusEffectBackgroundAlpha);
-    }
+	@Redirect(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawGuiTexture(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/util/Identifier;IIII)V"))
+	private void aaronMod$statusEffectBackgroundAlpha(DrawContext context, RenderPipeline pipeline, Identifier sprite, int x, int y, int width, int height) {
+		context.drawGuiTexture(pipeline, sprite, x, y, width, height, AaronModConfigManager.get().uiAndVisuals.overlays.statusEffectBackgroundAlpha);
+	}
 }

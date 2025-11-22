@@ -45,23 +45,23 @@ public class CopyChatCommand {
 	/**
 	 * The new middle click to copy chat supersedes this feature!
 	 */
-    private static int copyMessage(FabricClientCommandSource source, String excerpt) {
-    	List<ChatHudLine> chatHistory = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).getMessages();
-    	int maxChatHistoryLength = ChatAccessor.getMaxHistoryLength();
-    	int maxIteration = (chatHistory.size() >= maxChatHistoryLength) ? maxChatHistoryLength : chatHistory.size();
-    	boolean foundAMessage = false;
+	private static int copyMessage(FabricClientCommandSource source, String excerpt) {
+		List<ChatHudLine> chatHistory = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).getMessages();
+		int maxChatHistoryLength = ChatAccessor.getMaxHistoryLength();
+		int maxIteration = (chatHistory.size() >= maxChatHistoryLength) ? maxChatHistoryLength : chatHistory.size();
+		boolean foundAMessage = false;
 
-    	for(int i = 0; i < maxIteration; i++) {
-    		String currentMessage = chatHistory.get(i).content().getString();
-    		currentMessage = Formatting.strip(currentMessage);
-    		if(currentMessage.contains(excerpt)) {
-    			minecraftClient.keyboard.setClipboard(currentMessage);
-    			SystemToast.add(minecraftClient.getToastManager(), SystemToast.Type.PERIODIC_NOTIFICATION, successToastTitle, successToastDescription);
-    			foundAMessage = true;
-    			break;
-    		}
-    	}
-    	if(!foundAMessage) SystemToast.add(minecraftClient.getToastManager(), SystemToast.Type.PERIODIC_NOTIFICATION, notFoundToastTitle, notFoundToastDescription);
-        return Command.SINGLE_SUCCESS;
-    }
+		for (int i = 0; i < maxIteration; i++) {
+			String currentMessage = chatHistory.get(i).content().getString();
+			currentMessage = Formatting.strip(currentMessage);
+			if (currentMessage.contains(excerpt)) {
+				minecraftClient.keyboard.setClipboard(currentMessage);
+				SystemToast.add(minecraftClient.getToastManager(), SystemToast.Type.PERIODIC_NOTIFICATION, successToastTitle, successToastDescription);
+				foundAMessage = true;
+				break;
+			}
+		}
+		if (!foundAMessage) SystemToast.add(minecraftClient.getToastManager(), SystemToast.Type.PERIODIC_NOTIFICATION, notFoundToastTitle, notFoundToastDescription);
+		return Command.SINGLE_SUCCESS;
+	}
 }

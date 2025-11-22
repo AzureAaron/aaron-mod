@@ -15,7 +15,7 @@ public class MixinsTest {
 		SharedConstants.createGameVersion();
 		Bootstrap.initialize();
 	}
-	
+
 	@Test
 	public void auditMixins() {
 		//Ensure that the transformer is active so that the Mixins can be audited

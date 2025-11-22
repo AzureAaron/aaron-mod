@@ -56,7 +56,7 @@ public class InventoryCommand extends SkyblockCommand {
 				.then(argument("player", word())
 						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
 						.executes(context -> CommandSystem.handlePlayer4Skyblock(this, context.getSource(), getString(context, "player")))));
-		
+
 		dispatcher.register(literal("inv")
 				.executes(context -> CommandSystem.handleSelf4Skyblock(this, context.getSource()))
 				.then(argument("player", word())
@@ -77,22 +77,22 @@ public class InventoryCommand extends SkyblockCommand {
 	@Override
 	public void print(FabricClientCommandSource source, JsonObject body, String name, String uuid) {
 		ColourProfiles colourProfile = Constants.PROFILE.get();
-		
+
 		JsonObject profile = body.getAsJsonObject("members").getAsJsonObject(uuid);
-		
+
 		JsonObject inventoryData = profile.getAsJsonObject("inventory");
 		boolean inventoryEnabled = Skyblock.isInventoryApiEnabled(inventoryData);
-		
+
 		if (!inventoryEnabled) {
 			source.sendError(Messages.INVENTORY_API_DISABLED_ERROR.get());
-			
+
 			return;
 		}
-		
+
 		List<ItemStack> armour = null;
 		List<ItemStack> inventory = null;
 		List<ItemStack> equipment = null;
-		
+
 		try {
 			armour = ItemUtils.parseCompressedItemData(JsonHelper.getString(inventoryData, "inv_armor.data").orElseThrow());
 			inventory = ItemUtils.parseCompressedItemData(JsonHelper.getString(inventoryData, "inv_contents.data").orElseThrow());
@@ -100,10 +100,10 @@ public class InventoryCommand extends SkyblockCommand {
 		} catch (IOException | NullPointerException e) {
 			source.sendError(NBT_PARSING_ERROR.get());
 			LOGGER.error("[Aaron's Mod] Encountered an exception while parsing NBT!", e);
-			
+
 			return;
 		}
-		
+
 		ItemData4 boots = new ItemData4(armour.get(0), "No boots equipped!");
 		ItemData4 leggings = new ItemData4(armour.get(1), "No leggings equipped!"); //I originally misspelled leggings as beggings.
 		ItemData4 chestplate = new ItemData4(armour.get(2), "No chestplate equipped!");
@@ -111,7 +111,7 @@ public class InventoryCommand extends SkyblockCommand {
 
 		ItemData4[] equipmentPieces = new ItemData4[4];
 
-		if (equipment != null) {			
+		if (equipment != null) {
 			equipmentPieces[0] = new ItemData4(equipment.get(0), "No necklace equipped!");
 			equipmentPieces[1] = new ItemData4(equipment.get(1), "No cloak equipped!");
 			equipmentPieces[2] = new ItemData4(equipment.get(2), "No belt equipped!");
@@ -139,25 +139,25 @@ public class InventoryCommand extends SkyblockCommand {
 					.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
 					.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
 					.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
-			
+
 			source.sendFeedback(startText);
-			
+
 			source.sendFeedback(Text.literal("Inventory API » " + ((inventoryEnabled) ? "✓" : "✗")).withColor(colourProfile.infoColour.getAsInt()));
 			source.sendFeedback(Text.literal(""));
 			source.sendFeedback(helmet.feedbackMessage());
 			source.sendFeedback(chestplate.feedbackMessage());
 			source.sendFeedback(leggings.feedbackMessage());
 			source.sendFeedback(boots.feedbackMessage());
-			
+
 			if (equipmentFinal != null) {
 				source.sendFeedback(Text.literal(""));
-				
+
 				source.sendFeedback(equipmentPieces[0].feedbackMessage());
 				source.sendFeedback(equipmentPieces[1].feedbackMessage());
 				source.sendFeedback(equipmentPieces[2].feedbackMessage());
 				source.sendFeedback(equipmentPieces[3].feedbackMessage());
 			}
-			
+
 			//Print feedback
 			if (keyItems.size() > 0) {
 				source.sendFeedback(Text.literal(""));

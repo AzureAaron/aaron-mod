@@ -1,6 +1,7 @@
 package net.azureaaron.mod.features;
 
 import java.awt.Color;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -76,7 +77,7 @@ public class DragonHealth {
 	private static double getHealth(String health) {
 		try {
 			double multiplier = 1;
-			health = health.toUpperCase();
+			health = health.toUpperCase(Locale.CANADA);
 
 			if (health.endsWith("K")) {
 				multiplier = 1e3;

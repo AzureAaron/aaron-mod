@@ -36,7 +36,7 @@ public class Scheduler {
 
 	/**
 	 * Schedules a task that will be ran after a certain delay has passed.
-	 * 
+	 *
 	 * @param task          the task to run
 	 * @param delay         the delay (in ticks) after which the task will be executed
 	 * @param multithreaded whether the task should be executed on a separate thread
@@ -58,7 +58,7 @@ public class Scheduler {
 
 	/**
 	 * Schedules a task that will be ran every {@code period} ticks.
-	 * 
+	 *
 	 * @param task          the task to run
 	 * @param period        the interval between executions (in ticks)
 	 * @param multithreaded whether the task should be executed on a separate thread
@@ -73,7 +73,7 @@ public class Scheduler {
 
 	/**
 	 * Ticks the scheduler at the end of each client tick.
-	 * 
+	 *
 	 * Should only ever be called from the main class!
 	 */
 	public void tick() {

@@ -21,9 +21,9 @@ public class ChromaText {
 	/**
 	 * Note that this does not guarantee that there isn't another pack enabled on top which overrides
 	 * the necessary shaders required for it to work.
-	 * 
+	 *
 	 * For accurate results, this method should only be called after the client has loaded resource packs.
-	 * 
+	 *
 	 * @return whether the chroma text pack is enabled
 	 */
 	public static boolean chromaColourAvailable() {

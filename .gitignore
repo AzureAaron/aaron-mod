@@ -18,6 +18,7 @@
 !/LICENSE
 !/README.md
 !/settings.gradle
+!/checkstyle.xml
 
 # Build Src
 !/buildSrc

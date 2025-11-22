@@ -23,9 +23,9 @@ public class ClientTextArgumentType implements ArgumentType<Text> {
 	public static final DynamicCommandExceptionType INVALID_COMPONENT_EXCEPTION = new DynamicCommandExceptionType(
 			text -> Text.translatable("argument.component.invalid", text));
 	private static final Parser<NbtElement> PARSER = SnbtParsing.createParser(NbtOps.INSTANCE);
-	
+
 	private ClientTextArgumentType() {}//TextArgumentType
-	
+
 	public static Text getTextArgument(CommandContext<FabricClientCommandSource> context, String name) {
 		return context.getArgument(name, Text.class);
 	}
@@ -46,7 +46,7 @@ public class ClientTextArgumentType implements ArgumentType<Text> {
 			}
 			// Since everything was successful we'll pretend to have read everything
 			stringReader.setCursor(stringReader.getString().length());
-			
+
 			return text;
 		} catch (Exception exception) {
 			String string = exception.getCause() != null ? exception.getCause().getMessage() : exception.getMessage();

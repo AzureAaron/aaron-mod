@@ -24,51 +24,51 @@ import net.minecraft.text.Text;
 
 /**
  * Provides core functionality for the mod's commands.
- * 
+ *
  * @author Aaron
  */
 public class CommandSystem {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final Supplier<TextRenderer> TEXT_RENDERER = () -> MinecraftClient.getInstance().textRenderer;
-	
+
 	/**
 	 * Ensures that "dummy" players aren't included in command suggestions
 	 */
 	public static String[] getPlayerSuggestions(FabricClientCommandSource source) {
 		return source.getPlayerNames().stream().filter(playerName -> playerName.matches("[A-Za-z0-9_]+")).toArray(String[]::new);
 	}
-	
+
 	public static String getEndSpaces(Text text) {
 		TextRenderer textRenderer = TEXT_RENDERER.get();
-		
+
 		int spaceWidth = textRenderer.getWidth(" ");
 		int textWidth = textRenderer.getWidth(TextReplacer.visuallyReplaceText(text.asOrderedText()));
 		int spacesNeeded = (int) Math.ceil((double) textWidth / (double) spaceWidth);
-		
+
 		String spaces = "";
-		
+
 		for (int i = 0; i < spacesNeeded; i++) {
 			spaces += " ";
 		}
-		
+
 		return spaces;
 	}
-	
+
 	/**
 	 * Handles the command for the current player
 	 */
 	public static int handleSelf4Skyblock(SkyblockCommand command, FabricClientCommandSource source) {
 		Session session = source.getClient().getSession();
-		
+
 		return handleSkyblockCommand(command, source, new CommandPlayerData(session.getUsername(), session.getUuidOrNull().toString().replaceAll("-", "")));
 	}
-	
+
 	/**
 	 * Handles the command for another player
 	 */
 	public static int handlePlayer4Skyblock(SkyblockCommand command, FabricClientCommandSource source, String player) {
 		CompletableFuture.supplyAsync(() -> {
-			try {				
+			try {
 				return lookupPlayer(player);
 			} catch (Throwable t) {
 				if (!Functions.isUuid(player)) {
@@ -76,16 +76,16 @@ public class CommandSystem {
 				} else {
 					source.sendError(Messages.UUID_TO_NAME_ERROR.get());
 				}
-				
+
 				LOGGER.error("[Aaron's Mod] Encountered an exception while resolving a player's uuid/username!", t);
-				
+
 				return null;
 			}
 		})
 		.thenAccept(playerData -> {
 			if (playerData != null) handleSkyblockCommand(command, source, playerData);
 		});
-		
+
 		return Command.SINGLE_SUCCESS;
 	}
 
@@ -96,7 +96,7 @@ public class CommandSystem {
 			} catch (Throwable t) {
 				source.sendError(Messages.SKYBLOCK_PROFILES_FETCH_ERROR.get());
 				LOGGER.error("[Aaron's Mod] Encountered an exception while fetching a player's skyblock profiles!", t);
-				
+
 				return null;
 			}
 		})
@@ -106,7 +106,7 @@ public class CommandSystem {
 			} catch (Throwable t) {
 				if (t instanceof IllegalStateException) source.sendError(Messages.NO_SKYBLOCK_PROFILES_ERROR.get()); else source.sendError(Messages.JSON_PARSING_ERROR.get());
 				LOGGER.error("[Aaron's Mod] Encountered an exception while determining a player's selected skyblock profile!", t);
-				
+
 				return null;
 			}
 		})
@@ -120,26 +120,26 @@ public class CommandSystem {
 				}
 			}
 		});
-		
+
 		return Command.SINGLE_SUCCESS;
 	}
-	
+
 	public static int handleSelf4Vanilla(VanillaCommand command, FabricClientCommandSource source) {
 		Session session = source.getClient().getSession();
-		
+
 		try {
 			command.print(source, session.getUsername(), session.getUuidOrNull().toString().replaceAll("-", ""));
 		} catch (Throwable t) {
 			source.sendError(Messages.UNKNOWN_ERROR.get());
 			LOGGER.error("[Aaron's Mod] Encountered an exception while dispatching a vanilla command! Command: {}", command.getClass().getName(), t);
 		}
-		
+
 		return Command.SINGLE_SUCCESS;
 	}
-	
+
 	public static int handlePlayer4Vanilla(VanillaCommand command, FabricClientCommandSource source, String player) {
 		CompletableFuture.supplyAsync(() -> {
-			try {				
+			try {
 				return lookupPlayer(player);
 			} catch (Throwable t) {
 				if (!Functions.isUuid(player)) {
@@ -147,9 +147,9 @@ public class CommandSystem {
 				} else {
 					source.sendError(Messages.UUID_TO_NAME_ERROR.get());
 				}
-				
+
 				LOGGER.error("[Aaron's Mod] Encountered an exception while resolving a player's uuid/username!", t);
-				
+
 				return null;
 			}
 		})
@@ -163,7 +163,7 @@ public class CommandSystem {
 				}
 			}
 		});
-		
+
 		return Command.SINGLE_SUCCESS;
 	}
 

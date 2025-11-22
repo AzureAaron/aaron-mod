@@ -25,7 +25,7 @@ import net.azureaaron.mod.Main;
 
 /**
  * The name speaks for itself.
- * 
+ *
  * @author Aaron
  */
 public class Http {
@@ -77,7 +77,7 @@ public class Http {
 		return sendGetRequestInternal(UUID_TO_NAME + uuid, null);
 	}
 
-	public static String sendPostRequest(@NotNull String url, @NotNull String requestBody, @NotNull String contentType) throws IOException, InterruptedException {		
+	public static String sendPostRequest(@NotNull String url, @NotNull String requestBody, @NotNull String contentType) throws IOException, InterruptedException {
 		HttpRequest request = HttpRequest.newBuilder()
 				.POST(HttpRequest.BodyPublishers.ofString(requestBody))
 				.header("Accept", contentType)
@@ -105,18 +105,18 @@ public class Http {
 				.version(Version.HTTP_2)
 				.uri(uri)
 				.build();
-		
+
 		HttpResponse<InputStream> response = HTTP_CLIENT.send(request, BodyHandlers.ofInputStream());
 		int statusCode = response.statusCode();
 		String contentType = getContentType(response);
-		
+
 		//Status code & content type enforcement
 		if (statusCode != 200) throw new IllegalStateException("Request was unsuccessful! Code: " + statusCode);
 		if (!expectedContentTypes.contains(contentType)) throw new IllegalStateException("Unexpected content type received! Content Type: " + contentType);
-		
+
 		return getDecodedInputStream(response);
 	}
-	
+
 	private static InputStream getDecodedInputStream(HttpResponse<InputStream> response) {
 		String encoding = getContentEncoding(response);
 
@@ -131,26 +131,26 @@ public class Http {
 			throw new UncheckedIOException(e);
 		}
 	}
-	
+
 	private static String getContentEncoding(HttpResponse<InputStream> response) {
 		return response.headers().firstValue("Content-Encoding").orElse("");
 	}
-	
+
 	private static String getContentType(HttpResponse<InputStream> response) {
 		return response.headers().firstValue("Content-Type").orElse("");
 	}
 
 	//TODO give this a more generic name?
 	public record ApiResponse(String content, int statusCode, String url, HttpHeaders headers) {
-		
+
 		public boolean ok() {
 			return statusCode == 200;
 		}
-		
+
 		public boolean ratelimited() {
 			return statusCode == 429;
 		}
-		
+
 		public ApiException createException() {
 			return new ApiException("[Aaron's Mod] API Error! URL: " + url + ", Code: " + statusCode + ", Body: " + content);
 		}

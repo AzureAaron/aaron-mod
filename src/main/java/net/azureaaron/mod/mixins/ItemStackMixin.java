@@ -58,7 +58,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 			if (!name.contains(STAR) || !HAS_MASTER_STAR.test(name)) return text;
 
 			if (AaronModConfigManager.get().skyblock.dungeons.fancyDiamondHeadNames && isDiamondHead()) {
-				Text styledName = TextTransformer.stylize(text, NO_ITALIC, "Diamond", Style.EMPTY.withColor(0x84dadd), 1);
+				Text styledName = TextTransformer.stylize(text, NO_ITALIC, "Diamond", Style.EMPTY.withColor(0x84DADD), 1);
 				Text styledStars = TextTransformer.stylize(styledName, NO_ITALIC, STAR, Style.EMPTY.withColor(Formatting.AQUA), 5);
 
 				if (!AaronModConfigManager.get().skyblock.dungeons.oldMasterStars) {
@@ -203,7 +203,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 							goodEnchantmentColours.removeInt(enchant);
 						}
 					}
-					
+
 				}
 			}
 

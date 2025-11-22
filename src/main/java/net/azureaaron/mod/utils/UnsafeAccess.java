@@ -3,20 +3,22 @@ package net.azureaaron.mod.utils;
 import java.lang.reflect.Field;
 
 import net.azureaaron.mod.commands.ReflectCommand;
+// CHECKSTYLE.OFF: IllegalImport
 import sun.misc.Unsafe;
+// CHECKSTYLE.ON: IllegalImport
 
 /**
  * Interface used to gain access to the JVM's {@link Unsafe} instance.<br>
  * Used by the {@link ReflectCommand}.<br><br>
- * 
+ *
  * Here there be dragons!
- * 
+ *
  * @author Aaron
  */
 public interface UnsafeAccess {
 
 	Unsafe UNSAFE = unsafeAdventure();
-	
+
 	private static Unsafe unsafeAdventure() {
 		try {
 			Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");

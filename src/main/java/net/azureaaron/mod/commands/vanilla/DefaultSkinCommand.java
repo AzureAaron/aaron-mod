@@ -47,12 +47,12 @@ public class DefaultSkinCommand extends VanillaCommand {
 	public void print(FabricClientCommandSource source, String name, String uuid) {
 		RenderHelper.runOnRenderThread(() -> {
 			ColourProfiles colourProfile = Constants.PROFILE.get();
-			
+
 			UUID formattedUuid = UndashedUuid.fromString(uuid);
 			SkinTextures skinTexture = DefaultSkinHelper.getSkinTextures(formattedUuid);
 			String skinName = Functions.titleCase(skinTexture.body().id().toString().replaceAll("minecraft:textures\\/entity\\/player\\/(wide|slim)\\/", "").replace(".png", ""));
 			String skinModel = Functions.titleCase(DefaultSkinHelper.getSkinTextures(formattedUuid).model().asString());
-					
+
 			source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Default Skin » ").withColor(colourProfile.primaryColour.getAsInt())
 					.append(Text.literal(skinName + " (" + skinModel + ")").withColor(colourProfile.secondaryColour.getAsInt())));
 		});

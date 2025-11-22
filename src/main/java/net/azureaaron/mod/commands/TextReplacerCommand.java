@@ -19,7 +19,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
 
 public class TextReplacerCommand {
-	
+
 	@Init
 	public static void init() {
 		ClientCommandRegistrationCallback.EVENT.register(TextReplacerCommand::register);
@@ -60,12 +60,12 @@ public class TextReplacerCommand {
 
 		return Command.SINGLE_SUCCESS;
 	}
-	
+
 	private static int removeReplacement(FabricClientCommandSource source, String replacementText) {
 		boolean success = TextReplacer.removeTextReplacement(replacementText);
-		
+
 		if (success) source.sendFeedback(Text.literal("Successfully removed the text replacement for \"" + replacementText + "\"")); else source.sendError(Text.literal("That text replacement never existed!"));
-		
+
 		return Command.SINGLE_SUCCESS;
 	}
 }

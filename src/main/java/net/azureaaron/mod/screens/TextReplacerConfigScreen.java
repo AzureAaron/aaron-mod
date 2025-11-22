@@ -21,25 +21,25 @@ import net.minecraft.text.TextCodecs;
 public class TextReplacerConfigScreen extends Screen {
 	private static final int COLUMN_SPACING = 24;
 	private static final int ROW_SPACING = 8;
-    private static final int TEXT_FIELD_HEIGHT = 20;
-    private static final int TEXT_FIELD_WIDTH = 131;
+	private static final int TEXT_FIELD_HEIGHT = 20;
+	private static final int TEXT_FIELD_WIDTH = 131;
 	private static final Text TITLE = Text.literal("Visual Text Replacer Config");
 	private static final Text ARROW = Text.literal("→");
 	private final Screen parent;
-    private final ThreePartsLayoutWidget layout = new ThreePartsLayoutWidget(this);
+	private final ThreePartsLayoutWidget layout = new ThreePartsLayoutWidget(this);
 
 	public TextReplacerConfigScreen(Screen parent) {
 		super(TITLE);
 		this.parent = parent;
 	}
-	
+
 	@Override
 	protected void init() {
 		this.layout.addHeader(new TextWidget(this.getTitle(), this.textRenderer));
 		GridWidget gridWidget = this.layout.addBody(new GridWidget()).setColumnSpacing(COLUMN_SPACING).setRowSpacing(ROW_SPACING);
 		gridWidget.getMainPositioner().alignHorizontalCenter();
 		GridWidget.Adder adder = gridWidget.createAdder(4);
-		
+
 		adder.add(new TextWidget(Text.literal("Text"), this.textRenderer));
 		adder.add(new TextWidget(Text.empty(), this.textRenderer)); //Add space between the other 2 -- make constant?
 		adder.add(new TextWidget(Text.literal("Replacement"), this.textRenderer));
@@ -47,11 +47,11 @@ public class TextReplacerConfigScreen extends Screen {
 
 
 		generateTextFields(adder);
-				
+
 		this.layout.addFooter(ButtonWidget.builder(ScreenTexts.DONE, button -> this.close()).build());
 		this.layout.refreshPositions();
 		this.layout.forEachChild(this::addDrawableChild);
-		
+
 	}
 
 	/**
@@ -87,13 +87,13 @@ public class TextReplacerConfigScreen extends Screen {
 	protected void refreshWidgetPositions() {
 		this.layout.refreshPositions();
 	}
-	
+
 	@Override
 	public void close() {
 		assert this.client != null;
 		this.client.setScreen(parent);
 	}
-	
+
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
 		this.renderBackground(context, mouseX, mouseY, delta);

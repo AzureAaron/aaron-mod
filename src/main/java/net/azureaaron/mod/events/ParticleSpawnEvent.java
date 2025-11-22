@@ -12,6 +12,6 @@ public interface ParticleSpawnEvent {
 					listener.onParticleSpawn(packet);
 				}
 			});
-	
+
 	void onParticleSpawn(ParticleS2CPacket packet);
 }

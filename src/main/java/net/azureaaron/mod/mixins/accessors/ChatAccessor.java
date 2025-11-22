@@ -16,21 +16,21 @@ public interface ChatAccessor {
 		throw new UnsupportedOperationException();
 	}
 
-    @Accessor("messages")
-    List<ChatHudLine> getMessages();
+	@Accessor("messages")
+	List<ChatHudLine> getMessages();
 
-    @Accessor("visibleMessages")
-    List<ChatHudLine.Visible> getVisibleMessages();
+	@Accessor("visibleMessages")
+	List<ChatHudLine.Visible> getVisibleMessages();
 
-    @Invoker("toChatLineX")
-    double invokeToChatLineX(double x);
+	@Invoker("toChatLineX")
+	double invokeToChatLineX(double x);
 
-    @Invoker("toChatLineY")
-    double invokeToChatLineY(double y);
+	@Invoker("toChatLineY")
+	double invokeToChatLineY(double y);
 
-    @Invoker("getMessageLineIndex")
-    int invokeGetMessageLineIndex(double chatLineX, double chatLineY);
+	@Invoker("getMessageLineIndex")
+	int invokeGetMessageLineIndex(double chatLineX, double chatLineY);
 
-    @Invoker("getMessageIndex")
-    int invokeGetMessageEndLineIndex(double chatLineX, double chatLineY);
+	@Invoker("getMessageIndex")
+	int invokeGetMessageEndLineIndex(double chatLineX, double chatLineY);
 }

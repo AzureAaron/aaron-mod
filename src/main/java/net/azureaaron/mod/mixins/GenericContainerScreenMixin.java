@@ -16,7 +16,7 @@ import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.text.Text;
 
 @Mixin(GenericContainerScreen.class)
-public abstract class GenericContainerScreenMixin extends HandledScreen<GenericContainerScreenHandler> 
+public abstract class GenericContainerScreenMixin extends HandledScreen<GenericContainerScreenHandler>
 implements ScreenHandlerProvider<GenericContainerScreenHandler> {
 
 	public GenericContainerScreenMixin(GenericContainerScreenHandler handler, PlayerInventory inventory, Text title) {

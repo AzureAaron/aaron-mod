@@ -7,7 +7,7 @@ import net.azureaaron.mod.config.AaronModConfigManager;
 
 public class ModMenu implements ModMenuApi {
 	@Override
-    public ConfigScreenFactory<?> getModConfigScreenFactory() {
+	public ConfigScreenFactory<?> getModConfigScreenFactory() {
 		return AaronModConfigManager::createGui;
 	}
 }

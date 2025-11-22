@@ -25,7 +25,7 @@ public class BlessingsCommand {
 	public static void init() {
 		if (AaronModConfigManager.get().skyblock.commands.enableSkyblockCommands) ClientCommandRegistrationCallback.EVENT.register(BlessingsCommand::register);
 	}
-	
+
 	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
 		dispatcher.register(literal("blessings")
 				.executes(context -> printBlessings(context.getSource()))
@@ -33,35 +33,35 @@ public class BlessingsCommand {
 						.suggests((context, builder) -> builder.suggest("reset").buildFuture())
 						.executes(context -> printBlessings(context.getSource(), getString(context, "option")))));
 	}
-	
-    @SuppressWarnings("removal")
-	private static int printBlessings(FabricClientCommandSource source) {
-    	ColourProfiles colourProfile = Constants.PROFILE.get();
-    	
-    	source.sendFeedback(Text.literal("               ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
-    	
-    	source.sendFeedback(Text.literal("Power » " + Cache.powerBlessing).withColor(colourProfile.infoColour.getAsInt()));
-    	source.sendFeedback(Text.literal("Wisdom » " + Cache.wisdomBlessing).withColor(colourProfile.infoColour.getAsInt()));
-    	source.sendFeedback(Text.literal("Life » " + Cache.lifeBlessing).withColor(colourProfile.infoColour.getAsInt()));
-    	source.sendFeedback(Text.literal("Stone » " + Cache.stoneBlessing).withColor(colourProfile.infoColour.getAsInt()));
-    	source.sendFeedback(Text.literal("Time » " + (Cache.timeBlessing ? "✓" : "✗")).withColor(colourProfile.infoColour.getAsInt()));
-    	
-    	source.sendFeedback(Text.literal("               ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 
-        return Command.SINGLE_SUCCESS;
-    }
-    
-    private static int printBlessings(FabricClientCommandSource source, String option) {
-    	ColourProfiles colourProfile = Constants.PROFILE.get();
-    	
-    	if("reset".equals(option)) {
-    		Cache.resetBlessings();
+	@SuppressWarnings("removal")
+	private static int printBlessings(FabricClientCommandSource source) {
+		ColourProfiles colourProfile = Constants.PROFILE.get();
+
+		source.sendFeedback(Text.literal("               ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+
+		source.sendFeedback(Text.literal("Power » " + Cache.powerBlessing).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Text.literal("Wisdom » " + Cache.wisdomBlessing).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Text.literal("Life » " + Cache.lifeBlessing).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Text.literal("Stone » " + Cache.stoneBlessing).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Text.literal("Time » " + (Cache.timeBlessing ? "✓" : "✗")).withColor(colourProfile.infoColour.getAsInt()));
+
+		source.sendFeedback(Text.literal("               ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+
+		return Command.SINGLE_SUCCESS;
+	}
+
+	private static int printBlessings(FabricClientCommandSource source, String option) {
+		ColourProfiles colourProfile = Constants.PROFILE.get();
+
+		if ("reset".equals(option)) {
+			Cache.resetBlessings();
 			source.sendFeedback(Constants.PREFIX.get().append(Text.literal("Blessings » ").withColor(colourProfile.primaryColour.getAsInt())
 					.append(Text.literal("Successfully reset the counter!").withColor(colourProfile.secondaryColour.getAsInt()))));
-    	} else {
-    		source.sendError(Constants.PREFIX.get().append(Text.literal("Invalid option!").formatted(Formatting.RED)));
-    	}
-    	
-    	return Command.SINGLE_SUCCESS;
-    }
+		} else {
+			source.sendError(Constants.PREFIX.get().append(Text.literal("Invalid option!").formatted(Formatting.RED)));
+		}
+
+		return Command.SINGLE_SUCCESS;
+	}
 }

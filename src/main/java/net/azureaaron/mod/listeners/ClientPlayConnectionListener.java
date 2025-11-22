@@ -1,5 +1,7 @@
 package net.azureaaron.mod.listeners;
 
+import java.util.Locale;
+
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.utils.Cache;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -16,7 +18,7 @@ public class ClientPlayConnectionListener {
 	}
 
 	private static void onJoin(ClientPlayNetworkHandler handler, PacketSender sender, MinecraftClient client) {
-		Cache.currentServerAddress = client.isInSingleplayer() || handler.getServerInfo().address == null ? "localhost" : handler.getServerInfo().address.toLowerCase();
+		Cache.currentServerAddress = client.isInSingleplayer() || handler.getServerInfo().address == null ? "localhost" : handler.getServerInfo().address.toLowerCase(Locale.CANADA);
 	}
 
 	private static void onDisconnect(ClientPlayNetworkHandler handler, MinecraftClient client) {

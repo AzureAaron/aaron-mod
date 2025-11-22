@@ -6,7 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 /**
  * Record which holds a player's name and uuid, similar to a {@link com.mojang.authlib.GameProfile GameProfile}.
  * This is used for commands that take in a player argument.
- * 
+ *
  * @author Aaron
  */
 record CommandPlayerData(String name, String id) {

@@ -58,7 +58,7 @@ public class ServerTickCounter {
 
 	/**
 	 * Calculates the tick rate each second.
-	 * 
+	 *
 	 * The tick rate is counted based on how many ticks the client received a packet on within a second,
 	 * checking the ping packets is not great since that is more hypixel-specific and this allows it to
 	 * work with other servers (mileage may vary).
@@ -92,7 +92,7 @@ public class ServerTickCounter {
 	public void onReceivePacket() {
 		//This is called from outside the render thread and we need it to be on there otherwise
 		//this won't work properly
-		MinecraftClient.getInstance().send(() -> this.receivedPacketThisTick = true); 
+		MinecraftClient.getInstance().send(() -> this.receivedPacketThisTick = true);
 	}
 
 	private void reset() {

@@ -1,22 +1,23 @@
 package net.azureaaron.mod.utils;
 
 import java.awt.Color;
+import java.util.Locale;
 import java.util.function.BooleanSupplier;
 
 import net.minecraft.client.MinecraftClient;
 
 /**
  * Class containing various utility/helper functions.
- * 
+ *
  * @author Aaron
  */
 public class Functions {
 
 	public static String titleCase(String string) {
-		String[] split = string.toLowerCase().split(" ");
+		String[] split = string.toLowerCase(Locale.CANADA).split(" ");
 
-		for(int i = 0; i < split.length; i++) {
-			split[i] = String.valueOf(Character.toUpperCase(split[i].charAt(0))) + split[i].substring(1);	
+		for (int i = 0; i < split.length; i++) {
+			split[i] = String.valueOf(Character.toUpperCase(split[i].charAt(0))) + split[i].substring(1);
 		}
 
 		return String.join(" ", split);
@@ -35,7 +36,7 @@ public class Functions {
 	}
 
 	public static int romanToInt(String numeral) {
-		return switch(numeral) {
+		return switch (numeral) {
 			case "I" -> 1;
 			case "II" -> 2;
 			case "III" -> 3;
