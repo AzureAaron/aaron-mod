@@ -90,6 +90,9 @@ public class CroesusCommand extends SkyblockCommand {
 		for (JsonElement run : treasures.get("runs").getAsJsonArray()) {
 			JsonObject iteratedRun = run.getAsJsonObject();
 
+			// Temp fix
+			if (iteratedRun.get("type").getAsString().equals("KUUDRA")) continue;
+
 			if (iteratedRun.get("completion_ts").getAsLong() > twoDaysAgo && iteratedRun.get("dungeon_tier").getAsInt() != 0) {
 				runs.put(iteratedRun.get("run_id").getAsString(), new RunData(iteratedRun.get("completion_ts").getAsLong(), iteratedRun.get("dungeon_tier").getAsInt(), iteratedRun.get("dungeon_type").getAsString(), new ArrayList<ChestData>()));
 			} else {
@@ -111,6 +114,9 @@ public class CroesusCommand extends SkyblockCommand {
 			JsonObject iteratedChest = chest.getAsJsonObject();
 			String chestRunId = iteratedChest.get("run_id").getAsString();
 			boolean chestPaid = iteratedChest.get("paid").getAsBoolean();
+
+			// Temp fix
+			if (iteratedChest.get("type").getAsString().equals("KUUDRA")) continue;
 
 			//If the chest isn't yet apart of the claimedRuns HashSet and it was paid for
 			if (!claimedRuns.contains(chestRunId) && chestPaid) {
