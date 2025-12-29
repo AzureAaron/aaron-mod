@@ -19,6 +19,7 @@
 !/README.md
 !/settings.gradle
 !/checkstyle.xml
+!/checkstyle-suppressions.xml
 
 # Build Src
 !/buildSrc
