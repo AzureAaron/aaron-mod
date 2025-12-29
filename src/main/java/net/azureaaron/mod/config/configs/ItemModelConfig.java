@@ -3,13 +3,11 @@ package net.azureaaron.mod.config.configs;
 import net.azureaaron.mod.annotations.GenEquals;
 import net.azureaaron.mod.annotations.GenHashCode;
 import net.azureaaron.mod.annotations.GenToString;
-import net.minecraft.entity.LivingEntity;
 
 public class ItemModelConfig {
 	public boolean enableItemModelCustomization = true;
 
-	//This constant is wrongly named in yarn - its actually the swing duration
-	public int swingDuration = LivingEntity.GLOWING_FLAG;
+	public int swingDuration = 6;
 
 	public boolean ignoreMiningEffects = false;
 

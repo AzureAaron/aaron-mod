@@ -33,7 +33,7 @@ public class ScreenMixin implements ScreenResizeMarker {
 		return this.screenResized;
 	}
 
-	@Inject(method = "init(Lnet/minecraft/client/MinecraftClient;II)V", at = @At("TAIL"))
+	@Inject(method = "init(II)V", at = @At("TAIL"))
 	private void aaronMod$hideCursor(CallbackInfo ci) {
 		Object instance = (Object) this;
 

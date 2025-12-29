@@ -5,7 +5,7 @@ import java.util.ListIterator;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -46,8 +46,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 	private static final Style NO_ITALIC = Style.EMPTY.withItalic(false);
 
 	@Shadow
-	@Nullable
-	public abstract <T> T set(ComponentType<? super T> type, @Nullable T value);
+	public abstract <T> @Nullable T set(ComponentType<? super T> type, @Nullable T value);
 
 	@ModifyVariable(method = "getName", at = @At("STORE"))
 	private Text aaronMod$customItemName(Text text) {

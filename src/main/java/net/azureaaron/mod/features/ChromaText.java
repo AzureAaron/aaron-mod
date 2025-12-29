@@ -3,8 +3,8 @@ package net.azureaaron.mod.features;
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.fabricmc.fabric.api.resource.v1.pack.PackActivationType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 
@@ -14,8 +14,8 @@ public class ChromaText {
 
 	@Init
 	public static void init() {
-		ResourcePackActivationType activationType = AaronModConfigManager.get().uiAndVisuals.chromaText.canDisableChromaPack ? ResourcePackActivationType.DEFAULT_ENABLED : ResourcePackActivationType.ALWAYS_ENABLED;
-		ResourceManagerHelper.registerBuiltinResourcePack(ID, Main.MOD_CONTAINER, activationType);
+		PackActivationType activationType = AaronModConfigManager.get().uiAndVisuals.chromaText.canDisableChromaPack ? PackActivationType.DEFAULT_ENABLED : PackActivationType.ALWAYS_ENABLED;
+		ResourceLoader.registerBuiltinPack(ID, Main.MOD_CONTAINER, activationType);
 	}
 
 	/**

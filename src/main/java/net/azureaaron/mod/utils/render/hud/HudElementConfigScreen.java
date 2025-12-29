@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import net.azureaaron.dandelion.systems.ButtonOption;
@@ -24,10 +24,8 @@ import net.minecraft.util.Colors;
 public final class HudElementConfigScreen extends Screen {
 	private static final Text TITLE = Text.of("HUD Element Config Screen");
 	private static final List<HudElement> ELEMENTS = new ArrayList<>();
-	@Nullable
-	private final Screen parent;
-	@Nullable
-	private HudElement selected = null;
+	private final @Nullable Screen parent;
+	private @Nullable HudElement selected = null;
 
 	public HudElementConfigScreen(@Nullable Screen parent) {
 		super(TITLE);

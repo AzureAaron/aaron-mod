@@ -26,7 +26,6 @@ public class MixinPlugin implements IMixinConfigPlugin {
 	@Override
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
 		return switch (mixinClassName) {
-			case String s when s.equals(MIXIN_PACKAGE + "KeyboardMixin") -> SystemUtils.IS_OS_MAC; //Skip application outside of macOS
 			case String s when s.equals(MIXIN_PACKAGE + "ParticleManagerMixin") -> !OPTIFABRIC_LOADED;
 			case String s when s.equals(MIXIN_PACKAGE + "FireworksSparkParticleMixin") -> !OPTIFABRIC_LOADED;
 			case String s when s.equals(MIXIN_PACKAGE + "SkyblockerCustomizeNameScreenMixin") -> SKYBLOCKER_LOADED;

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 
 import it.unimi.dsi.fastutil.chars.CharList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
@@ -31,7 +30,7 @@ public class TextTransformer {
 	 * @param legacy The string with legacy formatting to be transformed
 	 * @return A {@link MutableText} object matching the exact formatting of the input
 	 */
-	public static MutableText fromLegacy(@NotNull String legacy) {
+	public static MutableText fromLegacy(String legacy) {
 		MutableText newText = Text.empty();
 		StringBuilder builder = new StringBuilder();
 		Formatting formatting = null;
@@ -113,8 +112,7 @@ public class TextTransformer {
 	 * @return The text object will all transformations applied
 	 * @see #stylize(Text, Style, String, Style, int)
 	 */
-	public static Text stylizeAndReplace(@NotNull Text text, @NotNull Style baseStyle, @NotNull String textToStylize, @NotNull Style newStyle,
-			@NotNull String[] replaceableText, @NotNull String replacementRegex, @NotNull String replacementText, int replacementMatches) {
+	public static Text stylizeAndReplace(Text text, Style baseStyle, String textToStylize, Style newStyle, String[] replaceableText, String replacementRegex, String replacementText, int replacementMatches) {
 		String stringForm = text.getString();
 
 		if (Arrays.stream(replaceableText).anyMatch(stringForm::contains)) {
@@ -157,7 +155,7 @@ public class TextTransformer {
 	 *
 	 * @return The text object with all transformations applied
 	 */
-	public static Text stylize(@NotNull Text text, @NotNull Style baseStyle, @NotNull String textToStylize, @NotNull Style newStyle, int matches) {
+	public static Text stylize(Text text, Style baseStyle, String textToStylize, Style newStyle, int matches) {
 		String stringForm = text.getString();
 
 		if (stringForm.contains(textToStylize)) {
@@ -188,7 +186,7 @@ public class TextTransformer {
 	 * @param text The text to be formatted into a rainbow gradient
 	 * @return A text object containing the {@code text} formatted into a rainbow gradient.
 	 */
-	public static Text rainbowify(@NotNull String text) {
+	public static Text rainbowify(String text) {
 		MutableText newText = Text.empty();
 		float textLength = text.length();
 		float next = Math.nextDown(1.0f) * textLength;
@@ -211,7 +209,7 @@ public class TextTransformer {
 	 *
 	 * @see #rainbowify(String)
 	 */
-	public static MutableText progressivelyRainbowify(@NotNull String text, int totalTextLength, int positionLeftOffAt) {
+	public static MutableText progressivelyRainbowify(String text, int totalTextLength, int positionLeftOffAt) {
 		MutableText newText = Text.empty();
 		float next = Math.nextDown(1.0f) * totalTextLength;
 

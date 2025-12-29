@@ -17,6 +17,7 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Click;
+import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -26,6 +27,7 @@ import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextCodecs;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.MathHelper;
 
 public class CopyChatMessages {
 	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
@@ -48,12 +50,12 @@ public class CopyChatMessages {
 		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.inGameHud.getChatHud());
 
 		if (click.button() == configuredButton && AaronModConfigManager.get().refinements.chat.copyChatMessages) {
-			double chatLineX = chatAccessor.invokeToChatLineX(click.x());
-			double chatLineY = chatAccessor.invokeToChatLineY(click.y());
+			double chatLineX = toChatLineX(click.x());
+			double chatLineY = toChatLineY(click.y());
 
 			switch (AaronModConfigManager.get().refinements.chat.copyChatMode) {
 				case SINGLE_LINE -> {
-					int messageLineIndex = chatAccessor.invokeGetMessageLineIndex(chatLineX, chatLineY);
+					int messageLineIndex = getMessageLineIndex(chatLineX, chatLineY);
 					List<ChatHudLine.Visible> visibleMessages = chatAccessor.getVisibleMessages();
 
 					if (messageLineIndex >= 0 && messageLineIndex < visibleMessages.size()) {
@@ -111,13 +113,13 @@ public class CopyChatMessages {
 	private static int getMessageIndex(double chatLineX, double chatLineY) {
 		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.inGameHud.getChatHud());
 
-		int lineIndex = chatAccessor.invokeGetMessageLineIndex(chatLineX, chatLineY);
+		int lineIndex = getMessageLineIndex(chatLineX, chatLineY);
 		if (lineIndex == -1) return -1;
 
 		List<ChatHudLine> messages = chatAccessor.getMessages();
 		List<ChatHudLine.Visible> visibleMessages = chatAccessor.getVisibleMessages();
 		int upperbound = 0; //Upper-bound value of range (position of start top of entry)
-		int lowerbound = chatAccessor.invokeGetMessageEndLineIndex(chatLineX, chatLineY); //Lower-bound value of range (position of end of entry)
+		int lowerbound = getMessageEndLineIndex(chatLineX, chatLineY); //Lower-bound value of range (position of end of entry)
 
 		for (int i = lowerbound + 1; i < visibleMessages.size(); i++) { //Iterate until we encounter the end of the next message
 			if (visibleMessages.get(i).endOfEntry()) {
@@ -147,5 +149,58 @@ public class CopyChatMessages {
 			if (messageContent.equals(hoveredMessage.toString())) return i;
 		}
 		return -1;
+	}
+
+	private static double toChatLineX(double x) {
+		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.inGameHud.getChatHud());
+		return x / chatAccessor.invokeGetChatScale() - 4.0;
+	}
+
+	private static double toChatLineY(double y) {
+		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.inGameHud.getChatHud());
+		double d = CLIENT.getWindow().getScaledHeight() - y - 40.0;
+
+		return d / (chatAccessor.invokeGetChatScale() * chatAccessor.invokeGetLineHeight());
+	}
+
+	private static int getMessageEndLineIndex(double chatLineX, double chatLineY) {
+		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.inGameHud.getChatHud());
+		int i = getMessageLineIndex(chatLineX, chatLineY);
+		if (i == -1) {
+			return -1;
+		} else {
+			while (i >= 0) {
+				if ((chatAccessor.getVisibleMessages().get(i)).endOfEntry()) {
+					return i;
+				}
+
+				i--;
+			}
+
+			return i;
+		}
+	}
+
+	private static int getMessageLineIndex(double chatLineX, double chatLineY) {
+		ChatHud chatHud = CLIENT.inGameHud.getChatHud();
+		ChatAccessor chatAccessor = (ChatAccessor) chatHud;
+
+		if (chatHud.isChatFocused() && !chatAccessor.invokeIsChatHidden()) {
+			if (!(chatLineX < -4.0) && !(chatLineX > MathHelper.floor(chatAccessor.invokeGetWidth() / chatAccessor.invokeGetChatScale()))) {
+				int i = Math.min(chatHud.getVisibleLineCount(), chatAccessor.getVisibleMessages().size());
+				if (chatLineY >= 0.0 && chatLineY < i) {
+					int j = MathHelper.floor(chatLineY + chatAccessor.getScrolledLines());
+					if (j >= 0 && j < chatAccessor.getVisibleMessages().size()) {
+						return j;
+					}
+				}
+
+				return -1;
+			} else {
+				return -1;
+			}
+		} else {
+			return -1;
+		}
 	}
 }

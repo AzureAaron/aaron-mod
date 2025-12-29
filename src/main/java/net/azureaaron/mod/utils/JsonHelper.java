@@ -9,8 +9,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import net.minecraft.util.annotation.MethodsReturnNonnullByDefault;
-
 /**
  * Helper methods to assist in retrieving values nested in JSON objects.
  *
@@ -18,7 +16,6 @@ import net.minecraft.util.annotation.MethodsReturnNonnullByDefault;
  *
  * @implNote While this provides null safety, it does not provide type safety. The caller must know the target type of the target JSON element.
  */
-@MethodsReturnNonnullByDefault
 public class JsonHelper {
 
 	public static OptionalInt getInt(JsonObject root, String path) {

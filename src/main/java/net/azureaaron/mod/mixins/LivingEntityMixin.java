@@ -3,6 +3,7 @@ package net.azureaaron.mod.mixins;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
@@ -29,7 +30,7 @@ public abstract class LivingEntityMixin extends Entity {
 		return shouldEnableSwingModifications() && AaronModConfigManager.get().itemModel.ignoreMiningEffects ? false : original;
 	}
 
-	@ModifyExpressionValue(method = "getHandSwingDuration", at = @At(value = "CONSTANT", args = "intValue=6"))
+	@ModifyVariable(method = "getHandSwingDuration", at = @At("LOAD"), ordinal = 0)
 	private int aaronMod$modifySwingDuration(int original) {
 		return shouldEnableSwingModifications() ? AaronModConfigManager.get().itemModel.swingDuration : original;
 	}

@@ -16,8 +16,7 @@ import java.time.Duration;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -58,26 +57,26 @@ public class Http {
 		}
 	}
 
-	public static String sendGetRequest(@NotNull String url) throws IOException, InterruptedException {
+	public static String sendGetRequest(String url) throws IOException, InterruptedException {
 		return sendGetRequestInternal(url, null).content();
 	}
 
-	public static String sendHypixelRequest(@NotNull String endpoint, @NotNull String parameters) throws IOException, InterruptedException, ApiException {
+	public static String sendHypixelRequest(String endpoint, String parameters) throws IOException, InterruptedException, ApiException {
 		ApiResponse response = sendGetRequestInternal(HYPIXEL_PROXY + endpoint + parameters, ApiAuthentication.getToken());
 		response.tryThrow();
 
 		return response.content();
 	}
 
-	public static ApiResponse sendNameToUuidRequest(@NotNull String name) throws IOException, InterruptedException, ApiException {
+	public static ApiResponse sendNameToUuidRequest(String name) throws IOException, InterruptedException, ApiException {
 		return sendGetRequestInternal(NAME_TO_UUID + name, null);
 	}
 
-	public static ApiResponse sendUuidToNameRequest(@NotNull String uuid) throws IOException, InterruptedException, ApiException {
+	public static ApiResponse sendUuidToNameRequest(String uuid) throws IOException, InterruptedException, ApiException {
 		return sendGetRequestInternal(UUID_TO_NAME + uuid, null);
 	}
 
-	public static String sendPostRequest(@NotNull String url, @NotNull String requestBody, @NotNull String contentType) throws IOException, InterruptedException {
+	public static String sendPostRequest(String url, String requestBody, String contentType) throws IOException, InterruptedException {
 		HttpRequest request = HttpRequest.newBuilder()
 				.POST(HttpRequest.BodyPublishers.ofString(requestBody))
 				.header("Accept", contentType)

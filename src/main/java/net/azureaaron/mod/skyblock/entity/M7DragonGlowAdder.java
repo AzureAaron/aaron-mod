@@ -4,7 +4,7 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.google.gson.JsonObject;
@@ -67,8 +67,7 @@ public class M7DragonGlowAdder extends MobGlowAdder {
 		return NO_GLOW;
 	}
 
-	@Nullable
-	private static String getHeadTexUrl(@Nullable ProfileComponent profile) {
+	private static @Nullable String getHeadTexUrl(@Nullable ProfileComponent profile) {
 		if (profile != null) {
 			Collection<Property> properties = profile.getGameProfile().properties().get("textures");
 

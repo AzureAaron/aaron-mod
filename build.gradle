@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version "${loom_version}"
+	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
 	id 'maven-publish'
 	id 'net.azureaaron.mod.annotation-processor'
 	id "com.diffplug.spotless" version "${spotless_version}"
@@ -102,6 +102,15 @@ loom {
 	mixin {
 		useLegacyMixinAp = false
 	}
+
+	decompilers {
+		vineflower {
+			options.put(
+					// Makes lambda names easy to find for Mixins
+					"mark-corresponding-synthetics", "1"
+					)
+		}
+	}
 }
 
 base {
@@ -166,6 +175,9 @@ spotless {
 checkstyle {
 	toolVersion = "${checkstyle_version}"
 	configFile = rootProject.file("checkstyle.xml")
+	configProperties = [
+		"suppressionsFile": rootProject.file("checkstyle-suppressions.xml")
+	]
 }
 
 // configure the maven publication

@@ -23,7 +23,7 @@ public class MinecraftClientMixin {
 		return !AaronModConfigManager.get().refinements.music.uninterruptedMusic;
 	}
 
-	@Inject(method = "onResolutionChanged", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;resize(Lnet/minecraft/client/MinecraftClient;II)V"))
+	@Inject(method = "onResolutionChanged", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;resize(II)V"))
 	private void aaronMod$onResolutionChange(CallbackInfo ci) {
 		this.currentScreen.markResized(false);
 	}

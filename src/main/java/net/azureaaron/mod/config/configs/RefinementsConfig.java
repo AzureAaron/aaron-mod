@@ -52,7 +52,8 @@ public class RefinementsConfig {
 
 		public boolean dontResetCursorPosition = false;
 
-		public boolean alternateF3PlusNKeybind = false;
+		@Deprecated
+		public transient boolean alternateF3PlusNKeybind = false;
 	}
 
 	public static class Screenshots {

@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-
 import net.azureaaron.mod.utils.datafixer.LegacyItemStackFixer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.component.ComponentHolder;
@@ -48,12 +46,10 @@ public class ItemUtils {
 				.toList();
 	}
 
-	@NotNull
 	public static NbtCompound getCustomData(ComponentHolder stack) {
 		return stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
 	}
 
-	@NotNull
 	public static String getId(ComponentHolder stack) {
 		return getCustomData(stack).getString("id", "");
 	}

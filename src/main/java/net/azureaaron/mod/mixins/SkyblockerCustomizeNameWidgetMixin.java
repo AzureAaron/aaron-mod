@@ -13,7 +13,6 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import net.azureaaron.mod.features.ChromaText;
 import net.azureaaron.mod.utils.render.AaronModRenderPipelines;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -54,11 +53,13 @@ public abstract class SkyblockerCustomizeNameWidgetMixin {
 		}
 
 		@Override
-		public void drawMessage(DrawContext context, TextRenderer textRenderer, int colour) {
+		public void drawIcon(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+			this.drawButton(context);
 			context.fill(AaronModRenderPipelines.CHROMA_GUI, this.getX() + 2, this.getY() + 2, this.getRight() - 2, this.getBottom() - 2, 0xFFAA5500);
 		}
 
 		@Override
 		protected void appendClickableNarrations(NarrationMessageBuilder builder) {}
+
 	}
 }

@@ -23,6 +23,7 @@ import net.azureaaron.mod.events.ReceiveChatMessageEvent;
 import net.azureaaron.mod.utils.Http;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.DrawnTextConsumer;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ChatScreen;
@@ -110,10 +111,12 @@ public class ImagePreview {
 	private static void afterScreenRendered(MinecraftClient client, Screen screen, DrawContext context, int mouseX, int mouseY) {
 		if (!AaronModConfigManager.get().uiAndVisuals.imagePreview.enableImagePreview) return;
 
-		Style style = client.inGameHud.getChatHud().getTextStyleAt(mouseX, mouseY);
+		DrawnTextConsumer.ClickHandler clickHandler = new DrawnTextConsumer.ClickHandler(screen.getTextRenderer(), mouseX, mouseY)
+				.insert(false);
+		Style clickedStyle = clickHandler.getStyle();
 
-		if (style != null && style.getClickEvent() != null) {
-			ClickEvent clickEvent = style.getClickEvent();
+		if (clickedStyle != null && clickedStyle.getClickEvent() != null) {
+			ClickEvent clickEvent = clickedStyle.getClickEvent();
 
 			if (clickEvent instanceof ClickEvent.OpenUrl(URI uri) && uri != null) {
 				CachedImage image = ImagePreview.IMAGE_CACHE.getOrDefault(fixupLink(uri.toString()), null);

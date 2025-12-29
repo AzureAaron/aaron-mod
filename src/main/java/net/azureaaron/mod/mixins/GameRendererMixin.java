@@ -66,7 +66,7 @@ public class GameRendererMixin {
 		GuiHelper.disableBlurScissor();
 	}
 
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gl/GlobalSettings;set(IIDJLnet/minecraft/client/render/RenderTickCounter;I)V", shift = At.Shift.AFTER))
+	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gl/GlobalSettings;set(IIDJLnet/minecraft/client/render/RenderTickCounter;ILnet/minecraft/client/render/Camera;Z)V", shift = At.Shift.AFTER))
 	private void aaronMod$updateShaderUniforms(CallbackInfo ci, @Local(argsOnly = true) RenderTickCounter tickCounter) {
 		ShaderUniforms.updateShaderUniforms(tickCounter);
 	}
@@ -87,7 +87,7 @@ public class GameRendererMixin {
 			SavedScaleState state = SavedScaleState.create(window).adjust();
 
 			if (!screen.wasResized()) {
-				screen.resize(this.client, window.getScaledWidth(), window.getScaledHeight());
+				screen.resize(window.getScaledWidth(), window.getScaledHeight());
 				screen.markResized(true);
 			}
 

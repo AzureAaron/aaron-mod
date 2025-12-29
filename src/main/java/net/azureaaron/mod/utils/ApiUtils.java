@@ -3,7 +3,7 @@ package net.azureaaron.mod.utils;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.google.common.cache.CacheBuilder;
@@ -39,16 +39,14 @@ public class ApiUtils {
 	 *
 	 * @return The user's {@link GameProfile} with their name and id only, or {@code null} if the lookup failed.
 	 */
-	@Nullable
-	public static GameProfile getProfile(String nameOrUuid) {
+	public static @Nullable GameProfile getProfile(String nameOrUuid) {
 		return GAME_PROFILE_CACHE.getUnchecked(nameOrUuid.replace("-", "")).profile();
 	}
 
 	/**
 	 * @see #getProfile(String)
 	 */
-	@Nullable
-	public static GameProfile getProfile(UUID uuid) {
+	public static @Nullable GameProfile getProfile(UUID uuid) {
 		return GAME_PROFILE_CACHE.getUnchecked(UndashedUuid.toString(uuid)).profile();
 	}
 

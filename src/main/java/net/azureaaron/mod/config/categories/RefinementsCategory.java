@@ -9,7 +9,6 @@ import net.azureaaron.mod.Main;
 import net.azureaaron.mod.config.AaronModConfig;
 import net.azureaaron.mod.config.ConfigUtils;
 import net.azureaaron.mod.config.configs.RefinementsConfig;
-import net.minecraft.client.input.SystemKeycodes;
 import net.minecraft.text.Text;
 
 public class RefinementsCategory {
@@ -98,15 +97,6 @@ public class RefinementsCategory {
 										() -> config.refinements.input.dontResetCursorPosition,
 										newValue -> config.refinements.input.dontResetCursorPosition = newValue)
 								.controller(ConfigUtils.createBooleanController())
-								.build())
-						.option(Option.<Boolean>createBuilder()
-								.name(Text.literal("Mac Only - Alternate FN+F3+N Keybind"))
-								.description(Text.literal("Provides FN+F3+J as an alternate keybind for FN+F3+N."))
-								.binding(defaults.refinements.input.alternateF3PlusNKeybind,
-										() -> config.refinements.input.alternateF3PlusNKeybind,
-										newValue -> config.refinements.input.alternateF3PlusNKeybind = newValue)
-								.controller(ConfigUtils.createBooleanController())
-								.modifiable(SystemKeycodes.IS_MAC_OS)
 								.build())
 						.build())
 

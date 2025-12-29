@@ -11,4 +11,7 @@
  *
  * @author AzureAaron
  */
+@NullMarked
 package net.azureaaron.mod.utils.render.state;
+
+import org.jspecify.annotations.NullMarked;

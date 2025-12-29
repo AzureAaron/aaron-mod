@@ -1,6 +1,6 @@
 package net.azureaaron.mod.mixins;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,8 +19,7 @@ public class EntityRenderManagerMixin implements EntityRenderMarker {
 	private EntityRenderState currentStateBeingRendered;
 
 	@Override
-	@Nullable
-	public EntityRenderState aaronMod$getEntityStateBeingRendered() {
+	public @Nullable EntityRenderState aaronMod$getEntityStateBeingRendered() {
 		return this.currentStateBeingRendered;
 	}
 

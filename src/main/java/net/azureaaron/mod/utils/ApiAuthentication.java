@@ -7,7 +7,7 @@ import java.util.Base64;
 import java.util.Objects;
 import java.util.UUID;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 import com.google.gson.JsonParser;
@@ -47,7 +47,7 @@ public class ApiAuthentication {
 	private static final String NO_PROFILE_KEYS = "Failed to get your profile keys! Some features of the mod may not work temporarily :( (Has your game been open for more than 24 hours?). To fix this restart your game!";
 	private static final String AUTH_FAILURE = "Failed to refresh your Aaron Mod API token, some features may not work temporarily!";
 
-	private static TokenInfo tokenInfo = null;
+	private static @Nullable TokenInfo tokenInfo = null;
 	private static boolean sentWarningOnce = false;
 
 	@Init
@@ -158,8 +158,7 @@ public class ApiAuthentication {
 		}
 	}
 
-	@Nullable
-	public static String getToken() {
+	public static @Nullable String getToken() {
 		return tokenInfo != null ? tokenInfo.token() : null;
 	}
 

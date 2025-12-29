@@ -18,7 +18,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.minecraft.client.render.block.entity.ChestBlockEntityRenderer;
+import net.azureaaron.mod.utils.ExtendedHolidays;
 import net.minecraft.client.render.item.property.select.LocalTimeProperty;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
@@ -44,7 +44,7 @@ public class LocalTimePropertyMixin {
 
 	@WrapOperation(method = "getValue", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/property/select/LocalTimeProperty;formatCurrentTime()Ljava/lang/String;"))
 	private String aaronMod$decemberChristmasChests(LocalTimeProperty property, Operation<String> operation, @Local(argsOnly = true) ItemStack stack) {
-		if (AaronModConfigManager.get().uiAndVisuals.seasonal.decemberChristmasChests && isChest(stack) && ChestBlockEntityRenderer.isAroundChristmas()) {
+		if (AaronModConfigManager.get().uiAndVisuals.seasonal.decemberChristmasChests && isChest(stack) && ExtendedHolidays.isChristmasSeason()) {
 			//Ensure that we can format the date given that LocalDates are not equivalent to Dates in terms of what they represent
 			if (data.format().equals(CHRISTMAS_DATE_FORMAT)) {
 				return dateFormat.format(CHRISTMAS_DATE.get());

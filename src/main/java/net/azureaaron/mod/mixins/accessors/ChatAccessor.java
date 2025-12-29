@@ -22,15 +22,18 @@ public interface ChatAccessor {
 	@Accessor("visibleMessages")
 	List<ChatHudLine.Visible> getVisibleMessages();
 
-	@Invoker("toChatLineX")
-	double invokeToChatLineX(double x);
+	@Invoker
+	double invokeGetChatScale();
 
-	@Invoker("toChatLineY")
-	double invokeToChatLineY(double y);
+	@Invoker
+	int invokeGetLineHeight();
 
-	@Invoker("getMessageLineIndex")
-	int invokeGetMessageLineIndex(double chatLineX, double chatLineY);
+	@Invoker
+	boolean invokeIsChatHidden();
 
-	@Invoker("getMessageIndex")
-	int invokeGetMessageEndLineIndex(double chatLineX, double chatLineY);
+	@Invoker
+	int invokeGetWidth();
+
+	@Accessor
+	int getScrolledLines();
 }

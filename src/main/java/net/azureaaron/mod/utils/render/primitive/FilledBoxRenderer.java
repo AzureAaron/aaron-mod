@@ -3,14 +3,11 @@ package net.azureaaron.mod.utils.render.primitive;
 import org.joml.Matrix4f;
 
 import net.azureaaron.mod.utils.render.AaronModRenderPipelines;
-import net.azureaaron.mod.utils.render.MatrixHelper;
 import net.azureaaron.mod.utils.render.Renderer;
 import net.azureaaron.mod.utils.render.state.FilledBoxRenderState;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.render.state.CameraRenderState;
-import net.minecraft.client.util.math.MatrixStack;
 
 public final class FilledBoxRenderer implements PrimitiveRenderer<FilledBoxRenderState> {
 	protected static final FilledBoxRenderer INSTANCE = new FilledBoxRenderer();
@@ -22,8 +19,51 @@ public final class FilledBoxRenderer implements PrimitiveRenderer<FilledBoxRende
 		BufferBuilder buffer = Renderer.getBuffer(state.throughWalls ? AaronModRenderPipelines.FILLED_THROUGH_WALLS : RenderPipelines.DEBUG_FILLED_BOX);
 		Matrix4f positionMatrix = new Matrix4f()
 				.translate((float) -cameraState.pos.x, (float) -cameraState.pos.y, (float) -cameraState.pos.z);
-		MatrixStack matrices = MatrixHelper.toStack(positionMatrix);
+		float minX = (float) state.minX;
+		float minY = (float) state.minY;
+		float minZ = (float) state.minZ;
+		float maxX = (float) state.maxX;
+		float maxY = (float) state.maxY;
+		float maxZ = (float) state.maxZ;
+		float red = state.colourComponents[0];
+		float green = state.colourComponents[1];
+		float blue = state.colourComponents[2];
+		float alpha = state.alpha;
 
-		VertexRendering.drawFilledBox(matrices, buffer, state.minX, state.minY, state.minZ, state.maxX, state.maxY, state.maxZ, state.colourComponents[0], state.colourComponents[1], state.colourComponents[2], state.alpha);
+		// Front face
+		buffer.vertex(positionMatrix, minX, minY, minZ).color(red, green, blue, alpha);
+		buffer.vertex(positionMatrix, maxX, minY, minZ).color(red, green, blue, alpha);
+		buffer.vertex(positionMatrix, maxX, maxY, minZ).color(red, green, blue, alpha);
+		buffer.vertex(positionMatrix, minX, maxY, minZ).color(red, green, blue, alpha);
+
+		// Back face
+		buffer.vertex(positionMatrix, maxX, minY, maxZ).color(red, green, blue, alpha);
+		buffer.vertex(positionMatrix, minX, minY, maxZ).color(red, green, blue, alpha);
+		buffer.vertex(positionMatrix, minX, maxY, maxZ).color(red, green, blue, alpha);
+		buffer.vertex(positionMatrix, maxX, maxY, maxZ).color(red, green, blue, alpha);
+
+		// Left face
+		buffer.vertex(positionMatrix, minX, minY, maxZ).color(red, green, blue, alpha);
+		buffer.vertex(positionMatrix, minX, minY, minZ).color(red, green, blue, alpha);
+		buffer.vertex(positionMatrix, minX, maxY, minZ).color(red, green, blue, alpha);
+		buffer.vertex(positionMatrix, minX, maxY, maxZ).color(red, green, blue, alpha);
+
+		// Right face
+		buffer.vertex(positionMatrix, maxX, minY, minZ).color(red, green, blue, alpha);
+		buffer.vertex(positionMatrix, maxX, minY, maxZ).color(red, green, blue, alpha);
+		buffer.vertex(positionMatrix, maxX, maxY, maxZ).color(red, green, blue, alpha);
+		buffer.vertex(positionMatrix, maxX, maxY, minZ).color(red, green, blue, alpha);
+
+		// Top face
+		buffer.vertex(positionMatrix, minX, maxY, minZ).color(red, green, blue, alpha);
+		buffer.vertex(positionMatrix, maxX, maxY, minZ).color(red, green, blue, alpha);
+		buffer.vertex(positionMatrix, maxX, maxY, maxZ).color(red, green, blue, alpha);
+		buffer.vertex(positionMatrix, minX, maxY, maxZ).color(red, green, blue, alpha);
+
+		// Bottom face
+		buffer.vertex(positionMatrix, minX, minY, maxZ).color(red, green, blue, alpha);
+		buffer.vertex(positionMatrix, maxX, minY, maxZ).color(red, green, blue, alpha);
+		buffer.vertex(positionMatrix, maxX, minY, minZ).color(red, green, blue, alpha);
+		buffer.vertex(positionMatrix, minX, minY, minZ).color(red, green, blue, alpha);
 	}
 }

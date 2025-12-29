@@ -14,9 +14,7 @@ import net.azureaaron.hmapi.network.packet.v1.s2c.LocationUpdateS2CPacket;
 import net.azureaaron.mod.annotations.Init;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.util.Util;
-import net.minecraft.util.annotation.FieldsAreNonnullByDefault;
 
-@FieldsAreNonnullByDefault
 @SuppressWarnings("unused")
 public class Utils {
 	private static final Logger LOGGER = LogUtils.getLogger();
