@@ -16,14 +16,14 @@ import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.Dragons;
 import net.azureaaron.mod.utils.Cache;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ProfileComponent;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ResolvableProfile;
 
 public class M7DragonGlowAdder extends MobGlowAdder {
 	@SuppressWarnings("unused")
@@ -42,14 +42,14 @@ public class M7DragonGlowAdder extends MobGlowAdder {
 
 	@Override
 	public int computeColour(Entity entity) {
-		if (entity instanceof EnderDragonEntity) {
-			List<ArmorStandEntity> armourStands = MobGlow.getNearbyArmourStands(entity);
+		if (entity instanceof EnderDragon) {
+			List<ArmorStand> armourStands = MobGlow.getNearbyArmourStands(entity);
 
-			for (ArmorStandEntity armourStand : armourStands) {
-				ItemStack headStack = armourStand.getEquippedStack(EquipmentSlot.HEAD);
+			for (ArmorStand armourStand : armourStands) {
+				ItemStack headStack = armourStand.getItemBySlot(EquipmentSlot.HEAD);
 
-				if (headStack.isOf(Items.PLAYER_HEAD)) {
-					ProfileComponent profile = headStack.get(DataComponentTypes.PROFILE);
+				if (headStack.is(Items.PLAYER_HEAD)) {
+					ResolvableProfile profile = headStack.get(DataComponents.PROFILE);
 					String textureUrl = getHeadTexUrl(profile);
 
 					return switch (textureUrl) {
@@ -67,9 +67,9 @@ public class M7DragonGlowAdder extends MobGlowAdder {
 		return NO_GLOW;
 	}
 
-	private static @Nullable String getHeadTexUrl(@Nullable ProfileComponent profile) {
+	private static @Nullable String getHeadTexUrl(@Nullable ResolvableProfile profile) {
 		if (profile != null) {
-			Collection<Property> properties = profile.getGameProfile().properties().get("textures");
+			Collection<Property> properties = profile.partialProfile().properties().get("textures");
 
 			for (Property property : properties) {
 				try {

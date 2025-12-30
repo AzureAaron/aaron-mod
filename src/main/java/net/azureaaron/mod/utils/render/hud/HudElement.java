@@ -1,10 +1,9 @@
 package net.azureaaron.mod.utils.render.hud;
 
 import java.util.Objects;
-
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 
 /**
  * An abstract representation of a HUD element. Extend this or use built-in subclasses to implement HUD elements.
@@ -13,7 +12,7 @@ import net.minecraft.client.render.RenderTickCounter;
  * of it to the HUD.
  */
 public abstract class HudElement {
-	protected static final MinecraftClient CLIENT = MinecraftClient.getInstance();
+	protected static final Minecraft CLIENT = Minecraft.getInstance();
 	protected final HudElementAccess access;
 	private final int defaultX;
 	private final int defaultY;
@@ -78,18 +77,18 @@ public abstract class HudElement {
 	 * Returns whether this element should be rendered onto the HUD.
 	 */
 	protected boolean shouldRender() {
-		return !CLIENT.getDebugHud().shouldShowDebugHud() && access.shouldRender();
+		return !CLIENT.getDebugOverlay().showDebugScreen() && access.shouldRender();
 	}
 
 	/**
-	 * Used for rendering this element to a {@link net.minecraft.client.gui.screen.Screen Screen}.
+	 * Used for rendering this element to a {@link net.minecraft.client.gui.screens.Screen Screen}.
 	 */
-	public abstract void renderScreen(DrawContext context);
+	public abstract void renderScreen(GuiGraphics context);
 
 	/**
 	 * Used for rendering this element to the HUD with Fabric's HUD layer rendering system.
 	 *
 	 * @implSpec The signature of this method must match the {@link net.minecraft.client.gui.LayeredDrawer.Layer#render(DrawContext, RenderTickCounter) LayeredDrawer$Layer#render} method.
 	 */
-	public abstract void renderHud(DrawContext context, RenderTickCounter tickCounter);
+	public abstract void renderHud(GuiGraphics context, DeltaTracker tickCounter);
 }

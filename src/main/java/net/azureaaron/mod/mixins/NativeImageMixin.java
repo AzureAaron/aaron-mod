@@ -23,13 +23,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.jtracy.MemoryPool;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.ImagePreview;
 import net.azureaaron.mod.injected.NativeImageMarker;
 import net.azureaaron.mod.utils.ImageMetadata;
-import net.minecraft.client.texture.NativeImage;
 
 @Mixin(NativeImage.class)
 public abstract class NativeImageMixin implements NativeImageMarker {
@@ -59,14 +59,14 @@ public abstract class NativeImageMixin implements NativeImageMarker {
 	private boolean isScreenshot;
 
 	@Shadow
-	public abstract int[] copyPixelsAbgr();
+	public abstract int[] getPixelsABGR();
 
 	@Unique
 	private static Class<?>[] findCallerClasses(Stream<StackFrame> stackFrames) {
 		return stackFrames.map(GET_CLASS).toArray(Class<?>[]::new);
 	}
 
-	@WrapOperation(method = "read(Lnet/minecraft/client/texture/NativeImage$Format;Ljava/nio/ByteBuffer;)Lnet/minecraft/client/texture/NativeImage;", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/PngMetadata;validate(Ljava/nio/ByteBuffer;)V"))
+	@WrapOperation(method = "read(Lcom/mojang/blaze3d/platform/NativeImage$Format;Ljava/nio/ByteBuffer;)Lcom/mojang/blaze3d/platform/NativeImage;", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/PngInfo;validateHeader(Ljava/nio/ByteBuffer;)V"))
 	private static void aaronMod$extendedImageTypeValidationForImagePreview(ByteBuffer buffer, Operation<Void> operation) throws IOException {
 		Class<?>[] callerClasses = StackWalker.getInstance(Option.RETAIN_CLASS_REFERENCE).walk(NativeImageMixin::findCallerClasses);
 		boolean wasCalledByImagePreview = Arrays.stream(callerClasses).anyMatch(IMAGE_PREVIEW_MATCH);
@@ -84,7 +84,7 @@ public abstract class NativeImageMixin implements NativeImageMarker {
 		}
 	}
 
-	@WrapMethod(method = "write")
+	@WrapMethod(method = "writeToChannel")
 	private boolean aaronMod$writeWithoutAlphaChannel(WritableByteChannel channel, Operation<Boolean> operation) throws IOException {
 		if (AaronModConfigManager.get().refinements.screenshots.optimizedScreenshots && this.isScreenshot) {
 			int pixels = this.width * this.height;
@@ -94,7 +94,7 @@ public abstract class NativeImageMixin implements NativeImageMarker {
 
 			//The allocation was successful
 			if (pointer != MemoryUtil.NULL) {
-				int[] originalPixels = this.copyPixelsAbgr();
+				int[] originalPixels = this.getPixelsABGR();
 
 				//Copy pixels from the original image in the ABGR format while dropping the alpha from the pixels
 				for (int i = 0; i < pixels; i++) {
@@ -116,7 +116,7 @@ public abstract class NativeImageMixin implements NativeImageMarker {
 
 					//Write the image with STB
 					if (STBImageWrite.nstbi_write_png_to_func(writeCallback.address(), 0L, this.width, cappedHeight, RGB_CHANNEL_COUNT, pointer, 0) != 0) {
-						writeCallback.throwStoredException();
+						writeCallback.throwIfException();
 
 						return true;
 					}

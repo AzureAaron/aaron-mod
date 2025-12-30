@@ -13,53 +13,53 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import net.azureaaron.mod.features.ChromaText;
 import net.azureaaron.mod.utils.render.AaronModRenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.GridWidget;
-import net.minecraft.client.gui.widget.PressableWidget;
-import net.minecraft.client.input.AbstractInput;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.layouts.GridLayout;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.InputWithModifiers;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 
 @Mixin(targets = "de.hysky.skyblocker.skyblock.item.custom.screen.name.CustomizeNameWidget")
 @Pseudo
 public abstract class SkyblockerCustomizeNameWidgetMixin {
 	@Shadow
 	@Final
-	private GridWidget grid;
+	private GridLayout grid;
 
 	@Shadow
 	protected abstract void setStyle(Style style);
 
 	@Inject(method = "addFormattingButtons", at = @At("RETURN"), require = 0)
-	private void aaronMod$addChromaButton(ImmutableList.Builder<ClickableWidget> builder, CallbackInfo ci, @Local(name = "colorButtonIndex") int colourButtonIndex) {
+	private void aaronMod$addChromaButton(ImmutableList.Builder<AbstractWidget> builder, CallbackInfo ci, @Local(name = "colorButtonIndex") int colourButtonIndex) {
 		if (ChromaText.chromaColourAvailable()) {
-			builder.add(grid.add(new ChromaColourButton(), 2, colourButtonIndex));
+			builder.add(grid.addChild(new ChromaColourButton(), 2, colourButtonIndex));
 		}
 	}
 
-	private class ChromaColourButton extends PressableWidget {
+	private class ChromaColourButton extends AbstractButton {
 
 		ChromaColourButton() {
-			super(0, 0, 16, 16, Text.literal("Chroma"));
-			this.setTooltip(Tooltip.of(getMessage()));
+			super(0, 0, 16, 16, Component.literal("Chroma"));
+			this.setTooltip(Tooltip.create(getMessage()));
 		}
 
 		@Override
-		public void onPress(AbstractInput input) {
+		public void onPress(InputWithModifiers input) {
 			SkyblockerCustomizeNameWidgetMixin.this.setStyle(Style.EMPTY.withColor(0xAA5500));
 		}
 
 		@Override
-		public void drawIcon(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-			this.drawButton(context);
+		public void renderContents(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+			this.renderDefaultSprite(context);
 			context.fill(AaronModRenderPipelines.CHROMA_GUI, this.getX() + 2, this.getY() + 2, this.getRight() - 2, this.getBottom() - 2, 0xFFAA5500);
 		}
 
 		@Override
-		protected void appendClickableNarrations(NarrationMessageBuilder builder) {}
+		protected void updateWidgetNarration(NarrationElementOutput builder) {}
 
 	}
 }

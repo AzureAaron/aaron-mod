@@ -6,12 +6,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.minecraft.client.render.entity.LightningEntityRenderer;
+import net.minecraft.client.renderer.entity.LightningBoltRenderer;
 
-@Mixin(LightningEntityRenderer.class)
+@Mixin(LightningBoltRenderer.class)
 public class LightningEntityRendererMixin {
 
-	@Inject(method = "render", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "submit", at = @At("HEAD"), cancellable = true)
 	private void aaronMod$hideLightningBolt(CallbackInfo ci) {
 		if (AaronModConfigManager.get().uiAndVisuals.world.hideLightning) ci.cancel();
 	}

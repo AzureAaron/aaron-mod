@@ -13,10 +13,10 @@ import net.azureaaron.mod.features.TextReplacer;
 import net.azureaaron.mod.screens.TextReplacerConfigScreen;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.CommandSource;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.Component;
 
 public class TextReplacerCommand {
 
@@ -25,29 +25,29 @@ public class TextReplacerCommand {
 		ClientCommandRegistrationCallback.EVENT.register(TextReplacerCommand::register);
 	}
 
-	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
 		dispatcher.register(literal("textreplacer")
 				//.executes(context -> openTextReplacerConfig(context.getSource()))
 				.then(literal("add")
 						.then(argument("replacementText", string())
 								.then(argument("textComponent", ClientTextArgumentType.text())
-										.executes(context -> addReplacement(context.getSource(), getString(context, "replacementText"), context.getArgument("textComponent", Text.class))))))
+										.executes(context -> addReplacement(context.getSource(), getString(context, "replacementText"), context.getArgument("textComponent", Component.class))))))
 				.then(literal("remove")
 						.then(argument("replacementText", string())
-								.suggests((commandSource, builder) -> CommandSource.suggestMatching(TextReplacer.getTextReplacements(), builder))
+								.suggests((commandSource, builder) -> SharedSuggestionProvider.suggest(TextReplacer.getTextReplacements(), builder))
 								.executes(context -> removeReplacement(context.getSource(), getString(context, "replacementText"))))));
 	}
 
 	@SuppressWarnings("unused")
 	private static int openTextReplacerConfig(FabricClientCommandSource source) {
-		MinecraftClient client = source.getClient();
+		Minecraft client = source.getClient();
 
-		client.send(() -> client.setScreen(new TextReplacerConfigScreen(null)));
+		client.schedule(() -> client.setScreen(new TextReplacerConfigScreen(null)));
 
 		return Command.SINGLE_SUCCESS;
 	}
 
-	private static int addReplacement(FabricClientCommandSource source, String replacementText, Text textComponent) {
+	private static int addReplacement(FabricClientCommandSource source, String replacementText, Component textComponent) {
 		/*String tcText = textComponent.getString();
 
 		if (tcText.length() != TextTransformer.deconstructAllComponents(textComponent).getSiblings().size()) {
@@ -56,7 +56,7 @@ public class TextReplacerCommand {
 		}*/
 
 		TextReplacer.addTextReplacement(replacementText, textComponent);
-		source.sendFeedback(Text.literal("Successfully added the text replacement \"" + replacementText + "\""));
+		source.sendFeedback(Component.literal("Successfully added the text replacement \"" + replacementText + "\""));
 
 		return Command.SINGLE_SUCCESS;
 	}
@@ -64,7 +64,7 @@ public class TextReplacerCommand {
 	private static int removeReplacement(FabricClientCommandSource source, String replacementText) {
 		boolean success = TextReplacer.removeTextReplacement(replacementText);
 
-		if (success) source.sendFeedback(Text.literal("Successfully removed the text replacement for \"" + replacementText + "\"")); else source.sendError(Text.literal("That text replacement never existed!"));
+		if (success) source.sendFeedback(Component.literal("Successfully removed the text replacement for \"" + replacementText + "\"")); else source.sendError(Component.literal("That text replacement never existed!"));
 
 		return Command.SINGLE_SUCCESS;
 	}

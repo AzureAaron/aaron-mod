@@ -11,40 +11,40 @@ import com.mojang.blaze3d.pipeline.RenderPipeline;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.TextReplacer;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.scoreboard.number.BlankNumberFormat;
-import net.minecraft.scoreboard.number.NumberFormat;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.StringVisitable;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.numbers.BlankFormat;
+import net.minecraft.network.chat.numbers.NumberFormat;
+import net.minecraft.resources.Identifier;
 
-@Mixin(InGameHud.class)
+@Mixin(Gui.class)
 public class InGameHudMixin {
 
-	@ModifyVariable(method = "renderScoreboardSidebar(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/scoreboard/ScoreboardObjective;)V", at = @At("STORE"))
+	@ModifyVariable(method = "displayScoreboardSidebar(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/scores/Objective;)V", at = @At("STORE"))
 	private NumberFormat aaronMod$hideScoreText(NumberFormat format) {
-		return AaronModConfigManager.get().uiAndVisuals.scoreboard.hideScore ? BlankNumberFormat.INSTANCE : format;
+		return AaronModConfigManager.get().uiAndVisuals.scoreboard.hideScore ? BlankFormat.INSTANCE : format;
 	}
 
-	@WrapOperation(method = "renderScoreboardSidebar(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/scoreboard/ScoreboardObjective;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawText(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;IIIZ)V"))
-	private void aaronMod$shadowEntryTitleAndScoreText(DrawContext context, TextRenderer textRenderer, Text text, int x, int y, int colour, boolean shadow, Operation<Integer> operation) {
+	@WrapOperation(method = "displayScoreboardSidebar(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/scores/Objective;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawString(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;IIIZ)V"))
+	private void aaronMod$shadowEntryTitleAndScoreText(GuiGraphics context, Font textRenderer, Component text, int x, int y, int colour, boolean shadow, Operation<Integer> operation) {
 		if (AaronModConfigManager.get().uiAndVisuals.scoreboard.shadowedScoreboardText) {
-			context.drawTextWithShadow(textRenderer, text, x, y, colour);
+			context.drawString(textRenderer, text, x, y, colour);
 		} else {
 			operation.call(context, textRenderer, text, x, y, colour, shadow);
 		}
 	}
 
-	@WrapOperation(method = "renderHeldItemTooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;getWidth(Lnet/minecraft/text/StringVisitable;)I"))
-	private int aaronMod$correctXValue(TextRenderer textRenderer, StringVisitable text, Operation<Integer> operation) {
-		return AaronModConfigManager.get().textReplacer.enableTextReplacer ? textRenderer.getWidth(TextReplacer.visuallyReplaceText(((MutableText) text).asOrderedText())) : operation.call(textRenderer, text);
+	@WrapOperation(method = "renderSelectedItemName", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font;width(Lnet/minecraft/network/chat/FormattedText;)I"))
+	private int aaronMod$correctXValue(Font textRenderer, FormattedText text, Operation<Integer> operation) {
+		return AaronModConfigManager.get().textReplacer.enableTextReplacer ? textRenderer.width(TextReplacer.visuallyReplaceText(((MutableComponent) text).getVisualOrderText())) : operation.call(textRenderer, text);
 	}
 
-	@Redirect(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawGuiTexture(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/util/Identifier;IIII)V"))
-	private void aaronMod$statusEffectBackgroundAlpha(DrawContext context, RenderPipeline pipeline, Identifier sprite, int x, int y, int width, int height) {
-		context.drawGuiTexture(pipeline, sprite, x, y, width, height, AaronModConfigManager.get().uiAndVisuals.overlays.statusEffectBackgroundAlpha);
+	@Redirect(method = "renderEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V"))
+	private void aaronMod$statusEffectBackgroundAlpha(GuiGraphics context, RenderPipeline pipeline, Identifier sprite, int x, int y, int width, int height) {
+		context.blitSprite(pipeline, sprite, x, y, width, height, AaronModConfigManager.get().uiAndVisuals.overlays.statusEffectBackgroundAlpha);
 	}
 }

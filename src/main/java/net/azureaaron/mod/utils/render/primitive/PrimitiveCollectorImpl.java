@@ -7,30 +7,30 @@ import net.azureaaron.mod.utils.render.FrustumUtils;
 import net.azureaaron.mod.utils.render.state.FilledBoxRenderState;
 import net.azureaaron.mod.utils.render.state.OutlinedBoxRenderState;
 import net.azureaaron.mod.utils.render.state.TextRenderState;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.render.Frustum;
-import net.minecraft.client.render.state.CameraRenderState;
-import net.minecraft.client.render.state.WorldRenderState;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Colors;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.LevelRenderState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.CommonColors;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public final class PrimitiveCollectorImpl implements PrimitiveCollector {
-	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
+	private static final Minecraft CLIENT = Minecraft.getInstance();
 	protected static final int MAX_OVERWORLD_BUILD_HEIGHT = 319;
 	@SuppressWarnings("unused")
-	private final WorldRenderState worldState;
+	private final LevelRenderState worldState;
 	private final Frustum frustum;
 	private List<FilledBoxRenderState> filledBoxStates = null;
 	private List<OutlinedBoxRenderState> outlinedBoxStates = null;
 	private List<TextRenderState> textStates = null;
 	private boolean frozen = false;
 
-	public PrimitiveCollectorImpl(WorldRenderState worldState, Frustum frustum) {
+	public PrimitiveCollectorImpl(LevelRenderState worldState, Frustum frustum) {
 		this.worldState = worldState;
 		this.frustum = frustum;
 	}
@@ -41,12 +41,12 @@ public final class PrimitiveCollectorImpl implements PrimitiveCollector {
 	}
 
 	@Override
-	public void submitFilledBox(Vec3d pos, Vec3d dimensions, float[] colourComponents, float alpha, boolean throughWalls) {
+	public void submitFilledBox(Vec3 pos, Vec3 dimensions, float[] colourComponents, float alpha, boolean throughWalls) {
 		submitFilledBox(pos.x, pos.y, pos.z, pos.x + dimensions.x, pos.y + dimensions.y, pos.z + dimensions.z, colourComponents, alpha, throughWalls);
 	}
 
 	@Override
-	public void submitFilledBox(Box box, float[] colourComponents, float alpha, boolean throughWalls) {
+	public void submitFilledBox(AABB box, float[] colourComponents, float alpha, boolean throughWalls) {
 		submitFilledBox(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, colourComponents, alpha, throughWalls);
 	}
 
@@ -77,7 +77,7 @@ public final class PrimitiveCollectorImpl implements PrimitiveCollector {
 	}
 
 	@Override
-	public void submitOutlinedBox(Box box, float[] colourComponents, float alpha, float lineWidth, boolean throughWalls) {
+	public void submitOutlinedBox(AABB box, float[] colourComponents, float alpha, float lineWidth, boolean throughWalls) {
 		submitOutlinedBox(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, colourComponents, alpha, lineWidth, throughWalls);
 	}
 
@@ -109,30 +109,30 @@ public final class PrimitiveCollectorImpl implements PrimitiveCollector {
 	}
 
 	@Override
-	public void submitText(Text text, Vec3d pos, boolean throughWalls) {
+	public void submitText(Component text, Vec3 pos, boolean throughWalls) {
 		submitText(text, pos, 1, throughWalls);
 	}
 
 	@Override
-	public void submitText(Text text, Vec3d pos, float scale, boolean throughWalls) {
+	public void submitText(Component text, Vec3 pos, float scale, boolean throughWalls) {
 		submitText(text, pos, scale, 0, throughWalls);
 	}
 
 	@Override
-	public void submitText(Text text, Vec3d pos, float scale, float yOffset, boolean throughWalls) {
-		submitText(text.asOrderedText(), pos, scale, yOffset, throughWalls);
+	public void submitText(Component text, Vec3 pos, float scale, float yOffset, boolean throughWalls) {
+		submitText(text.getVisualOrderText(), pos, scale, yOffset, throughWalls);
 	}
 
-	private void submitText(OrderedText text, Vec3d pos, float scale, float yOffset, boolean throughWalls) {
+	private void submitText(FormattedCharSequence text, Vec3 pos, float scale, float yOffset, boolean throughWalls) {
 		ensureNotFrozen();
 
 		if (this.textStates == null) {
 			this.textStates = new ArrayList<>();
 		}
 
-		TextRenderer textRenderer = CLIENT.textRenderer;
-		float xOffset = -textRenderer.getWidth(text) / 2f;
-		TextRenderer.GlyphDrawable glyphs = textRenderer.prepare(text, xOffset, yOffset, Colors.WHITE, false, false, 0);
+		Font textRenderer = CLIENT.font;
+		float xOffset = -textRenderer.width(text) / 2f;
+		Font.PreparedText glyphs = textRenderer.prepareText(text, xOffset, yOffset, CommonColors.WHITE, false, false, 0);
 
 		TextRenderState state = new TextRenderState();
 		state.glyphs = glyphs;

@@ -3,21 +3,21 @@ package net.azureaaron.mod.mixins;
 import org.spongepowered.asm.mixin.Mixin;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.PotionContentsComponent;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.PotionItem;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.PotionItem;
+import net.minecraft.world.item.alchemy.PotionContents;
 
 @Mixin(PotionItem.class)
 public class PotionItemMixin extends Item {
 
-	public PotionItemMixin(Settings settings) {
+	public PotionItemMixin(Properties settings) {
 		super(settings);
 	}
 
 	@Override
-	public boolean hasGlint(ItemStack stack) {
-		return AaronModConfigManager.get().uiAndVisuals.legacyRevival.potionGlint && (super.hasGlint(stack) || stack.getOrDefault(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent.DEFAULT).hasEffects());
+	public boolean isFoil(ItemStack stack) {
+		return AaronModConfigManager.get().uiAndVisuals.legacyRevival.potionGlint && (super.isFoil(stack) || stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).hasEffects());
 	}
 }

@@ -6,16 +6,16 @@ import org.spongepowered.asm.mixin.injection.At;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
 import net.azureaaron.mod.Keybinds;
-import net.minecraft.block.entity.SignBlockEntity;
-import net.minecraft.client.render.block.entity.AbstractSignBlockEntityRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.block.entity.state.SignBlockEntityRenderState;
+import net.minecraft.client.renderer.blockentity.AbstractSignRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.state.SignRenderState;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
 
-@Mixin(AbstractSignBlockEntityRenderer.class)
-public abstract class AbstractSignBlockEntityRendererMixin implements BlockEntityRenderer<SignBlockEntity, SignBlockEntityRenderState> {
+@Mixin(AbstractSignRenderer.class)
+public abstract class AbstractSignBlockEntityRendererMixin implements BlockEntityRenderer<SignBlockEntity, SignRenderState> {
 
-	@ModifyReturnValue(method = "shouldRenderTextOutline", at = @At("RETURN"))
+	@ModifyReturnValue(method = "isOutlineVisible", at = @At("RETURN"))
 	private static boolean aaronMod$renderGlowingTextOutlineWhenZoomedIn(boolean renderGlowingOutline) {
-		return Keybinds.zoomKeybind.isPressed() ? true : renderGlowingOutline;
+		return Keybinds.zoomKeybind.isDown() ? true : renderGlowingOutline;
 	}
 }

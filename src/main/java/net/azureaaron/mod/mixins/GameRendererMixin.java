@@ -12,28 +12,27 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-
+import com.mojang.blaze3d.platform.Window;
 import net.azureaaron.mod.Keybinds;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.SeparateInventoryGuiScale;
 import net.azureaaron.mod.features.SeparateInventoryGuiScale.SavedScaleState;
 import net.azureaaron.mod.utils.render.GuiHelper;
 import net.azureaaron.mod.utils.render.ShaderUniforms;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.render.GuiRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.client.render.fog.FogRenderer;
-import net.minecraft.client.render.fog.FogRenderer.FogType;
-import net.minecraft.client.util.Window;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.fog.FogRenderer;
+import net.minecraft.client.renderer.fog.FogRenderer.FogMode;
 
 @Mixin(value = GameRenderer.class, priority = 1100) //Inject after Fabric so that our handler also wraps the Screen API render events
 public class GameRendererMixin {
 	@Shadow
 	@Final
-	MinecraftClient client;
+	Minecraft minecraft;
 	@Shadow
 	@Final
 	private FogRenderer fogRenderer;
@@ -46,28 +45,28 @@ public class GameRendererMixin {
 
 	@ModifyReturnValue(method = "getFov", at = @At("RETURN"))
 	private float aaronMod$zoom(float fov) {
-		if (Keybinds.zoomKeybind.isPressed()) {
+		if (Keybinds.zoomKeybind.isDown()) {
 			if (!this.cameraSmoothed) {
 				this.cameraSmoothed = true;
-				this.client.options.smoothCameraEnabled = true;
+				this.minecraft.options.smoothCamera = true;
 			}
 
 			return (float) (fov * AaronModConfigManager.get().uiAndVisuals.world.zoomMultiplier);
 		} else if (this.cameraSmoothed) {
 			this.cameraSmoothed = false;
-			this.client.options.smoothCameraEnabled = false;
+			this.minecraft.options.smoothCamera = false;
 		}
 
 		return fov;
 	}
 
-	@Inject(method = "renderBlur", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gl/PostEffectProcessor;render(Lnet/minecraft/client/gl/Framebuffer;Lnet/minecraft/client/util/ObjectAllocator;)V", shift = At.Shift.AFTER))
+	@Inject(method = "processBlurEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/PostChain;process(Lcom/mojang/blaze3d/pipeline/RenderTarget;Lcom/mojang/blaze3d/resource/GraphicsResourceAllocator;)V", shift = At.Shift.AFTER))
 	private void aaronMod$afterBlurRendered(CallbackInfo ci) {
 		GuiHelper.disableBlurScissor();
 	}
 
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gl/GlobalSettings;set(IIDJLnet/minecraft/client/render/RenderTickCounter;ILnet/minecraft/client/render/Camera;Z)V", shift = At.Shift.AFTER))
-	private void aaronMod$updateShaderUniforms(CallbackInfo ci, @Local(argsOnly = true) RenderTickCounter tickCounter) {
+	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlobalSettingsUniform;update(IIDJLnet/minecraft/client/DeltaTracker;ILnet/minecraft/client/Camera;Z)V", shift = At.Shift.AFTER))
+	private void aaronMod$updateShaderUniforms(CallbackInfo ci, @Local(argsOnly = true) DeltaTracker tickCounter) {
 		ShaderUniforms.updateShaderUniforms(tickCounter);
 	}
 
@@ -76,28 +75,28 @@ public class GameRendererMixin {
 		ShaderUniforms.close();
 	}
 
-	@WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;renderWithTooltip(Lnet/minecraft/client/gui/DrawContext;IIF)V"))
-	private void aaronMod$separateGUIScaleForScreens(Screen screen, DrawContext context, int mouseX, int mouseY, float delta, Operation<Void> operation) {
+	@WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;renderWithTooltipAndSubtitles(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"))
+	private void aaronMod$separateGUIScaleForScreens(Screen screen, GuiGraphics context, int mouseX, int mouseY, float delta, Operation<Void> operation) {
 		if (SeparateInventoryGuiScale.isEnabled(screen)) {
 			//Draw all stuff beforehand so that we don't interfere with the positioning or anything
 			//This must be done here since the projection matrix inside by this method indirectly (down the chain of calls it performs)
-			this.guiRenderer.render(this.fogRenderer.getFogBuffer(FogType.NONE));
+			this.guiRenderer.render(this.fogRenderer.getBuffer(FogMode.NONE));
 
-			Window window = this.client.getWindow();
+			Window window = this.minecraft.getWindow();
 			SavedScaleState state = SavedScaleState.create(window).adjust();
 
 			if (!screen.wasResized()) {
-				screen.resize(window.getScaledWidth(), window.getScaledHeight());
+				screen.resize(window.getGuiScaledWidth(), window.getGuiScaledHeight());
 				screen.markResized(true);
 			}
 
-			int newMouseX = (int) this.client.mouse.getScaledX(window);
-			int newMouseY = (int) this.client.mouse.getScaledY(window);
+			int newMouseX = (int) this.minecraft.mouseHandler.getScaledXPos(window);
+			int newMouseY = (int) this.minecraft.mouseHandler.getScaledYPos(window);
 
 			//Render the screen, then draw everything that the screen drew (if we don't then things like tooltip positions get messed up)
 			operation.call(screen, context, newMouseX, newMouseY, delta);
 
-			this.guiRenderer.render(this.fogRenderer.getFogBuffer(FogType.NONE));
+			this.guiRenderer.render(this.fogRenderer.getBuffer(FogMode.NONE));
 
 			//Reset State
 			state.reset();

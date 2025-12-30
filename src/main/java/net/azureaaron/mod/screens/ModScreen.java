@@ -2,37 +2,37 @@ package net.azureaaron.mod.screens;
 
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ConfirmLinkScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.GridWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.client.gui.widget.ThreePartsLayoutWidget;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.StringVisitable;
-import net.minecraft.text.Text;
-import net.minecraft.util.Colors;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Language;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.layouts.GridLayout;
+import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
+import net.minecraft.client.gui.screens.ConfirmLinkScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.CommonColors;
+import net.minecraft.util.FormattedCharSequence;
 
 public class ModScreen extends Screen {
 	public static final int SPACING = 8;
 	public static final int BUTTON_WIDTH = 210;
 	public static final int HALF_BUTTON_WIDTH = 101; //Same as (210 - 8) / 2
-	private static final Text TITLE = Text.literal("Aaron's Mod " + Main.MOD_VERSION);
-	private static final Identifier ICON = Identifier.of(Main.NAMESPACE, "icon.png");
-	private static final Text CONFIGURATION_TEXT = Text.literal("Config...");
-	private static final Text SOURCE_TEXT = Text.literal("Source");
-	private static final Text REPORT_BUGS_TEXT = Text.translatable("menu.reportBugs");
-	private static final Text MODRINTH_TEXT = Text.literal("Modrinth");
-	private static final Text DISCORD_TEXT = Text.literal("Discord");
-	private static final Text THANKS = Text.literal("Thanks for using the mod!");
+	private static final Component TITLE = Component.literal("Aaron's Mod " + Main.MOD_VERSION);
+	private static final Identifier ICON = Identifier.fromNamespaceAndPath(Main.NAMESPACE, "icon.png");
+	private static final Component CONFIGURATION_TEXT = Component.literal("Config...");
+	private static final Component SOURCE_TEXT = Component.literal("Source");
+	private static final Component REPORT_BUGS_TEXT = Component.translatable("menu.reportBugs");
+	private static final Component MODRINTH_TEXT = Component.literal("Modrinth");
+	private static final Component DISCORD_TEXT = Component.literal("Discord");
+	private static final Component THANKS = Component.literal("Thanks for using the mod!");
 	private final Screen parent;
-	private final ThreePartsLayoutWidget layout = new ThreePartsLayoutWidget(this);
+	private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this);
 
 	public ModScreen(Screen parent) {
 		super(TITLE);
@@ -41,77 +41,77 @@ public class ModScreen extends Screen {
 
 	@Override
 	protected void init() {
-		this.layout.addHeader(new IconTextWidget(this.getTitle(), this.textRenderer, ICON));
+		this.layout.addToHeader(new IconTextWidget(this.getTitle(), this.font, ICON));
 
-		GridWidget gridWidget = this.layout.addBody(new GridWidget()).setSpacing(SPACING);
-		gridWidget.getMainPositioner().alignHorizontalCenter();
-		GridWidget.Adder adder = gridWidget.createAdder(2);
+		GridLayout gridWidget = this.layout.addToContents(new GridLayout()).spacing(SPACING);
+		gridWidget.defaultCellSetting().alignHorizontallyCenter();
+		GridLayout.RowHelper adder = gridWidget.createRowHelper(2);
 
-		adder.add(ButtonWidget.builder(CONFIGURATION_TEXT, button -> this.openConfig()).width(BUTTON_WIDTH).build(), 2);
-		adder.add(ButtonWidget.builder(SOURCE_TEXT, ConfirmLinkScreen.opening(this, "https://github.com/AzureAaron/aaron-mod")).width(HALF_BUTTON_WIDTH).build());
-		adder.add(ButtonWidget.builder(REPORT_BUGS_TEXT, ConfirmLinkScreen.opening(this, "https://github.com/AzureAaron/aaron-mod/issues")).width(HALF_BUTTON_WIDTH).build());
-		adder.add(ButtonWidget.builder(MODRINTH_TEXT, ConfirmLinkScreen.opening(this, "https://modrinth.com/mod/aaron-mod")).width(HALF_BUTTON_WIDTH).build());
-		adder.add(ButtonWidget.builder(DISCORD_TEXT, ConfirmLinkScreen.opening(this, "https://discord.gg/CQH9Je8qJ9")).width(HALF_BUTTON_WIDTH).build());
-		adder.add(ButtonWidget.builder(ScreenTexts.DONE, button -> this.close()).width(BUTTON_WIDTH).build(), 2);
+		adder.addChild(Button.builder(CONFIGURATION_TEXT, button -> this.openConfig()).width(BUTTON_WIDTH).build(), 2);
+		adder.addChild(Button.builder(SOURCE_TEXT, ConfirmLinkScreen.confirmLink(this, "https://github.com/AzureAaron/aaron-mod")).width(HALF_BUTTON_WIDTH).build());
+		adder.addChild(Button.builder(REPORT_BUGS_TEXT, ConfirmLinkScreen.confirmLink(this, "https://github.com/AzureAaron/aaron-mod/issues")).width(HALF_BUTTON_WIDTH).build());
+		adder.addChild(Button.builder(MODRINTH_TEXT, ConfirmLinkScreen.confirmLink(this, "https://modrinth.com/mod/aaron-mod")).width(HALF_BUTTON_WIDTH).build());
+		adder.addChild(Button.builder(DISCORD_TEXT, ConfirmLinkScreen.confirmLink(this, "https://discord.gg/CQH9Je8qJ9")).width(HALF_BUTTON_WIDTH).build());
+		adder.addChild(Button.builder(CommonComponents.GUI_DONE, button -> this.onClose()).width(BUTTON_WIDTH).build(), 2);
 
-		this.layout.addFooter(new TextWidget(THANKS, this.textRenderer));
-		this.layout.refreshPositions();
-		this.layout.forEachChild(this::addDrawableChild);
+		this.layout.addToFooter(new StringWidget(THANKS, this.font));
+		this.layout.arrangeElements();
+		this.layout.visitWidgets(this::addRenderableWidget);
 	}
 
 	@Override
-	protected void refreshWidgetPositions() {
-		this.layout.refreshPositions();
+	protected void repositionElements() {
+		this.layout.arrangeElements();
 	}
 
 	private void openConfig() {
-		this.client.setScreen(AaronModConfigManager.createGui(this));
+		this.minecraft.setScreen(AaronModConfigManager.createGui(this));
 	}
 
 	@Override
-	public void close() {
-		this.client.setScreen(parent);
+	public void onClose() {
+		this.minecraft.setScreen(parent);
 	}
 
 	@Override
-	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+	public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
 		super.render(context, mouseX, mouseY, delta);
 	}
 
-	private static class IconTextWidget extends TextWidget {
+	private static class IconTextWidget extends StringWidget {
 		private final Identifier icon;
 
-		IconTextWidget(Text message, TextRenderer textRenderer, Identifier icon) {
+		IconTextWidget(Component message, Font textRenderer, Identifier icon) {
 			super(message, textRenderer);
 			this.icon = icon;
 		}
 
 		@Override
-		public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-			Text text = this.getMessage();
-			TextRenderer textRenderer = this.getTextRenderer();
+		public void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
+			Component text = this.getMessage();
+			Font textRenderer = this.getFont();
 
 			int width = this.getWidth();
-			int textWidth = textRenderer.getWidth(text);
+			int textWidth = textRenderer.width(text);
 			float horizontalAlignment = 0.5f; // default
 			//17 = (32 + 2) / 2 • 32 + 2 is the width of the icon + spacing between icon and text
 			int x = this.getX() + 17 + Math.round(horizontalAlignment * (float) (width - textWidth));
-			int y = this.getY() + (this.getHeight() - textRenderer.fontHeight) / 2;
-			OrderedText orderedText = textWidth > width ? this.trim(text, width) : text.asOrderedText();
+			int y = this.getY() + (this.getHeight() - textRenderer.lineHeight) / 2;
+			FormattedCharSequence orderedText = textWidth > width ? this.trim(text, width) : text.getVisualOrderText();
 
 			int iconX = x - 34;
 			int iconY = y - 13;
 
-			context.drawTextWithShadow(textRenderer, orderedText, x, y, Colors.WHITE);
-			context.drawTexture(RenderPipelines.GUI_TEXTURED, this.icon, iconX, iconY, 0, 0, 32, 32, 32, 32);
+			context.drawString(textRenderer, orderedText, x, y, CommonColors.WHITE);
+			context.blit(RenderPipelines.GUI_TEXTURED, this.icon, iconX, iconY, 0, 0, 32, 32, 32, 32);
 		}
 
 		//Copied from parent class
-		private OrderedText trim(Text text, int width) {
-			TextRenderer textRenderer = this.getTextRenderer();
-			StringVisitable stringVisitable = textRenderer.trimToWidth(text, width - textRenderer.getWidth(ScreenTexts.ELLIPSIS));
+		private FormattedCharSequence trim(Component text, int width) {
+			Font textRenderer = this.getFont();
+			FormattedText stringVisitable = textRenderer.substrByWidth(text, width - textRenderer.width(CommonComponents.ELLIPSIS));
 
-			return Language.getInstance().reorder(StringVisitable.concat(stringVisitable, ScreenTexts.ELLIPSIS));
+			return Language.getInstance().getVisualOrder(FormattedText.composite(stringVisitable, CommonComponents.ELLIPSIS));
 		}
 	}
 }

@@ -12,9 +12,9 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.sound.MusicTracker;
+import net.minecraft.client.sounds.MusicManager;
 
-@Mixin(MusicTracker.class)
+@Mixin(MusicManager.class)
 public class MusicTrackerMixin {
 	@Unique
 	private static final String SCREEN_TICK = FabricLoader.getInstance().getMappingResolver().mapMethodName("intermediary", "net.minecraft.class_437", "method_25393", "()V");
@@ -26,7 +26,7 @@ public class MusicTrackerMixin {
 				.toArray(String[]::new);
 	}
 
-	@ModifyReturnValue(method = "method_75844", at = @At("RETURN"))
+	@ModifyReturnValue(method = "canReplace", at = @At("RETURN"))
 	private static boolean aaronMod$dontReplaceMusicSometimes(boolean original) {
 		//Walking the stack is done to ensure that we only return false when Screen#tick isn't the reason for this method invocation
 		String[] callerMethods = StackWalker.getInstance().walk(MusicTrackerMixin::findCallerMethods);

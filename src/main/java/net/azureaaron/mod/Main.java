@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
+import com.mojang.blaze3d.platform.InputConstants;
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.config.datafixer.ConfigDataFixer;
@@ -17,10 +17,9 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.SharedConstants;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.Identifier;
 
 public class Main implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("aaron-mod");
@@ -28,10 +27,10 @@ public class Main implements ClientModInitializer {
 	public static final boolean OPTIFABRIC_LOADED = FabricLoader.getInstance().isModLoaded("optifabric");
 	public static final ModContainer MOD_CONTAINER = FabricLoader.getInstance().getModContainer("aaron-mod").get();
 	public static final String MOD_VERSION = MOD_CONTAINER.getMetadata().getVersion().getFriendlyString();
-	public static final String MINECRAFT_VERSION = SharedConstants.getGameVersion().name();
+	public static final String MINECRAFT_VERSION = SharedConstants.getCurrentVersion().name();
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	public static final Gson GSON_PLAIN = new GsonBuilder().create();
-	public static final KeyBinding.Category KEYBINDING_CATEGORY = KeyBinding.Category.create(Identifier.of(NAMESPACE, "main"));
+	public static final KeyMapping.Category KEYBINDING_CATEGORY = KeyMapping.Category.register(Identifier.fromNamespaceAndPath(NAMESPACE, "main"));
 
 	@Override
 	public void onInitializeClient() {
@@ -44,7 +43,7 @@ public class Main implements ClientModInitializer {
 		init();
 	}
 
-	private static void tick(MinecraftClient client) {
+	private static void tick(Minecraft client) {
 		Scheduler.INSTANCE.tick();
 	}
 
@@ -59,10 +58,10 @@ public class Main implements ClientModInitializer {
 	@Init
 	public static void registerKeybindings() {
 		//I used to cheat the translation key system but now I abide by it :)
-		Keybinds.zoomKeybind = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.aaron-mod.zoom", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_C, KEYBINDING_CATEGORY));
+		Keybinds.zoomKeybind = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.aaron-mod.zoom", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_C, KEYBINDING_CATEGORY));
 	}
 
 	public static Identifier id(String path) {
-		return Identifier.of(NAMESPACE, path);
+		return Identifier.fromNamespaceAndPath(NAMESPACE, path);
 	}
 }

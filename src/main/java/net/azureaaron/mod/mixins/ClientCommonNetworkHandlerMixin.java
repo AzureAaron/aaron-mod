@@ -6,14 +6,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.azureaaron.mod.utils.ServerTickCounter;
-import net.minecraft.client.network.ClientCommonNetworkHandler;
-import net.minecraft.network.packet.s2c.common.CommonPingS2CPacket;
+import net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl;
+import net.minecraft.network.protocol.common.ClientboundPingPacket;
 
-@Mixin(ClientCommonNetworkHandler.class)
+@Mixin(ClientCommonPacketListenerImpl.class)
 public class ClientCommonNetworkHandlerMixin {
 
-	@Inject(method = "onPing", at = @At("RETURN"))
-	private void aaronMod$onServerTick(CommonPingS2CPacket packet, CallbackInfo ci) {
+	@Inject(method = "handlePing", at = @At("RETURN"))
+	private void aaronMod$onServerTick(ClientboundPingPacket packet, CallbackInfo ci) {
 		ServerTickCounter.INSTANCE.onServerTick(packet);
 	}
 }

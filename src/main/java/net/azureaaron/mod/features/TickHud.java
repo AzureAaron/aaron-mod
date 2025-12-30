@@ -8,14 +8,14 @@ import net.azureaaron.mod.utils.ServerTickCounter;
 import net.azureaaron.mod.utils.render.hud.TextHudElement;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 public class TickHud {
-	private static final Identifier ID = Identifier.of(Main.NAMESPACE, "ticks");
+	private static final Identifier ID = Identifier.fromNamespaceAndPath(Main.NAMESPACE, "ticks");
 	public static final int DEFAULT_X = 50;
 	private static final TextHudElement HUD_ELEMENT = new TextHudElement(
-			Text.of("20 tps"),
+			Component.nullToEmpty("20 tps"),
 			TickHud::getTpsText,
 			AaronModConfigManager.get().uiAndVisuals.tpsHud,
 			DEFAULT_X,
@@ -27,10 +27,10 @@ public class TickHud {
 		HudElementRegistry.attachElementAfter(VanillaHudElements.STATUS_EFFECTS, ID, HUD_ELEMENT::renderHud);
 	}
 
-	private static Text getTpsText() {
+	private static Component getTpsText() {
 		double tickRate = ServerTickCounter.INSTANCE.getTickRate();
 		String formattedTickRate = tickRate > 0 ? Formatters.FLOAT_NUMBERS.format(tickRate) : "?";
 
-		return Text.of(formattedTickRate + " tps");
+		return Component.nullToEmpty(formattedTickRate + " tps");
 	}
 }

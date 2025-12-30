@@ -6,17 +6,16 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyReceiver;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gl.UniformType;
+import com.mojang.blaze3d.shaders.UniformType;
+import net.minecraft.client.renderer.RenderPipelines;
 
 @Mixin(RenderPipelines.class)
 public class RenderPipelinesMixin {
 
 	@ModifyReceiver(method = "<clinit>", at = {
-			@At(value = "net.azureaaron.mod.utils.render.RenderPipelineInjectionPoint", target = "Lnet/minecraft/client/gl/RenderPipelines;RENDERTYPE_TEXT:Lcom/mojang/blaze3d/pipeline/RenderPipeline;", opcode = Opcodes.PUTSTATIC),
-			@At(value = "net.azureaaron.mod.utils.render.RenderPipelineInjectionPoint", target = "Lnet/minecraft/client/gl/RenderPipelines;RENDERTYPE_TEXT_POLYGON_OFFSET:Lcom/mojang/blaze3d/pipeline/RenderPipeline;", opcode = Opcodes.PUTSTATIC),
-			@At(value = "net.azureaaron.mod.utils.render.RenderPipelineInjectionPoint", target = "Lnet/minecraft/client/gl/RenderPipelines;GUI_TEXT:Lcom/mojang/blaze3d/pipeline/RenderPipeline;", opcode = Opcodes.PUTSTATIC)
+			@At(value = "net.azureaaron.mod.utils.render.RenderPipelineInjectionPoint", target = "Lnet/minecraft/client/renderer/RenderPipelines;TEXT:Lcom/mojang/blaze3d/pipeline/RenderPipeline;", opcode = Opcodes.PUTSTATIC),
+			@At(value = "net.azureaaron.mod.utils.render.RenderPipelineInjectionPoint", target = "Lnet/minecraft/client/renderer/RenderPipelines;TEXT_POLYGON_OFFSET:Lcom/mojang/blaze3d/pipeline/RenderPipeline;", opcode = Opcodes.PUTSTATIC),
+			@At(value = "net.azureaaron.mod.utils.render.RenderPipelineInjectionPoint", target = "Lnet/minecraft/client/renderer/RenderPipelines;GUI_TEXT:Lcom/mojang/blaze3d/pipeline/RenderPipeline;", opcode = Opcodes.PUTSTATIC)
 			}, require = 3)
 	private static RenderPipeline.Builder aaronMod$injectChromaShaderProperties(RenderPipeline.Builder builder) {
 		return builder.withUniform("Globals", UniformType.UNIFORM_BUFFER)

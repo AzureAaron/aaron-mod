@@ -2,7 +2,7 @@ package net.azureaaron.mod.config.configs;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 public class ParticlesConfig {
 	public Object2BooleanOpenHashMap<Identifier> states = new Object2BooleanOpenHashMap<>();

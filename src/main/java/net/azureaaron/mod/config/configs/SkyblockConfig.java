@@ -3,7 +3,7 @@ package net.azureaaron.mod.config.configs;
 import java.awt.Color;
 
 import net.azureaaron.mod.utils.Functions;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
 
 public class SkyblockConfig {
 	public Commands commands = new Commands();
@@ -38,7 +38,7 @@ public class SkyblockConfig {
 
 		public boolean showGoodEnchants = true;
 
-		public Color goodEnchantsColour = new Color(Formatting.GOLD.getColorValue());
+		public Color goodEnchantsColour = new Color(ChatFormatting.GOLD.getColor());
 	}
 
 	public enum RainbowMode {

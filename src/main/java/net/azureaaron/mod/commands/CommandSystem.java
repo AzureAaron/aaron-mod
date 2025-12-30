@@ -17,10 +17,10 @@ import net.azureaaron.mod.utils.Http;
 import net.azureaaron.mod.utils.Messages;
 import net.azureaaron.mod.utils.Skyblock;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.session.Session;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.User;
+import net.minecraft.client.gui.Font;
+import net.minecraft.network.chat.Component;
 
 /**
  * Provides core functionality for the mod's commands.
@@ -29,20 +29,20 @@ import net.minecraft.text.Text;
  */
 public class CommandSystem {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	private static final Supplier<TextRenderer> TEXT_RENDERER = () -> MinecraftClient.getInstance().textRenderer;
+	private static final Supplier<Font> TEXT_RENDERER = () -> Minecraft.getInstance().font;
 
 	/**
 	 * Ensures that "dummy" players aren't included in command suggestions
 	 */
 	public static String[] getPlayerSuggestions(FabricClientCommandSource source) {
-		return source.getPlayerNames().stream().filter(playerName -> playerName.matches("[A-Za-z0-9_]+")).toArray(String[]::new);
+		return source.getOnlinePlayerNames().stream().filter(playerName -> playerName.matches("[A-Za-z0-9_]+")).toArray(String[]::new);
 	}
 
-	public static String getEndSpaces(Text text) {
-		TextRenderer textRenderer = TEXT_RENDERER.get();
+	public static String getEndSpaces(Component text) {
+		Font textRenderer = TEXT_RENDERER.get();
 
-		int spaceWidth = textRenderer.getWidth(" ");
-		int textWidth = textRenderer.getWidth(TextReplacer.visuallyReplaceText(text.asOrderedText()));
+		int spaceWidth = textRenderer.width(" ");
+		int textWidth = textRenderer.width(TextReplacer.visuallyReplaceText(text.getVisualOrderText()));
 		int spacesNeeded = (int) Math.ceil((double) textWidth / (double) spaceWidth);
 
 		String spaces = "";
@@ -58,9 +58,9 @@ public class CommandSystem {
 	 * Handles the command for the current player
 	 */
 	public static int handleSelf4Skyblock(SkyblockCommand command, FabricClientCommandSource source) {
-		Session session = source.getClient().getSession();
+		User session = source.getClient().getUser();
 
-		return handleSkyblockCommand(command, source, new CommandPlayerData(session.getUsername(), session.getUuidOrNull().toString().replaceAll("-", "")));
+		return handleSkyblockCommand(command, source, new CommandPlayerData(session.getName(), session.getProfileId().toString().replaceAll("-", "")));
 	}
 
 	/**
@@ -125,10 +125,10 @@ public class CommandSystem {
 	}
 
 	public static int handleSelf4Vanilla(VanillaCommand command, FabricClientCommandSource source) {
-		Session session = source.getClient().getSession();
+		User session = source.getClient().getUser();
 
 		try {
-			command.print(source, session.getUsername(), session.getUuidOrNull().toString().replaceAll("-", ""));
+			command.print(source, session.getName(), session.getProfileId().toString().replaceAll("-", ""));
 		} catch (Throwable t) {
 			source.sendError(Messages.UNKNOWN_ERROR.get());
 			LOGGER.error("[Aaron's Mod] Encountered an exception while dispatching a vanilla command! Command: {}", command.getClass().getName(), t);

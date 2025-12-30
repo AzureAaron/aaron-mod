@@ -11,8 +11,8 @@ import net.azureaaron.mod.screens.ModScreen;
 import net.azureaaron.mod.utils.render.hud.HudElementConfigScreen;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.client.Minecraft;
+import net.minecraft.commands.CommandBuildContext;
 
 public class ModScreenCommand {
 
@@ -21,7 +21,7 @@ public class ModScreenCommand {
 		ClientCommandRegistrationCallback.EVENT.register(ModScreenCommand::register);
 	}
 
-	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
 		dispatcher.register(literal("aaronmod")
 				.executes(context -> handleOpenModScreen(context.getSource()))
 				.then(literal("config")
@@ -33,22 +33,22 @@ public class ModScreenCommand {
 	}
 
 	private static int handleOpenModScreen(FabricClientCommandSource source) {
-		MinecraftClient client = source.getClient();
-		client.send(() -> client.setScreen(new ModScreen(null)));
+		Minecraft client = source.getClient();
+		client.schedule(() -> client.setScreen(new ModScreen(null)));
 
 		return Command.SINGLE_SUCCESS;
 	}
 
 	private static int handleOpenConfig(FabricClientCommandSource source) {
-		MinecraftClient client = source.getClient();
-		client.send(() -> client.setScreen(AaronModConfigManager.createGui(null)));
+		Minecraft client = source.getClient();
+		client.schedule(() -> client.setScreen(AaronModConfigManager.createGui(null)));
 
 		return Command.SINGLE_SUCCESS;
 	}
 
 	private static int handleOpenHudConfig(FabricClientCommandSource source) {
-		MinecraftClient client = source.getClient();
-		client.send(() -> client.setScreen(new HudElementConfigScreen(null)));
+		Minecraft client = source.getClient();
+		client.schedule(() -> client.setScreen(new HudElementConfigScreen(null)));
 
 		return Command.SINGLE_SUCCESS;
 	}

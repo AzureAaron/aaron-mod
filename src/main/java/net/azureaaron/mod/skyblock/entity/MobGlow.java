@@ -8,10 +8,10 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.azureaaron.mod.annotations.Init;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
-import net.minecraft.client.render.entity.state.EntityRenderState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.decoration.ArmorStand;
 
 public class MobGlow {
 	/**
@@ -86,7 +86,7 @@ public class MobGlow {
 	/*
 	 * Useful for checking entity name armour stands.
 	 */
-	public static List<ArmorStandEntity> getNearbyArmourStands(Entity entity) {
-		return entity.getEntityWorld().getEntitiesByClass(ArmorStandEntity.class, entity.getBoundingBox().expand(0, 2, 0), EntityPredicates.NOT_MOUNTED);
+	public static List<ArmorStand> getNearbyArmourStands(Entity entity) {
+		return entity.level().getEntitiesOfClass(ArmorStand.class, entity.getBoundingBox().inflate(0, 2, 0), EntitySelector.ENTITY_NOT_BEING_RIDDEN);
 	}
 }

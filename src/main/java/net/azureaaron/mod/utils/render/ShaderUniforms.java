@@ -3,13 +3,13 @@ package net.azureaaron.mod.utils.render;
 import com.mojang.blaze3d.buffers.GpuBuffer;
 
 import net.azureaaron.mod.utils.Scheduler;
-import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.client.DeltaTracker;
 
 public class ShaderUniforms {
 	private static final ChromaSettings CHROMA_SETTINGS = new ChromaSettings();
 
-	public static void updateShaderUniforms(RenderTickCounter tickCounter) {
-		float ticks = Scheduler.INSTANCE.getCurrentTick() + tickCounter.getTickProgress(true);
+	public static void updateShaderUniforms(DeltaTracker tickCounter) {
+		float ticks = Scheduler.INSTANCE.getCurrentTick() + tickCounter.getGameTimeDeltaPartialTick(true);
 
 		CHROMA_SETTINGS.set(ticks);
 	}

@@ -5,12 +5,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.minecraft.client.texture.PlayerSkinTextureDownloader;
+import net.minecraft.client.renderer.texture.SkinTextureDownloader;
 
-@Mixin(PlayerSkinTextureDownloader.class)
+@Mixin(SkinTextureDownloader.class)
 public class PlayerSkinTextureDownloaderMixin {
 
-	@ModifyVariable(method = "download", at = @At("LOAD"), argsOnly = true, ordinal = 0)
+	@ModifyVariable(method = "downloadSkin", at = @At("LOAD"), argsOnly = true, ordinal = 0)
 	private static String aaronMod$secureSkinDownloads(String uri) {
 		if (AaronModConfigManager.get().refinements.secureSkinDownloads) {
 			return uri.replace("http://", "https://");

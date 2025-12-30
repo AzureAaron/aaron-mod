@@ -11,12 +11,12 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.ExtendedHolidays;
-import net.minecraft.client.data.ItemModels;
+import net.minecraft.client.data.models.model.ItemModelUtils;
 
-@Mixin(ItemModels.class)
+@Mixin(ItemModelUtils.class)
 public class ItemModelsMixin {
 
-	@ModifyExpressionValue(method = "christmasSelect", at = @At(value = "FIELD", target = "Lnet/minecraft/util/Holidays;CHRISTMAS_PERIOD:Ljava/util/List;", opcode = Opcodes.GETSTATIC))
+	@ModifyExpressionValue(method = "isXmas", at = @At(value = "FIELD", target = "Lnet/minecraft/util/SpecialDates;CHRISTMAS_RANGE:Ljava/util/List;", opcode = Opcodes.GETSTATIC))
 	private static List<MonthDay> aaronMod$christmasSeason(List<MonthDay> original) {
 		return AaronModConfigManager.get().uiAndVisuals.seasonal.decemberChristmasChests ? ExtendedHolidays.CHRISTMAS_SEASON : original;
 	}

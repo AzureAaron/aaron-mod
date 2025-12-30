@@ -3,13 +3,11 @@ package net.azureaaron.mod.utils;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
-
+import net.minecraft.ChatFormatting;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import net.minecraft.util.Formatting;
 
 /**
  * This class is used to cache & save values that are related to the mod's operations.<br><br>
@@ -80,7 +78,7 @@ public class Cache {
 			//Populate skyblock items cache
 			try {
 				for (JsonElement item : itemsData) {
-					String itemName = Formatting.strip(item.getAsJsonObject().get("name").getAsString());
+					String itemName = ChatFormatting.stripFormatting(item.getAsJsonObject().get("name").getAsString());
 					String itemId = item.getAsJsonObject().get("id").getAsString();
 
 					//Exclude items that aren't salable

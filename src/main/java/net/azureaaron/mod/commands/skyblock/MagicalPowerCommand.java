@@ -53,21 +53,21 @@ import net.azureaaron.mod.utils.Skyblock;
 import net.azureaaron.mod.utils.render.RenderHelper;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.CommandSource;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Util;
+import net.minecraft.world.item.ItemStack;
 
 public class MagicalPowerCommand extends SkyblockCommand {
 	private static final Command INSTANCE = new MagicalPowerCommand();
 	private static final Logger LOGGER = LogUtils.getLogger();
-	private static final Supplier<MutableText> NO_ACCESSORY_BAG_DATA = () -> Constants.PREFIX.get().append(Text.literal("This profile doesn't have any accessory bag data!").formatted(Formatting.RED));
-	private static final Supplier<MutableText> NBT_PARSING_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while trying to parse NBT!").formatted(Formatting.RED)); //TODO make constant
+	private static final Supplier<MutableComponent> NO_ACCESSORY_BAG_DATA = () -> Constants.PREFIX.get().append(Component.literal("This profile doesn't have any accessory bag data!").withStyle(ChatFormatting.RED));
+	private static final Supplier<MutableComponent> NBT_PARSING_ERROR = () -> Constants.PREFIX.get().append(Component.literal("There was an error while trying to parse NBT!").withStyle(ChatFormatting.RED)); //TODO make constant
 	private static final Pattern ACCESSORY_RARITY_PATTERN = Pattern.compile("(?:a )?(?<rarity>(?:VERY )?[A-Za-z]+) (?:DUNGEON )?(?:AC|HAT)CESSORY(?: a)?");
 	private static final IntToDoubleFunction STATS_MULT = magicalPower -> 29.97d * Math.pow(Math.log(Math.fma(0.0019d, magicalPower, 1d)), 1.2d);
 	private static final Object2IntOpenHashMap<String> RARITY_TIER_MAP = Util.make(new Object2IntOpenHashMap<>(), map -> {
@@ -87,17 +87,17 @@ public class MagicalPowerCommand extends SkyblockCommand {
 	}
 
 	@Override
-	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
 		dispatcher.register(literal("magicalpower")
 				.executes(context -> CommandSystem.handleSelf4Skyblock(this, context.getSource()))
 				.then(argument("player", word())
-						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
+						.suggests((context, builder) -> SharedSuggestionProvider.suggest(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
 						.executes(context -> CommandSystem.handlePlayer4Skyblock(this, context.getSource(), getString(context, "player")))));
 
 		dispatcher.register(literal("mp")
 				.executes(context -> CommandSystem.handleSelf4Skyblock(this, context.getSource()))
 				.then(argument("player", word())
-						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
+						.suggests((context, builder) -> SharedSuggestionProvider.suggest(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
 						.executes(context -> CommandSystem.handlePlayer4Skyblock(this, context.getSource(), getString(context, "player")))));
 	}
 
@@ -140,13 +140,13 @@ public class MagicalPowerCommand extends SkyblockCommand {
 
 		//Loop through the accessories
 		for (ItemStack stack : accessories) {
-			if (!stack.contains(DataComponentTypes.LORE)) continue; //Item is probably not an accessory
+			if (!stack.has(DataComponents.LORE)) continue; //Item is probably not an accessory
 
 			String itemId = ItemUtils.getId(stack);
 
 			//Determine the rarity - iterate backwards for efficiency
-			for (Text line : stack.get(DataComponentTypes.LORE).lines().reversed()) {
-				String loreLine = Formatting.strip(line.getString()); //Strip formatting again just in case it fails in original parsing
+			for (Component line : stack.get(DataComponents.LORE).lines().reversed()) {
+				String loreLine = ChatFormatting.stripFormatting(line.getString()); //Strip formatting again just in case it fails in original parsing
 				Matcher matcher = ACCESSORY_RARITY_PATTERN.matcher(loreLine);
 
 				if (!itemId.isBlank() && matcher.matches()) {
@@ -318,7 +318,7 @@ public class MagicalPowerCommand extends SkyblockCommand {
 		//Tunings
 		//Having Map<String, JsonElement> be the type used to break command+click inspection for some reason
 		Map<String, JsonElement> tuningData = accessoryBagStorage.getAsJsonObject("tuning").getAsJsonObject("slot_0").asMap();
-		List<Text> tunings = tuningData.entrySet().stream().filter(entry -> entry.getValue().getAsInt() != 0)
+		List<Component> tunings = tuningData.entrySet().stream().filter(entry -> entry.getValue().getAsInt() != 0)
 				.map(entry -> formatTuningStat(entry.getKey(), entry.getValue().getAsInt()))
 				.collect(Collectors.toList());
 
@@ -330,70 +330,70 @@ public class MagicalPowerCommand extends SkyblockCommand {
 		Object2FloatOpenHashMap<String> finalBonus = bonus;
 
 		RenderHelper.runOnRenderThread(() -> {
-			Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
-					.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
-					.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
-					.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
-					.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
+			Component startText = Component.literal("     ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
+					.append(Component.literal("[- ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
+					.append(Component.literal(name).withStyle(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
+					.append(Component.literal(" -]").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
+					.append(Component.literal("     ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt())).withStyle(style -> style.withStrikethrough(true))));
 
 			source.sendFeedback(startText);
 
-			source.sendFeedback(Text.literal("Magical Power » ").withColor(colourProfile.infoColour.getAsInt())
-					.append(Text.literal(Formatters.INTEGER_NUMBERS.format(finalMagicalPower)).withColor(colourProfile.highlightColour.getAsInt())));
-			source.sendFeedback(Text.literal("Selected Power » " + Functions.titleCase(selectedPower)).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Component.literal("Magical Power » ").withColor(colourProfile.infoColour.getAsInt())
+					.append(Component.literal(Formatters.INTEGER_NUMBERS.format(finalMagicalPower)).withColor(colourProfile.highlightColour.getAsInt())));
+			source.sendFeedback(Component.literal("Selected Power » " + Functions.titleCase(selectedPower)).withColor(colourProfile.infoColour.getAsInt()));
 
 			//If the power data isn't null then print out the stats
 			if (powerData != null) {
-				source.sendFeedback(Text.literal(""));
+				source.sendFeedback(Component.literal(""));
 
 				finalStats.object2FloatEntrySet().stream()
 						.sorted(MagicalPowerCommand::compareStats)
 						.map(e -> formatStatText(e.getKey(), e.getFloatValue()))
 						.forEachOrdered(source::sendFeedback);
 
-				source.sendFeedback(Text.literal(""));
+				source.sendFeedback(Component.literal(""));
 
 				if (finalBonus.size() > 0) {
-					List<Text> bonuses = finalBonus.clone().object2FloatEntrySet().stream().map(e -> formatStatText(e.getKey(), e.getFloatValue())).collect(Collectors.toList());
+					List<Component> bonuses = finalBonus.clone().object2FloatEntrySet().stream().map(e -> formatStatText(e.getKey(), e.getFloatValue())).collect(Collectors.toList());
 
-					source.sendFeedback(Text.literal("(Unique Power Bonus)").withColor(colourProfile.hoverColour.getAsInt()).styled(style -> style.withHoverEvent(
+					source.sendFeedback(Component.literal("(Unique Power Bonus)").withColor(colourProfile.hoverColour.getAsInt()).withStyle(style -> style.withHoverEvent(
 							new HoverEvent.ShowText(getStatsBreakdown(bonuses)))));
 				}
 			} else {
-				source.sendFeedback(Text.literal(""));
+				source.sendFeedback(Component.literal(""));
 			}
 
-			source.sendFeedback(Text.literal("(Tunings)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt()).withHoverEvent(
+			source.sendFeedback(Component.literal("(Tunings)").withStyle(style -> style.withColor(colourProfile.hoverColour.getAsInt()).withHoverEvent(
 					new HoverEvent.ShowText(getStatsBreakdown(tunings)))));
 
-			source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+			source.sendFeedback(Component.literal(CommandSystem.getEndSpaces(startText)).withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 		});
 	}
 
-	private static Text formatTuningStat(String stat, int tuningAmount) {
+	private static Component formatTuningStat(String stat, int tuningAmount) {
 		return formatStatText(stat, scaleTuningStat(stat, tuningAmount));
 	}
 
-	private static Text formatStatText(String stat, float amount) {
+	private static Component formatStatText(String stat, float amount) {
 		String base = (Math.signum(amount) == 1f ? "+" : "") + Formatters.FLOAT_NUMBERS.format(amount);
 
 		return switch (stat) {
-			case "health" -> Text.literal(base + "\u2764 Health").formatted(Formatting.RED);
-			case "defence", "defense" -> Text.literal(base + "\u2748 Defence").formatted(Formatting.GREEN);
-			case "walk_speed" -> Text.literal(base + "\u2726 Speed").formatted(Formatting.WHITE);
-			case "strength" -> Text.literal(base + "\u2741 Strength").formatted(Formatting.RED);
-			case "critical_damage" -> Text.literal(base + "\u2620 Crit Damage").formatted(Formatting.BLUE);
-			case "critical_chance" -> Text.literal(base + "\u2623 Crit Chance").formatted(Formatting.BLUE);
-			case "attack_speed" -> Text.literal(base + "\u2694 Bonus Attack Speed").formatted(Formatting.YELLOW);
-			case "intelligence" -> Text.literal(base + "\u270E Intelligence").formatted(Formatting.AQUA);
-			case "ferocity" -> Text.literal(base + "\u2AFD Ferocity").formatted(Formatting.RED);
-			case "ability_damage" -> Text.literal(base + "\u0E51 Ability Damage").formatted(Formatting.RED);
-			case "true_defence", "true_defense" -> Text.literal(base + "\u2742 True Defence").formatted(Formatting.WHITE);
-			case "combat_wisdom" -> Text.literal(base + "\u262F Combat Wisdom").formatted(Formatting.DARK_AQUA);
-			case "vitality" -> Text.literal(base + "\u2668 Vitality").formatted(Formatting.DARK_RED);
-			case "mending" -> Text.literal(base + "\u2604 Mending").formatted(Formatting.GREEN);
+			case "health" -> Component.literal(base + "\u2764 Health").withStyle(ChatFormatting.RED);
+			case "defence", "defense" -> Component.literal(base + "\u2748 Defence").withStyle(ChatFormatting.GREEN);
+			case "walk_speed" -> Component.literal(base + "\u2726 Speed").withStyle(ChatFormatting.WHITE);
+			case "strength" -> Component.literal(base + "\u2741 Strength").withStyle(ChatFormatting.RED);
+			case "critical_damage" -> Component.literal(base + "\u2620 Crit Damage").withStyle(ChatFormatting.BLUE);
+			case "critical_chance" -> Component.literal(base + "\u2623 Crit Chance").withStyle(ChatFormatting.BLUE);
+			case "attack_speed" -> Component.literal(base + "\u2694 Bonus Attack Speed").withStyle(ChatFormatting.YELLOW);
+			case "intelligence" -> Component.literal(base + "\u270E Intelligence").withStyle(ChatFormatting.AQUA);
+			case "ferocity" -> Component.literal(base + "\u2AFD Ferocity").withStyle(ChatFormatting.RED);
+			case "ability_damage" -> Component.literal(base + "\u0E51 Ability Damage").withStyle(ChatFormatting.RED);
+			case "true_defence", "true_defense" -> Component.literal(base + "\u2742 True Defence").withStyle(ChatFormatting.WHITE);
+			case "combat_wisdom" -> Component.literal(base + "\u262F Combat Wisdom").withStyle(ChatFormatting.DARK_AQUA);
+			case "vitality" -> Component.literal(base + "\u2668 Vitality").withStyle(ChatFormatting.DARK_RED);
+			case "mending" -> Component.literal(base + "\u2604 Mending").withStyle(ChatFormatting.GREEN);
 
-			default -> Text.literal(base + " " + Functions.titleCase(stat.replace('_', ' '))).formatted(Formatting.GRAY);
+			default -> Component.literal(base + " " + Functions.titleCase(stat.replace('_', ' '))).withStyle(ChatFormatting.GRAY);
 		};
 	}
 
@@ -412,15 +412,15 @@ public class MagicalPowerCommand extends SkyblockCommand {
 		};
 	}
 
-	private static Text getStatsBreakdown(List<Text> list) {
-		MutableText breakdown = Text.empty();
+	private static Component getStatsBreakdown(List<Component> list) {
+		MutableComponent breakdown = Component.empty();
 
-		Iterator<Text> iterator = list.iterator();
+		Iterator<Component> iterator = list.iterator();
 
 		while (iterator.hasNext()) {
-			MutableText statText = (MutableText) iterator.next();
+			MutableComponent statText = (MutableComponent) iterator.next();
 
-			if (iterator.hasNext()) statText.append(Text.literal("\n"));
+			if (iterator.hasNext()) statText.append(Component.literal("\n"));
 
 			breakdown.append(statText);
 		}
@@ -437,7 +437,7 @@ public class MagicalPowerCommand extends SkyblockCommand {
 	}
 
 	@SuppressWarnings("unused")
-	private static Text getRarityBreakdownText(String rarity, Object2ObjectOpenHashMap<String, String> accessoryMap) {
+	private static Component getRarityBreakdownText(String rarity, Object2ObjectOpenHashMap<String, String> accessoryMap) {
 		int count = countOfRarity(accessoryMap, rarity);
 		int mpPer = switch (rarity) {
 			case "VERY SPECIAL" -> 5;

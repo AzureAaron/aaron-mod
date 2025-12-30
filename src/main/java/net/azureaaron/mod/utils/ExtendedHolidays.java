@@ -4,8 +4,7 @@ import java.time.Month;
 import java.time.MonthDay;
 import java.util.ArrayList;
 import java.util.List;
-
-import net.minecraft.util.Holidays;
+import net.minecraft.util.SpecialDates;
 
 public class ExtendedHolidays {
 	public static final List<MonthDay> CHRISTMAS_SEASON = getDecemberDays();
@@ -21,6 +20,6 @@ public class ExtendedHolidays {
 	}
 
 	public static boolean isChristmasSeason() {
-		return CHRISTMAS_SEASON.contains(Holidays.now());
+		return CHRISTMAS_SEASON.contains(SpecialDates.dayNow());
 	}
 }

@@ -7,21 +7,20 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
+import com.mojang.blaze3d.platform.InputConstants;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.injected.ScreenResizeMarker;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ReconfiguringScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.world.LevelLoadingScreen;
-import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.LevelLoadingScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.multiplayer.ServerReconfigScreen;
 
 @Mixin(Screen.class)
 public class ScreenMixin implements ScreenResizeMarker {
 	@Unique
 	private boolean screenResized;
 	@Shadow
-	protected MinecraftClient client;
+	protected Minecraft minecraft;
 
 	@Override
 	public void markResized(boolean resized) {
@@ -37,14 +36,14 @@ public class ScreenMixin implements ScreenResizeMarker {
 	private void aaronMod$hideCursor(CallbackInfo ci) {
 		Object instance = (Object) this;
 
-		if ((instance instanceof LevelLoadingScreen || instance instanceof ReconfiguringScreen) && AaronModConfigManager.get().uiAndVisuals.world.hideWorldLoadingScreen) {
+		if ((instance instanceof LevelLoadingScreen || instance instanceof ServerReconfigScreen) && AaronModConfigManager.get().uiAndVisuals.world.hideWorldLoadingScreen) {
 			//Prevents the mouse from being movable while we cancel the rendering of the screen
-			InputUtil.setCursorParameters(this.client.getWindow(), GLFW.GLFW_CURSOR_DISABLED, this.client.mouse.getX(), this.client.mouse.getY());
+			InputConstants.grabOrReleaseMouse(this.minecraft.getWindow(), GLFW.GLFW_CURSOR_DISABLED, this.minecraft.mouseHandler.xpos(), this.minecraft.mouseHandler.ypos());
 		}
 	}
 
 	@Inject(method = "render", at = @At("HEAD"), cancellable = true)
 	private void aaronMod$hideReconfiguringScreen(CallbackInfo ci) {
-		if ((Object) this instanceof ReconfiguringScreen && AaronModConfigManager.get().uiAndVisuals.world.hideWorldLoadingScreen) ci.cancel();
+		if ((Object) this instanceof ServerReconfigScreen && AaronModConfigManager.get().uiAndVisuals.world.hideWorldLoadingScreen) ci.cancel();
 	}
 }

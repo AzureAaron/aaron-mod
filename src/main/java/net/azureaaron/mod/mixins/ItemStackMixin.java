@@ -23,21 +23,21 @@ import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.ItemUtils;
 import net.azureaaron.mod.utils.RomanNumerals;
 import net.azureaaron.mod.utils.TextTransformer;
-import net.minecraft.component.ComponentHolder;
-import net.minecraft.component.ComponentType;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LoreComponent;
-import net.minecraft.component.type.NbtComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipAppender;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponentHolder;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.item.component.TooltipProvider;
 
 @Mixin(ItemStack.class)
-public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolder {
+public abstract class ItemStackMixin implements AaronModItemMeta, DataComponentHolder {
 	@Unique
 	private static final String STAR = "✪";
 	@Unique
@@ -46,19 +46,19 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 	private static final Style NO_ITALIC = Style.EMPTY.withItalic(false);
 
 	@Shadow
-	public abstract <T> @Nullable T set(ComponentType<? super T> type, @Nullable T value);
+	public abstract <T> @Nullable T set(DataComponentType<? super T> type, @Nullable T value);
 
-	@ModifyVariable(method = "getName", at = @At("STORE"))
-	private Text aaronMod$customItemName(Text text) {
+	@ModifyVariable(method = "getHoverName", at = @At("STORE"))
+	private Component aaronMod$customItemName(Component text) {
 		if ((Functions.isOnHypixel() && Functions.isInSkyblock() || getAlwaysDisplaySkyblockInfo()) && (AaronModConfigManager.get().skyblock.dungeons.oldMasterStars || AaronModConfigManager.get().skyblock.dungeons.fancyDiamondHeadNames) && text != null) {
 			String name = text.getString();
-			Formatting masterStarStyle = Formatting.RED;
+			ChatFormatting masterStarStyle = ChatFormatting.RED;
 
 			if (!name.contains(STAR) || !HAS_MASTER_STAR.test(name)) return text;
 
 			if (AaronModConfigManager.get().skyblock.dungeons.fancyDiamondHeadNames && isDiamondHead()) {
-				Text styledName = TextTransformer.stylize(text, NO_ITALIC, "Diamond", Style.EMPTY.withColor(0x84DADD), 1);
-				Text styledStars = TextTransformer.stylize(styledName, NO_ITALIC, STAR, Style.EMPTY.withColor(Formatting.AQUA), 5);
+				Component styledName = TextTransformer.stylize(text, NO_ITALIC, "Diamond", Style.EMPTY.withColor(0x84DADD), 1);
+				Component styledStars = TextTransformer.stylize(styledName, NO_ITALIC, STAR, Style.EMPTY.withColor(ChatFormatting.AQUA), 5);
 
 				if (!AaronModConfigManager.get().skyblock.dungeons.oldMasterStars) {
 					String masterStar = switch (name) {
@@ -71,9 +71,9 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 						default -> "?";
 					};
 
-					return TextTransformer.stylize(styledStars, NO_ITALIC, masterStar, Style.EMPTY.withColor(Formatting.DARK_AQUA), 1);
+					return TextTransformer.stylize(styledStars, NO_ITALIC, masterStar, Style.EMPTY.withColor(ChatFormatting.DARK_AQUA), 1);
 				} else {
-					masterStarStyle = Formatting.DARK_AQUA;
+					masterStarStyle = ChatFormatting.DARK_AQUA;
 					text = styledStars;
 				}
 			}
@@ -90,17 +90,17 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 				};
 
 				if (masterStarsApplied > 0) {
-					Text newText = TextTransformer.recursiveCopy(text);
-					ListIterator<Text> iterator = newText.getSiblings().listIterator();
+					Component newText = TextTransformer.recursiveCopy(text);
+					ListIterator<Component> iterator = newText.getSiblings().listIterator();
 
 					while (iterator.hasNext()) {
-						Text component = iterator.next();
+						Component component = iterator.next();
 						String stringified = component.getString();
 
 						//Swap the gold stars for the mixed red/gold stars
 						if (stringified.contains(STAR)) {
-							Text stars = Text.literal(STAR.repeat(masterStarsApplied)).setStyle(NO_ITALIC.withFormatting(masterStarStyle))
-									.append((masterStarsApplied != 5) ? Text.literal(STAR.repeat(5 - masterStarsApplied)).setStyle(NO_ITALIC.withFormatting(Formatting.GOLD)) : Text.empty());
+							Component stars = Component.literal(STAR.repeat(masterStarsApplied)).setStyle(NO_ITALIC.applyFormat(masterStarStyle))
+									.append((masterStarsApplied != 5) ? Component.literal(STAR.repeat(5 - masterStarsApplied)).setStyle(NO_ITALIC.applyFormat(ChatFormatting.GOLD)) : Component.empty());
 
 							iterator.set(stars);
 						}
@@ -117,17 +117,17 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 		return text;
 	}
 
-	@ModifyVariable(method = "appendComponentTooltip", at = @At("STORE"))
-	private TooltipAppender aaronMod$rainbowifyMaxSkyblockEnchantments(TooltipAppender itemComponent) {
-		if (AaronModConfigManager.get().skyblock.enchantments.rainbowMaxEnchants && ((Functions.isOnHypixel() && Functions.isInSkyblock()) || getAlwaysDisplaySkyblockInfo()) && itemComponent instanceof LoreComponent lore) {
+	@ModifyVariable(method = "addToTooltip", at = @At("STORE"))
+	private TooltipProvider aaronMod$rainbowifyMaxSkyblockEnchantments(TooltipProvider itemComponent) {
+		if (AaronModConfigManager.get().skyblock.enchantments.rainbowMaxEnchants && ((Functions.isOnHypixel() && Functions.isInSkyblock()) || getAlwaysDisplaySkyblockInfo()) && itemComponent instanceof ItemLore lore) {
 			//Find what enchantments to replace with what colour
-			NbtCompound appliedEnchantments = ItemUtils.getCustomData(this).getCompoundOrEmpty("enchantments");
+			CompoundTag appliedEnchantments = ItemUtils.getCustomData(this).getCompoundOrEmpty("enchantments");
 			Object2IntMap<String> maxEnchantmentColours = new Object2IntOpenHashMap<>();
 			Object2IntMap<String> goodEnchantmentColours = new Object2IntOpenHashMap<>();
 
-			for (String id : appliedEnchantments.getKeys()) {
+			for (String id : appliedEnchantments.keySet()) {
 				SkyblockEnchantment enchantment = SkyblockEnchantments.getEnchantments().get(id);
-				int level = appliedEnchantments.getInt(id, 0); //Will be 0 if the key isn't an int
+				int level = appliedEnchantments.getIntOr(id, 0); //Will be 0 if the key isn't an int
 
 				if (level > 0 && enchantment != null && enchantment.isAtGoodOrMaxLevel(level)) {
 					//The name as shown when applied (e.g. Critical VII)
@@ -142,15 +142,15 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 			}
 
 			//Copy the text to ensure that we don't modify the original
-			List<Text> lines = lore.lines().stream()
+			List<Component> lines = lore.lines().stream()
 					.map(TextTransformer::recursiveCopy)
 					.collect(Collectors.toList());
 
-			for (Text line : lines) {
+			for (Component line : lines) {
 				Predicate<String> lineContains = line.getString()::contains;
 
 				if (!maxEnchantmentColours.isEmpty() && maxEnchantmentColours.keySet().stream().anyMatch(lineContains)) {
-					List<Text> textComponents = line.getSiblings();
+					List<Component> textComponents = line.getSiblings();
 
 					switch (AaronModConfigManager.get().skyblock.enchantments.rainbowMode) {
 						case STATIC -> {
@@ -158,22 +158,22 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 							int positionLeftOffAt = 0;
 
 							//Exclude non-max enchants from counting towards total length since it looks weird & incomplete otherwise
-							for (Text currentComponent : textComponents) {
+							for (Component currentComponent : textComponents) {
 								String componentString = currentComponent.getString().trim();
 
-								if (maxEnchantmentColours.containsKey(componentString) && currentComponent.getStyle().getColor().getRgb() == Formatting.BLUE.getColorValue()) {
+								if (maxEnchantmentColours.containsKey(componentString) && currentComponent.getStyle().getColor().getValue() == ChatFormatting.BLUE.getColor()) {
 									totalLength += componentString.length();
 								}
 							}
 
-							ListIterator<Text> iterator = textComponents.listIterator();
+							ListIterator<Component> iterator = textComponents.listIterator();
 
 							while (iterator.hasNext()) {
-								Text currentComponent = iterator.next();
+								Component currentComponent = iterator.next();
 								String componentString = currentComponent.getString().trim();
 
-								if (maxEnchantmentColours.containsKey(componentString) && currentComponent.getStyle().getColor().getRgb() == Formatting.BLUE.getColorValue()) {
-									iterator.set(TextTransformer.progressivelyRainbowify(componentString, totalLength, positionLeftOffAt).styled(style -> style.withItalic(false)));
+								if (maxEnchantmentColours.containsKey(componentString) && currentComponent.getStyle().getColor().getValue() == ChatFormatting.BLUE.getColor()) {
+									iterator.set(TextTransformer.progressivelyRainbowify(componentString, totalLength, positionLeftOffAt).withStyle(style -> style.withItalic(false)));
 									maxEnchantmentColours.removeInt(componentString);
 									positionLeftOffAt += componentString.length();
 								}
@@ -181,11 +181,11 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 						}
 
 						case CHROMA -> {
-							for (Text currentComponent : textComponents) {
+							for (Component currentComponent : textComponents) {
 								String enchant = currentComponent.getString().trim();
 
-								if (maxEnchantmentColours.containsKey(enchant) && currentComponent.getStyle().getColor().getRgb() == Formatting.BLUE.getColorValue()) {
-									((MutableText) currentComponent).withColor(maxEnchantmentColours.getInt(enchant));
+								if (maxEnchantmentColours.containsKey(enchant) && currentComponent.getStyle().getColor().getValue() == ChatFormatting.BLUE.getColor()) {
+									((MutableComponent) currentComponent).withColor(maxEnchantmentColours.getInt(enchant));
 									maxEnchantmentColours.removeInt(enchant);
 								}
 							}
@@ -194,11 +194,11 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 				}
 
 				if (!goodEnchantmentColours.isEmpty() && goodEnchantmentColours.keySet().stream().anyMatch(lineContains)) {
-					for (Text currentComponent : line.getSiblings()) {
+					for (Component currentComponent : line.getSiblings()) {
 						String enchant = currentComponent.getString().trim();
 
-						if (goodEnchantmentColours.containsKey(enchant) && currentComponent.getStyle().getColor().getRgb() == Formatting.BLUE.getColorValue()) {
-							((MutableText) currentComponent).withColor(goodEnchantmentColours.getInt(enchant));
+						if (goodEnchantmentColours.containsKey(enchant) && currentComponent.getStyle().getColor().getValue() == ChatFormatting.BLUE.getColor()) {
+							((MutableComponent) currentComponent).withColor(goodEnchantmentColours.getInt(enchant));
 							goodEnchantmentColours.removeInt(enchant);
 						}
 					}
@@ -208,7 +208,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 
 			//Return a new lore component with the updated text
 			//Note that the styledLines list is actively transformed as its read so we can't create this component ahead of time and modify the contents of that list (it won't work)
-			return new LoreComponent(lines);
+			return new ItemLore(lines);
 		}
 
 		return itemComponent;
@@ -223,22 +223,22 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 
 	@Override
 	public boolean getAlwaysDisplaySkyblockInfo() {
-		return ItemUtils.getCustomData(this).getCompoundOrEmpty(Main.NAMESPACE).getBoolean("alwaysDisplaySkyblockInfo", false);
+		return ItemUtils.getCustomData(this).getCompoundOrEmpty(Main.NAMESPACE).getBooleanOr("alwaysDisplaySkyblockInfo", false);
 	}
 
 	@Override
 	public void setAlwaysDisplaySkyblockInfo(boolean value) {
-		NbtComponent component = contains(DataComponentTypes.CUSTOM_DATA) ? get(DataComponentTypes.CUSTOM_DATA) : NbtComponent.of(new NbtCompound());
-		NbtCompound compound = component.copyNbt();
+		CustomData component = has(DataComponents.CUSTOM_DATA) ? get(DataComponents.CUSTOM_DATA) : CustomData.of(new CompoundTag());
+		CompoundTag compound = component.copyTag();
 
 		if (!compound.contains(Main.NAMESPACE)) {
-			compound.put(Main.NAMESPACE, new NbtCompound());
+			compound.put(Main.NAMESPACE, new CompoundTag());
 		}
 
 		compound.getCompoundOrEmpty(Main.NAMESPACE).putBoolean("alwaysDisplaySkyblockInfo", value);
 
-		if (!contains(DataComponentTypes.CUSTOM_DATA)) {
-			set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(compound));
+		if (!has(DataComponents.CUSTOM_DATA)) {
+			set(DataComponents.CUSTOM_DATA, CustomData.of(compound));
 		}
 	}
 }

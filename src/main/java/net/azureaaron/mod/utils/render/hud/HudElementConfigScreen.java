@@ -10,19 +10,19 @@ import org.lwjgl.glfw.GLFW;
 import net.azureaaron.dandelion.systems.ButtonOption;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.render.RenderHelper;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.text.Text;
-import net.minecraft.util.Colors;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.CommonColors;
 
 /**
  * Provides a unified configuration screen for moving/scaling the mod's HUD elements.
  */
 public final class HudElementConfigScreen extends Screen {
-	private static final Text TITLE = Text.of("HUD Element Config Screen");
+	private static final Component TITLE = Component.nullToEmpty("HUD Element Config Screen");
 	private static final List<HudElement> ELEMENTS = new ArrayList<>();
 	private final @Nullable Screen parent;
 	private @Nullable HudElement selected = null;
@@ -44,28 +44,28 @@ public final class HudElementConfigScreen extends Screen {
 	 */
 	public static ButtonOption createOption() {
 		return ButtonOption.createBuilder()
-				.name(Text.literal("HUD Manager"))
-				.prompt(Text.literal("Open"))
-				.action(screen -> MinecraftClient.getInstance().setScreen(new HudElementConfigScreen(screen)))
+				.name(Component.literal("HUD Manager"))
+				.prompt(Component.literal("Open"))
+				.action(screen -> Minecraft.getInstance().setScreen(new HudElementConfigScreen(screen)))
 				.build();
 	}
 
 	@Override
-	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+	public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
 		super.render(context, mouseX, mouseY, delta);
 		renderTips(context);
 		renderElements(context);
 	}
 
-	private void renderTips(DrawContext context) {
-		context.drawCenteredTextWithShadow(textRenderer, "Left click to select an element", width >> 1, textRenderer.fontHeight * 2, Colors.LIGHT_GRAY);
-		context.drawCenteredTextWithShadow(textRenderer, "Right click to unselect an element", width >> 1, textRenderer.fontHeight * 3 + 4, Colors.LIGHT_GRAY);
-		context.drawCenteredTextWithShadow(textRenderer, "Press +/- to scale an element", width >> 1, textRenderer.fontHeight * 4 + 8, Colors.LIGHT_GRAY);
-		context.drawCenteredTextWithShadow(textRenderer, "Press R to reset an element's position/scale", width >> 1, textRenderer.fontHeight * 5 + 12, Colors.LIGHT_GRAY);
-		context.drawCenteredTextWithShadow(textRenderer, "Press TAB to cycle between elements", width >> 1, textRenderer.fontHeight * 6 + 16, Colors.LIGHT_GRAY);
+	private void renderTips(GuiGraphics context) {
+		context.drawCenteredString(font, "Left click to select an element", width >> 1, font.lineHeight * 2, CommonColors.LIGHT_GRAY);
+		context.drawCenteredString(font, "Right click to unselect an element", width >> 1, font.lineHeight * 3 + 4, CommonColors.LIGHT_GRAY);
+		context.drawCenteredString(font, "Press +/- to scale an element", width >> 1, font.lineHeight * 4 + 8, CommonColors.LIGHT_GRAY);
+		context.drawCenteredString(font, "Press R to reset an element's position/scale", width >> 1, font.lineHeight * 5 + 12, CommonColors.LIGHT_GRAY);
+		context.drawCenteredString(font, "Press TAB to cycle between elements", width >> 1, font.lineHeight * 6 + 16, CommonColors.LIGHT_GRAY);
 	}
 
-	private void renderElements(DrawContext context) {
+	private void renderElements(GuiGraphics context) {
 		//Render all HUD elements
 		for (HudElement element : ELEMENTS) {
 			element.renderScreen(context);
@@ -79,21 +79,21 @@ public final class HudElementConfigScreen extends Screen {
 			int height = selected.height();
 
 			//Top line
-			context.drawHorizontalLine(Math.max(x - 1, 0), Math.min(x + width + 1, this.width), Math.max(y - 1, 0), Colors.RED);
+			context.hLine(Math.max(x - 1, 0), Math.min(x + width + 1, this.width), Math.max(y - 1, 0), CommonColors.RED);
 
 			//Bottom line
-			context.drawHorizontalLine(Math.max(x - 1, 0), Math.min(x + width + 1, this.width), Math.min(y + height + 1, this.height), Colors.RED);
+			context.hLine(Math.max(x - 1, 0), Math.min(x + width + 1, this.width), Math.min(y + height + 1, this.height), CommonColors.RED);
 
 			//Left line
-			context.drawVerticalLine(Math.max(x - 1, 0), Math.max(y - 1, 0), Math.min(y + height + 1, this.height), Colors.RED);
+			context.vLine(Math.max(x - 1, 0), Math.max(y - 1, 0), Math.min(y + height + 1, this.height), CommonColors.RED);
 
 			//Right line
-			context.drawVerticalLine(Math.min(x + width + 1, this.width), Math.max(y - 1, 0), Math.min(y + height + 1, this.height), Colors.RED);
+			context.vLine(Math.min(x + width + 1, this.width), Math.max(y - 1, 0), Math.min(y + height + 1, this.height), CommonColors.RED);
 		}
 	}
 
 	@Override
-	public boolean mouseClicked(Click click, boolean doubled) {
+	public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
 		switch (click.button()) {
 			//Select HUD element via left click
 			case GLFW.GLFW_MOUSE_BUTTON_LEFT -> {
@@ -121,7 +121,7 @@ public final class HudElementConfigScreen extends Screen {
 	}
 
 	@Override
-	public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+	public boolean mouseDragged(MouseButtonEvent click, double offsetX, double offsetY) {
 		if (selected != null && click.button() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 			selected.x((int) Math.clamp(click.x() - (selected.width() >> 1), 0, this.width - selected.width()));
 			selected.y((int) Math.clamp(click.y() - (selected.height() >> 1), 0, this.height - selected.height()));
@@ -131,7 +131,7 @@ public final class HudElementConfigScreen extends Screen {
 	}
 
 	@Override
-	public boolean keyPressed(KeyInput input) {
+	public boolean keyPressed(KeyEvent input) {
 		switch (input.key()) {
 			//Scale up
 			case GLFW.GLFW_KEY_EQUAL -> {
@@ -146,7 +146,7 @@ public final class HudElementConfigScreen extends Screen {
 			//Scale down
 			case GLFW.GLFW_KEY_MINUS -> {
 				//Ensure _ wasn't the key pressed
-				if (selected != null && !input.hasShift()) {
+				if (selected != null && !input.hasShiftDown()) {
 					selected.scale(selected.scale() - 0.1f);
 
 					return true;
@@ -184,7 +184,7 @@ public final class HudElementConfigScreen extends Screen {
 	}
 
 	@Override
-	public void close() {
+	public void onClose() {
 		//Apply any changes to each field in the config
 		for (HudElement element : ELEMENTS) {
 			element.apply();
@@ -193,6 +193,6 @@ public final class HudElementConfigScreen extends Screen {
 		//Save the config
 		AaronModConfigManager.save();
 
-		this.client.setScreen(parent);
+		this.minecraft.setScreen(parent);
 	}
 }

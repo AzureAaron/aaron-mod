@@ -13,14 +13,14 @@ import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.config.ConfigUtils;
 import net.azureaaron.mod.mixins.accessors.BillboardParticleAccessor;
 import net.azureaaron.mod.utils.Functions;
-import net.minecraft.client.particle.BillboardParticle;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.particle.ParticleType;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.particle.SingleQuadParticle;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Util;
 
 public class Particles {
@@ -49,7 +49,7 @@ public class Particles {
 		float scale = AaronModConfigManager.get().particles.scaling.getOrDefault(id, 1f);
 
 		//Only set the alpha if won't result in the particle being discarded by the fragment shader or if its not greater than the default
-		if (particle instanceof BillboardParticle billboard && billboard instanceof BillboardParticleAccessor accessor && alpha > 0.1f && alpha < accessor.getAlpha()) {
+		if (particle instanceof SingleQuadParticle billboard && billboard instanceof BillboardParticleAccessor accessor && alpha > 0.1f && alpha < accessor.getAlpha()) {
 			accessor.invokeSetAlpha(alpha);
 			billboard.markHasCustomAlpha();
 		}
@@ -63,32 +63,32 @@ public class Particles {
 
 	public static List<OptionGroup> getOptionGroups(AaronModConfig config) {
 		List<OptionGroup> list = new ArrayList<>();
-		List<Entry<RegistryKey<ParticleType<?>>, ParticleType<?>>> entryList = new ArrayList<>(Registries.PARTICLE_TYPE.getEntrySet());
+		List<Entry<ResourceKey<ParticleType<?>>, ParticleType<?>>> entryList = new ArrayList<>(BuiltInRegistries.PARTICLE_TYPE.entrySet());
 
 		// Alphabetically sort the entries for logical ordering
 		entryList.sort((o1, o2) -> {
-			String o1Name = getParticleDisplayName(o1.getKey().getValue().toString());
-			String o2Name = getParticleDisplayName(o2.getKey().getValue().toString());
+			String o1Name = getParticleDisplayName(o1.getKey().identifier().toString());
+			String o2Name = getParticleDisplayName(o2.getKey().identifier().toString());
 
 			return o1Name.compareTo(o2Name);
 		});
 
-		for (Entry<RegistryKey<ParticleType<?>>, ParticleType<?>> entry : entryList) {
+		for (Entry<ResourceKey<ParticleType<?>>, ParticleType<?>> entry : entryList) {
 			ParticleType<?> particleType = entry.getValue();
-			Identifier id = entry.getKey().getValue();
+			Identifier id = entry.getKey().identifier();
 
 			String name = getParticleDisplayName(id.getPath());
 			String namespaceName = getParticleDisplayName(id.getNamespace());
-			Text description = PARTICLE_DESCRIPTIONS.containsKey(particleType) ? Text.literal(PARTICLE_DESCRIPTIONS.get(particleType)) : Text.empty();
+			Component description = PARTICLE_DESCRIPTIONS.containsKey(particleType) ? Component.literal(PARTICLE_DESCRIPTIONS.get(particleType)) : Component.empty();
 
 			list.add(OptionGroup.createBuilder()
-					.name(Text.literal(name + " Particles (" + namespaceName + ")"))
+					.name(Component.literal(name + " Particles (" + namespaceName + ")"))
 					.description(description)
 					.collapsed(true)
 
 					//Toggle
 					.option(Option.<Boolean>createBuilder()
-							.name(Text.literal("Enable " + name))
+							.name(Component.literal("Enable " + name))
 							.binding(true,
 									() -> config.particles.states.getOrDefault(id, true),
 									newValue -> config.particles.states.put(id, newValue.booleanValue()))
@@ -96,7 +96,7 @@ public class Particles {
 							.controller(ConfigUtils.createBooleanController())
 							.build())
 					.option(Option.<Float>createBuilder()
-							.name(Text.literal(name + " Scale Multiplier"))
+							.name(Component.literal(name + " Scale Multiplier"))
 							.binding(1f,
 									() -> config.particles.scaling.getOrDefault(id, 1f),
 									newValue -> config.particles.scaling.put(id, newValue.floatValue()))
@@ -104,7 +104,7 @@ public class Particles {
 							.controller(FloatController.createBuilder().range(0f, 20f).build())
 							.build())
 					.option(Option.<Float>createBuilder()
-							.name(Text.literal(name + " Opacity"))
+							.name(Component.literal(name + " Opacity"))
 							.binding(1f,
 									() -> config.particles.alphas.getOrDefault(id, 1f),
 									newValue -> config.particles.alphas.put(id, newValue.floatValue()))

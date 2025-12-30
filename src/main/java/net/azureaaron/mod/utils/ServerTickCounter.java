@@ -7,8 +7,8 @@ import com.google.common.collect.EvictingQueue;
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.events.ServerTickCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.packet.s2c.common.CommonPingS2CPacket;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.protocol.common.ClientboundPingPacket;
 
 public class ServerTickCounter {
 	public static final ServerTickCounter INSTANCE = new ServerTickCounter();
@@ -46,11 +46,11 @@ public class ServerTickCounter {
 		ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register((client, world) -> INSTANCE.reset());
 	}
 
-	public void onServerTick(CommonPingS2CPacket packet) {
+	public void onServerTick(ClientboundPingPacket packet) {
 		//Make sure we don't count the same packet twice (if Hypixel sends it for some reason)
-		if (packet.getParameter() != this.lastParameter) {
+		if (packet.getId() != this.lastParameter) {
 			this.totalTicks++;
-			this.lastParameter = packet.getParameter();
+			this.lastParameter = packet.getId();
 
 			ServerTickCallback.EVENT.invoker().onTick();
 		}
@@ -92,7 +92,7 @@ public class ServerTickCounter {
 	public void onReceivePacket() {
 		//This is called from outside the render thread and we need it to be on there otherwise
 		//this won't work properly
-		MinecraftClient.getInstance().send(() -> this.receivedPacketThisTick = true);
+		Minecraft.getInstance().schedule(() -> this.receivedPacketThisTick = true);
 	}
 
 	private void reset() {

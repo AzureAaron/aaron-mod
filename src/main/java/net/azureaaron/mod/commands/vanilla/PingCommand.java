@@ -11,11 +11,11 @@ import net.azureaaron.mod.events.PingResultCallback;
 import net.azureaaron.mod.utils.Constants;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.network.packet.c2s.query.QueryPingC2SPacket;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.ping.ServerboundPingRequestPacket;
 import net.minecraft.util.Util;
 
 public class PingCommand {
@@ -26,7 +26,7 @@ public class PingCommand {
 		ClientCommandRegistrationCallback.EVENT.register(PingCommand::register);
 	}
 
-	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
 		dispatcher.register(literal("ping")
 				.executes(context -> handleCommand(context.getSource())));
 
@@ -36,11 +36,11 @@ public class PingCommand {
 	private static int handleCommand(FabricClientCommandSource source) {
 		ColourProfiles colourProfile = Constants.PROFILE.get();
 
-		MinecraftClient client = source.getClient();
-		ClientPlayNetworkHandler networkHandler = client.getNetworkHandler();
+		Minecraft client = source.getClient();
+		ClientPacketListener networkHandler = client.getConnection();
 
-		if (source.getClient().isInSingleplayer() || networkHandler == null) {
-			source.sendFeedback(Constants.PREFIX.get().append(Text.literal("You're on a local server!").withColor(colourProfile.primaryColour.getAsInt())));
+		if (source.getClient().isLocalServer() || networkHandler == null) {
+			source.sendFeedback(Constants.PREFIX.get().append(Component.literal("You're on a local server!").withColor(colourProfile.primaryColour.getAsInt())));
 		} else {
 			sendPingPacket(client, networkHandler);
 		}
@@ -48,24 +48,24 @@ public class PingCommand {
 		return Command.SINGLE_SUCCESS;
 	}
 
-	private static int printPing(MinecraftClient client, long ping) {
+	private static int printPing(Minecraft client, long ping) {
 		ColourProfiles colourProfile = Constants.PROFILE.get();
 
-		client.player.sendMessage(Text.literal("Ping » ").withColor(colourProfile.primaryColour.getAsInt())
-				.append(Text.literal(ping + " ms").withColor(colourProfile.secondaryColour.getAsInt())), false);
+		client.player.displayClientMessage(Component.literal("Ping » ").withColor(colourProfile.primaryColour.getAsInt())
+				.append(Component.literal(ping + " ms").withColor(colourProfile.secondaryColour.getAsInt())), false);
 
 		return Command.SINGLE_SUCCESS;
 	}
 
-	private static void sendPingPacket(MinecraftClient client, ClientPlayNetworkHandler networkHandler) {
+	private static void sendPingPacket(Minecraft client, ClientPacketListener networkHandler) {
 		sentCommand = true;
-		if (!client.getDebugHud().shouldShowPacketSizeAndPingCharts()) networkHandler.sendPacket(new QueryPingC2SPacket(Util.getMeasuringTimeMs()));
+		if (!client.getDebugOverlay().showNetworkCharts()) networkHandler.send(new ServerboundPingRequestPacket(Util.getMillis()));
 	}
 
 	private static void onPingResult(long ping) {
 		if (sentCommand) {
 			sentCommand = false;
-			printPing(MinecraftClient.getInstance(), ping);
+			printPing(Minecraft.getInstance(), ping);
 		}
 	}
 }

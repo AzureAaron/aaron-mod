@@ -17,11 +17,11 @@ import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.render.RenderHelper;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.CommandSource;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 
 public class UuidCommand extends VanillaCommand {
 	private static final Command INSTANCE = new UuidCommand();
@@ -32,11 +32,11 @@ public class UuidCommand extends VanillaCommand {
 	}
 
 	@Override
-	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
 		dispatcher.register(literal("uuid")
 				.executes(context -> CommandSystem.handleSelf4Vanilla(this, context.getSource()))
 				.then(argument("player", word())
-						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
+						.suggests((context, builder) -> SharedSuggestionProvider.suggest(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
 						.executes(context -> CommandSystem.handlePlayer4Vanilla(this, context.getSource(), getString(context, "player")))));
 	}
 
@@ -45,9 +45,9 @@ public class UuidCommand extends VanillaCommand {
 		RenderHelper.runOnRenderThread(() -> {
 			ColourProfiles colourProfile = Constants.PROFILE.get();
 
-			source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Uuid » ").withColor(colourProfile.primaryColour.getAsInt())
-					.append(Text.literal(uuid).withColor(colourProfile.secondaryColour.getAsInt()))
-					.append("").styled(style -> style.withHoverEvent(new HoverEvent.ShowText(Text.translatable("chat.copy.click")))
+			source.sendFeedback(Component.literal(Functions.possessiveEnding(name) + " Uuid » ").withColor(colourProfile.primaryColour.getAsInt())
+					.append(Component.literal(uuid).withColor(colourProfile.secondaryColour.getAsInt()))
+					.append("").withStyle(style -> style.withHoverEvent(new HoverEvent.ShowText(Component.translatable("chat.copy.click")))
 							.withClickEvent(new ClickEvent.CopyToClipboard(uuid))));
 		});
 	}

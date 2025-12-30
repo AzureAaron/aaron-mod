@@ -35,22 +35,22 @@ import net.azureaaron.mod.utils.Skyblock;
 import net.azureaaron.mod.utils.render.RenderHelper;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.CommandSource;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.BundleContentsComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Util;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.BundleContents;
 
 public class CroesusCommand extends SkyblockCommand {
 	private static final Command INSTANCE = new CroesusCommand();
 	private static final long TWO_DAYS = 172_800_000;
-	private static final Supplier<MutableText> NO_TREASURES = () -> Constants.PREFIX.get().append(Text.literal("This player doesn't have any dungeon treasures to claim!").formatted(Formatting.RED));
+	private static final Supplier<MutableComponent> NO_TREASURES = () -> Constants.PREFIX.get().append(Component.literal("This player doesn't have any dungeon treasures to claim!").withStyle(ChatFormatting.RED));
 
 	@Init
 	public static void init() {
@@ -58,11 +58,11 @@ public class CroesusCommand extends SkyblockCommand {
 	}
 
 	@Override
-	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
 		dispatcher.register(literal("croesus")
 				.executes(context -> CommandSystem.handleSelf4Skyblock(this, context.getSource()))
 				.then(argument("player", word())
-						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
+						.suggests((context, builder) -> SharedSuggestionProvider.suggest(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
 						.executes(context -> CommandSystem.handlePlayer4Skyblock(this, context.getSource(), getString(context, "player")))));
 	}
 
@@ -158,8 +158,8 @@ public class CroesusCommand extends SkyblockCommand {
 		Function<String, Boolean> containsRareLoot = s -> Skyblock.getRareLootItems().keySet().stream().anyMatch(s::equals);
 		List<String> rareLoot = rewards.stream().filter(e -> containsRareLoot.apply(e)).collect(Collectors.toList());
 
-		ItemStack bundle = Items.BUNDLE.getDefaultStack();
-		bundle.set(DataComponentTypes.CUSTOM_NAME, Text.literal("✦ Rare Loot Preview ✦").styled(style -> style.withItalic(false).withColor(colourProfile.infoColour.getAsInt())));
+		ItemStack bundle = Items.BUNDLE.getDefaultInstance();
+		bundle.set(DataComponents.CUSTOM_NAME, Component.literal("✦ Rare Loot Preview ✦").withStyle(style -> style.withItalic(false).withColor(colourProfile.infoColour.getAsInt())));
 
 		//We use a map because ItemStacks have no determinate hash code thus we need a key that to allow for deduplication which will result in the same rare drops being stacked
 		HashMap<String, ItemStack> stacks = new HashMap<>();
@@ -173,21 +173,21 @@ public class CroesusCommand extends SkyblockCommand {
 			}
 		}
 
-		bundle.set(DataComponentTypes.BUNDLE_CONTENTS, new BundleContentsComponent(new ArrayList<>(stacks.values())));
+		bundle.set(DataComponents.BUNDLE_CONTENTS, new BundleContents(new ArrayList<>(stacks.values())));
 
 		RenderHelper.runOnRenderThread(() -> {
-			Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
-					.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
-					.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
-					.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
-					.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
+			Component startText = Component.literal("     ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
+					.append(Component.literal("[- ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
+					.append(Component.literal(name).withStyle(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
+					.append(Component.literal(" -]").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
+					.append(Component.literal("     ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt())).withStyle(style -> style.withStrikethrough(true))));
 
 			source.sendFeedback(startText);
 
-			source.sendFeedback(Text.literal("Unclaimed Chests » " + runs.size()).withColor(colourProfile.infoColour.getAsInt()));
-			source.sendFeedback(Text.literal("Rare Loot Awaits » " + ((rareLootAwaits) ? "✓" : "✗"))
-					.styled(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent.ShowItem(bundle))));
-			source.sendFeedback(Text.literal(""));
+			source.sendFeedback(Component.literal("Unclaimed Chests » " + runs.size()).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Component.literal("Rare Loot Awaits » " + ((rareLootAwaits) ? "✓" : "✗"))
+					.withStyle(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent.ShowItem(bundle))));
+			source.sendFeedback(Component.literal(""));
 
 			int count = 0;
 
@@ -199,17 +199,17 @@ public class CroesusCommand extends SkyblockCommand {
 					long expiresAt = run.timestamp() + TWO_DAYS;
 					long expiresIn = (run.timestamp() + TWO_DAYS) - System.currentTimeMillis();
 
-					source.sendFeedback(Text.literal("(" + floorShorthand + " • " + timeAgo + ")")
-							.styled(style -> style.withColor(colourProfile.hoverColour.getAsInt())
-									.withHoverEvent(new HoverEvent.ShowText(Text.literal("Expires:\n" + Formatters.DATE_FORMATTER.format(Instant.ofEpochMilli(expiresAt)) + "\n(In " + TimeUnit.MILLISECONDS.toHours(expiresIn) + " hours)")
+					source.sendFeedback(Component.literal("(" + floorShorthand + " • " + timeAgo + ")")
+							.withStyle(style -> style.withColor(colourProfile.hoverColour.getAsInt())
+									.withHoverEvent(new HoverEvent.ShowText(Component.literal("Expires:\n" + Formatters.DATE_FORMATTER.format(Instant.ofEpochMilli(expiresAt)) + "\n(In " + TimeUnit.MILLISECONDS.toHours(expiresIn) + " hours)")
 											.withColor(colourProfile.infoColour.getAsInt())))));
 					count++;
 				}
 			}
 
-			if (count > 10) source.sendFeedback(Text.literal("and " + (runs.size() - 10) + " more...").styled(style -> style.withColor(colourProfile.supportingInfoColour.getAsInt()).withItalic(true)));
+			if (count > 10) source.sendFeedback(Component.literal("and " + (runs.size() - 10) + " more...").withStyle(style -> style.withColor(colourProfile.supportingInfoColour.getAsInt()).withItalic(true)));
 
-			source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+			source.sendFeedback(Component.literal(CommandSystem.getEndSpaces(startText)).withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 		});
 	}
 

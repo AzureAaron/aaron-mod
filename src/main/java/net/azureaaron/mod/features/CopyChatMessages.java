@@ -15,26 +15,26 @@ import net.azureaaron.mod.mixins.accessors.ChatAccessor;
 import net.azureaaron.mod.utils.ItemUtils;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.hud.ChatHud;
-import net.minecraft.client.gui.hud.ChatHudLine;
-import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.toast.SystemToast;
-import net.minecraft.client.toast.ToastManager;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextCodecs;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.GuiMessage;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.client.gui.components.toasts.ToastManager;
+import net.minecraft.client.gui.screens.ChatScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.Mth;
 
 public class CopyChatMessages {
-	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
-	private static final Text SUCCESS_TITLE = Text.literal("Success!");
-	private static final Text SUCCESS_DESCRIPTION = Text.literal("The message was copied to your clipboard!");
-	private static final Text NOT_FOUND_TITLE = Text.literal("Not Found!");
-	private static final Text NOT_FOUND_DESCRIPTION = Text.literal("No message was hovered over!");
+	private static final Minecraft CLIENT = Minecraft.getInstance();
+	private static final Component SUCCESS_TITLE = Component.literal("Success!");
+	private static final Component SUCCESS_DESCRIPTION = Component.literal("The message was copied to your clipboard!");
+	private static final Component NOT_FOUND_TITLE = Component.literal("Not Found!");
+	private static final Component NOT_FOUND_DESCRIPTION = Component.literal("No message was hovered over!");
 
 	@Init
 	public static void init() {
@@ -45,9 +45,9 @@ public class CopyChatMessages {
 		});
 	}
 
-	private static boolean onMouseInput(Screen screen, Click click, boolean consumed) {
+	private static boolean onMouseInput(Screen screen, MouseButtonEvent click, boolean consumed) {
 		int configuredButton = AaronModConfigManager.get().refinements.chat.copyChatMouseButton == RefinementsConfig.MouseButton.MIDDLE ? GLFW.GLFW_MOUSE_BUTTON_MIDDLE : GLFW.GLFW_MOUSE_BUTTON_LEFT;
-		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.inGameHud.getChatHud());
+		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.gui.getChat());
 
 		if (click.button() == configuredButton && AaronModConfigManager.get().refinements.chat.copyChatMessages) {
 			double chatLineX = toChatLineX(click.x());
@@ -56,10 +56,10 @@ public class CopyChatMessages {
 			switch (AaronModConfigManager.get().refinements.chat.copyChatMode) {
 				case SINGLE_LINE -> {
 					int messageLineIndex = getMessageLineIndex(chatLineX, chatLineY);
-					List<ChatHudLine.Visible> visibleMessages = chatAccessor.getVisibleMessages();
+					List<GuiMessage.Line> visibleMessages = chatAccessor.getVisibleMessages();
 
 					if (messageLineIndex >= 0 && messageLineIndex < visibleMessages.size()) {
-						OrderedText orderedText = visibleMessages.get(messageLineIndex).content();
+						FormattedCharSequence orderedText = visibleMessages.get(messageLineIndex).content();
 						StringBuilder message = new StringBuilder();
 
 						orderedText.accept((index, style, codePoint) -> {
@@ -67,7 +67,7 @@ public class CopyChatMessages {
 							return true;
 						});
 
-						CLIENT.keyboard.setClipboard(message.toString());
+						CLIENT.keyboardHandler.setClipboard(message.toString());
 						sendToast(true);
 
 						return true;
@@ -78,14 +78,14 @@ public class CopyChatMessages {
 
 				case ENTIRE_MESSAGE -> {
 					int messageIndex = getMessageIndex(chatLineX, chatLineY);
-					List<ChatHudLine> messages = chatAccessor.getMessages();
+					List<GuiMessage> messages = chatAccessor.getMessages();
 
 					if (messageIndex > -1 && messageIndex < messages.size()) {
-						Text message = messages.get(messageIndex).content();
-						String text2Copy = !click.hasAlt() ? Formatting.strip(message.getString()) : TextCodecs.CODEC.encodeStart(ItemUtils.getRegistryLookup().getOps(JsonOps.INSTANCE), message)
+						Component message = messages.get(messageIndex).content();
+						String text2Copy = !click.hasAltDown() ? ChatFormatting.stripFormatting(message.getString()) : ComponentSerialization.CODEC.encodeStart(ItemUtils.getRegistryLookup().createSerializationContext(JsonOps.INSTANCE), message)
 								.mapOrElse(JsonElement::toString, e -> "Error while encoding JSON text: " + e.message());
 
-						CLIENT.keyboard.setClipboard(text2Copy);
+						CLIENT.keyboardHandler.setClipboard(text2Copy);
 						sendToast(true);
 
 						return true;
@@ -103,21 +103,21 @@ public class CopyChatMessages {
 		ToastManager toastManager = CLIENT.getToastManager();
 
 		if (success) {
-			SystemToast.add(toastManager, SystemToast.Type.PERIODIC_NOTIFICATION, SUCCESS_TITLE, SUCCESS_DESCRIPTION);
+			SystemToast.add(toastManager, SystemToast.SystemToastId.PERIODIC_NOTIFICATION, SUCCESS_TITLE, SUCCESS_DESCRIPTION);
 		} else {
-			SystemToast.add(toastManager, SystemToast.Type.PERIODIC_NOTIFICATION, NOT_FOUND_TITLE, NOT_FOUND_DESCRIPTION);
+			SystemToast.add(toastManager, SystemToast.SystemToastId.PERIODIC_NOTIFICATION, NOT_FOUND_TITLE, NOT_FOUND_DESCRIPTION);
 
 		}
 	}
 
 	private static int getMessageIndex(double chatLineX, double chatLineY) {
-		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.inGameHud.getChatHud());
+		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.gui.getChat());
 
 		int lineIndex = getMessageLineIndex(chatLineX, chatLineY);
 		if (lineIndex == -1) return -1;
 
-		List<ChatHudLine> messages = chatAccessor.getMessages();
-		List<ChatHudLine.Visible> visibleMessages = chatAccessor.getVisibleMessages();
+		List<GuiMessage> messages = chatAccessor.getMessages();
+		List<GuiMessage.Line> visibleMessages = chatAccessor.getVisibleMessages();
 		int upperbound = 0; //Upper-bound value of range (position of start top of entry)
 		int lowerbound = getMessageEndLineIndex(chatLineX, chatLineY); //Lower-bound value of range (position of end of entry)
 
@@ -133,7 +133,7 @@ public class CopyChatMessages {
 		StringBuilder hoveredMessage = new StringBuilder();
 
 		for (int i = upperbound; i >= lowerbound; i--) { //Iterate over the entries apart of this message and build the messages content
-			ChatHudLine.Visible currentEntry = visibleMessages.get(i);
+			GuiMessage.Line currentEntry = visibleMessages.get(i);
 
 			currentEntry.content().accept((index, style, codePoint) -> {
 				if (!Character.isWhitespace(codePoint)) hoveredMessage.appendCodePoint(codePoint);
@@ -143,8 +143,8 @@ public class CopyChatMessages {
 		}
 
 		for (int i = 0; i < messages.size(); i++) { //Iterate over all stored messages
-			ChatHudLine currentMessage = messages.get(i);
-			String messageContent = StringUtils.deleteWhitespace(Formatting.strip(currentMessage.content().getString()));
+			GuiMessage currentMessage = messages.get(i);
+			String messageContent = StringUtils.deleteWhitespace(ChatFormatting.stripFormatting(currentMessage.content().getString()));
 
 			if (messageContent.equals(hoveredMessage.toString())) return i;
 		}
@@ -152,19 +152,19 @@ public class CopyChatMessages {
 	}
 
 	private static double toChatLineX(double x) {
-		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.inGameHud.getChatHud());
-		return x / chatAccessor.invokeGetChatScale() - 4.0;
+		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.gui.getChat());
+		return x / chatAccessor.invokeGetScale() - 4.0;
 	}
 
 	private static double toChatLineY(double y) {
-		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.inGameHud.getChatHud());
-		double d = CLIENT.getWindow().getScaledHeight() - y - 40.0;
+		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.gui.getChat());
+		double d = CLIENT.getWindow().getGuiScaledHeight() - y - 40.0;
 
-		return d / (chatAccessor.invokeGetChatScale() * chatAccessor.invokeGetLineHeight());
+		return d / (chatAccessor.invokeGetScale() * chatAccessor.invokeGetLineHeight());
 	}
 
 	private static int getMessageEndLineIndex(double chatLineX, double chatLineY) {
-		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.inGameHud.getChatHud());
+		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.gui.getChat());
 		int i = getMessageLineIndex(chatLineX, chatLineY);
 		if (i == -1) {
 			return -1;
@@ -182,14 +182,14 @@ public class CopyChatMessages {
 	}
 
 	private static int getMessageLineIndex(double chatLineX, double chatLineY) {
-		ChatHud chatHud = CLIENT.inGameHud.getChatHud();
+		ChatComponent chatHud = CLIENT.gui.getChat();
 		ChatAccessor chatAccessor = (ChatAccessor) chatHud;
 
 		if (chatHud.isChatFocused() && !chatAccessor.invokeIsChatHidden()) {
-			if (!(chatLineX < -4.0) && !(chatLineX > MathHelper.floor(chatAccessor.invokeGetWidth() / chatAccessor.invokeGetChatScale()))) {
-				int i = Math.min(chatHud.getVisibleLineCount(), chatAccessor.getVisibleMessages().size());
+			if (!(chatLineX < -4.0) && !(chatLineX > Mth.floor(chatAccessor.invokeGetWidth() / chatAccessor.invokeGetScale()))) {
+				int i = Math.min(chatHud.getLinesPerPage(), chatAccessor.getVisibleMessages().size());
 				if (chatLineY >= 0.0 && chatLineY < i) {
-					int j = MathHelper.floor(chatLineY + chatAccessor.getScrolledLines());
+					int j = Mth.floor(chatLineY + chatAccessor.getChatScrollbarPos());
 					if (j >= 0 && j < chatAccessor.getVisibleMessages().size()) {
 						return j;
 					}

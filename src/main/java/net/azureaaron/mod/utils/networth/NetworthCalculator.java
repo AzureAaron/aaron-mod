@@ -9,17 +9,17 @@ import net.azureaaron.networth.PetCalculator;
 import net.azureaaron.networth.data.ModifierValues;
 import net.azureaaron.networth.item.PetInfo;
 import net.azureaaron.networth.item.SkyblockItemStack;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 
 public class NetworthCalculator {
 
 	public static NetworthResult calculateItemNetworth(ItemStack stack) {
-		NbtCompound customData = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
-		String itemId = customData.getString("id", "");
+		CompoundTag customData = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+		String itemId = customData.getStringOr("id", "");
 		int count = stack.getCount();
 
 		SkyblockItemStack skyblockStack = SkyblockItemStack.of(itemId, count, new Dynamic<>(NbtOps.INSTANCE, customData), SkyblockItemMetadataRetriever.of(customData, itemId));

@@ -20,11 +20,11 @@ import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.render.RenderHelper;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.util.DefaultSkinHelper;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.CommandSource;
-import net.minecraft.entity.player.SkinTextures;
-import net.minecraft.text.Text;
+import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.PlayerSkin;
 
 public class DefaultSkinCommand extends VanillaCommand {
 	private static final Command INSTANCE = new DefaultSkinCommand();
@@ -35,11 +35,11 @@ public class DefaultSkinCommand extends VanillaCommand {
 	}
 
 	@Override
-	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
 		dispatcher.register(literal("defaultskin")
 				.executes(context -> CommandSystem.handleSelf4Vanilla(this, context.getSource()))
 				.then(argument("player", word())
-						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
+						.suggests((context, builder) -> SharedSuggestionProvider.suggest(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
 						.executes(context -> CommandSystem.handlePlayer4Vanilla(this, context.getSource(), getString(context, "player")))));
 	}
 
@@ -49,12 +49,12 @@ public class DefaultSkinCommand extends VanillaCommand {
 			ColourProfiles colourProfile = Constants.PROFILE.get();
 
 			UUID formattedUuid = UndashedUuid.fromString(uuid);
-			SkinTextures skinTexture = DefaultSkinHelper.getSkinTextures(formattedUuid);
+			PlayerSkin skinTexture = DefaultPlayerSkin.get(formattedUuid);
 			String skinName = Functions.titleCase(skinTexture.body().id().toString().replaceAll("minecraft:textures\\/entity\\/player\\/(wide|slim)\\/", "").replace(".png", ""));
-			String skinModel = Functions.titleCase(DefaultSkinHelper.getSkinTextures(formattedUuid).model().asString());
+			String skinModel = Functions.titleCase(DefaultPlayerSkin.get(formattedUuid).model().getSerializedName());
 
-			source.sendFeedback(Text.literal(Functions.possessiveEnding(name) + " Default Skin » ").withColor(colourProfile.primaryColour.getAsInt())
-					.append(Text.literal(skinName + " (" + skinModel + ")").withColor(colourProfile.secondaryColour.getAsInt())));
+			source.sendFeedback(Component.literal(Functions.possessiveEnding(name) + " Default Skin » ").withColor(colourProfile.primaryColour.getAsInt())
+					.append(Component.literal(skinName + " (" + skinModel + ")").withColor(colourProfile.secondaryColour.getAsInt())));
 		});
 	}
 }

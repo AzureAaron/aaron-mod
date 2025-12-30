@@ -9,25 +9,25 @@ import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.config.configs.ItemModelConfig.AbstractHand;
 import net.azureaaron.mod.screens.ModScreen;
 import net.azureaaron.mod.utils.render.GuiHelper;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.ScreenPos;
-import net.minecraft.client.gui.ScreenRect;
-import net.minecraft.client.gui.screen.ConfirmScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.CheckboxWidget;
-import net.minecraft.client.gui.widget.GridWidget;
-import net.minecraft.client.gui.widget.SimplePositioningWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
-import net.minecraft.client.gui.widget.GridWidget.Adder;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.ColorHelper;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Checkbox;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.layouts.FrameLayout;
+import net.minecraft.client.gui.layouts.GridLayout;
+import net.minecraft.client.gui.layouts.GridLayout.RowHelper;
+import net.minecraft.client.gui.navigation.ScreenPosition;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
+import net.minecraft.client.gui.screens.ConfirmScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.ARGB;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 
 public class CustomizeItemModelScreen extends Screen {
 	private static final int TEXT_FIELD_WIDTH = 50;
@@ -36,37 +36,37 @@ public class CustomizeItemModelScreen extends Screen {
 	//[-+]?[0-9]*\.?[0-9]*
 	private static final Predicate<String> FLOAT_INPUT_REGEX = Pattern.compile("[-+]?[0-9]*\\.?[0-9]*").asMatchPredicate();
 	private static final int BUTTON_WIDTH = 50;
-	private static final int OUTLINE_COLOUR = ColorHelper.getArgb(191, 0, 0, 0);
-	private static final int INNER_OUTLINE_COLOUR = ColorHelper.getArgb(51, 255, 255, 255);
+	private static final int OUTLINE_COLOUR = ARGB.color(191, 0, 0, 0);
+	private static final int INNER_OUTLINE_COLOUR = ARGB.color(51, 255, 255, 255);
 	private final Screen parent;
-	public final Hand hand;
+	public final InteractionHand hand;
 	public final ItemStack previewItem;
 	private final AbstractHand config;
 	private final AbstractHand backup;
 	private boolean hasChanges;
 
-	protected CustomizeItemModelScreen(Screen parent, Hand hand, ItemStack previewItem) {
-		super(Text.literal(hand == Hand.MAIN_HAND ? "Customize Main Hand" : "Customize Off Hand"));
+	protected CustomizeItemModelScreen(Screen parent, InteractionHand hand, ItemStack previewItem) {
+		super(Component.literal(hand == InteractionHand.MAIN_HAND ? "Customize Main Hand" : "Customize Off Hand"));
 		this.parent = parent;
 		this.hand = hand;
 		this.previewItem = previewItem;
 		this.config = switch (this.hand) {
-			case Hand.MAIN_HAND -> AaronModConfigManager.get().itemModel.mainHand;
-			case Hand.OFF_HAND -> AaronModConfigManager.get().itemModel.offHand;
+			case InteractionHand.MAIN_HAND -> AaronModConfigManager.get().itemModel.mainHand;
+			case InteractionHand.OFF_HAND -> AaronModConfigManager.get().itemModel.offHand;
 		};
 		this.backup = new AbstractHand().copyFrom(this.config);
 	}
 
 	@Override
 	protected void init() {
-		ScreenRect dimensions = this.getEffectiveDimensions(this.width, this.height);
-		GridWidget gridWidget = new GridWidget();
-		gridWidget.setSpacing(ModScreen.SPACING);
+		ScreenRectangle dimensions = this.getEffectiveDimensions(this.width, this.height);
+		GridLayout gridWidget = new GridLayout();
+		gridWidget.spacing(ModScreen.SPACING);
 
-		Adder adder = gridWidget.createAdder(3);
+		RowHelper adder = gridWidget.createRowHelper(3);
 
 		//Add title
-		adder.add(new TextWidget(this.title, this.textRenderer), 3);
+		adder.addChild(new StringWidget(this.title, this.font), 3);
 
 		this.addEnableCustomizationsCheckbox(adder);
 		this.addTranslationButtons(adder);
@@ -74,101 +74,101 @@ public class CustomizeItemModelScreen extends Screen {
 		this.addRotationButtons(adder);
 		this.addFinalButtons(adder);
 
-		gridWidget.refreshPositions();
-		SimplePositioningWidget.setPos(gridWidget, dimensions, 0.15f, 0.35f);
-		gridWidget.forEachChild(this::addDrawableChild);
+		gridWidget.arrangeElements();
+		FrameLayout.alignInRectangle(gridWidget, dimensions, 0.15f, 0.35f);
+		gridWidget.visitWidgets(this::addRenderableWidget);
 	}
 
-	private void addEnableCustomizationsCheckbox(Adder adder) {
-		CheckboxWidget enableCustomizations = CheckboxWidget.builder(Text.of("Enable Customizations"), this.textRenderer)
-				.checked(this.config.enabled)
-				.callback((checkbox, checked) -> {
+	private void addEnableCustomizationsCheckbox(RowHelper adder) {
+		Checkbox enableCustomizations = Checkbox.builder(Component.nullToEmpty("Enable Customizations"), this.font)
+				.selected(this.config.enabled)
+				.onValueChange((checkbox, checked) -> {
 					this.config.enabled = checked;
 					this.hasChanges = true;
 				})
 				.build();
-		adder.add(enableCustomizations, 3);
+		adder.addChild(enableCustomizations, 3);
 	}
 
-	private void addTranslationButtons(Adder adder) {
-		adder.add(new TextWidget(Text.literal("Translations"), this.textRenderer), 3);
-		adder.add(new TextWidget(Text.literal("X"), this.textRenderer));
-		adder.add(new TextWidget(Text.literal("Y"), this.textRenderer));
-		adder.add(new TextWidget(Text.literal("Z"), this.textRenderer));
+	private void addTranslationButtons(RowHelper adder) {
+		adder.addChild(new StringWidget(Component.literal("Translations"), this.font), 3);
+		adder.addChild(new StringWidget(Component.literal("X"), this.font));
+		adder.addChild(new StringWidget(Component.literal("Y"), this.font));
+		adder.addChild(new StringWidget(Component.literal("Z"), this.font));
 
-		TextFieldWidget xTranslationField = this.newFloatField(Text.of("X Translation"), () -> this.config.x, newValue -> this.config.x = newValue);
-		TextFieldWidget yTranslationField = this.newFloatField(Text.of("Y Translation"), () -> this.config.y, newValue -> this.config.y = newValue);
-		TextFieldWidget zTranslationField = this.newFloatField(Text.of("Z Translation"), () -> this.config.z, newValue -> this.config.z = newValue);
+		EditBox xTranslationField = this.newFloatField(Component.nullToEmpty("X Translation"), () -> this.config.x, newValue -> this.config.x = newValue);
+		EditBox yTranslationField = this.newFloatField(Component.nullToEmpty("Y Translation"), () -> this.config.y, newValue -> this.config.y = newValue);
+		EditBox zTranslationField = this.newFloatField(Component.nullToEmpty("Z Translation"), () -> this.config.z, newValue -> this.config.z = newValue);
 
-		adder.add(xTranslationField);
-		adder.add(yTranslationField);
-		adder.add(zTranslationField);
+		adder.addChild(xTranslationField);
+		adder.addChild(yTranslationField);
+		adder.addChild(zTranslationField);
 	}
 
-	private void addScaleButtons(Adder adder) {
-		adder.add(new TextWidget(Text.literal("Scaling"), this.textRenderer), 3);
+	private void addScaleButtons(RowHelper adder) {
+		adder.addChild(new StringWidget(Component.literal("Scaling"), this.font), 3);
 
-		TextFieldWidget scalingField = this.newFloatField(Text.of("Scaling"), () -> this.config.scale, newValue -> this.config.scale = newValue);
+		EditBox scalingField = this.newFloatField(Component.nullToEmpty("Scaling"), () -> this.config.scale, newValue -> this.config.scale = newValue);
 
-		adder.add(scalingField, 3);
+		adder.addChild(scalingField, 3);
 	}
 
-	private void addRotationButtons(Adder adder) {
-		adder.add(new TextWidget(Text.literal("Rotations"), this.textRenderer), 3);
-		adder.add(new TextWidget(Text.literal("X"), this.textRenderer));
-		adder.add(new TextWidget(Text.literal("Y"), this.textRenderer));
-		adder.add(new TextWidget(Text.literal("Z"), this.textRenderer));
+	private void addRotationButtons(RowHelper adder) {
+		adder.addChild(new StringWidget(Component.literal("Rotations"), this.font), 3);
+		adder.addChild(new StringWidget(Component.literal("X"), this.font));
+		adder.addChild(new StringWidget(Component.literal("Y"), this.font));
+		adder.addChild(new StringWidget(Component.literal("Z"), this.font));
 
-		TextFieldWidget xRotationField = this.newFloatField(Text.of("X Rotation"), () -> this.config.xRotation, newValue -> this.config.xRotation = newValue);
-		TextFieldWidget yRotationField = this.newFloatField(Text.of("Y Rotation"), () -> this.config.yRotation, newValue -> this.config.yRotation = newValue);
-		TextFieldWidget zRotationField = this.newFloatField(Text.of("Z Rotation"), () -> this.config.zRotation, newValue -> this.config.zRotation = newValue);
+		EditBox xRotationField = this.newFloatField(Component.nullToEmpty("X Rotation"), () -> this.config.xRotation, newValue -> this.config.xRotation = newValue);
+		EditBox yRotationField = this.newFloatField(Component.nullToEmpty("Y Rotation"), () -> this.config.yRotation, newValue -> this.config.yRotation = newValue);
+		EditBox zRotationField = this.newFloatField(Component.nullToEmpty("Z Rotation"), () -> this.config.zRotation, newValue -> this.config.zRotation = newValue);
 
-		adder.add(xRotationField);
-		adder.add(yRotationField);
-		adder.add(zRotationField);
+		adder.addChild(xRotationField);
+		adder.addChild(yRotationField);
+		adder.addChild(zRotationField);
 	}
 
-	private void addFinalButtons(Adder adder) {
-		ButtonWidget saveButton = ButtonWidget.builder(Text.literal("Save"), button -> this.saveAndClose())
-				.tooltip(Tooltip.of(Text.literal("Saves the values and closes the screen.")))
+	private void addFinalButtons(RowHelper adder) {
+		Button saveButton = Button.builder(Component.literal("Save"), button -> this.saveAndClose())
+				.tooltip(Tooltip.create(Component.literal("Saves the values and closes the screen.")))
 				.width(BUTTON_WIDTH)
 				.build();
-		ButtonWidget revertButton = ButtonWidget.builder(Text.literal("Revert"), button -> this.revert())
-				.tooltip(Tooltip.of(Text.literal("Reverts any edits made.")))
+		Button revertButton = Button.builder(Component.literal("Revert"), button -> this.revert())
+				.tooltip(Tooltip.create(Component.literal("Reverts any edits made.")))
 				.width(BUTTON_WIDTH)
 				.build();
-		ButtonWidget resetButton = ButtonWidget.builder(Text.literal("Reset"), button -> this.reset())
-				.tooltip(Tooltip.of(Text.literal("Resets all values to their defaults.")))
+		Button resetButton = Button.builder(Component.literal("Reset"), button -> this.reset())
+				.tooltip(Tooltip.create(Component.literal("Resets all values to their defaults.")))
 				.width(BUTTON_WIDTH)
 				.build();
 
-		adder.add(saveButton);
-		adder.add(revertButton);
-		adder.add(resetButton);
+		adder.addChild(saveButton);
+		adder.addChild(revertButton);
+		adder.addChild(resetButton);
 	}
 
-	private TextFieldWidget newFloatField(Text text, Supplier<Float> getter, FloatConsumer setter) {
-		TextFieldWidget textField = new TextFieldWidget(this.textRenderer, TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT, text);
-		textField.setText(String.valueOf(getter.get()));
-		textField.setTextPredicate(FLOAT_INPUT_REGEX);
-		textField.setChangedListener(input -> handleFloatInput(textField, input, setter));
+	private EditBox newFloatField(Component text, Supplier<Float> getter, FloatConsumer setter) {
+		EditBox textField = new EditBox(this.font, TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT, text);
+		textField.setValue(String.valueOf(getter.get()));
+		textField.setFilter(FLOAT_INPUT_REGEX);
+		textField.setResponder(input -> handleFloatInput(textField, input, setter));
 
 		return textField;
 	}
 
-	private void handleFloatInput(TextFieldWidget textField, String input, FloatConsumer setter) {
+	private void handleFloatInput(EditBox textField, String input, FloatConsumer setter) {
 		try {
 			float value = Float.parseFloat(input);
 
 			//Make sure the float is valid for positioning purposes
 			if (!Float.isNaN(value) && Float.isFinite(value)) {
 				setter.accept(value);
-				textField.setEditableColor(TextFieldWidget.DEFAULT_EDITABLE_COLOR);
+				textField.setTextColor(EditBox.DEFAULT_TEXT_COLOR);
 			} else {
-				textField.setEditableColor(ColorHelper.fullAlpha(Formatting.RED.getColorValue()));
+				textField.setTextColor(ARGB.opaque(ChatFormatting.RED.getColor()));
 			}
 		} catch (NumberFormatException e) {
-			textField.setEditableColor(ColorHelper.fullAlpha(Formatting.RED.getColorValue()));
+			textField.setTextColor(ARGB.opaque(ChatFormatting.RED.getColor()));
 		}
 
 		this.hasChanges = !this.config.equals(this.backup);
@@ -177,60 +177,60 @@ public class CustomizeItemModelScreen extends Screen {
 	/**
 	 * Since we only render for half the width of the screen, this calculates the dimensions of the half that we will be using.
 	 */
-	private ScreenRect getEffectiveDimensions(int scaledWindowWidth, int scaledWindowHeight) {
-		boolean isMainHand = this.hand == Hand.MAIN_HAND;
+	private ScreenRectangle getEffectiveDimensions(int scaledWindowWidth, int scaledWindowHeight) {
+		boolean isMainHand = this.hand == InteractionHand.MAIN_HAND;
 		int x = isMainHand ? 0 : scaledWindowWidth / 2;
 		int width = scaledWindowWidth / 2;
 
-		return new ScreenRect(new ScreenPos(x, 0), width, scaledWindowHeight);
+		return new ScreenRectangle(new ScreenPosition(x, 0), width, scaledWindowHeight);
 	}
 
 	@Override
-	public void renderBackground(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-		ScreenRect dimensions = this.getEffectiveDimensions(this.width, this.height);
+	public void renderBackground(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+		ScreenRectangle dimensions = this.getEffectiveDimensions(this.width, this.height);
 
-		context.enableScissor(dimensions.getLeft(), dimensions.getTop(), dimensions.getRight(), dimensions.getBottom());
-		GuiHelper.enableBlurScissor(dimensions.getLeft(), dimensions.getTop(), dimensions.width(), dimensions.height());
-		this.applyBlur(context);
-		this.renderDarkening(context);
+		context.enableScissor(dimensions.left(), dimensions.top(), dimensions.right(), dimensions.bottom());
+		GuiHelper.enableBlurScissor(dimensions.left(), dimensions.top(), dimensions.width(), dimensions.height());
+		this.renderBlurredBackground(context);
+		this.renderMenuBackground(context);
 		context.disableScissor();
 
-		boolean isMainHand = this.hand == Hand.MAIN_HAND;
-		context.drawVerticalLine(isMainHand ? dimensions.getRight() : dimensions.getLeft(), dimensions.getTop() - 1, dimensions.getBottom(), OUTLINE_COLOUR);
-		context.drawVerticalLine(isMainHand ? dimensions.getRight() - 1 : dimensions.getLeft() + 1, dimensions.getTop() - 1, dimensions.getBottom(), INNER_OUTLINE_COLOUR);
+		boolean isMainHand = this.hand == InteractionHand.MAIN_HAND;
+		context.vLine(isMainHand ? dimensions.right() : dimensions.left(), dimensions.top() - 1, dimensions.bottom(), OUTLINE_COLOUR);
+		context.vLine(isMainHand ? dimensions.right() - 1 : dimensions.left() + 1, dimensions.top() - 1, dimensions.bottom(), INNER_OUTLINE_COLOUR);
 	}
 
 	private void saveAndClose() {
 		AaronModConfigManager.save();
 		this.hasChanges = false;
-		this.close();
+		this.onClose();
 	}
 
 	private void revert() {
 		this.config.copyFrom(this.backup);
 		this.hasChanges = false;
-		this.clearAndInit();
+		this.rebuildWidgets();
 	}
 
 	private void reset() {
 		this.config.copyFrom(new AbstractHand());
 		this.hasChanges = true;
-		this.clearAndInit();
+		this.rebuildWidgets();
 	}
 
 	@Override
-	public void close() {
+	public void onClose() {
 		if (this.hasChanges) {
-			this.client.setScreen(new ConfirmScreen(confirmed -> {
+			this.minecraft.setScreen(new ConfirmScreen(confirmed -> {
 				if (confirmed) {
 					this.revert();
-					this.client.setScreen(this.parent);
+					this.minecraft.setScreen(this.parent);
 				} else {
-					this.client.setScreen(this);
+					this.minecraft.setScreen(this);
 				}
-			}, Text.literal("Unsaved Changes"), Text.literal("Are you sure you want to exit this screen? Any changes will not be saved!"), Text.literal("Quit & Discard Changes"), ScreenTexts.CANCEL));
+			}, Component.literal("Unsaved Changes"), Component.literal("Are you sure you want to exit this screen? Any changes will not be saved!"), Component.literal("Quit & Discard Changes"), CommonComponents.GUI_CANCEL));
 		} else {
-			this.client.setScreen(this.parent);
+			this.minecraft.setScreen(this.parent);
 		}
 	}
 }

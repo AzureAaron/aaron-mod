@@ -6,12 +6,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.azureaaron.mod.utils.ServerTickCounter;
-import net.minecraft.network.ClientConnection;
+import net.minecraft.network.Connection;
 
-@Mixin(ClientConnection.class)
+@Mixin(Connection.class)
 public class ClientConnectionMixin {
 
-	@Inject(method = "handlePacket", at = @At("HEAD"))
+	@Inject(method = "genericsFtw", at = @At("HEAD"))
 	private static void aaronMod$onReceivePacket(CallbackInfo ci) {
 		ServerTickCounter.INSTANCE.onReceivePacket();
 	}

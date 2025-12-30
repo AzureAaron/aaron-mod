@@ -6,15 +6,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.minecraft.client.particle.FireworksSparkParticle;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.Registries;
+import net.minecraft.client.particle.FireworkParticles;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 
-@Mixin(FireworksSparkParticle.FireworkParticle.class)
+@Mixin(FireworkParticles.Starter.class)
 public class FireworksSparkParticleMixin {
 
-	@Inject(method = "addExplosionParticle", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "createParticle", at = @At("HEAD"), cancellable = true)
 	private void aaronMod$onExplosionParticle(CallbackInfo ci) {
-		if (!AaronModConfigManager.get().particles.states.getOrDefault(Registries.PARTICLE_TYPE.getId(ParticleTypes.FIREWORK), true)) ci.cancel();
+		if (!AaronModConfigManager.get().particles.states.getOrDefault(BuiltInRegistries.PARTICLE_TYPE.getKey(ParticleTypes.FIREWORK), true)) ci.cancel();
 	}
 }

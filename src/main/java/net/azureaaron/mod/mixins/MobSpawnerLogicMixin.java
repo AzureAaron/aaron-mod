@@ -6,9 +6,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.minecraft.block.spawner.MobSpawnerLogic;
+import net.minecraft.world.level.BaseSpawner;
 
-@Mixin(MobSpawnerLogic.class)
+@Mixin(BaseSpawner.class)
 public class MobSpawnerLogicMixin {
 
 	@Inject(method = "clientTick", at = @At("HEAD"), cancellable = true)

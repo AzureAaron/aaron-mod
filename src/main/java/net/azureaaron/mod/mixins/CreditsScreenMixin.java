@@ -6,15 +6,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.minecraft.client.gui.screen.CreditsScreen;
-import net.minecraft.client.sound.MusicTracker;
-import net.minecraft.sound.MusicSound;
+import net.minecraft.client.gui.screens.WinScreen;
+import net.minecraft.client.sounds.MusicManager;
+import net.minecraft.sounds.Music;
 
-@Mixin(CreditsScreen.class)
+@Mixin(WinScreen.class)
 public class CreditsScreenMixin {
 
-	@WrapWithCondition(method = "removed", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/MusicTracker;stop(Lnet/minecraft/sound/MusicSound;)V"))
-	private boolean aaronMod$dontStopCreditsMusic(MusicTracker musicTracker, MusicSound type) {
+	@WrapWithCondition(method = "removed", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sounds/MusicManager;stopPlaying(Lnet/minecraft/sounds/Music;)V"))
+	private boolean aaronMod$dontStopCreditsMusic(MusicManager musicTracker, Music type) {
 		return !AaronModConfigManager.get().refinements.music.uninterruptedMusic;
 	}
 }

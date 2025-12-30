@@ -31,18 +31,18 @@ import net.azureaaron.mod.utils.Skyblock;
 import net.azureaaron.mod.utils.render.RenderHelper;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.CommandSource;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.ItemStack;
 
 public class InventoryCommand extends SkyblockCommand {
 	private static final Command INSTANCE = new InventoryCommand();
 	private static final Logger LOGGER = LogUtils.getLogger();
-	private static final Supplier<MutableText> NBT_PARSING_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while trying to parse NBT!").formatted(Formatting.RED));
+	private static final Supplier<MutableComponent> NBT_PARSING_ERROR = () -> Constants.PREFIX.get().append(Component.literal("There was an error while trying to parse NBT!").withStyle(ChatFormatting.RED));
 
 	@Init
 	public static void init() {
@@ -50,26 +50,26 @@ public class InventoryCommand extends SkyblockCommand {
 	}
 
 	@Override
-	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
 		dispatcher.register(literal("inventory")
 				.executes(context -> CommandSystem.handleSelf4Skyblock(this, context.getSource()))
 				.then(argument("player", word())
-						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
+						.suggests((context, builder) -> SharedSuggestionProvider.suggest(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
 						.executes(context -> CommandSystem.handlePlayer4Skyblock(this, context.getSource(), getString(context, "player")))));
 
 		dispatcher.register(literal("inv")
 				.executes(context -> CommandSystem.handleSelf4Skyblock(this, context.getSource()))
 				.then(argument("player", word())
-						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
+						.suggests((context, builder) -> SharedSuggestionProvider.suggest(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
 						.executes(context -> CommandSystem.handlePlayer4Skyblock(this, context.getSource(), getString(context, "player")))));
 	}
 
 	private record ItemData4(ItemStack stack, String fallback) {
-		private MutableText feedbackMessage() {
+		private MutableComponent feedbackMessage() {
 			if (!stack.isEmpty()) {
-				return stack.getName().copy().styled(style -> style.withHoverEvent(new HoverEvent.ShowItem(stack)));
+				return stack.getHoverName().copy().withStyle(style -> style.withHoverEvent(new HoverEvent.ShowItem(stack)));
 			} else {
-				return Text.literal(fallback).formatted(Formatting.RED);
+				return Component.literal(fallback).withStyle(ChatFormatting.RED);
 			}
 		}
 	}
@@ -130,27 +130,27 @@ public class InventoryCommand extends SkyblockCommand {
 		}
 
 		//Sort key items by name
-		keyItems.sort(Comparator.comparing(id -> id.stack().getName().getString()));
+		keyItems.sort(Comparator.comparing(id -> id.stack().getHoverName().getString()));
 		List<ItemStack> equipmentFinal = equipment;
 
 		RenderHelper.runOnRenderThread(() -> {
-			Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
-					.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
-					.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
-					.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
-					.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
+			Component startText = Component.literal("     ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
+					.append(Component.literal("[- ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
+					.append(Component.literal(name).withStyle(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
+					.append(Component.literal(" -]").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
+					.append(Component.literal("     ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt())).withStyle(style -> style.withStrikethrough(true))));
 
 			source.sendFeedback(startText);
 
-			source.sendFeedback(Text.literal("Inventory API » " + ((inventoryEnabled) ? "✓" : "✗")).withColor(colourProfile.infoColour.getAsInt()));
-			source.sendFeedback(Text.literal(""));
+			source.sendFeedback(Component.literal("Inventory API » " + ((inventoryEnabled) ? "✓" : "✗")).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Component.literal(""));
 			source.sendFeedback(helmet.feedbackMessage());
 			source.sendFeedback(chestplate.feedbackMessage());
 			source.sendFeedback(leggings.feedbackMessage());
 			source.sendFeedback(boots.feedbackMessage());
 
 			if (equipmentFinal != null) {
-				source.sendFeedback(Text.literal(""));
+				source.sendFeedback(Component.literal(""));
 
 				source.sendFeedback(equipmentPieces[0].feedbackMessage());
 				source.sendFeedback(equipmentPieces[1].feedbackMessage());
@@ -160,14 +160,14 @@ public class InventoryCommand extends SkyblockCommand {
 
 			//Print feedback
 			if (keyItems.size() > 0) {
-				source.sendFeedback(Text.literal(""));
+				source.sendFeedback(Component.literal(""));
 
 				for (ItemData4 item : keyItems) {
 					source.sendFeedback(item.feedbackMessage());
 				}
 			}
 
-			source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+			source.sendFeedback(Component.literal(CommandSystem.getEndSpaces(startText)).withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 		});
 	}
 }

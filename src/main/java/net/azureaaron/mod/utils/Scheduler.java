@@ -11,8 +11,8 @@ import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.azureaaron.mod.utils.render.RenderHelper;
-import net.minecraft.util.profiler.Profiler;
-import net.minecraft.util.profiler.Profilers;
+import net.minecraft.util.profiling.Profiler;
+import net.minecraft.util.profiling.ProfilerFiller;
 
 /**
  * Provides task scheduling based on the client tick.
@@ -78,7 +78,7 @@ public class Scheduler {
 	 */
 	public void tick() {
 		//Profile the scheduler tick for debugging
-		Profiler profiler = Profilers.get();
+		ProfilerFiller profiler = Profiler.get();
 		profiler.push("aaronModSchedulerTick");
 
 		//Check if there are tasks scheduled for the current tick, if there are any then execute them.

@@ -11,39 +11,39 @@ import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.ParticleSpawnEvent;
 import net.azureaaron.mod.events.PlaySoundEvent;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientCommonNetworkHandler;
-import net.minecraft.client.network.ClientConnectionState;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.sound.MusicTracker;
-import net.minecraft.network.ClientConnection;
-import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.multiplayer.CommonListenerCookie;
+import net.minecraft.client.sounds.MusicManager;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 
-@Mixin(ClientPlayNetworkHandler.class)
-public abstract class ClientPlayNetworkHandlerMixin extends ClientCommonNetworkHandler {
+@Mixin(ClientPacketListener.class)
+public abstract class ClientPlayNetworkHandlerMixin extends ClientCommonPacketListenerImpl {
 
-	protected ClientPlayNetworkHandlerMixin(MinecraftClient client, ClientConnection connection, ClientConnectionState connectionState) {
+	protected ClientPlayNetworkHandlerMixin(Minecraft client, Connection connection, CommonListenerCookie connectionState) {
 		super(client, connection, connectionState);
 	}
 
-	@WrapWithCondition(method = "onPlayerRespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/MusicTracker;stop()V"))
-	private boolean aaronMod$onWorldChange(MusicTracker musicTracker) {
+	@WrapWithCondition(method = "handleRespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sounds/MusicManager;stopPlaying()V"))
+	private boolean aaronMod$onWorldChange(MusicManager musicTracker) {
 		return !AaronModConfigManager.get().refinements.music.uninterruptedMusic;
 	}
 
-	@Inject(method = "onPlaySound", at = @At("RETURN"))
-	private void aaronMod$onPlaySound(PlaySoundS2CPacket packet, CallbackInfo ci) {
+	@Inject(method = "handleSoundEvent", at = @At("RETURN"))
+	private void aaronMod$onPlaySound(ClientboundSoundPacket packet, CallbackInfo ci) {
 		PlaySoundEvent.EVENT.invoker().onPlaySound(packet);
 	}
 
-	@Inject(method = "onParticle", at = @At("RETURN"))
-	private void aaronMod$onParticleSpawn(ParticleS2CPacket packet, CallbackInfo ci) {
+	@Inject(method = "handleParticleEvent", at = @At("RETURN"))
+	private void aaronMod$onParticleSpawn(ClientboundLevelParticlesPacket packet, CallbackInfo ci) {
 		ParticleSpawnEvent.EVENT.invoker().onParticleSpawn(packet);
 	}
 
-	@ModifyExpressionValue(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/DebugHud;shouldShowPacketSizeAndPingCharts()Z"))
+	@ModifyExpressionValue(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/DebugScreenOverlay;showNetworkCharts()Z"))
 	private boolean aaronMod$sendPingPackets4PingDisplay(boolean original) {
-		return this.client.getDebugHud().shouldShowDebugHud() ? original : original || AaronModConfigManager.get().uiAndVisuals.pingHud.enablePingHud;
+		return this.minecraft.getDebugOverlay().showDebugScreen() ? original : original || AaronModConfigManager.get().uiAndVisuals.pingHud.enablePingHud;
 	}
 }

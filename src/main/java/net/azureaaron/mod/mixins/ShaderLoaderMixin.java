@@ -15,14 +15,14 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import net.azureaaron.mod.features.ChromaText;
 import net.azureaaron.mod.utils.Cache;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.ShaderLoader;
-import net.minecraft.resource.DefaultResourcePack;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceType;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ShaderManager;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.VanillaPackResources;
+import net.minecraft.server.packs.resources.Resource;
 
-@Mixin(ShaderLoader.class)
+@Mixin(ShaderManager.class)
 public class ShaderLoaderMixin {
 	@Unique
 	private static final String RENDERTYPE_TEXT_SHADER = "shaders/core/rendertype_text";
@@ -32,15 +32,15 @@ public class ShaderLoaderMixin {
 
 	@ModifyExpressionValue(method = "prepare",
 			at = @At(value = "INVOKE", target = "Ljava/util/Map$Entry;getValue()Ljava/lang/Object;", ordinal = 0),
-			slice = @Slice(from = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/shaders/ShaderType;byLocation(Lnet/minecraft/util/Identifier;)Lcom/mojang/blaze3d/shaders/ShaderType;"), to = @At(value = "INVOKE", target = "Lnet/minecraft/client/gl/ShaderLoader;loadShaderSource(Lnet/minecraft/util/Identifier;Lnet/minecraft/resource/Resource;Lcom/mojang/blaze3d/shaders/ShaderType;Ljava/util/Map;Lcom/google/common/collect/ImmutableMap$Builder;)V"))
+			slice = @Slice(from = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/shaders/ShaderType;byLocation(Lnet/minecraft/resources/Identifier;)Lcom/mojang/blaze3d/shaders/ShaderType;"), to = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ShaderManager;loadShader(Lnet/minecraft/resources/Identifier;Lnet/minecraft/server/packs/resources/Resource;Lcom/mojang/blaze3d/shaders/ShaderType;Ljava/util/Map;Lcom/google/common/collect/ImmutableMap$Builder;)V"))
 	)
 	private Object aaronMod$useVanillaRenderTypeTextShaderWhileOnMCCI(Object genericResource, @Local Map.Entry<Identifier, Resource> entry) {
-		if (Cache.currentServerAddress.endsWith("mccisland.net") && entry.getValue().getPackId().equals(ChromaText.ID.toString()) && entry.getKey().getPath().startsWith(RENDERTYPE_TEXT_SHADER)) {
+		if (Cache.currentServerAddress.endsWith("mccisland.net") && entry.getValue().sourcePackId().equals(ChromaText.ID.toString()) && entry.getKey().getPath().startsWith(RENDERTYPE_TEXT_SHADER)) {
 			LOGGER.warn("[Aaron's Mod] Loading vanilla {} shader file due to an incompatibility on MCCI", entry.getKey());
 
-			DefaultResourcePack vanillaPack = MinecraftClient.getInstance().getDefaultResourcePack();
+			VanillaPackResources vanillaPack = Minecraft.getInstance().getVanillaPackResources();
 
-			return new Resource(vanillaPack, vanillaPack.open(ResourceType.CLIENT_RESOURCES, entry.getKey()));
+			return new Resource(vanillaPack, vanillaPack.getResource(PackType.CLIENT_RESOURCES, entry.getKey()));
 		}
 
 		return genericResource;

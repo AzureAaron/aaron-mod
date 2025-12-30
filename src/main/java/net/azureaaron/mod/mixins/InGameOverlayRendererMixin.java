@@ -6,12 +6,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.minecraft.client.gui.hud.InGameOverlayRenderer;
+import net.minecraft.client.renderer.ScreenEffectRenderer;
 
-@Mixin(InGameOverlayRenderer.class)
+@Mixin(ScreenEffectRenderer.class)
 public class InGameOverlayRendererMixin {
 
-	@Inject(method = "renderFireOverlay", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "renderFire", at = @At("HEAD"), cancellable = true)
 	private static void aaronMod$hideFireOverlay(CallbackInfo ci) {
 		if (AaronModConfigManager.get().uiAndVisuals.overlays.hideFireOverlay) ci.cancel();
 	}

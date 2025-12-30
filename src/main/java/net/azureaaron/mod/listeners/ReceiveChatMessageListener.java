@@ -9,11 +9,11 @@ import net.azureaaron.mod.events.ReceiveChatMessageEvent;
 import net.azureaaron.mod.features.Dragons;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Functions;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 
 public class ReceiveChatMessageListener {
-	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
+	private static final Minecraft CLIENT = Minecraft.getInstance();
 	private static final Pattern PARTY_PATTERN = Pattern.compile("Party Finder > (?<name>[A-z0-9_]+) joined the dungeon group! \\([^)]*\\)");
 	private static final Pattern PLAYER_BLESSING_PATTERN = Pattern.compile("DUNGEON BUFF! [A-z0-9_]+ found a Blessing of (?<blessing>[A-z]+) (?<level>[A-z]+)!( \\([^)]*\\))?");
 	private static final Pattern AUTO_PICKUP_BLESSING_PATTERN = Pattern.compile("DUNGEON BUFF! A Blessing of (?<blessing>[A-z]+) (?<level>[A-z]+) was found!( \\([^)]*\\))?");
@@ -25,13 +25,13 @@ public class ReceiveChatMessageListener {
 		ReceiveChatMessageEvent.EVENT.register((message, overlay, cancelled) -> {
 			if (Functions.isOnHypixel() && !overlay) {
 				String stringForm = message.getString();
-				String strippedForm = Formatting.strip(stringForm);
+				String strippedForm = ChatFormatting.stripFormatting(stringForm);
 				Matcher partyMatcher = PARTY_PATTERN.matcher(stringForm);
 				Matcher playerBlessingMatcher = PLAYER_BLESSING_PATTERN.matcher(stringForm);
 				Matcher autoBlessingMatcher = AUTO_PICKUP_BLESSING_PATTERN.matcher(stringForm);
 				Matcher teamScoreMatcher = TEAM_SCORE_PATTERN.matcher(stringForm);
 
-				if (AaronModConfigManager.get().skyblock.dungeons.dungeonFinderPlayerStats && partyMatcher.matches()) CLIENT.player.networkHandler.sendChatCommand("dungeons " + partyMatcher.group("name"));
+				if (AaronModConfigManager.get().skyblock.dungeons.dungeonFinderPlayerStats && partyMatcher.matches()) CLIENT.player.connection.sendCommand("dungeons " + partyMatcher.group("name"));
 
 				if (playerBlessingMatcher.matches()) Cache.incrementBlessing(playerBlessingMatcher.group("blessing"), playerBlessingMatcher.group("level"));
 

@@ -1,7 +1,7 @@
 package net.azureaaron.mod;
 
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.KeyMapping;
 
 public class Keybinds {
-	public static KeyBinding zoomKeybind;
+	public static KeyMapping zoomKeybind;
 }

@@ -15,7 +15,7 @@ import com.ibm.icu.text.DateTimePatternGenerator;
 
 import ca.weblite.objc.Client;
 import net.azureaaron.mod.debug.Debug;
-import net.minecraft.client.input.SystemKeycodes;
+import net.minecraft.client.input.InputQuirks;
 import net.minecraft.util.Util;
 
 /**
@@ -121,7 +121,7 @@ public class Formatters {
 	private static boolean is12HourClock() {
 		//The j formatting template returns the preferred formatting for the time
 		//If the format contains a (am/pm pattern) then the preference is to use the 12 hour clock, otherwise its the 24 hour clock
-		if (SystemKeycodes.IS_MAC_OS) {
+		if (InputQuirks.REPLACE_CTRL_KEY_WITH_CMD_KEY) {
 			Object locale = Client.getInstance().send("NSLocale", "currentLocale");
 			String timeFormat = (String) Client.getInstance().send("NSDateFormatter", "dateFormatFromTemplate:options:locale:", "j", 0, locale);
 

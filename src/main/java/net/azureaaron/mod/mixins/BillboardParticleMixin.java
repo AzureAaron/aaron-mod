@@ -7,9 +7,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 import net.azureaaron.mod.injected.ParticleAlphaMarker;
-import net.minecraft.client.particle.BillboardParticle;
+import net.minecraft.client.particle.SingleQuadParticle;
 
-@Mixin(BillboardParticle.class)
+@Mixin(SingleQuadParticle.class)
 public class BillboardParticleMixin implements ParticleAlphaMarker {
 	@Unique
 	private boolean hasCustomAlpha;
@@ -19,8 +19,8 @@ public class BillboardParticleMixin implements ParticleAlphaMarker {
 		this.hasCustomAlpha = true;
 	}
 
-	@ModifyExpressionValue(method = "renderVertex", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/particle/BillboardParticle;getRenderType()Lnet/minecraft/client/particle/BillboardParticle$RenderType;"))
-	private BillboardParticle.RenderType aaronMod$particleAlphaTranslucency(BillboardParticle.RenderType original) {
-		return this.hasCustomAlpha && original.equals(BillboardParticle.RenderType.PARTICLE_ATLAS_OPAQUE) ? BillboardParticle.RenderType.PARTICLE_ATLAS_TRANSLUCENT : original;
+	@ModifyExpressionValue(method = "extractRotatedQuad(Lnet/minecraft/client/renderer/state/QuadParticleRenderState;Lorg/joml/Quaternionf;FFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/particle/SingleQuadParticle;getLayer()Lnet/minecraft/client/particle/SingleQuadParticle$Layer;"))
+	private SingleQuadParticle.Layer aaronMod$particleAlphaTranslucency(SingleQuadParticle.Layer original) {
+		return this.hasCustomAlpha && original.equals(SingleQuadParticle.Layer.OPAQUE) ? SingleQuadParticle.Layer.TRANSLUCENT : original;
 	}
 }

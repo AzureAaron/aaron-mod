@@ -7,13 +7,13 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.TextTransformer;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
 
 public class TextReplacer {
-	public static final Supplier<Object2ObjectLinkedOpenHashMap<String, Text>> TEXT_REPLACEMENTS = () -> AaronModConfigManager.get().textReplacer.textReplacements;
+	public static final Supplier<Object2ObjectLinkedOpenHashMap<String, Component>> TEXT_REPLACEMENTS = () -> AaronModConfigManager.get().textReplacer.textReplacements;
 
-	public static void addTextReplacement(String textToReplace, Text replacementText) {
+	public static void addTextReplacement(String textToReplace, Component replacementText) {
 		TEXT_REPLACEMENTS.get().put(textToReplace, replacementText);
 		AaronModConfigManager.save();
 	}
@@ -37,7 +37,7 @@ public class TextReplacer {
 		return suggestions;
 	}
 
-	public static OrderedText visuallyReplaceText(OrderedText text) {
+	public static FormattedCharSequence visuallyReplaceText(FormattedCharSequence text) {
 		return TextTransformer.replaceMultipleEntriesInOrdered(text, TEXT_REPLACEMENTS.get());
 	}
 }

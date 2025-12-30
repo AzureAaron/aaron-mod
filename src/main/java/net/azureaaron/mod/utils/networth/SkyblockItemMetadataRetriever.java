@@ -4,23 +4,23 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.azureaaron.mod.utils.ItemUtils;
 import net.azureaaron.networth.item.ItemMetadataRetriever;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
 
 record SkyblockItemMetadataRetriever(IntList cakeBagCakeYears) implements ItemMetadataRetriever {
 
-	static SkyblockItemMetadataRetriever of(NbtCompound customData, String itemId) {
+	static SkyblockItemMetadataRetriever of(CompoundTag customData, String itemId) {
 		return new SkyblockItemMetadataRetriever(getCakeBagCakeYears(customData, itemId));
 	}
 
-	private static IntList getCakeBagCakeYears(NbtCompound customData, String itemId) {
+	private static IntList getCakeBagCakeYears(CompoundTag customData, String itemId) {
 		if (itemId.equals("NEW_YEAR_CAKE_BAG") && customData.contains("new_year_cake_bag_data")) {
 			try {
 				IntList cakeYears = new IntArrayList();
 
-				for (NbtCompound compound : ItemUtils.decodeCompressedItemData(customData.getByteArray("new_year_cake_bag_data").orElse(new byte[0]))) {
+				for (CompoundTag compound : ItemUtils.decodeCompressedItemData(customData.getByteArray("new_year_cake_bag_data").orElse(new byte[0]))) {
 					if (compound.getCompoundOrEmpty("tag").contains("ExtraAttributes")) {
-						NbtCompound extraAttributes = compound.getCompoundOrEmpty("tag").getCompoundOrEmpty("ExtraAttributes");
-						int cakeYear = extraAttributes.getInt("new_years_cake", 0); //You can only put new year cakes in the bag so we don't need to check for it being one
+						CompoundTag extraAttributes = compound.getCompoundOrEmpty("tag").getCompoundOrEmpty("ExtraAttributes");
+						int cakeYear = extraAttributes.getIntOr("new_years_cake", 0); //You can only put new year cakes in the bag so we don't need to check for it being one
 
 						cakeYears.add(cakeYear);
 					}

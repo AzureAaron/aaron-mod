@@ -6,14 +6,14 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.TextReplacer;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.text.OrderedText;
+import net.minecraft.client.gui.Font;
+import net.minecraft.util.FormattedCharSequence;
 
-@Mixin(TextRenderer.class)
+@Mixin(Font.class)
 public class TextRendererMixin {
 
-	@ModifyVariable(method = "prepare(Lnet/minecraft/text/OrderedText;FFIZZI)Lnet/minecraft/client/font/TextRenderer$GlyphDrawable;", at = @At("HEAD"), argsOnly = true)
-	private OrderedText aaronMod$visuallyReplaceOrderedText(OrderedText text) {
+	@ModifyVariable(method = "prepareText(Lnet/minecraft/util/FormattedCharSequence;FFIZZI)Lnet/minecraft/client/gui/Font$PreparedText;", at = @At("HEAD"), argsOnly = true)
+	private FormattedCharSequence aaronMod$visuallyReplaceOrderedText(FormattedCharSequence text) {
 		return AaronModConfigManager.get().textReplacer.enableTextReplacer ? TextReplacer.visuallyReplaceText(text) : text;
 	}
 }

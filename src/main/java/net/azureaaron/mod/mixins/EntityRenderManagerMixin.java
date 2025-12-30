@@ -10,10 +10,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import net.azureaaron.mod.injected.EntityRenderMarker;
-import net.minecraft.client.render.entity.EntityRenderManager;
-import net.minecraft.client.render.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 
-@Mixin(EntityRenderManager.class)
+@Mixin(EntityRenderDispatcher.class)
 public class EntityRenderManagerMixin implements EntityRenderMarker {
 	@Unique
 	private EntityRenderState currentStateBeingRendered;
@@ -23,12 +23,12 @@ public class EntityRenderManagerMixin implements EntityRenderMarker {
 		return this.currentStateBeingRendered;
 	}
 
-	@Inject(method = "render", at = @At("HEAD"))
+	@Inject(method = "submit", at = @At("HEAD"))
 	private void aaronMod$markEntityStateBeingRendered(CallbackInfo ci, @Local(argsOnly = true) EntityRenderState state) {
 		this.currentStateBeingRendered = state;
 	}
 
-	@Inject(method = "render", at = @At("RETURN"))
+	@Inject(method = "submit", at = @At("RETURN"))
 	private void aaronMod$clearEntityStateBeingRendered(CallbackInfo ci) {
 		this.currentStateBeingRendered = null;
 	}

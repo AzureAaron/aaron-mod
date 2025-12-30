@@ -29,26 +29,26 @@ import net.azureaaron.mod.utils.Messages;
 import net.azureaaron.mod.utils.render.RenderHelper;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.CommandSource;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 public class BazaarCommand {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	private static final Supplier<MutableText> NON_EXISTENT_PRODUCT_ERROR = () -> Constants.PREFIX.get().append(Text.literal("The product you've provided is non existent!").formatted(Formatting.RED));
-	private static final Supplier<MutableText> BAZAAR_FETCH_ERROR = () -> Constants.PREFIX.get().append(Text.literal("There was an error while fetching information from the bazaar!").formatted(Formatting.RED));
+	private static final Supplier<MutableComponent> NON_EXISTENT_PRODUCT_ERROR = () -> Constants.PREFIX.get().append(Component.literal("The product you've provided is non existent!").withStyle(ChatFormatting.RED));
+	private static final Supplier<MutableComponent> BAZAAR_FETCH_ERROR = () -> Constants.PREFIX.get().append(Component.literal("There was an error while fetching information from the bazaar!").withStyle(ChatFormatting.RED));
 
 	@Init
 	public static void init() {
 		if (AaronModConfigManager.get().skyblock.commands.enableSkyblockCommands) ClientCommandRegistrationCallback.EVENT.register(BazaarCommand::register);
 	}
 
-	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
 		final LiteralCommandNode<FabricClientCommandSource> bazaarCommand = dispatcher.register(literal("bazaarprice")
 				.then(argument("product", greedyString())
-						.suggests((context, builder) -> CommandSource.suggestMatching(Cache.PRODUCTS_LIST, builder))
+						.suggests((context, builder) -> SharedSuggestionProvider.suggest(Cache.PRODUCTS_LIST, builder))
 						.executes(context -> handleCommand(context.getSource(), getString(context, "product")))));
 
 		dispatcher.register(literal("bzprice").redirect(bazaarCommand));
@@ -92,25 +92,25 @@ public class BazaarCommand {
 		RenderHelper.runOnRenderThread(() -> {
 			ColourProfiles colourProfile = Constants.PROFILE.get();
 
-			Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
-					.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
-					.append(Text.literal(productName).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
-					.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
-					.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
+			Component startText = Component.literal("     ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
+					.append(Component.literal("[- ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
+					.append(Component.literal(productName).withStyle(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
+					.append(Component.literal(" -]").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
+					.append(Component.literal("     ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt())).withStyle(style -> style.withStrikethrough(true))));
 
 			source.sendFeedback(startText);
 
-			source.sendFeedback(Text.literal("Buy Price » " + Formatters.DOUBLE_NUMBERS.format(productData.get("buyPrice").getAsDouble())).withColor(colourProfile.infoColour.getAsInt()));
-			source.sendFeedback(Text.literal(Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("buyVolume").getAsInt()) + " in " + Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("buyOrders").getAsInt()) + " offers").withColor(colourProfile.supportingInfoColour.getAsInt()));
-			source.sendFeedback(Text.literal(Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("buyMovingWeek").getAsInt()) + " insta-buys in 7 days").withColor(colourProfile.supportingInfoColour.getAsInt()));
+			source.sendFeedback(Component.literal("Buy Price » " + Formatters.DOUBLE_NUMBERS.format(productData.get("buyPrice").getAsDouble())).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Component.literal(Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("buyVolume").getAsInt()) + " in " + Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("buyOrders").getAsInt()) + " offers").withColor(colourProfile.supportingInfoColour.getAsInt()));
+			source.sendFeedback(Component.literal(Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("buyMovingWeek").getAsInt()) + " insta-buys in 7 days").withColor(colourProfile.supportingInfoColour.getAsInt()));
 
-			source.sendFeedback(Text.literal(""));
+			source.sendFeedback(Component.literal(""));
 
-			source.sendFeedback(Text.literal("Sell Price » " + Formatters.DOUBLE_NUMBERS.format(productData.get("sellPrice").getAsDouble())).withColor(colourProfile.infoColour.getAsInt()));
-			source.sendFeedback(Text.literal(Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("sellVolume").getAsInt()) + " in " + Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("sellOrders").getAsInt()) + " orders").withColor(colourProfile.supportingInfoColour.getAsInt()));
-			source.sendFeedback(Text.literal(Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("sellMovingWeek").getAsInt()) + " insta-sells in 7 days").withColor(colourProfile.supportingInfoColour.getAsInt()));
+			source.sendFeedback(Component.literal("Sell Price » " + Formatters.DOUBLE_NUMBERS.format(productData.get("sellPrice").getAsDouble())).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Component.literal(Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("sellVolume").getAsInt()) + " in " + Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("sellOrders").getAsInt()) + " orders").withColor(colourProfile.supportingInfoColour.getAsInt()));
+			source.sendFeedback(Component.literal(Formatters.SHORT_INTEGER_NUMBERS.format(productData.get("sellMovingWeek").getAsInt()) + " insta-sells in 7 days").withColor(colourProfile.supportingInfoColour.getAsInt()));
 
-			source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+			source.sendFeedback(Component.literal(CommandSystem.getEndSpaces(startText)).withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 		});
 	}
 }

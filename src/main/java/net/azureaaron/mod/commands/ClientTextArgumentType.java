@@ -10,24 +10,24 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.SnbtParsing;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextCodecs;
-import net.minecraft.util.packrat.Parser;
+import net.minecraft.nbt.SnbtGrammar;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.util.parsing.packrat.commands.CommandArgumentParser;
 
-public class ClientTextArgumentType implements ArgumentType<Text> {
+public class ClientTextArgumentType implements ArgumentType<Component> {
 	private static final Collection<String> EXAMPLES = Arrays.asList("\"hello world\"", "\"\"",
 			"\"{\"text\":\"hello world\"}", "[\"\"]");
 	public static final DynamicCommandExceptionType INVALID_COMPONENT_EXCEPTION = new DynamicCommandExceptionType(
-			text -> Text.translatable("argument.component.invalid", text));
-	private static final Parser<NbtElement> PARSER = SnbtParsing.createParser(NbtOps.INSTANCE);
+			text -> Component.translatable("argument.component.invalid", text));
+	private static final CommandArgumentParser<Tag> PARSER = SnbtGrammar.createParser(NbtOps.INSTANCE);
 
 	private ClientTextArgumentType() {}//TextArgumentType
 
-	public static Text getTextArgument(CommandContext<FabricClientCommandSource> context, String name) {
-		return context.getArgument(name, Text.class);
+	public static Component getTextArgument(CommandContext<FabricClientCommandSource> context, String name) {
+		return context.getArgument(name, Component.class);
 	}
 
 	public static ClientTextArgumentType text() {
@@ -35,12 +35,12 @@ public class ClientTextArgumentType implements ArgumentType<Text> {
 	}
 
 	@Override
-	public Text parse(StringReader stringReader) throws CommandSyntaxException {
+	public Component parse(StringReader stringReader) throws CommandSyntaxException {
 		//Convert &z to §z
 		String str = stringReader.getRemaining().replaceAll("&z", "§z").replaceAll("&Z", "§Z");
 		StringReader reader = new StringReader(str);
 		try {
-			Text text = PARSER.withDecoding(NbtOps.INSTANCE, PARSER, TextCodecs.CODEC, INVALID_COMPONENT_EXCEPTION).parse(reader);
+			Component text = PARSER.withCodec(NbtOps.INSTANCE, PARSER, ComponentSerialization.CODEC, INVALID_COMPONENT_EXCEPTION).parseForCommands(reader);
 			if (text == null) {
 				throw INVALID_COMPONENT_EXCEPTION.createWithContext(reader, "empty");
 			}

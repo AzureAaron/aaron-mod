@@ -13,6 +13,7 @@ import org.joml.Matrix3x2fStack;
 import org.slf4j.Logger;
 
 import com.google.common.collect.ImmutableSet;
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.logging.LogUtils;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -22,18 +23,17 @@ import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.ReceiveChatMessageEvent;
 import net.azureaaron.mod.utils.Http;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.DrawnTextConsumer;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.texture.NativeImage;
-import net.minecraft.client.texture.NativeImageBackedTexture;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ActiveTextCollector;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.ChatScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.resources.Identifier;
 
 public class ImagePreview {
 	private static final Logger LOGGER = LogUtils.getLogger();
@@ -56,7 +56,7 @@ public class ImagePreview {
 		});
 	}
 
-	private static void inspectMessageForImageLinks(Text text, boolean overlay, boolean cancelled) {
+	private static void inspectMessageForImageLinks(Component text, boolean overlay, boolean cancelled) {
 		if (AaronModConfigManager.get().uiAndVisuals.imagePreview.enableImagePreview && !overlay && !cancelled) {
 			ObjectOpenHashSet<String> foundImages = new ObjectOpenHashSet<>();
 
@@ -90,15 +90,15 @@ public class ImagePreview {
 					//Insert a temporary value to ensure we don't try to cache this twice - ConcurrentHashMaps don't support nulls
 					IMAGE_CACHE.put(url, CachedImage.EMPTY);
 
-					MinecraftClient client = MinecraftClient.getInstance();
+					Minecraft client = Minecraft.getInstance();
 					InputStream inputStream = Http.sendGenericH2Request(uri, EXPECTED_CONTENT_TYPES);
 					NativeImage image = NativeImage.read(inputStream);
-					Identifier id = Identifier.of(Main.NAMESPACE, "image_preview/" + COUNTER.getAndIncrement());
+					Identifier id = Identifier.fromNamespaceAndPath(Main.NAMESPACE, "image_preview/" + COUNTER.getAndIncrement());
 
 					//Schedule the image to be uploaded as a texture on the render thread to avoid Mojang's
 					//horribly dangerous system for handling off-thread GL operations
-					client.send(() -> {
-						client.getTextureManager().registerTexture(id, new NativeImageBackedTexture(id::toString, image));
+					client.schedule(() -> {
+						client.getTextureManager().register(id, new DynamicTexture(id::toString, image));
 						IMAGE_CACHE.put(url, new CachedImage(System.currentTimeMillis(), id, image.getWidth(), image.getHeight()));
 					});
 				}
@@ -108,12 +108,12 @@ public class ImagePreview {
 		});
 	}
 
-	private static void afterScreenRendered(MinecraftClient client, Screen screen, DrawContext context, int mouseX, int mouseY) {
+	private static void afterScreenRendered(Minecraft client, Screen screen, GuiGraphics context, int mouseX, int mouseY) {
 		if (!AaronModConfigManager.get().uiAndVisuals.imagePreview.enableImagePreview) return;
 
-		DrawnTextConsumer.ClickHandler clickHandler = new DrawnTextConsumer.ClickHandler(screen.getTextRenderer(), mouseX, mouseY)
-				.insert(false);
-		Style clickedStyle = clickHandler.getStyle();
+		ActiveTextCollector.ClickableStyleFinder clickHandler = new ActiveTextCollector.ClickableStyleFinder(screen.getFont(), mouseX, mouseY)
+				.includeInsertions(false);
+		Style clickedStyle = clickHandler.result();
 
 		if (clickedStyle != null && clickedStyle.getClickEvent() != null) {
 			ClickEvent clickEvent = clickedStyle.getClickEvent();
@@ -122,7 +122,7 @@ public class ImagePreview {
 				CachedImage image = ImagePreview.IMAGE_CACHE.getOrDefault(fixupLink(uri.toString()), null);
 
 				if (image != null && image != CachedImage.EMPTY) {
-					Matrix3x2fStack matrices = context.getMatrices();
+					Matrix3x2fStack matrices = context.pose();
 					int width = image.width();
 					int height = image.height();
 
@@ -132,7 +132,7 @@ public class ImagePreview {
 					matrices.pushMatrix();
 					matrices.scale(scale, scale); //The 1f is needed otherwise it'll render behind the chat (the chat's z is scaled by 1 too)
 
-					context.drawTexture(RenderPipelines.GUI_TEXTURED, image.texture(), 0, 0, 0, 0, width, height, width, height);
+					context.blit(RenderPipelines.GUI_TEXTURED, image.texture(), 0, 0, 0, 0, width, height, width, height);
 
 					matrices.popMatrix();
 				}
@@ -143,9 +143,9 @@ public class ImagePreview {
 	/**
 	 * Clears the image cache and frees memory associated with the images
 	 */
-	public static void clearCache(MinecraftClient client) {
+	public static void clearCache(Minecraft client) {
 		for (Map.Entry<String, CachedImage> entry : IMAGE_CACHE.entrySet()) {
-			client.getTextureManager().destroyTexture(entry.getValue().texture());
+			client.getTextureManager().release(entry.getValue().texture());
 		}
 
 		IMAGE_CACHE.clear();

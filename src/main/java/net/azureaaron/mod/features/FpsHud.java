@@ -6,15 +6,15 @@ import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.render.hud.TextHudElement;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 public class FpsHud {
-	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
-	private static final Identifier ID = Identifier.of(Main.NAMESPACE, "fps");
+	private static final Minecraft CLIENT = Minecraft.getInstance();
+	private static final Identifier ID = Identifier.fromNamespaceAndPath(Main.NAMESPACE, "fps");
 	private static final TextHudElement HUD_ELEMENT = new TextHudElement(
-			Text.of("100 fps"),
+			Component.nullToEmpty("100 fps"),
 			FpsHud::getFpsText,
 			AaronModConfigManager.get().uiAndVisuals.fpsHud,
 			2,
@@ -25,7 +25,7 @@ public class FpsHud {
 		HudElementRegistry.attachElementAfter(VanillaHudElements.STATUS_EFFECTS, ID, HUD_ELEMENT::renderHud);
 	}
 
-	private static Text getFpsText() {
-		return Text.literal(CLIENT.getCurrentFps() + " fps");
+	private static Component getFpsText() {
+		return Component.literal(CLIENT.getFps() + " fps");
 	}
 }

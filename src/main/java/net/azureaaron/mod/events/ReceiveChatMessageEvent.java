@@ -4,7 +4,7 @@ import net.azureaaron.mod.annotations.Init;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 /**
  * This event is called when a system message is received and cancelled.<br><br>
@@ -26,7 +26,7 @@ public interface ReceiveChatMessageEvent {
 	 * @param overlay Whether the message will to be displayed in the action bar or not
 	 * @param cancelled Whether the message was cancelled or not
 	 */
-	void onMessage(Text message, boolean overlay, boolean cancelled);
+	void onMessage(Component message, boolean overlay, boolean cancelled);
 
 	@Init
 	static void init() {

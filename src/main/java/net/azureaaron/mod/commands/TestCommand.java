@@ -12,9 +12,9 @@ import net.azureaaron.mod.annotations.Init;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.text.Text;
-import net.minecraft.text.Texts;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
 
 public class TestCommand {
 	private static final boolean ENABLED = Boolean.parseBoolean(System.getProperty("aaronmod.enableTestCommand", "false")) || FabricLoader.getInstance().isDevelopmentEnvironment();
@@ -24,7 +24,7 @@ public class TestCommand {
 		ClientCommandRegistrationCallback.EVENT.register(TestCommand::register);
 	}
 
-	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
 		if (ENABLED) {
 			dispatcher.register(literal("test")
 					.executes(context -> printTest(context.getSource()))
@@ -34,12 +34,12 @@ public class TestCommand {
 	}
 
 	private static int printTest(FabricClientCommandSource source) {
-		source.sendFeedback(Texts.bracketedCopyable("test!"));
+		source.sendFeedback(ComponentUtils.copyOnClickText("test!"));
 		return Command.SINGLE_SUCCESS;
 	}
 
 	private static int printTest(FabricClientCommandSource source, String option) {
-		source.sendFeedback(Text.literal("No tests to be done right now!"));
+		source.sendFeedback(Component.literal("No tests to be done right now!"));
 		return Command.SINGLE_SUCCESS;
 	}
 }

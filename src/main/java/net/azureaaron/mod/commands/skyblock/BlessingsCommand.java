@@ -15,9 +15,9 @@ import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Constants;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.network.chat.Component;
 
 public class BlessingsCommand {
 
@@ -26,7 +26,7 @@ public class BlessingsCommand {
 		if (AaronModConfigManager.get().skyblock.commands.enableSkyblockCommands) ClientCommandRegistrationCallback.EVENT.register(BlessingsCommand::register);
 	}
 
-	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
 		dispatcher.register(literal("blessings")
 				.executes(context -> printBlessings(context.getSource()))
 				.then(argument("option", word())
@@ -38,15 +38,15 @@ public class BlessingsCommand {
 	private static int printBlessings(FabricClientCommandSource source) {
 		ColourProfiles colourProfile = Constants.PROFILE.get();
 
-		source.sendFeedback(Text.literal("               ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+		source.sendFeedback(Component.literal("               ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 
-		source.sendFeedback(Text.literal("Power » " + Cache.powerBlessing).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal("Wisdom » " + Cache.wisdomBlessing).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal("Life » " + Cache.lifeBlessing).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal("Stone » " + Cache.stoneBlessing).withColor(colourProfile.infoColour.getAsInt()));
-		source.sendFeedback(Text.literal("Time » " + (Cache.timeBlessing ? "✓" : "✗")).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Component.literal("Power » " + Cache.powerBlessing).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Component.literal("Wisdom » " + Cache.wisdomBlessing).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Component.literal("Life » " + Cache.lifeBlessing).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Component.literal("Stone » " + Cache.stoneBlessing).withColor(colourProfile.infoColour.getAsInt()));
+		source.sendFeedback(Component.literal("Time » " + (Cache.timeBlessing ? "✓" : "✗")).withColor(colourProfile.infoColour.getAsInt()));
 
-		source.sendFeedback(Text.literal("               ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+		source.sendFeedback(Component.literal("               ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 
 		return Command.SINGLE_SUCCESS;
 	}
@@ -56,10 +56,10 @@ public class BlessingsCommand {
 
 		if ("reset".equals(option)) {
 			Cache.resetBlessings();
-			source.sendFeedback(Constants.PREFIX.get().append(Text.literal("Blessings » ").withColor(colourProfile.primaryColour.getAsInt())
-					.append(Text.literal("Successfully reset the counter!").withColor(colourProfile.secondaryColour.getAsInt()))));
+			source.sendFeedback(Constants.PREFIX.get().append(Component.literal("Blessings » ").withColor(colourProfile.primaryColour.getAsInt())
+					.append(Component.literal("Successfully reset the counter!").withColor(colourProfile.secondaryColour.getAsInt()))));
 		} else {
-			source.sendError(Constants.PREFIX.get().append(Text.literal("Invalid option!").formatted(Formatting.RED)));
+			source.sendError(Constants.PREFIX.get().append(Component.literal("Invalid option!").withStyle(ChatFormatting.RED)));
 		}
 
 		return Command.SINGLE_SUCCESS;

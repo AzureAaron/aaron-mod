@@ -6,27 +6,27 @@ import com.mojang.serialization.JsonOps;
 
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.features.TextReplacer;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.GridWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.client.gui.widget.ThreePartsLayoutWidget;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextCodecs;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.layouts.GridLayout;
+import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 
 public class TextReplacerConfigScreen extends Screen {
 	private static final int COLUMN_SPACING = 24;
 	private static final int ROW_SPACING = 8;
 	private static final int TEXT_FIELD_HEIGHT = 20;
 	private static final int TEXT_FIELD_WIDTH = 131;
-	private static final Text TITLE = Text.literal("Visual Text Replacer Config");
-	private static final Text ARROW = Text.literal("→");
+	private static final Component TITLE = Component.literal("Visual Text Replacer Config");
+	private static final Component ARROW = Component.literal("→");
 	private final Screen parent;
-	private final ThreePartsLayoutWidget layout = new ThreePartsLayoutWidget(this);
+	private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this);
 
 	public TextReplacerConfigScreen(Screen parent) {
 		super(TITLE);
@@ -35,69 +35,69 @@ public class TextReplacerConfigScreen extends Screen {
 
 	@Override
 	protected void init() {
-		this.layout.addHeader(new TextWidget(this.getTitle(), this.textRenderer));
-		GridWidget gridWidget = this.layout.addBody(new GridWidget()).setColumnSpacing(COLUMN_SPACING).setRowSpacing(ROW_SPACING);
-		gridWidget.getMainPositioner().alignHorizontalCenter();
-		GridWidget.Adder adder = gridWidget.createAdder(4);
+		this.layout.addToHeader(new StringWidget(this.getTitle(), this.font));
+		GridLayout gridWidget = this.layout.addToContents(new GridLayout()).columnSpacing(COLUMN_SPACING).rowSpacing(ROW_SPACING);
+		gridWidget.defaultCellSetting().alignHorizontallyCenter();
+		GridLayout.RowHelper adder = gridWidget.createRowHelper(4);
 
-		adder.add(new TextWidget(Text.literal("Text"), this.textRenderer));
-		adder.add(new TextWidget(Text.empty(), this.textRenderer)); //Add space between the other 2 -- make constant?
-		adder.add(new TextWidget(Text.literal("Replacement"), this.textRenderer));
-		adder.add(new TextWidget(Text.empty(), this.textRenderer)); //Add space between the other 2 -- make constant?
+		adder.addChild(new StringWidget(Component.literal("Text"), this.font));
+		adder.addChild(new StringWidget(Component.empty(), this.font)); //Add space between the other 2 -- make constant?
+		adder.addChild(new StringWidget(Component.literal("Replacement"), this.font));
+		adder.addChild(new StringWidget(Component.empty(), this.font)); //Add space between the other 2 -- make constant?
 
 
 		generateTextFields(adder);
 
-		this.layout.addFooter(ButtonWidget.builder(ScreenTexts.DONE, button -> this.close()).build());
-		this.layout.refreshPositions();
-		this.layout.forEachChild(this::addDrawableChild);
+		this.layout.addToFooter(Button.builder(CommonComponents.GUI_DONE, button -> this.onClose()).build());
+		this.layout.arrangeElements();
+		this.layout.visitWidgets(this::addRenderableWidget);
 
 	}
 
 	/**
 	 * Generates the text fields to be added when the screen is opened
 	 */
-	private void generateTextFields(GridWidget.Adder adder) {
-		for (Map.Entry<String, Text> entry : TextReplacer.TEXT_REPLACEMENTS.get().entrySet()) {
+	private void generateTextFields(GridLayout.RowHelper adder) {
+		for (Map.Entry<String, Component> entry : TextReplacer.TEXT_REPLACEMENTS.get().entrySet()) {
 			String replacementText = entry.getKey();
-			String replacementComponent = Main.GSON_PLAIN.toJson(TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, entry.getValue()).getOrThrow());
+			String replacementComponent = Main.GSON_PLAIN.toJson(ComponentSerialization.CODEC.encodeStart(JsonOps.INSTANCE, entry.getValue()).getOrThrow());
 
-			TextFieldWidget replacementTextField = new TextFieldWidget(this.textRenderer, 0, 0, TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT, Text.empty());
-			TextFieldWidget replacementComponentField = new TextFieldWidget(this.textRenderer, 0, 0, TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT, Text.empty());
+			EditBox replacementTextField = new EditBox(this.font, 0, 0, TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT, Component.empty());
+			EditBox replacementComponentField = new EditBox(this.font, 0, 0, TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT, Component.empty());
 
 			replacementTextField.setMaxLength(Integer.MAX_VALUE);
-			replacementTextField.setText(replacementText);
+			replacementTextField.setValue(replacementText);
 			replacementComponentField.setMaxLength(Integer.MAX_VALUE);
-			replacementComponentField.setText(replacementComponent);
-			ButtonWidget removeButton = ButtonWidget.builder(Text.of("🗑"), (button) -> {
+			replacementComponentField.setValue(replacementComponent);
+			Button removeButton = Button.builder(Component.nullToEmpty("🗑"), (button) -> {
 				TextReplacer.removeTextReplacement(replacementText);
-				MinecraftClient.getInstance().setScreen(new TextReplacerConfigScreen(null));
+				Minecraft.getInstance().setScreen(new TextReplacerConfigScreen(null));
 			})
-					.dimensions(0, 0, 20, 20)
+					.bounds(0, 0, 20, 20)
 					.build();
 
-			adder.add(replacementTextField);
-			adder.add(new TextWidget(ARROW, this.textRenderer));
-			adder.add(replacementComponentField);
-			adder.add(removeButton);
+			adder.addChild(replacementTextField);
+			adder.addChild(new StringWidget(ARROW, this.font));
+			adder.addChild(replacementComponentField);
+			adder.addChild(removeButton);
 		}
 }
 
 	@Override
-	protected void refreshWidgetPositions() {
-		this.layout.refreshPositions();
+	protected void repositionElements() {
+		this.layout.arrangeElements();
 	}
 
 	@Override
-	public void close() {
-		assert this.client != null;
-		this.client.setScreen(parent);
+	public void onClose() {
+		assert this.minecraft != null;
+		this.minecraft.setScreen(parent);
 	}
 
 	@Override
-	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+	public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
 		this.renderBackground(context, mouseX, mouseY, delta);
-		context.drawTextWithShadow(this.textRenderer, "Thanks for using the mod!", 2, this.height - 10, 0xFFFFFF);
+		context.drawString(this.font, "Thanks for using the mod!", 2, this.height - 10, 0xFFFFFF);
 		super.render(context, mouseX, mouseY, delta);
 	}
 }

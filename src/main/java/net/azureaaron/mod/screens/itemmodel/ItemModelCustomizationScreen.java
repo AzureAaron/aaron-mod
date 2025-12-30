@@ -14,31 +14,31 @@ import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.config.categories.ItemModelCategory;
 import net.azureaaron.mod.screens.ModScreen;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.GridWidget;
-import net.minecraft.client.gui.widget.GridWidget.Adder;
-import net.minecraft.client.gui.widget.MultilineTextWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.client.gui.widget.ThreePartsLayoutWidget;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.ColorHelper;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.MultiLineTextWidget;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.layouts.GridLayout;
+import net.minecraft.client.gui.layouts.GridLayout.RowHelper;
+import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class ItemModelCustomizationScreen extends Screen {
-	private static final Text TITLE = Text.literal("Item Model Customization Screen");
-	private static final Text ITEM_ID_HINT = Text.literal("Enter Item ID").formatted(Formatting.ITALIC).formatted(Formatting.GRAY);
+	private static final Component TITLE = Component.literal("Item Model Customization Screen");
+	private static final Component ITEM_ID_HINT = Component.literal("Enter Item ID").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY);
 	private final Screen parent;
-	private final ThreePartsLayoutWidget layout = new ThreePartsLayoutWidget(this);
+	private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this);
 	private ItemStack previewItem = new ItemStack(Items.DIAMOND_SWORD);
 
 	public ItemModelCustomizationScreen(Screen parent) {
@@ -52,8 +52,8 @@ public class ItemModelCustomizationScreen extends Screen {
 			dispatcher.register(literal("aaronmod")
 					.then(literal("itemModel")
 							.executes(context -> {
-								MinecraftClient client = context.getSource().getClient();
-								client.send(() -> client.setScreen(new ItemModelCustomizationScreen(null)));
+								Minecraft client = context.getSource().getClient();
+								client.schedule(() -> client.setScreen(new ItemModelCustomizationScreen(null)));
 
 								return Command.SINGLE_SUCCESS;
 							}))
@@ -63,62 +63,62 @@ public class ItemModelCustomizationScreen extends Screen {
 
 	@Override
 	protected void init() {
-		this.layout.addHeader(new TextWidget(this.getTitle(), this.textRenderer));
-		ButtonWidget closeButton = ButtonWidget.builder(ScreenTexts.DONE, button -> this.close()).width(ModScreen.BUTTON_WIDTH).build();
+		this.layout.addToHeader(new StringWidget(this.getTitle(), this.font));
+		Button closeButton = Button.builder(CommonComponents.GUI_DONE, button -> this.onClose()).width(ModScreen.BUTTON_WIDTH).build();
 
 		if (!hasEnabledItemCustomization()) {
-			this.layout.addBody(new TextWidget(Text.literal("\u2139 You must enable Item Model Customization in order to use this.").withColor(Colour.INFO), this.textRenderer));
-			this.layout.addFooter(closeButton);
-		} else if (this.client.world == null) {
-			this.layout.addBody(new TextWidget(Text.literal("\u2139 You must be in a world in order to use this.").withColor(Colour.INFO), this.textRenderer));
-			this.layout.addFooter(closeButton);
+			this.layout.addToContents(new StringWidget(Component.literal("\u2139 You must enable Item Model Customization in order to use this.").withColor(Colour.INFO), this.font));
+			this.layout.addToFooter(closeButton);
+		} else if (this.minecraft.level == null) {
+			this.layout.addToContents(new StringWidget(Component.literal("\u2139 You must be in a world in order to use this.").withColor(Colour.INFO), this.font));
+			this.layout.addToFooter(closeButton);
 		} else {
-			GridWidget gridWidget = this.layout.addBody(new GridWidget()).setSpacing(ModScreen.SPACING);
-			gridWidget.getMainPositioner().alignHorizontalCenter();
-			Adder adder = gridWidget.createAdder(2);
+			GridLayout gridWidget = this.layout.addToContents(new GridLayout()).spacing(ModScreen.SPACING);
+			gridWidget.defaultCellSetting().alignHorizontallyCenter();
+			RowHelper adder = gridWidget.createRowHelper(2);
 
-			MultilineTextWidget explanationText = new MultilineTextWidget(Text.literal("Choose a hand to customize the model for."), this.textRenderer)
+			MultiLineTextWidget explanationText = new MultiLineTextWidget(Component.literal("Choose a hand to customize the model for."), this.font)
 					.setMaxWidth(ModScreen.BUTTON_WIDTH)
 					.setCentered(true);
 
-			adder.add(explanationText, 2);
-			adder.add(ButtonWidget.builder(Text.literal("Main Hand"), button -> openModelCustomizationScreen(Hand.MAIN_HAND)).width(ModScreen.HALF_BUTTON_WIDTH).build());
-			adder.add(ButtonWidget.builder(Text.literal("Off Hand"), button -> openModelCustomizationScreen(Hand.OFF_HAND)).width(ModScreen.HALF_BUTTON_WIDTH).build());
+			adder.addChild(explanationText, 2);
+			adder.addChild(Button.builder(Component.literal("Main Hand"), button -> openModelCustomizationScreen(InteractionHand.MAIN_HAND)).width(ModScreen.HALF_BUTTON_WIDTH).build());
+			adder.addChild(Button.builder(Component.literal("Off Hand"), button -> openModelCustomizationScreen(InteractionHand.OFF_HAND)).width(ModScreen.HALF_BUTTON_WIDTH).build());
 
 			addPreviewItemWidgets(adder);
 
-			adder.add(closeButton, 2);
+			adder.addChild(closeButton, 2);
 		}
 
-		this.layout.refreshPositions();
-		this.layout.forEachChild(this::addDrawableChild);
+		this.layout.arrangeElements();
+		this.layout.visitWidgets(this::addRenderableWidget);
 	}
 
-	private void addPreviewItemWidgets(Adder adder) {
-		TextWidget previewHeading = new TextWidget(Text.literal("Preview Item"), this.textRenderer);
-		previewHeading.setTooltip(Tooltip.of(Text.literal("The item that will be used to preview the customizations.")));
+	private void addPreviewItemWidgets(RowHelper adder) {
+		StringWidget previewHeading = new StringWidget(Component.literal("Preview Item"), this.font);
+		previewHeading.setTooltip(Tooltip.create(Component.literal("The item that will be used to preview the customizations.")));
 
-		adder.add(previewHeading, 2);
+		adder.addChild(previewHeading, 2);
 
-		TextFieldWidget itemIdField = new TextFieldWidget(this.textRenderer, ModScreen.BUTTON_WIDTH, 20, Text.literal("Preview Item ID"));
-		itemIdField.setPlaceholder(ITEM_ID_HINT);
-		itemIdField.setText("minecraft:diamond_sword");
-		itemIdField.setChangedListener(text -> {
-			Identifier id = Identifier.of(text.toLowerCase(Locale.CANADA));
+		EditBox itemIdField = new EditBox(this.font, ModScreen.BUTTON_WIDTH, 20, Component.literal("Preview Item ID"));
+		itemIdField.setHint(ITEM_ID_HINT);
+		itemIdField.setValue("minecraft:diamond_sword");
+		itemIdField.setResponder(text -> {
+			Identifier id = Identifier.parse(text.toLowerCase(Locale.CANADA));
 
-			if (Registries.ITEM.containsId(id)) {
-				itemIdField.setEditableColor(TextFieldWidget.DEFAULT_EDITABLE_COLOR);
-				this.previewItem = new ItemStack(Registries.ITEM.get(id));
+			if (BuiltInRegistries.ITEM.containsKey(id)) {
+				itemIdField.setTextColor(EditBox.DEFAULT_TEXT_COLOR);
+				this.previewItem = new ItemStack(BuiltInRegistries.ITEM.getValue(id));
 			} else {
-				itemIdField.setEditableColor(ColorHelper.fullAlpha(Formatting.RED.getColorValue()));
+				itemIdField.setTextColor(ARGB.opaque(ChatFormatting.RED.getColor()));
 			}
 		});
 
-		adder.add(itemIdField, 2);
+		adder.addChild(itemIdField, 2);
 	}
 
-	private void openModelCustomizationScreen(Hand hand) {
-		this.client.setScreen(new CustomizeItemModelScreen(this, hand, this.previewItem));
+	private void openModelCustomizationScreen(InteractionHand hand) {
+		this.minecraft.setScreen(new CustomizeItemModelScreen(this, hand, this.previewItem));
 	}
 
 	private boolean hasEnabledItemCustomization() {
@@ -140,12 +140,12 @@ public class ItemModelCustomizationScreen extends Screen {
 	}
 
 	@Override
-	protected void refreshWidgetPositions() {
-		this.layout.refreshPositions();
+	protected void repositionElements() {
+		this.layout.arrangeElements();
 	}
 
 	@Override
-	public void close() {
-		this.client.setScreen(this.parent);
+	public void onClose() {
+		this.minecraft.setScreen(this.parent);
 	}
 }

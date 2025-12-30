@@ -10,20 +10,20 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import net.azureaaron.mod.skyblock.entity.MobGlow;
 import net.azureaaron.mod.utils.render.GlowRenderer;
-import net.minecraft.client.render.OutlineVertexConsumerProvider;
-import net.minecraft.client.render.command.ItemCommandRenderer;
-import net.minecraft.client.render.command.OrderedRenderCommandQueueImpl;
+import net.minecraft.client.renderer.OutlineBufferSource;
+import net.minecraft.client.renderer.SubmitNodeStorage;
+import net.minecraft.client.renderer.feature.ItemFeatureRenderer;
 
-@Mixin(ItemCommandRenderer.class)
+@Mixin(ItemFeatureRenderer.class)
 public class ItemCommandRendererMixin {
 
-	@WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/command/OrderedRenderCommandQueueImpl$ItemCommand;outlineColor()I"), require = 2)
-	private int aaronMod$useCustomGlowColour(OrderedRenderCommandQueueImpl.ItemCommand command, Operation<Integer> operation) {
+	@WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeStorage$ItemSubmit;outlineColor()I"), require = 2)
+	private int aaronMod$useCustomGlowColour(SubmitNodeStorage.ItemSubmit command, Operation<Integer> operation) {
 		return command.aaronMod$getCustomGlowColour() != MobGlow.NO_GLOW ? command.aaronMod$getCustomGlowColour() : operation.call(command);
 	}
 
 	@ModifyVariable(method = "render", at = @At("LOAD"), argsOnly = true, require = 2)
-	private OutlineVertexConsumerProvider aaronMod$useCustomGlowConsumers(OutlineVertexConsumerProvider original, @Local OrderedRenderCommandQueueImpl.ItemCommand command) {
+	private OutlineBufferSource aaronMod$useCustomGlowConsumers(OutlineBufferSource original, @Local SubmitNodeStorage.ItemSubmit command) {
 		return command.aaronMod$getCustomGlowColour() != MobGlow.NO_GLOW ? GlowRenderer.getInstance().getGlowVertexConsumers() : original;
 	}
 }

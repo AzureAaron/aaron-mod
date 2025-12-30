@@ -11,18 +11,18 @@ import com.llamalad7.mixinextras.sugar.Local;
 import net.azureaaron.mod.Particles;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.ParticleManager;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.particle.ParticleEngine;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 
-@Mixin(ParticleManager.class)
+@Mixin(ParticleEngine.class)
 public class ParticleManagerMixin {
 
-	@ModifyVariable(method = "addParticle(Lnet/minecraft/particle/ParticleEffect;DDDDDD)Lnet/minecraft/client/particle/Particle;", at = @At("STORE"))
-	private Particle aaronMod$modifyParticles(Particle original, @Local(argsOnly = true) ParticleEffect parameters, @Cancellable CallbackInfoReturnable<Particle> cir) {
+	@ModifyVariable(method = "createParticle(Lnet/minecraft/core/particles/ParticleOptions;DDDDDD)Lnet/minecraft/client/particle/Particle;", at = @At("STORE"))
+	private Particle aaronMod$modifyParticles(Particle original, @Local(argsOnly = true) ParticleOptions parameters, @Cancellable CallbackInfoReturnable<Particle> cir) {
 		if (original != null) {
-			Identifier particleId = Registries.PARTICLE_TYPE.getId(parameters.getType());
+			Identifier particleId = BuiltInRegistries.PARTICLE_TYPE.getKey(parameters.getType());
 
 			if (AaronModConfigManager.get().particles.states.getOrDefault(particleId, true)) {
 				return Particles.modifyParticle(original, particleId);

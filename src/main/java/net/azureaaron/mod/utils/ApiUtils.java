@@ -17,12 +17,12 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.util.UndashedUuid;
 
 import net.azureaaron.mod.utils.Http.ApiResponse;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.dynamic.Codecs;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.ExtraCodecs;
 
 public class ApiUtils {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
+	private static final Minecraft CLIENT = Minecraft.getInstance();
 	private static final LoadingCache<String, ProfileResult> GAME_PROFILE_CACHE = CacheBuilder.newBuilder()
 			.expireAfterWrite(20, TimeUnit.MINUTES)
 			.build(new CacheLoader<>() {
@@ -54,7 +54,7 @@ public class ApiUtils {
 		boolean isUuid = Functions.isUuid(key);
 
 		//Return the game profile for the client to avoid an unnecessary lookup
-		if (CLIENT.getSession().getUsername().equalsIgnoreCase(key) || UndashedUuid.toString(CLIENT.getSession().getUuidOrNull()).equalsIgnoreCase(key)) {
+		if (CLIENT.getUser().getName().equalsIgnoreCase(key) || UndashedUuid.toString(CLIENT.getUser().getProfileId()).equalsIgnoreCase(key)) {
 			return new ProfileResult(CLIENT.getGameProfile());
 		}
 
@@ -62,7 +62,7 @@ public class ApiUtils {
 			ApiResponse response = isUuid ? Http.sendUuidToNameRequest(key) : Http.sendNameToUuidRequest(key);
 
 			if (response.ok()) {
-				GameProfile profile = Codecs.GAME_PROFILE_CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).getOrThrow();
+				GameProfile profile = ExtraCodecs.AUTHLIB_GAME_PROFILE.parse(JsonOps.INSTANCE, JsonParser.parseString(response.content())).getOrThrow();
 
 				return new ProfileResult(profile);
 			} else if (response.ratelimited() && retries < 3) {

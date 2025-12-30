@@ -13,15 +13,15 @@ import net.azureaaron.mod.utils.render.hud.TextHudElement;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 public class PingHud {
-	private static final Identifier ID = Identifier.of(Main.NAMESPACE, "ping");
+	private static final Identifier ID = Identifier.fromNamespaceAndPath(Main.NAMESPACE, "ping");
 	public static final int DEFAULT_Y = 2 + 9 + 4;
 	private static final TextHudElement HUD_ELEMENT = new TextHudElement(
-			Text.literal("30 ms"),
+			Component.literal("30 ms"),
 			PingHud::getPingText,
 			AaronModConfigManager.get().uiAndVisuals.pingHud,
 			2,
@@ -40,13 +40,13 @@ public class PingHud {
 		ClientPlayConnectionEvents.JOIN.register((_handler, _sender, _client) -> reset());
 	}
 
-	private static Text getPingText() {
+	private static Component getPingText() {
 		int colour;
 
 		if (!AaronModConfigManager.get().uiAndVisuals.pingHud.colouredPing) {
 			colour = 0xFFFFFF;
 		} else if (average < 0) {
-			colour = Formatting.GRAY.getColorValue();
+			colour = ChatFormatting.GRAY.getColor();
 		} else if (average < 150) {
 			colour = 0x00FF21;
 		} else if (average < 300) {
@@ -59,7 +59,7 @@ public class PingHud {
 			colour = 0x61007C;
 		}
 
-		return Text.empty().append(Text.literal(String.valueOf(average)).withColor(colour)).append(" ms");
+		return Component.empty().append(Component.literal(String.valueOf(average)).withColor(colour)).append(" ms");
 	}
 
 	private static void reset() {

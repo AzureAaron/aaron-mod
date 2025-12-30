@@ -7,24 +7,24 @@ import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Functions;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.gui.screen.ingame.ScreenHandlerProvider;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.GenericContainerScreenHandler;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.ContainerScreen;
+import net.minecraft.client.gui.screens.inventory.MenuAccess;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.ChestMenu;
 
-@Mixin(GenericContainerScreen.class)
-public abstract class GenericContainerScreenMixin extends HandledScreen<GenericContainerScreenHandler>
-implements ScreenHandlerProvider<GenericContainerScreenHandler> {
+@Mixin(ContainerScreen.class)
+public abstract class GenericContainerScreenMixin extends AbstractContainerScreen<ChestMenu>
+implements MenuAccess<ChestMenu> {
 
-	public GenericContainerScreenMixin(GenericContainerScreenHandler handler, PlayerInventory inventory, Text title) {
+	public GenericContainerScreenMixin(ChestMenu handler, Inventory inventory, Component title) {
 		super(handler, inventory, title);
 	}
 
-	@WrapWithCondition(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/GenericContainerScreen;drawMouseoverTooltip(Lnet/minecraft/client/gui/DrawContext;II)V", ordinal = 0))
-	private boolean aaronMod$hideScreenToolips(GenericContainerScreen container, DrawContext context, int mouseX, int mouseY) {
+	@WrapWithCondition(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/ContainerScreen;renderTooltip(Lnet/minecraft/client/gui/GuiGraphics;II)V", ordinal = 0))
+	private boolean aaronMod$hideScreenToolips(ContainerScreen container, GuiGraphics context, int mouseX, int mouseY) {
 		return !(Functions.isOnHypixel() && AaronModConfigManager.get().skyblock.dungeons.hideClickOnTimeTooltips && this.title.getString().equals("Click the button on time!"));
 	}
 }

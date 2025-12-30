@@ -5,12 +5,12 @@ import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.fabricmc.fabric.api.resource.v1.pack.PackActivationType;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.Identifier;
 
 public class ChromaText {
-	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
-	public static final Identifier ID = Identifier.of(Main.NAMESPACE, "chroma_text");
+	private static final Minecraft CLIENT = Minecraft.getInstance();
+	public static final Identifier ID = Identifier.fromNamespaceAndPath(Main.NAMESPACE, "chroma_text");
 
 	@Init
 	public static void init() {
@@ -28,7 +28,7 @@ public class ChromaText {
 	 */
 	public static boolean chromaColourAvailable() {
 		try {
-			for (String id : CLIENT.getResourcePackManager().getEnabledIds()) {
+			for (String id : CLIENT.getResourcePackRepository().getSelectedIds()) {
 				if (id.equals(ID.toString())) {
 					return true;
 				}

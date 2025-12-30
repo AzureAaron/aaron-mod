@@ -20,9 +20,9 @@ import net.azureaaron.mod.utils.JsonHelper;
 import net.azureaaron.mod.utils.render.RenderHelper;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.CommandSource;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.Component;
 
 public class EssenceCommand extends SkyblockCommand {
 	private static final Command INSTANCE = new EssenceCommand();
@@ -33,11 +33,11 @@ public class EssenceCommand extends SkyblockCommand {
 	}
 
 	@Override
-	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
 		dispatcher.register(literal("essence")
 				.executes(context -> CommandSystem.handleSelf4Skyblock(this, context.getSource()))
 				.then(argument("player", word())
-						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
+						.suggests((context, builder) -> SharedSuggestionProvider.suggest(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
 						.executes(context -> CommandSystem.handlePlayer4Skyblock(this, context.getSource(), getString(context, "player")))));
 	}
 
@@ -59,24 +59,24 @@ public class EssenceCommand extends SkyblockCommand {
 		int crimsonEssence = JsonHelper.getInt(currencies, "essence.CRIMSON.current").orElse(0);
 
 		RenderHelper.runOnRenderThread(() -> {
-			Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
-					.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
-					.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
-					.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
-					.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
+			Component startText = Component.literal("     ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
+					.append(Component.literal("[- ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
+					.append(Component.literal(name).withStyle(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
+					.append(Component.literal(" -]").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
+					.append(Component.literal("     ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt())).withStyle(style -> style.withStrikethrough(true))));
 
 			source.sendFeedback(startText);
 
-			source.sendFeedback(Text.literal("Wither » " + Formatters.INTEGER_NUMBERS.format(witherEssence)).withColor(colourProfile.infoColour.getAsInt()));
-			source.sendFeedback(Text.literal("Spider » " + Formatters.INTEGER_NUMBERS.format(spiderEssence)).withColor(colourProfile.infoColour.getAsInt()));
-			source.sendFeedback(Text.literal("Undead » " + Formatters.INTEGER_NUMBERS.format(undeadEssence)).withColor(colourProfile.infoColour.getAsInt()));
-			source.sendFeedback(Text.literal("Dragon » " + Formatters.INTEGER_NUMBERS.format(dragonEssence)).withColor(colourProfile.infoColour.getAsInt()));
-			source.sendFeedback(Text.literal("Gold » " + Formatters.INTEGER_NUMBERS.format(goldEssence)).withColor(colourProfile.infoColour.getAsInt()));
-			source.sendFeedback(Text.literal("Diamond » " + Formatters.INTEGER_NUMBERS.format(diamondEssence)).withColor(colourProfile.infoColour.getAsInt()));
-			source.sendFeedback(Text.literal("Ice » " + Formatters.INTEGER_NUMBERS.format(iceEssence)).withColor(colourProfile.infoColour.getAsInt()));
-			source.sendFeedback(Text.literal("Crimson » " + Formatters.INTEGER_NUMBERS.format(crimsonEssence)).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Component.literal("Wither » " + Formatters.INTEGER_NUMBERS.format(witherEssence)).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Component.literal("Spider » " + Formatters.INTEGER_NUMBERS.format(spiderEssence)).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Component.literal("Undead » " + Formatters.INTEGER_NUMBERS.format(undeadEssence)).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Component.literal("Dragon » " + Formatters.INTEGER_NUMBERS.format(dragonEssence)).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Component.literal("Gold » " + Formatters.INTEGER_NUMBERS.format(goldEssence)).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Component.literal("Diamond » " + Formatters.INTEGER_NUMBERS.format(diamondEssence)).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Component.literal("Ice » " + Formatters.INTEGER_NUMBERS.format(iceEssence)).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Component.literal("Crimson » " + Formatters.INTEGER_NUMBERS.format(crimsonEssence)).withColor(colourProfile.infoColour.getAsInt()));
 
-			source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+			source.sendFeedback(Component.literal(CommandSystem.getEndSpaces(startText)).withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 		});
 	}
 }

@@ -2,7 +2,7 @@ package net.azureaaron.mod.events;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 
 @FunctionalInterface
 public interface PlaySoundEvent {
@@ -13,5 +13,5 @@ public interface PlaySoundEvent {
 				}
 			});
 
-	void onPlaySound(PlaySoundS2CPacket packet);
+	void onPlaySound(ClientboundSoundPacket packet);
 }

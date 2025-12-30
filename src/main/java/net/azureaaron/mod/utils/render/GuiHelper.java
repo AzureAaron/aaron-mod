@@ -1,10 +1,9 @@
 package net.azureaaron.mod.utils.render;
 
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderPass;
-
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.ScissorState;
-import net.minecraft.client.util.Window;
+import com.mojang.blaze3d.systems.ScissorState;
+import net.minecraft.client.Minecraft;
 
 public class GuiHelper {
 	private static final ScissorState BLUR_SCISSOR_STATE = new ScissorState();
@@ -21,15 +20,15 @@ public class GuiHelper {
 	}
 
 	public static void applyBlurScissorToRenderPass(RenderPass renderPass) {
-		if (BLUR_SCISSOR_STATE.isEnabled()) {
-			Window window = MinecraftClient.getInstance().getWindow();
-			int framebufferHeight = window.getFramebufferHeight();
-			double scaleFactor = window.getScaleFactor();
+		if (BLUR_SCISSOR_STATE.enabled()) {
+			Window window = Minecraft.getInstance().getWindow();
+			int framebufferHeight = window.getHeight();
+			double scaleFactor = window.getGuiScale();
 
-			double x = BLUR_SCISSOR_STATE.getX() * scaleFactor;
-			double y = framebufferHeight - (BLUR_SCISSOR_STATE.getY() + BLUR_SCISSOR_STATE.getHeight()) * scaleFactor;
-			double width = BLUR_SCISSOR_STATE.getWidth() * scaleFactor;
-			double height = BLUR_SCISSOR_STATE.getHeight() * scaleFactor;
+			double x = BLUR_SCISSOR_STATE.x() * scaleFactor;
+			double y = framebufferHeight - (BLUR_SCISSOR_STATE.y() + BLUR_SCISSOR_STATE.height()) * scaleFactor;
+			double width = BLUR_SCISSOR_STATE.width() * scaleFactor;
+			double height = BLUR_SCISSOR_STATE.height() * scaleFactor;
 
 			renderPass.enableScissor((int) x, (int) y, Math.max(0, (int) width), Math.max(0, (int) height));
 		}

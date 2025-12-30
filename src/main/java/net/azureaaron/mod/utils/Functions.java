@@ -3,8 +3,7 @@ package net.azureaaron.mod.utils;
 import java.awt.Color;
 import java.util.Locale;
 import java.util.function.BooleanSupplier;
-
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 
 /**
  * Class containing various utility/helper functions.
@@ -29,8 +28,8 @@ public class Functions {
 
 	public static boolean isOnHypixel() {
 		String serverAddress = Cache.currentServerAddress;
-		MinecraftClient client = MinecraftClient.getInstance();
-		String serverBrand = client.player != null && client.player.networkHandler != null && client.player.networkHandler.getBrand() != null ? client.player.networkHandler.getBrand() : "";
+		Minecraft client = Minecraft.getInstance();
+		String serverBrand = client.player != null && client.player.connection != null && client.player.connection.serverBrand() != null ? client.player.connection.serverBrand() : "";
 
 		return serverAddress.contains("hypixel.net") || serverAddress.contains("hypixel.io") || serverBrand.contains("Hypixel BungeeCord");
 	}

@@ -4,16 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
-
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.util.FormattedCharSequence;
 import org.apache.commons.lang3.StringUtils;
 
 import it.unimi.dsi.fastutil.chars.CharList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 
 /**
  * This class is used for advanced text transformation such as client-side item renaming.
@@ -28,12 +27,12 @@ public class TextTransformer {
 	 * Why? Section symbols are deprecated/obsoleted and support for them could be removed at a later date. - best not to use them :)
 	 *
 	 * @param legacy The string with legacy formatting to be transformed
-	 * @return A {@link MutableText} object matching the exact formatting of the input
+	 * @return A {@link MutableComponent} object matching the exact formatting of the input
 	 */
-	public static MutableText fromLegacy(String legacy) {
-		MutableText newText = Text.empty();
+	public static MutableComponent fromLegacy(String legacy) {
+		MutableComponent newText = Component.empty();
 		StringBuilder builder = new StringBuilder();
-		Formatting formatting = null;
+		ChatFormatting formatting = null;
 		boolean bold = false;
 		boolean italic = false;
 		boolean underline = false;
@@ -43,11 +42,11 @@ public class TextTransformer {
 		for (int i = 0; i < legacy.length(); i++) {
 			//If we've encountered a new formatting code then append the text from the previous "sequence" and reset state
 			if (i != 0 && legacy.charAt(i - 1) == '§' && FORMAT_CODES.contains(Character.toLowerCase(legacy.charAt(i))) && !builder.isEmpty()) {
-				newText.append(Text.literal(builder.toString()).setStyle(Style.EMPTY
+				newText.append(Component.literal(builder.toString()).setStyle(Style.EMPTY
 						.withColor(formatting)
 						.withBold(bold)
 						.withItalic(italic)
-						.withUnderline(underline)
+						.withUnderlined(underline)
 						.withStrikethrough(strikethrough)
 						.withObfuscated(obfuscated)));
 
@@ -62,7 +61,7 @@ public class TextTransformer {
 			}
 
 			if (i != 0 && legacy.charAt(i - 1) == '§') {
-				Formatting fmt = Formatting.byCode(legacy.charAt(i));
+				ChatFormatting fmt = ChatFormatting.getByCode(legacy.charAt(i));
 
 				switch (fmt) {
 					case BOLD -> bold = true;
@@ -84,11 +83,11 @@ public class TextTransformer {
 
 			// We've read the last character so append the last text with all of the formatting
 			if (i == legacy.length() - 1) {
-				newText.append(Text.literal(builder.toString()).setStyle(Style.EMPTY
+				newText.append(Component.literal(builder.toString()).setStyle(Style.EMPTY
 						.withColor(formatting)
 						.withBold(bold)
 						.withItalic(italic)
-						.withUnderline(underline)
+						.withUnderlined(underline)
 						.withStrikethrough(strikethrough)
 						.withObfuscated(obfuscated)));
 			}
@@ -110,21 +109,21 @@ public class TextTransformer {
 	 * @param replacementMatches How many matches should be made for {@code replaceableText}
 	 *
 	 * @return The text object will all transformations applied
-	 * @see #stylize(Text, Style, String, Style, int)
+	 * @see #stylize(Component, Style, String, Style, int)
 	 */
-	public static Text stylizeAndReplace(Text text, Style baseStyle, String textToStylize, Style newStyle, String[] replaceableText, String replacementRegex, String replacementText, int replacementMatches) {
+	public static Component stylizeAndReplace(Component text, Style baseStyle, String textToStylize, Style newStyle, String[] replaceableText, String replacementRegex, String replacementText, int replacementMatches) {
 		String stringForm = text.getString();
 
 		if (Arrays.stream(replaceableText).anyMatch(stringForm::contains)) {
-			List<Text> textComponents = text.getSiblings();
+			List<Component> textComponents = text.getSiblings();
 			int textComponentCount = textComponents.size();
-			MutableText newText = Text.empty().setStyle(baseStyle);
+			MutableComponent newText = Component.empty().setStyle(baseStyle);
 			int replacementsMatched = 0;
 
 			for (int i = 0; i < textComponentCount; i++) {
 				String componentString = textComponents.get(i).getString();
 				if (componentString.contains(textToStylize) && replacementsMatched < replacementMatches) {
-					newText.append(Text.literal(componentString).setStyle(newStyle));
+					newText.append(Component.literal(componentString).setStyle(newStyle));
 					replacementsMatched++;
 					continue;
 				}
@@ -132,7 +131,7 @@ public class TextTransformer {
 				if (Arrays.stream(replaceableText).anyMatch(componentString::contains)) {
 					if (replacementText.isEmpty()) continue; //Avoid adding components which won't display
 					Style componentStyle = textComponents.get(i).getStyle();
-					newText.append(Text.literal(componentString.replaceAll(replacementRegex, replacementText)).setStyle(componentStyle));
+					newText.append(Component.literal(componentString.replaceAll(replacementRegex, replacementText)).setStyle(componentStyle));
 					continue;
 				}
 
@@ -155,19 +154,19 @@ public class TextTransformer {
 	 *
 	 * @return The text object with all transformations applied
 	 */
-	public static Text stylize(Text text, Style baseStyle, String textToStylize, Style newStyle, int matches) {
+	public static Component stylize(Component text, Style baseStyle, String textToStylize, Style newStyle, int matches) {
 		String stringForm = text.getString();
 
 		if (stringForm.contains(textToStylize)) {
-			List<Text> textComponents = text.getSiblings();
+			List<Component> textComponents = text.getSiblings();
 			int textComponentCount = textComponents.size();
-			MutableText newText = Text.empty().setStyle(baseStyle);
+			MutableComponent newText = Component.empty().setStyle(baseStyle);
 			int partsMatched = 0;
 
 			for (int i = 0; i < textComponentCount; i++) {
 				String componentString = textComponents.get(i).getString();
 				if (componentString.contains(textToStylize) && partsMatched < matches) {
-					newText.append(Text.literal(componentString).setStyle(newStyle));
+					newText.append(Component.literal(componentString).setStyle(newStyle));
 					partsMatched++;
 					continue;
 				}
@@ -186,15 +185,15 @@ public class TextTransformer {
 	 * @param text The text to be formatted into a rainbow gradient
 	 * @return A text object containing the {@code text} formatted into a rainbow gradient.
 	 */
-	public static Text rainbowify(String text) {
-		MutableText newText = Text.empty();
+	public static Component rainbowify(String text) {
+		MutableComponent newText = Component.empty();
 		float textLength = text.length();
 		float next = Math.nextDown(1.0f) * textLength;
 
-		newText.append(Text.literal(String.valueOf(text.charAt(0))).withColor(Functions.hsbToRGB(Math.nextDown(1.0f), 1.0f, 1.0f)));
+		newText.append(Component.literal(String.valueOf(text.charAt(0))).withColor(Functions.hsbToRGB(Math.nextDown(1.0f), 1.0f, 1.0f)));
 		for (int i = 1; i < textLength; ++i) {
 			float i2 = i; //For some reason Java doesn't like the direct reference
-			newText.append(Text.literal(String.valueOf(text.charAt(i))).withColor(Functions.hsbToRGB(i2 / next, 1.0f, 1.0f)));
+			newText.append(Component.literal(String.valueOf(text.charAt(i))).withColor(Functions.hsbToRGB(i2 / next, 1.0f, 1.0f)));
 		}
 		return newText;
 	}
@@ -209,14 +208,14 @@ public class TextTransformer {
 	 *
 	 * @see #rainbowify(String)
 	 */
-	public static MutableText progressivelyRainbowify(String text, int totalTextLength, int positionLeftOffAt) {
-		MutableText newText = Text.empty();
+	public static MutableComponent progressivelyRainbowify(String text, int totalTextLength, int positionLeftOffAt) {
+		MutableComponent newText = Component.empty();
 		float next = Math.nextDown(1.0f) * totalTextLength;
 
-		newText.append(Text.literal(String.valueOf(text.charAt(0))).withColor(Functions.hsbToRGB(positionLeftOffAt / next, 1.0f, 1.0f)));
+		newText.append(Component.literal(String.valueOf(text.charAt(0))).withColor(Functions.hsbToRGB(positionLeftOffAt / next, 1.0f, 1.0f)));
 		for (int i = 1; i < text.length(); ++i) {
 			float i2 = i + positionLeftOffAt; //For some reason Java doesn't like the direct reference
-			newText.append(Text.literal(String.valueOf(text.charAt(i))).withColor(Functions.hsbToRGB(i2 / next, 1.0f, 1.0f)));
+			newText.append(Component.literal(String.valueOf(text.charAt(i))).withColor(Functions.hsbToRGB(i2 / next, 1.0f, 1.0f)));
 		}
 		return newText;
 	}
@@ -224,11 +223,11 @@ public class TextTransformer {
 	/**
 	 * Replaces the first occurrence of string in OrderedText with custom styling!
 	 */
-	public static OrderedText replaceInOrdered(OrderedText orderedText, String wantedWord, Text replacementText) {
-		MutableText text = Text.empty();
+	public static FormattedCharSequence replaceInOrdered(FormattedCharSequence orderedText, String wantedWord, Component replacementText) {
+		MutableComponent text = Component.empty();
 
 		orderedText.accept((index, style, codePoint) -> {
-			text.append(Text.literal(Character.toString(codePoint)).setStyle(style));
+			text.append(Component.literal(Character.toString(codePoint)).setStyle(style));
 
 			return true;
 		});
@@ -240,7 +239,7 @@ public class TextTransformer {
 
 		if (startIndex == -1) return orderedText; // What we want to replace doesn't exist
 
-		List<Text> textComponents = text.getSiblings();
+		List<Component> textComponents = text.getSiblings();
 
 		//Set the component (or first letter of our target word) to what we want to replace it with
 		textComponents.set(startIndex, replacementText);
@@ -250,17 +249,17 @@ public class TextTransformer {
 			textComponents.remove(i);
 		}
 
-		return text.asOrderedText();
+		return text.getVisualOrderText();
 	}
 
 	/**
 	 * Replaces multiple occurrences of one string in OrderedText with custom styling!
 	 */
-	public static OrderedText replaceMultipleInOrdered(OrderedText orderedText, String wantedWord, Text replacementText) {
-		MutableText text = Text.empty();
+	public static FormattedCharSequence replaceMultipleInOrdered(FormattedCharSequence orderedText, String wantedWord, Component replacementText) {
+		MutableComponent text = Component.empty();
 
 		orderedText.accept((index, style, codePoint) -> {
-			text.append(Text.literal(Character.toString(codePoint)).setStyle(style));
+			text.append(Component.literal(Character.toString(codePoint)).setStyle(style));
 
 			return true;
 		});
@@ -271,7 +270,7 @@ public class TextTransformer {
 		if (!occurs) return orderedText; // What we want to replace doesn't exist
 
 		int occurrences = StringUtils.countMatches(stringified, wantedWord);
-		MutableText newText = text;
+		MutableComponent newText = text;
 		int indexFrom = 0;
 
 		for (int i = 0; i < occurrences; i++) {
@@ -281,7 +280,7 @@ public class TextTransformer {
 
 			if (startIndex == -1) break; //If for some reason the strings replacements just disappeared, should never happen
 
-			List<Text> textComponents = newText.getSiblings();
+			List<Component> textComponents = newText.getSiblings();
 
 			//Set the component (or first letter of our target word) to what we want to replace it with
 			textComponents.set(startIndex, replacementText);
@@ -300,23 +299,23 @@ public class TextTransformer {
 			indexFrom = endIndex + lengthDiff;
 		}
 
-		return newText.asOrderedText();
+		return newText.getVisualOrderText();
 	}
 
 	/**
 	 * Deconstructs the extra components of a text object into components of individual characters
-	 * and their styles, similar to the format of {@link OrderedText}
+	 * and their styles, similar to the format of {@link FormattedCharSequence}
 	 */
 	//private static final Map<Text, OrderedText> cache = new HashMap<>();
 
-	public static MutableText deconstructComponents(Text text) {
-		List<Text> currentComponents = text.getSiblings();
+	public static MutableComponent deconstructComponents(Component text) {
+		List<Component> currentComponents = text.getSiblings();
 
-		MutableText newText = Text.empty();
-		List<Text> newComponents = newText.getSiblings();
+		MutableComponent newText = Component.empty();
+		List<Component> newComponents = newText.getSiblings();
 
 		for (int i = 0; i < currentComponents.size(); i++) {
-			Text current = currentComponents.get(i);
+			Component current = currentComponents.get(i);
 			String currentString = current.getString();
 
 			if (currentString.length() <= 1) {
@@ -335,8 +334,8 @@ public class TextTransformer {
 				cache.put(current, orderedText);
 			}*/
 
-			current.asOrderedText().accept((index, style, codePoint) -> {
-				newComponents.add(Text.literal(Character.toString(codePoint)).setStyle(style));
+			current.getVisualOrderText().accept((index, style, codePoint) -> {
+				newComponents.add(Component.literal(Character.toString(codePoint)).setStyle(style));
 
 				return true;
 			});
@@ -347,23 +346,23 @@ public class TextTransformer {
 
 	/**
 	 * Deconstructs the extra components of a text object into components of individual characters
-	 * and their styles, similar to the format of {@link OrderedText}
+	 * and their styles, similar to the format of {@link FormattedCharSequence}
 	 */
-	public static MutableText deconstructAllComponents(Text text) {
-		List<Text> currentComponents = text.getSiblings();
+	public static MutableComponent deconstructAllComponents(Component text) {
+		List<Component> currentComponents = text.getSiblings();
 
-		MutableText newText = Text.empty();
-		List<Text> newComponents = newText.getSiblings();
+		MutableComponent newText = Component.empty();
+		List<Component> newComponents = newText.getSiblings();
 
 		//Deconstruct the main text
-		text.asOrderedText().accept((index, style, codePoint) -> {
-			newComponents.add(Text.literal(Character.toString(codePoint)).setStyle(style));
+		text.getVisualOrderText().accept((index, style, codePoint) -> {
+			newComponents.add(Component.literal(Character.toString(codePoint)).setStyle(style));
 
 			return true;
 		});
 
 		for (int i = 0; i < currentComponents.size(); i++) {
-			Text current = currentComponents.get(i);
+			Component current = currentComponents.get(i);
 			String currentString = current.getString();
 
 			if (currentString.length() <= 1) {
@@ -374,8 +373,8 @@ public class TextTransformer {
 
 			//The conversion to ordered text is the only way to efficiently traverse the replacement component
 			//as it could have nesting layers or legacy formatting -- maybe we can cache this?
-			current.asOrderedText().accept((index, style, codePoint) -> {
-				newComponents.add(Text.literal(Character.toString(codePoint)).setStyle(style));
+			current.getVisualOrderText().accept((index, style, codePoint) -> {
+				newComponents.add(Component.literal(Character.toString(codePoint)).setStyle(style));
 
 				return true;
 			});
@@ -387,24 +386,24 @@ public class TextTransformer {
 	/**
 	 * Accepts a map of text replacements, which will then be used to replace occurrences of said strings in the {@code orderedText}
 	 */
-	public static OrderedText replaceMultipleEntriesInOrdered(OrderedText orderedText, Object2ObjectLinkedOpenHashMap<String, Text> replacements) {
-		MutableText text = Text.empty();
+	public static FormattedCharSequence replaceMultipleEntriesInOrdered(FormattedCharSequence orderedText, Object2ObjectLinkedOpenHashMap<String, Component> replacements) {
+		MutableComponent text = Component.empty();
 
 		orderedText.accept((index, style, codePoint) -> {
-			text.append(Text.literal(Character.toString(codePoint)).setStyle(style));
+			text.append(Component.literal(Character.toString(codePoint)).setStyle(style));
 
 			return true;
 		});
 
 		String stringified = text.getString();
-		MutableText newText = text;
+		MutableComponent newText = text;
 
 		//This doesn't work properly when a character is made up of multiple codepoint units
 		if (stringified.length() != text.getSiblings().size()) return orderedText;
 
-		for (Entry<String, Text> entry : replacements.entrySet()) {
+		for (Entry<String, Component> entry : replacements.entrySet()) {
 			String wantedWord = entry.getKey();
-			Text replacementText = entry.getValue();
+			Component replacementText = entry.getValue();
 
 			boolean occurs = stringified.indexOf(wantedWord) != -1;
 
@@ -422,7 +421,7 @@ public class TextTransformer {
 				//should only happen when another replacement caused this replacement to no longer exist
 				if (startIndex == -1) break;
 
-				List<Text> textComponents = newText.getSiblings();
+				List<Component> textComponents = newText.getSiblings();
 
 				//Set the component (or first letter of our target word) to what we want to replace it with
 				textComponents.set(startIndex, replacementText);
@@ -443,20 +442,20 @@ public class TextTransformer {
 			}
 		}
 
-		return (newText.equals(text)) ? orderedText : newText.asOrderedText();
+		return (newText.equals(text)) ? orderedText : newText.getVisualOrderText();
 	}
 
 	/**
 	 * Copies a text's content, style, and creates a deep copy of the siblings.
 	 */
-	public static MutableText recursiveCopy(Text original) {
-		MutableText newText = MutableText.of(original.getContent())
+	public static MutableComponent recursiveCopy(Component original) {
+		MutableComponent newText = MutableComponent.create(original.getContents())
 				.setStyle(original.getStyle());
 
 		//Size the array list ahead of time to prevent many memory copies due to resizing the array frequently otherwise
-		((ArrayList<Text>) newText.getSiblings()).ensureCapacity(original.getSiblings().size());
+		((ArrayList<Component>) newText.getSiblings()).ensureCapacity(original.getSiblings().size());
 
-		for (Text sibling : original.getSiblings()) {
+		for (Component sibling : original.getSiblings()) {
 			newText.getSiblings().add(recursiveCopy(sibling));
 		}
 
@@ -466,8 +465,8 @@ public class TextTransformer {
 	/**
 	 * Replaces the text's content while preserving the style and siblings.
 	 */
-	public static MutableText withContent(Text original, String newContent) {
-		MutableText newText = Text.literal(newContent).setStyle(original.getStyle());
+	public static MutableComponent withContent(Component original, String newContent) {
+		MutableComponent newText = Component.literal(newContent).setStyle(original.getStyle());
 
 		newText.getSiblings().addAll(original.getSiblings());
 

@@ -6,7 +6,7 @@ import net.azureaaron.mod.events.WorldRenderExtractionCallback;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.render.primitive.PrimitiveCollector;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 public class M7Waypoints {
 	private static final float ALPHA = 0.5f;

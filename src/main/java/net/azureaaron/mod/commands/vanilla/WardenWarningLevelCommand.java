@@ -18,17 +18,17 @@ import net.azureaaron.mod.utils.render.RenderHelper;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 
 public class WardenWarningLevelCommand {
-	private static final Supplier<Text> DISCLAIMER = () -> Text.literal("It isn't possible to find out the\nexact player who triggered the shrieker.\n\nThis may not be 100% accurate.").styled(style -> style.withColor(Constants.PROFILE.get().infoColour.getAsInt()));
-	private static final Set<SoundEvent> WARNING_SOUNDS = Set.of(SoundEvents.ENTITY_WARDEN_NEARBY_CLOSE, SoundEvents.ENTITY_WARDEN_NEARBY_CLOSER, SoundEvents.ENTITY_WARDEN_NEARBY_CLOSEST, SoundEvents.ENTITY_WARDEN_LISTENING_ANGRY);
+	private static final Supplier<Component> DISCLAIMER = () -> Component.literal("It isn't possible to find out the\nexact player who triggered the shrieker.\n\nThis may not be 100% accurate.").withStyle(style -> style.withColor(Constants.PROFILE.get().infoColour.getAsInt()));
+	private static final Set<SoundEvent> WARNING_SOUNDS = Set.of(SoundEvents.WARDEN_NEARBY_CLOSE, SoundEvents.WARDEN_NEARBY_CLOSER, SoundEvents.WARDEN_NEARBY_CLOSEST, SoundEvents.WARDEN_LISTENING_ANGRY);
 
 	//It isn't possible to find out which exact player trigger a shrieker so this may not be 100% accurate
 	private static int warningLevel = 0;
@@ -41,7 +41,7 @@ public class WardenWarningLevelCommand {
 		PlaySoundEvent.EVENT.register(WardenWarningLevelCommand::onPlaySound);
 	}
 
-	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
 		dispatcher.register(literal("wardenwarninglevel")
 				.executes(context -> printWardenWarningLevel(context.getSource())));
 	}
@@ -55,14 +55,14 @@ public class WardenWarningLevelCommand {
 		String spacing = "                              ";
 
 		RenderHelper.runOnRenderThread(() -> {
-			source.sendFeedback(Text.literal(spacing).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+			source.sendFeedback(Component.literal(spacing).withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 
-			source.sendFeedback(Text.literal("Warning Level » " + warningLevel).styled(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent.ShowText(DISCLAIMER.get()))));
-			source.sendFeedback(Text.literal(""));
-			source.sendFeedback(Text.literal("Warnings Left » " + warningsLeft).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())));
-			source.sendFeedback(Text.literal("Last Triggered Shrieker » " + lastTriggered).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())));
+			source.sendFeedback(Component.literal("Warning Level » " + warningLevel).withStyle(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent.ShowText(DISCLAIMER.get()))));
+			source.sendFeedback(Component.literal(""));
+			source.sendFeedback(Component.literal("Warnings Left » " + warningsLeft).withStyle(style -> style.withColor(colourProfile.infoColour.getAsInt())));
+			source.sendFeedback(Component.literal("Last Triggered Shrieker » " + lastTriggered).withStyle(style -> style.withColor(colourProfile.infoColour.getAsInt())));
 
-			source.sendFeedback(Text.literal(spacing).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+			source.sendFeedback(Component.literal(spacing).withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 		});
 
 		return Command.SINGLE_SUCCESS;
@@ -75,15 +75,15 @@ public class WardenWarningLevelCommand {
 		}
 	}
 
-	private static void onPlaySound(PlaySoundS2CPacket packet) {
-		if (packet.getCategory() == SoundCategory.HOSTILE && WARNING_SOUNDS.contains(packet.getSound().value())) {
+	private static void onPlaySound(ClientboundSoundPacket packet) {
+		if (packet.getSource() == SoundSource.HOSTILE && WARNING_SOUNDS.contains(packet.getSound().value())) {
 			lastShriekTime = System.currentTimeMillis();
 
 			switch (packet.getSound().value()) {
-				case SoundEvent s when s.equals(SoundEvents.ENTITY_WARDEN_NEARBY_CLOSE) -> warningLevel = 1;
-				case SoundEvent s when s.equals(SoundEvents.ENTITY_WARDEN_NEARBY_CLOSER) -> warningLevel = 2;
-				case SoundEvent s when s.equals(SoundEvents.ENTITY_WARDEN_NEARBY_CLOSEST) -> warningLevel = 3;
-				case SoundEvent s when s.equals(SoundEvents.ENTITY_WARDEN_LISTENING_ANGRY) -> warningLevel = 4;
+				case SoundEvent s when s.equals(SoundEvents.WARDEN_NEARBY_CLOSE) -> warningLevel = 1;
+				case SoundEvent s when s.equals(SoundEvents.WARDEN_NEARBY_CLOSER) -> warningLevel = 2;
+				case SoundEvent s when s.equals(SoundEvents.WARDEN_NEARBY_CLOSEST) -> warningLevel = 3;
+				case SoundEvent s when s.equals(SoundEvents.WARDEN_LISTENING_ANGRY) -> warningLevel = 4;
 
 				default -> {}
 			}

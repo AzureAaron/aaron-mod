@@ -45,13 +45,13 @@ import net.azureaaron.networth.PetCalculator;
 import net.azureaaron.networth.item.PetInfo;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.CommandSource;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.ItemStack;
 
 public class NetworthCommand extends SkyblockCommand {
 	private static final Command INSTANCE = new NetworthCommand();
@@ -63,17 +63,17 @@ public class NetworthCommand extends SkyblockCommand {
 	}
 
 	@Override
-	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
 		dispatcher.register(literal("networth")
 				.executes(context -> CommandSystem.handleSelf4Skyblock(this, context.getSource()))
 				.then(argument("player", word())
-						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
+						.suggests((context, builder) -> SharedSuggestionProvider.suggest(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
 						.executes(context -> CommandSystem.handlePlayer4Skyblock(this, context.getSource(), getString(context, "player")))));
 
 		dispatcher.register(literal("nw")
 				.executes(context -> CommandSystem.handleSelf4Skyblock(this, context.getSource()))
 				.then(argument("player", word())
-						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
+						.suggests((context, builder) -> SharedSuggestionProvider.suggest(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
 						.executes(context -> CommandSystem.handlePlayer4Skyblock(this, context.getSource(), getString(context, "player")))));
 	}
 
@@ -150,7 +150,7 @@ public class NetworthCommand extends SkyblockCommand {
 			}
 		} catch (Exception e) {
 			LOGGER.error("[Aaron's Mod Networth Command] Failed to calculate networth :(", e);
-			source.sendError(Constants.PREFIX.get().append(Text.literal("Failed to calculate this player's networth!").formatted(Formatting.RED)));
+			source.sendError(Constants.PREFIX.get().append(Component.literal("Failed to calculate this player's networth!").withStyle(ChatFormatting.RED)));
 
 			return;
 		}
@@ -172,32 +172,32 @@ public class NetworthCommand extends SkyblockCommand {
 		double overallValue = armourValue + equipmentValue + inventoryValue + enderChestsValue + storageValue + accessoriesValue + petsValue + wardrobeValue + sacksValue + essenceValue + purse + bank;
 
 		RenderHelper.runOnRenderThread(() -> {
-			Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
-					.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
-					.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
-					.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
-					.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
+			Component startText = Component.literal("     ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
+					.append(Component.literal("[- ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
+					.append(Component.literal(name).withStyle(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
+					.append(Component.literal(" -]").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
+					.append(Component.literal("     ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt())).withStyle(style -> style.withStrikethrough(true))));
 
 			source.sendFeedback(startText);
 
-			source.sendFeedback(Text.literal("Networth » " + Formatters.INTEGER_NUMBERS.format(overallValue) + " (" + Formatters.SHORT_FLOAT_NUMBERS.format(overallValue) + ")").withColor(colourProfile.infoColour.getAsInt()));
-			source.sendFeedback(Text.literal(""));
-			source.sendFeedback(Text.literal("Armour » " + Formatters.SHORT_FLOAT_NUMBERS.format(armourValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(armourValue, armour, ItemStack::getName))));
-			source.sendFeedback(Text.literal("Equipment » " + Formatters.SHORT_FLOAT_NUMBERS.format(equipmentValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(equipmentValue, equipment, ItemStack::getName))));
-			source.sendFeedback(Text.literal("Inventory » " + Formatters.SHORT_FLOAT_NUMBERS.format(inventoryValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(inventoryValue, inventory, ItemStack::getName))));
-			source.sendFeedback(Text.literal("Ender Chests » " + Formatters.SHORT_FLOAT_NUMBERS.format(enderChestsValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(enderChestsValue, enderChests, ItemStack::getName))));
-			source.sendFeedback(Text.literal("Storage » " + Formatters.SHORT_FLOAT_NUMBERS.format(storageValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(storageValue, storage, ItemStack::getName))));
-			source.sendFeedback(Text.literal("Accessories » " + Formatters.SHORT_FLOAT_NUMBERS.format(accessoriesValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(accessoriesValue, accessories, ItemStack::getName))));
-			source.sendFeedback(Text.literal("Pets » " + Formatters.SHORT_FLOAT_NUMBERS.format(petsValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(petsValue, pets, NetworthCommand::formatPet))));
-			source.sendFeedback(Text.literal("Wardrobe » " + Formatters.SHORT_FLOAT_NUMBERS.format(wardrobeValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(wardrobeValue, wardrobe, ItemStack::getName))));
-			source.sendFeedback(Text.literal("Sacks » " + Formatters.SHORT_FLOAT_NUMBERS.format(sacksValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(sacksValue, sacks, NetworthCommand::formatSacks))));
-			source.sendFeedback(Text.literal("Essence » " + Formatters.SHORT_FLOAT_NUMBERS.format(essenceValue)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(essenceValue, essence, NetworthCommand::formatEssence))));
+			source.sendFeedback(Component.literal("Networth » " + Formatters.INTEGER_NUMBERS.format(overallValue) + " (" + Formatters.SHORT_FLOAT_NUMBERS.format(overallValue) + ")").withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Component.literal(""));
+			source.sendFeedback(Component.literal("Armour » " + Formatters.SHORT_FLOAT_NUMBERS.format(armourValue)).withColor(colourProfile.infoColour.getAsInt()).withStyle(style -> style.withHoverEvent(getHover(armourValue, armour, ItemStack::getHoverName))));
+			source.sendFeedback(Component.literal("Equipment » " + Formatters.SHORT_FLOAT_NUMBERS.format(equipmentValue)).withColor(colourProfile.infoColour.getAsInt()).withStyle(style -> style.withHoverEvent(getHover(equipmentValue, equipment, ItemStack::getHoverName))));
+			source.sendFeedback(Component.literal("Inventory » " + Formatters.SHORT_FLOAT_NUMBERS.format(inventoryValue)).withColor(colourProfile.infoColour.getAsInt()).withStyle(style -> style.withHoverEvent(getHover(inventoryValue, inventory, ItemStack::getHoverName))));
+			source.sendFeedback(Component.literal("Ender Chests » " + Formatters.SHORT_FLOAT_NUMBERS.format(enderChestsValue)).withColor(colourProfile.infoColour.getAsInt()).withStyle(style -> style.withHoverEvent(getHover(enderChestsValue, enderChests, ItemStack::getHoverName))));
+			source.sendFeedback(Component.literal("Storage » " + Formatters.SHORT_FLOAT_NUMBERS.format(storageValue)).withColor(colourProfile.infoColour.getAsInt()).withStyle(style -> style.withHoverEvent(getHover(storageValue, storage, ItemStack::getHoverName))));
+			source.sendFeedback(Component.literal("Accessories » " + Formatters.SHORT_FLOAT_NUMBERS.format(accessoriesValue)).withColor(colourProfile.infoColour.getAsInt()).withStyle(style -> style.withHoverEvent(getHover(accessoriesValue, accessories, ItemStack::getHoverName))));
+			source.sendFeedback(Component.literal("Pets » " + Formatters.SHORT_FLOAT_NUMBERS.format(petsValue)).withColor(colourProfile.infoColour.getAsInt()).withStyle(style -> style.withHoverEvent(getHover(petsValue, pets, NetworthCommand::formatPet))));
+			source.sendFeedback(Component.literal("Wardrobe » " + Formatters.SHORT_FLOAT_NUMBERS.format(wardrobeValue)).withColor(colourProfile.infoColour.getAsInt()).withStyle(style -> style.withHoverEvent(getHover(wardrobeValue, wardrobe, ItemStack::getHoverName))));
+			source.sendFeedback(Component.literal("Sacks » " + Formatters.SHORT_FLOAT_NUMBERS.format(sacksValue)).withColor(colourProfile.infoColour.getAsInt()).withStyle(style -> style.withHoverEvent(getHover(sacksValue, sacks, NetworthCommand::formatSacks))));
+			source.sendFeedback(Component.literal("Essence » " + Formatters.SHORT_FLOAT_NUMBERS.format(essenceValue)).withColor(colourProfile.infoColour.getAsInt()).withStyle(style -> style.withHoverEvent(getHover(essenceValue, essence, NetworthCommand::formatEssence))));
 
-			source.sendFeedback(Text.literal(""));
-			source.sendFeedback(Text.literal("Bank » " + Formatters.SHORT_FLOAT_NUMBERS.format(bank)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(bank, null, null))));
-			source.sendFeedback(Text.literal("Purse » " + Formatters.SHORT_FLOAT_NUMBERS.format(purse)).withColor(colourProfile.infoColour.getAsInt()).styled(style -> style.withHoverEvent(getHover(purse, null, null))));
+			source.sendFeedback(Component.literal(""));
+			source.sendFeedback(Component.literal("Bank » " + Formatters.SHORT_FLOAT_NUMBERS.format(bank)).withColor(colourProfile.infoColour.getAsInt()).withStyle(style -> style.withHoverEvent(getHover(bank, null, null))));
+			source.sendFeedback(Component.literal("Purse » " + Formatters.SHORT_FLOAT_NUMBERS.format(purse)).withColor(colourProfile.infoColour.getAsInt()).withStyle(style -> style.withHoverEvent(getHover(purse, null, null))));
 
-			source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+			source.sendFeedback(Component.literal(CommandSystem.getEndSpaces(startText)).withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 		});
 	}
 
@@ -211,9 +211,9 @@ public class NetworthCommand extends SkyblockCommand {
 		return calculations;
 	}
 
-	private static <T> HoverEvent getHover(double totalValue, @Nullable Object2DoubleMap<T> objects, @Nullable Function<T, Text> textifier) {
+	private static <T> HoverEvent getHover(double totalValue, @Nullable Object2DoubleMap<T> objects, @Nullable Function<T, Component> textifier) {
 		ColourProfiles colourProfile = Constants.PROFILE.get();
-		MutableText hoverText = Text.empty().append(Text.literal("Exact Value » " + Formatters.INTEGER_NUMBERS.format(totalValue)).withColor(colourProfile.infoColour.getAsInt()));
+		MutableComponent hoverText = Component.empty().append(Component.literal("Exact Value » " + Formatters.INTEGER_NUMBERS.format(totalValue)).withColor(colourProfile.infoColour.getAsInt()));
 
 		if (objects != null && textifier != null) {
 			List<Object2DoubleMap.Entry<T>> sortedEntries = objects.object2DoubleEntrySet().stream()
@@ -225,39 +225,39 @@ public class NetworthCommand extends SkyblockCommand {
 				hoverText.append("\n");
 				hoverText.append(textifier.apply(entry.getKey()));
 				hoverText.append(" - ");
-				hoverText.append(Text.literal(Formatters.SHORT_FLOAT_NUMBERS.format(entry.getDoubleValue())).withColor(colourProfile.infoColour.getAsInt()));
+				hoverText.append(Component.literal(Formatters.SHORT_FLOAT_NUMBERS.format(entry.getDoubleValue())).withColor(colourProfile.infoColour.getAsInt()));
 			}
 		}
 
 		return new HoverEvent.ShowText(hoverText);
 	}
 
-	private static Text formatPet(PetInfo petInfo) {
-		Formatting nameColour = switch (petInfo.tier()) {
-			case "MYTHIC" -> Formatting.LIGHT_PURPLE;
-			case "LEGENDARY" -> Formatting.GOLD;
-			case "EPIC" -> Formatting.DARK_PURPLE;
-			case "RARE" -> Formatting.BLUE;
-			case "UNCOMMON" -> Formatting.GREEN;
-			case "COMMON" -> Formatting.WHITE;
+	private static Component formatPet(PetInfo petInfo) {
+		ChatFormatting nameColour = switch (petInfo.tier()) {
+			case "MYTHIC" -> ChatFormatting.LIGHT_PURPLE;
+			case "LEGENDARY" -> ChatFormatting.GOLD;
+			case "EPIC" -> ChatFormatting.DARK_PURPLE;
+			case "RARE" -> ChatFormatting.BLUE;
+			case "UNCOMMON" -> ChatFormatting.GREEN;
+			case "COMMON" -> ChatFormatting.WHITE;
 
-			default -> Formatting.GRAY;
+			default -> ChatFormatting.GRAY;
 		};
 		String formattedName = Functions.titleCase(petInfo.type().replace('_', ' '));
-		MutableText text = Text.empty()
-				.append(Text.literal("[Lvl " + PetCalculator.calculatePetLevel(petInfo).leftInt() + "] ").formatted(Formatting.GRAY))
-				.append(Text.literal(formattedName).formatted(nameColour));
+		MutableComponent text = Component.empty()
+				.append(Component.literal("[Lvl " + PetCalculator.calculatePetLevel(petInfo).leftInt() + "] ").withStyle(ChatFormatting.GRAY))
+				.append(Component.literal(formattedName).withStyle(nameColour));
 
 		return text;
 	}
 
-	private static Text formatSacks(String itemId) {
+	private static Component formatSacks(String itemId) {
 		String name = Cache.ITEM_NAMES.get(itemId);
 
-		return name != null ? Text.literal(name) : Text.literal(Functions.titleCase(itemId.replace('_', ' ')));
+		return name != null ? Component.literal(name) : Component.literal(Functions.titleCase(itemId.replace('_', ' ')));
 	}
 
-	private static Text formatEssence(String essenceType) {
+	private static Component formatEssence(String essenceType) {
 		int essenceColour = switch (essenceType) {
 			case "WITHER" -> 0x2B2B2A;
 			case "SPIDER" -> 0x4B647A;
@@ -271,6 +271,6 @@ public class NetworthCommand extends SkyblockCommand {
 			default -> 0;
 		};
 
-		return Text.literal(Functions.titleCase(essenceType)).withColor(essenceColour).append(Text.literal(" Essence"));
+		return Component.literal(Functions.titleCase(essenceType)).withColor(essenceColour).append(Component.literal(" Essence"));
 	}
 }

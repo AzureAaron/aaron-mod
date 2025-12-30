@@ -13,14 +13,14 @@ import net.azureaaron.mod.mixins.accessors.ClientEntityManagerAccessor;
 import net.azureaaron.mod.mixins.accessors.ClientWorldAccessor;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.render.primitive.PrimitiveCollector;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.entity.EntityIndex;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.level.entity.EntityLookup;
+import net.minecraft.world.phys.Vec3;
 
 public class DragonHealth {
 	//﴾ (?:.+ )?Withered Dragon (?:\u16E4 )?(?<health>[\dkKMB.]+)\/(?<max>[\dkKMB.]+)\u2764 ﴿
@@ -34,17 +34,17 @@ public class DragonHealth {
 	private static void extractRendering(PrimitiveCollector collector) {
 		try {
 			if (Cache.inM7Phase5 && AaronModConfigManager.get().skyblock.m7.dragonHealthDisplay) {
-				MinecraftClient client = MinecraftClient.getInstance();
-				ClientWorld world = client.world;
+				Minecraft client = Minecraft.getInstance();
+				ClientLevel world = client.level;
 
 				if (world != null) {
-					for (Entity entity : world.getEntities()) {
-						if (entity instanceof EnderDragonEntity dragon) {
+					for (Entity entity : world.entitiesForRendering()) {
+						if (entity instanceof EnderDragon dragon) {
 							@SuppressWarnings("unchecked")
-							EntityIndex<Entity> entityIndex = ((ClientEntityManagerAccessor<Entity>) ((ClientWorldAccessor) world).getEntityManager()).getIndex();
+							EntityLookup<Entity> entityIndex = ((ClientEntityManagerAccessor<Entity>) ((ClientWorldAccessor) world).getEntityStorage()).getEntityStorage();
 
-							for (Entity indexedEntity : entityIndex.iterate()) {
-								if (indexedEntity instanceof ArmorStandEntity armourStand && armourStand.getBoundingBox().intersects(dragon.getBoundingBox()) && armourStand.hasCustomName()) {
+							for (Entity indexedEntity : entityIndex.getAllEntities()) {
+								if (indexedEntity instanceof ArmorStand armourStand && armourStand.getBoundingBox().intersects(dragon.getBoundingBox()) && armourStand.hasCustomName()) {
 									String name = armourStand.getName().getString();
 									Matcher matcher = DRAGON_HP.matcher(name);
 
@@ -57,9 +57,9 @@ public class DragonHealth {
 										float hp = (health / maxHealth) * 100f;
 
 										int colour = getHealthColour(hp);
-										Vec3d pos = dragon.getLerpedPos(client.getRenderTickCounter().getTickProgress(false)).subtract(0, 1, 0);
+										Vec3 pos = dragon.getPosition(client.getDeltaTracker().getGameTimeDeltaPartialTick(false)).subtract(0, 1, 0);
 
-										collector.submitText(Text.literal(healthSegment).styled(style -> style.withColor(colour)), pos, 8, true);
+										collector.submitText(Component.literal(healthSegment).withStyle(style -> style.withColor(colour)), pos, 8, true);
 
 										break;
 									}

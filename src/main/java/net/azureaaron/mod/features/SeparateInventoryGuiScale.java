@@ -1,17 +1,17 @@
 package net.azureaaron.mod.features;
 
+import com.mojang.blaze3d.platform.Window;
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.util.Window;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 
 public class SeparateInventoryGuiScale {
-	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
+	private static final Minecraft CLIENT = Minecraft.getInstance();
 	public static final int AUTO = 0;
 
 	public static boolean isEnabled(Screen screen) {
-		return AaronModConfigManager.get().uiAndVisuals.inventoryScreen.separateInventoryGuiScale && screen instanceof HandledScreen<?>;
+		return AaronModConfigManager.get().uiAndVisuals.inventoryScreen.separateInventoryGuiScale && screen instanceof AbstractContainerScreen<?>;
 	}
 
 	private static int getInventoryGuiScale() {
@@ -26,23 +26,23 @@ public class SeparateInventoryGuiScale {
 	}
 
 	public static int getAutoGuiScale() {
-		return CLIENT.isRunning() ? CLIENT.getWindow().calculateScaleFactor(AUTO, CLIENT.forcesUnicodeFont()) : AUTO;
+		return CLIENT.isRunning() ? CLIENT.getWindow().calculateScale(AUTO, CLIENT.isEnforceUnicode()) : AUTO;
 	}
 
 	public record SavedScaleState(Window window, int originalScaleFactor) {
 
 		public static SavedScaleState create(Window window) {
-			return new SavedScaleState(window, window.getScaleFactor());
+			return new SavedScaleState(window, window.getGuiScale());
 		}
 
 		public SavedScaleState adjust() {
-			this.window.setScaleFactor(this.window.calculateScaleFactor(getInventoryGuiScale(), CLIENT.forcesUnicodeFont()));
+			this.window.setGuiScale(this.window.calculateScale(getInventoryGuiScale(), CLIENT.isEnforceUnicode()));
 
 			return this;
 		}
 
 		public SavedScaleState reset() {
-			this.window.setScaleFactor(this.originalScaleFactor);
+			this.window.setGuiScale(this.originalScaleFactor);
 
 			return this;
 		}

@@ -2,7 +2,7 @@ package net.azureaaron.mod.events;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
+import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
 
 @FunctionalInterface
 public interface ParticleSpawnEvent {
@@ -13,5 +13,5 @@ public interface ParticleSpawnEvent {
 				}
 			});
 
-	void onParticleSpawn(ParticleS2CPacket packet);
+	void onParticleSpawn(ClientboundLevelParticlesPacket packet);
 }

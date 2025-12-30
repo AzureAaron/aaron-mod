@@ -14,8 +14,8 @@ import net.azureaaron.mod.config.categories.SkyblockCategory;
 import net.azureaaron.mod.config.categories.TextReplacerCategory;
 import net.azureaaron.mod.config.categories.UIAndVisualsCategory;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 
 public class AaronModConfigManager {
 	public static final Path PATH = FabricLoader.getInstance().getConfigDir().resolve("aaron-mod.json");
@@ -40,7 +40,7 @@ public class AaronModConfigManager {
 
 	public static Screen createGui(Screen parent) {
 		return DandelionConfigScreen.create(CONFIG_MANAGER, (defaults, config, builder) -> builder
-				.title(Text.translatable("aaron-mod.config.title", Main.MOD_VERSION))
+				.title(Component.translatable("aaron-mod.config.title", Main.MOD_VERSION))
 				.category(GeneralCategory.create(defaults, config))
 				.category(UIAndVisualsCategory.create(defaults, config))
 				.category(RefinementsCategory.create(defaults, config))

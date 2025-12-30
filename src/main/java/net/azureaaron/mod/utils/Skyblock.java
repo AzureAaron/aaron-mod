@@ -19,10 +19,10 @@ import com.mojang.serialization.JsonOps;
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.annotations.Init;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.RegistryOps;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.world.item.ItemStack;
 
 public class Skyblock {
 	private static final Logger LOGGER = LogUtils.getLogger();
@@ -34,10 +34,10 @@ public class Skyblock {
 				.whenComplete((_result, _throwable) -> loaded = true));
 	}
 
-	private static CompletableFuture<Void> loadRareLootItems(MinecraftClient client) {
+	private static CompletableFuture<Void> loadRareLootItems(Minecraft client) {
 		return CompletableFuture.supplyAsync(() -> {
-			try (BufferedReader reader = client.getResourceManager().openAsReader(Identifier.of(Main.NAMESPACE, "skyblock/rare_loot_items.json"))) {
-				RegistryOps<JsonElement> ops = ItemUtils.getRegistryLookup().getOps(JsonOps.INSTANCE);
+			try (BufferedReader reader = client.getResourceManager().openAsReader(Identifier.fromNamespaceAndPath(Main.NAMESPACE, "skyblock/rare_loot_items.json"))) {
+				RegistryOps<JsonElement> ops = ItemUtils.getRegistryLookup().createSerializationContext(JsonOps.INSTANCE);
 
 				return RARE_LOOT_CODEC.parse(ops, JsonParser.parseReader(reader)).getOrThrow();
 			} catch (Exception e) {

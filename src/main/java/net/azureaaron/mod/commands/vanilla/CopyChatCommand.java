@@ -15,26 +15,26 @@ import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.mixins.accessors.ChatAccessor;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.hud.ChatHudLine;
-import net.minecraft.client.toast.SystemToast;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.GuiMessage;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.network.chat.Component;
 
 public class CopyChatCommand {
-	private static final MinecraftClient minecraftClient = MinecraftClient.getInstance();
-	private static final Text successToastTitle = Text.literal("Success!");
-	private static final Text successToastDescription = Text.literal("The message was copied to your clipboard!");
-	private static final Text notFoundToastTitle = Text.literal("Not Found!");
-	private static final Text notFoundToastDescription = Text.literal("No message contained your input!");
+	private static final Minecraft minecraftClient = Minecraft.getInstance();
+	private static final Component successToastTitle = Component.literal("Success!");
+	private static final Component successToastDescription = Component.literal("The message was copied to your clipboard!");
+	private static final Component notFoundToastTitle = Component.literal("Not Found!");
+	private static final Component notFoundToastDescription = Component.literal("No message contained your input!");
 
 	@Init
 	public static void init() {
 		ClientCommandRegistrationCallback.EVENT.register(CopyChatCommand::register);
 	}
 
-	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
 		LiteralCommandNode<FabricClientCommandSource> copyChatCommand = dispatcher.register(literal("copychat")
 				.then(argument("excerpt", greedyString())
 						.executes(context -> copyMessage(context.getSource(), getString(context, "excerpt")))));
@@ -46,22 +46,22 @@ public class CopyChatCommand {
 	 * The new middle click to copy chat supersedes this feature!
 	 */
 	private static int copyMessage(FabricClientCommandSource source, String excerpt) {
-		List<ChatHudLine> chatHistory = ((ChatAccessor) minecraftClient.inGameHud.getChatHud()).getMessages();
+		List<GuiMessage> chatHistory = ((ChatAccessor) minecraftClient.gui.getChat()).getMessages();
 		int maxChatHistoryLength = ChatAccessor.getMaxHistoryLength();
 		int maxIteration = (chatHistory.size() >= maxChatHistoryLength) ? maxChatHistoryLength : chatHistory.size();
 		boolean foundAMessage = false;
 
 		for (int i = 0; i < maxIteration; i++) {
 			String currentMessage = chatHistory.get(i).content().getString();
-			currentMessage = Formatting.strip(currentMessage);
+			currentMessage = ChatFormatting.stripFormatting(currentMessage);
 			if (currentMessage.contains(excerpt)) {
-				minecraftClient.keyboard.setClipboard(currentMessage);
-				SystemToast.add(minecraftClient.getToastManager(), SystemToast.Type.PERIODIC_NOTIFICATION, successToastTitle, successToastDescription);
+				minecraftClient.keyboardHandler.setClipboard(currentMessage);
+				SystemToast.add(minecraftClient.getToastManager(), SystemToast.SystemToastId.PERIODIC_NOTIFICATION, successToastTitle, successToastDescription);
 				foundAMessage = true;
 				break;
 			}
 		}
-		if (!foundAMessage) SystemToast.add(minecraftClient.getToastManager(), SystemToast.Type.PERIODIC_NOTIFICATION, notFoundToastTitle, notFoundToastDescription);
+		if (!foundAMessage) SystemToast.add(minecraftClient.getToastManager(), SystemToast.SystemToastId.PERIODIC_NOTIFICATION, notFoundToastTitle, notFoundToastDescription);
 		return Command.SINGLE_SUCCESS;
 	}
 }

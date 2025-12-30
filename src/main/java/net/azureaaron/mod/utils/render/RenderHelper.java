@@ -8,9 +8,9 @@ import net.azureaaron.mod.utils.render.primitive.PrimitiveCollectorImpl;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldExtractionContext;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.profiler.Profiler;
-import net.minecraft.util.profiler.Profilers;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.profiling.Profiler;
+import net.minecraft.util.profiling.ProfilerFiller;
 
 public class RenderHelper {
 	private static PrimitiveCollectorImpl collector;
@@ -22,7 +22,7 @@ public class RenderHelper {
 	}
 
 	public static void startExtraction(WorldExtractionContext context) {
-		Profiler profiler = Profilers.get();
+		ProfilerFiller profiler = Profiler.get();
 		profiler.push("aaronModPrimitiveCollection");
 		collector = new PrimitiveCollectorImpl(context.worldState(), context.frustum());
 
@@ -32,7 +32,7 @@ public class RenderHelper {
 	}
 
 	public static void executeDraws(WorldRenderContext context) {
-		Profiler profiler = Profilers.get();
+		ProfilerFiller profiler = Profiler.get();
 
 		profiler.push("aaronModSubmitPrimitives");
 		collector.dispatchPrimitivesToRenderers(context.worldState().cameraRenderState);
@@ -59,7 +59,7 @@ public class RenderHelper {
 		if (RenderSystem.isOnRenderThread()) {
 			runnable.run();
 		} else {
-			MinecraftClient.getInstance().execute(runnable);
+			Minecraft.getInstance().execute(runnable);
 		}
 	}
 }

@@ -6,34 +6,34 @@ import java.util.Base64;
 import java.util.List;
 
 import net.azureaaron.mod.utils.datafixer.LegacyItemStackFixer;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.component.ComponentHolder;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.HolderLookup.Provider;
+import net.minecraft.core.component.DataComponentHolder;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.data.registries.VanillaRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
-import net.minecraft.nbt.NbtSizeTracker;
-import net.minecraft.registry.BuiltinRegistries;
-import net.minecraft.registry.RegistryWrapper.WrapperLookup;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 
 public class ItemUtils {
-	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
-	private static final WrapperLookup DEFAULT_LOOKUP = BuiltinRegistries.createWrapperLookup();
+	private static final Minecraft CLIENT = Minecraft.getInstance();
+	private static final Provider DEFAULT_LOOKUP = VanillaRegistries.createLookup();
 
 	/**
-	 * Decodes from the item format from the Hypixel API into a list of {@link NbtCompound}s.
+	 * Decodes from the item format from the Hypixel API into a list of {@link CompoundTag}s.
 	 */
-	public static List<NbtCompound> decodeCompressedItemData(String encoded) throws IOException {
+	public static List<CompoundTag> decodeCompressedItemData(String encoded) throws IOException {
 		return decodeCompressedItemData(Base64.getDecoder().decode(encoded));
 	}
 
 	/**
 	 * @see #decodeCompressedItemData(String)
 	 */
-	public static List<NbtCompound> decodeCompressedItemData(byte[] bytes) throws IOException {
-		return NbtIo.readCompressed(new ByteArrayInputStream(bytes), NbtSizeTracker.ofUnlimitedBytes()).getListOrEmpty("i").stream()
-				.map(NbtCompound.class::cast)
+	public static List<CompoundTag> decodeCompressedItemData(byte[] bytes) throws IOException {
+		return NbtIo.readCompressed(new ByteArrayInputStream(bytes), NbtAccounter.unlimitedHeap()).getListOrEmpty("i").stream()
+				.map(CompoundTag.class::cast)
 				.toList();
 	}
 
@@ -46,15 +46,15 @@ public class ItemUtils {
 				.toList();
 	}
 
-	public static NbtCompound getCustomData(ComponentHolder stack) {
-		return stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
+	public static CompoundTag getCustomData(DataComponentHolder stack) {
+		return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 	}
 
-	public static String getId(ComponentHolder stack) {
-		return getCustomData(stack).getString("id", "");
+	public static String getId(DataComponentHolder stack) {
+		return getCustomData(stack).getStringOr("id", "");
 	}
 
-	public static WrapperLookup getRegistryLookup() {
-		return CLIENT.getNetworkHandler() != null && CLIENT.getNetworkHandler().getRegistryManager() != null ? CLIENT.getNetworkHandler().getRegistryManager() : DEFAULT_LOOKUP;
+	public static Provider getRegistryLookup() {
+		return CLIENT.getConnection() != null && CLIENT.getConnection().registryAccess() != null ? CLIENT.getConnection().registryAccess() : DEFAULT_LOOKUP;
 	}
 }

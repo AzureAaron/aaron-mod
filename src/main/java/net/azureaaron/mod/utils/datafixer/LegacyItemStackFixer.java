@@ -15,15 +15,15 @@ import net.azureaaron.legacyitemdfu.TypeReferences;
 import net.azureaaron.mod.utils.ItemUtils;
 import net.azureaaron.mod.utils.TextTransformer;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LoreComponent;
-import net.minecraft.component.type.NbtComponent;
-import net.minecraft.component.type.TooltipDisplayComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.text.Text;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.item.component.TooltipDisplay;
 
 public class LegacyItemStackFixer {
 	private static final Logger LOGGER = LogUtils.getLogger();
@@ -34,40 +34,40 @@ public class LegacyItemStackFixer {
 	@Deprecated(forRemoval = true)
 	private static boolean shouldLog = FabricLoader.getInstance().isDevelopmentEnvironment();
 
-	public static ItemStack fixLegacyStack(NbtCompound nbt) {
-		if (nbt.getInt("id", 0) == 0) return ItemStack.EMPTY;
+	public static ItemStack fixLegacyStack(CompoundTag nbt) {
+		if (nbt.getIntOr("id", 0) == 0) return ItemStack.EMPTY;
 
-		Dynamic<NbtElement> fixed = getFixer().update(TypeReferences.LEGACY_ITEM_STACK, new Dynamic<>(ItemUtils.getRegistryLookup().getOps(NbtOps.INSTANCE), nbt), getFirstVersion(), getLatestVersion());
+		Dynamic<Tag> fixed = getFixer().update(TypeReferences.LEGACY_ITEM_STACK, new Dynamic<>(ItemUtils.getRegistryLookup().createSerializationContext(NbtOps.INSTANCE), nbt), getFirstVersion(), getLatestVersion());
 		ItemStack stack = ItemStack.CODEC.parse(fixed)
 				.setPartial(ItemStack.EMPTY)
 				.resultOrPartial(LegacyItemStackFixer::tryLogFixerError)
 				.get();
 
 		//Convert Custom Name & Lore to text components
-		if (stack.contains(DataComponentTypes.CUSTOM_NAME)) {
-			stack.set(DataComponentTypes.CUSTOM_NAME, TextTransformer.fromLegacy(stack.get(DataComponentTypes.CUSTOM_NAME).getString()));
+		if (stack.has(DataComponents.CUSTOM_NAME)) {
+			stack.set(DataComponents.CUSTOM_NAME, TextTransformer.fromLegacy(stack.get(DataComponents.CUSTOM_NAME).getString()));
 		}
 
-		if (stack.contains(DataComponentTypes.LORE)) {
-			List<Text> fixedLore = stack.get(DataComponentTypes.LORE).lines().stream()
-					.map(Text::getString)
+		if (stack.has(DataComponents.LORE)) {
+			List<Component> fixedLore = stack.get(DataComponents.LORE).lines().stream()
+					.map(Component::getString)
 					.map(TextTransformer::fromLegacy)
-					.map(Text.class::cast)
+					.map(Component.class::cast)
 					.toList();
 
-			stack.set(DataComponentTypes.LORE, new LoreComponent(fixedLore));
+			stack.set(DataComponents.LORE, new ItemLore(fixedLore));
 		}
 
 		//Remap Custom Data
-		if (stack.contains(DataComponentTypes.CUSTOM_DATA)) {
-			stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(stack.get(DataComponentTypes.CUSTOM_DATA).copyNbt().getCompoundOrEmpty("ExtraAttributes")));
+		if (stack.has(DataComponents.CUSTOM_DATA)) {
+			stack.set(DataComponents.CUSTOM_DATA, CustomData.of(stack.get(DataComponents.CUSTOM_DATA).copyTag().getCompoundOrEmpty("ExtraAttributes")));
 		}
 
 		//Hide Attributes & Vanilla Enchantments
-		TooltipDisplayComponent display = stack.getOrDefault(DataComponentTypes.TOOLTIP_DISPLAY, TooltipDisplayComponent.DEFAULT)
-				.with(DataComponentTypes.ATTRIBUTE_MODIFIERS, true)
-				.with(DataComponentTypes.ENCHANTMENTS, true);
-		stack.set(DataComponentTypes.TOOLTIP_DISPLAY, display);
+		TooltipDisplay display = stack.getOrDefault(DataComponents.TOOLTIP_DISPLAY, TooltipDisplay.DEFAULT)
+				.withHidden(DataComponents.ATTRIBUTE_MODIFIERS, true)
+				.withHidden(DataComponents.ENCHANTMENTS, true);
+		stack.set(DataComponents.TOOLTIP_DISPLAY, display);
 
 		//Always Display Skyblock Stuff on the item
 		stack.setAlwaysDisplaySkyblockInfo(true);

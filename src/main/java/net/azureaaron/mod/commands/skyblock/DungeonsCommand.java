@@ -27,16 +27,16 @@ import net.azureaaron.mod.utils.Levelling;
 import net.azureaaron.mod.utils.render.RenderHelper;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.CommandSource;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
 
 public class DungeonsCommand extends SkyblockCommand {
 	private static final Command INSTANCE = new DungeonsCommand();
-	private static final Supplier<MutableText> NEVER_PLAYED_DUNGEONS_ERROR = () -> Constants.PREFIX.get().append(Text.literal("This player hasn't entered the catacombs yet!").formatted(Formatting.RED));
+	private static final Supplier<MutableComponent> NEVER_PLAYED_DUNGEONS_ERROR = () -> Constants.PREFIX.get().append(Component.literal("This player hasn't entered the catacombs yet!").withStyle(ChatFormatting.RED));
 
 	@Init
 	public static void init() {
@@ -44,23 +44,23 @@ public class DungeonsCommand extends SkyblockCommand {
 	}
 
 	@Override
-	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
 		dispatcher.register(literal("dungeons")
 				.executes(context -> CommandSystem.handleSelf4Skyblock(this, context.getSource()))
 				.then(argument("player", word())
-						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
+						.suggests((context, builder) -> SharedSuggestionProvider.suggest(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
 						.executes(context -> CommandSystem.handlePlayer4Skyblock(this, context.getSource(), getString(context, "player")))));
 
 		dispatcher.register(literal("catacombs")
 				.executes(context -> CommandSystem.handleSelf4Skyblock(this, context.getSource()))
 				.then(argument("player", word())
-						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
+						.suggests((context, builder) -> SharedSuggestionProvider.suggest(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
 						.executes(context -> CommandSystem.handlePlayer4Skyblock(this, context.getSource(), getString(context, "player")))));
 
 		dispatcher.register(literal("cata")
 				.executes(context -> CommandSystem.handleSelf4Skyblock(this, context.getSource()))
 				.then(argument("player", word())
-						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
+						.suggests((context, builder) -> SharedSuggestionProvider.suggest(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
 						.executes(context -> CommandSystem.handlePlayer4Skyblock(this, context.getSource(), getString(context, "player")))));
 	}
 
@@ -126,55 +126,55 @@ public class DungeonsCommand extends SkyblockCommand {
 		int masterFloor7s = JsonHelper.getInt(masterTierCompletions, "7").orElse(0);
 
 		RenderHelper.runOnRenderThread(() -> {
-			Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
-					.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
-					.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
-					.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
-					.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
+			Component startText = Component.literal("     ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
+					.append(Component.literal("[- ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
+					.append(Component.literal(name).withStyle(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
+					.append(Component.literal(" -]").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
+					.append(Component.literal("     ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt())).withStyle(style -> style.withStrikethrough(true))));
 
 			source.sendFeedback(startText);
 
-			source.sendFeedback(Text.literal("Level » " + catacombsLevel).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())
-					.withHoverEvent(new HoverEvent.ShowText(Text.literal("Total XP: " + Formatters.INTEGER_NUMBERS.format(catacombsXp)).withColor(colourProfile.infoColour.getAsInt())))));
-			source.sendFeedback(Text.literal("Dailies » " + ((onDailies) ? "✓" : "✗") + dailiesLeft).withColor(colourProfile.infoColour.getAsInt()));
-			source.sendFeedback(Text.literal("Secrets » " + Formatters.INTEGER_NUMBERS.format(secrets)).withColor(colourProfile.infoColour.getAsInt()));
-			source.sendFeedback(Text.literal("Selected Class » ").withColor(colourProfile.infoColour.getAsInt())
-					.append(Text.literal(Functions.titleCase(selectedClass)).withColor(colourProfile.highlightColour.getAsInt())));
+			source.sendFeedback(Component.literal("Level » " + catacombsLevel).withStyle(style -> style.withColor(colourProfile.infoColour.getAsInt())
+					.withHoverEvent(new HoverEvent.ShowText(Component.literal("Total XP: " + Formatters.INTEGER_NUMBERS.format(catacombsXp)).withColor(colourProfile.infoColour.getAsInt())))));
+			source.sendFeedback(Component.literal("Dailies » " + ((onDailies) ? "✓" : "✗") + dailiesLeft).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Component.literal("Secrets » " + Formatters.INTEGER_NUMBERS.format(secrets)).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Component.literal("Selected Class » ").withColor(colourProfile.infoColour.getAsInt())
+					.append(Component.literal(Functions.titleCase(selectedClass)).withColor(colourProfile.highlightColour.getAsInt())));
 
-			source.sendFeedback(Text.literal("[ H » ").withColor(colourProfile.infoColour.getAsInt())
-					.append(Text.literal(String.valueOf(healerLevel)).withColor(healerColour))
-					.append(Text.literal(" • M » ").withColor(colourProfile.infoColour.getAsInt()))
-					.append(Text.literal(String.valueOf(mageLevel)).withColor(mageColour))
-					.append(Text.literal(" • B » ").withColor(colourProfile.infoColour.getAsInt()))
-					.append(Text.literal(String.valueOf(berserkLevel)).withColor(berserkColour))
-					.append(Text.literal(" • A » ").withColor(colourProfile.infoColour.getAsInt()))
-					.append(Text.literal(String.valueOf(archerLevel)).withColor(archerColour))
-					.append(Text.literal(" • T » ").withColor(colourProfile.infoColour.getAsInt()))
-					.append(Text.literal(String.valueOf(tankLevel)).withColor(tankColour))
-					.append(Text.literal(" ]").withColor(colourProfile.infoColour.getAsInt()))
-					.styled(style -> style.withHoverEvent(new HoverEvent.ShowText(Text.literal("Class Avg. » " + String.valueOf(classAverage)).withColor(colourProfile.infoColour.getAsInt())))));
+			source.sendFeedback(Component.literal("[ H » ").withColor(colourProfile.infoColour.getAsInt())
+					.append(Component.literal(String.valueOf(healerLevel)).withColor(healerColour))
+					.append(Component.literal(" • M » ").withColor(colourProfile.infoColour.getAsInt()))
+					.append(Component.literal(String.valueOf(mageLevel)).withColor(mageColour))
+					.append(Component.literal(" • B » ").withColor(colourProfile.infoColour.getAsInt()))
+					.append(Component.literal(String.valueOf(berserkLevel)).withColor(berserkColour))
+					.append(Component.literal(" • A » ").withColor(colourProfile.infoColour.getAsInt()))
+					.append(Component.literal(String.valueOf(archerLevel)).withColor(archerColour))
+					.append(Component.literal(" • T » ").withColor(colourProfile.infoColour.getAsInt()))
+					.append(Component.literal(String.valueOf(tankLevel)).withColor(tankColour))
+					.append(Component.literal(" ]").withColor(colourProfile.infoColour.getAsInt()))
+					.withStyle(style -> style.withHoverEvent(new HoverEvent.ShowText(Component.literal("Class Avg. » " + String.valueOf(classAverage)).withColor(colourProfile.infoColour.getAsInt())))));
 
-			source.sendFeedback(Text.literal(""));
+			source.sendFeedback(Component.literal(""));
 
-			source.sendFeedback(Text.literal("(Catacombs Completions)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt())
-					.withHoverEvent(new HoverEvent.ShowText(Text.literal("Entrance » " + Formatters.INTEGER_NUMBERS.format(entrances) + "\n").withColor(colourProfile.infoColour.getAsInt())
-							.append(Text.literal("F1 » " + Formatters.INTEGER_NUMBERS.format(floor1s) + "\n"))
-							.append(Text.literal("F2 » " + Formatters.INTEGER_NUMBERS.format(floor2s) + "\n"))
-							.append(Text.literal("F3 » " + Formatters.INTEGER_NUMBERS.format(floor3s) + "\n"))
-							.append(Text.literal("F4 » " + Formatters.INTEGER_NUMBERS.format(floor4s) + "\n"))
-							.append(Text.literal("F5 » " + Formatters.INTEGER_NUMBERS.format(floor5s) + "\n"))
-							.append(Text.literal("F6 » " + Formatters.INTEGER_NUMBERS.format(floor6s) + "\n"))
-							.append(Text.literal("F7 » " + Formatters.INTEGER_NUMBERS.format(floor7s)))))));
-			source.sendFeedback(Text.literal("(Master Catacombs Completions)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt())
-					.withHoverEvent(new HoverEvent.ShowText(Text.literal("M1 » " + Formatters.INTEGER_NUMBERS.format(masterFloor1s) + "\n").withColor(colourProfile.infoColour.getAsInt())
-							.append(Text.literal("M2 » " + Formatters.INTEGER_NUMBERS.format(masterFloor2s) + "\n"))
-							.append(Text.literal("M3 » " + Formatters.INTEGER_NUMBERS.format(masterFloor3s) + "\n"))
-							.append(Text.literal("M4 » " + Formatters.INTEGER_NUMBERS.format(masterFloor4s) + "\n"))
-							.append(Text.literal("M5 » " + Formatters.INTEGER_NUMBERS.format(masterFloor5s) + "\n"))
-							.append(Text.literal("M6 » " + Formatters.INTEGER_NUMBERS.format(masterFloor6s) + "\n"))
-							.append(Text.literal("M7 » " + Formatters.INTEGER_NUMBERS.format(masterFloor7s)))))));
+			source.sendFeedback(Component.literal("(Catacombs Completions)").withStyle(style -> style.withColor(colourProfile.hoverColour.getAsInt())
+					.withHoverEvent(new HoverEvent.ShowText(Component.literal("Entrance » " + Formatters.INTEGER_NUMBERS.format(entrances) + "\n").withColor(colourProfile.infoColour.getAsInt())
+							.append(Component.literal("F1 » " + Formatters.INTEGER_NUMBERS.format(floor1s) + "\n"))
+							.append(Component.literal("F2 » " + Formatters.INTEGER_NUMBERS.format(floor2s) + "\n"))
+							.append(Component.literal("F3 » " + Formatters.INTEGER_NUMBERS.format(floor3s) + "\n"))
+							.append(Component.literal("F4 » " + Formatters.INTEGER_NUMBERS.format(floor4s) + "\n"))
+							.append(Component.literal("F5 » " + Formatters.INTEGER_NUMBERS.format(floor5s) + "\n"))
+							.append(Component.literal("F6 » " + Formatters.INTEGER_NUMBERS.format(floor6s) + "\n"))
+							.append(Component.literal("F7 » " + Formatters.INTEGER_NUMBERS.format(floor7s)))))));
+			source.sendFeedback(Component.literal("(Master Catacombs Completions)").withStyle(style -> style.withColor(colourProfile.hoverColour.getAsInt())
+					.withHoverEvent(new HoverEvent.ShowText(Component.literal("M1 » " + Formatters.INTEGER_NUMBERS.format(masterFloor1s) + "\n").withColor(colourProfile.infoColour.getAsInt())
+							.append(Component.literal("M2 » " + Formatters.INTEGER_NUMBERS.format(masterFloor2s) + "\n"))
+							.append(Component.literal("M3 » " + Formatters.INTEGER_NUMBERS.format(masterFloor3s) + "\n"))
+							.append(Component.literal("M4 » " + Formatters.INTEGER_NUMBERS.format(masterFloor4s) + "\n"))
+							.append(Component.literal("M5 » " + Formatters.INTEGER_NUMBERS.format(masterFloor5s) + "\n"))
+							.append(Component.literal("M6 » " + Formatters.INTEGER_NUMBERS.format(masterFloor6s) + "\n"))
+							.append(Component.literal("M7 » " + Formatters.INTEGER_NUMBERS.format(masterFloor7s)))))));
 
-			source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+			source.sendFeedback(Component.literal(CommandSystem.getEndSpaces(startText)).withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 		});
 	}
 }

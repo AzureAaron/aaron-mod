@@ -5,15 +5,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 import net.azureaaron.mod.events.PingResultCallback;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.PingMeasurer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.PingDebugMonitor;
 
-@Mixin(PingMeasurer.class)
+@Mixin(PingDebugMonitor.class)
 public class PingMeasurerMixin {
 
-	@ModifyArg(method = "onPingResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiler/MultiValueDebugSampleLogImpl;push(J)V"))
+	@ModifyArg(method = "onPongReceived", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/debugchart/LocalSampleLogger;logSample(J)V"))
 	private long aaronMod$onPingResult(long ping) {
-		MinecraftClient.getInstance().send(() -> PingResultCallback.EVENT.invoker().onPingResult(ping));
+		Minecraft.getInstance().schedule(() -> PingResultCallback.EVENT.invoker().onPingResult(ping));
 
 		return ping;
 	}

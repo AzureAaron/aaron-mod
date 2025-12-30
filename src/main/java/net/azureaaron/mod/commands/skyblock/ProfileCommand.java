@@ -28,10 +28,10 @@ import net.azureaaron.mod.utils.Skyblock;
 import net.azureaaron.mod.utils.render.RenderHelper;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.CommandSource;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 
 public class ProfileCommand extends SkyblockCommand {
 	private static final Command INSTANCE = new ProfileCommand();
@@ -42,11 +42,11 @@ public class ProfileCommand extends SkyblockCommand {
 	}
 
 	@Override
-	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+	public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
 		dispatcher.register(literal("profile")
 				.executes(context -> CommandSystem.handleSelf4Skyblock(this, context.getSource()))
 				.then(argument("player", word())
-						.suggests((context, builder) -> CommandSource.suggestMatching(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
+						.suggests((context, builder) -> SharedSuggestionProvider.suggest(CommandSystem.getPlayerSuggestions(context.getSource()), builder))
 						.executes(context -> CommandSystem.handlePlayer4Skyblock(this, context.getSource(), getString(context, "player")))));
 	}
 
@@ -96,34 +96,34 @@ public class ProfileCommand extends SkyblockCommand {
 		int riftstalkerBloodfiendLevel = Levelling.getSlayerLevel(JsonHelper.getInt(slayerBosses, "vampire.xp").orElse(0), Slayers.RIFTSTALKER_BLOODFIEND);
 
 		RenderHelper.runOnRenderThread(() -> {
-			Text startText = Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
-					.append(Text.literal("[- ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
-					.append(Text.literal(name).styled(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
-					.append(Text.literal(" -]").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
-					.append(Text.literal("     ").styled(style -> style.withColor(colourProfile.primaryColour.getAsInt())).styled(style -> style.withStrikethrough(true))));
+			Component startText = Component.literal("     ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true))
+					.append(Component.literal("[- ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(false)))
+					.append(Component.literal(name).withStyle(style -> style.withColor(colourProfile.secondaryColour.getAsInt()).withBold(true).withStrikethrough(false))
+					.append(Component.literal(" -]").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withBold(false).withStrikethrough(false)))
+					.append(Component.literal("     ").withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt())).withStyle(style -> style.withStrikethrough(true))));
 
 			source.sendFeedback(startText);
 
-			source.sendFeedback(Text.literal("Profile » " + Functions.titleCase(body.get("cute_name").getAsString())).withColor(colourProfile.infoColour.getAsInt()));
-			source.sendFeedback(Text.literal("Joined » " + Formatters.toRelativeTime(firstJoinRelative).greatest())
-					.styled(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent.ShowText(Text.literal(Formatters.DATE_FORMATTER.format(Instant.ofEpochMilli(firstJoinTimestamp))).styled(style1 -> style1.withColor(colourProfile.infoColour.getAsInt()))))));
-			source.sendFeedback(Text.literal("Level » " + level).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Component.literal("Profile » " + Functions.titleCase(body.get("cute_name").getAsString())).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Component.literal("Joined » " + Formatters.toRelativeTime(firstJoinRelative).greatest())
+					.withStyle(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent.ShowText(Component.literal(Formatters.DATE_FORMATTER.format(Instant.ofEpochMilli(firstJoinTimestamp))).withStyle(style1 -> style1.withColor(colourProfile.infoColour.getAsInt()))))));
+			source.sendFeedback(Component.literal("Level » " + level).withColor(colourProfile.infoColour.getAsInt()));
 
-			source.sendFeedback(Text.literal(""));
+			source.sendFeedback(Component.literal(""));
 
 			if (bankingEnabled) {
-				source.sendFeedback(Text.literal("Bank » " + bank).withColor(colourProfile.infoColour.getAsInt()));
+				source.sendFeedback(Component.literal("Bank » " + bank).withColor(colourProfile.infoColour.getAsInt()));
 			} else {
-				source.sendFeedback(Text.literal("Bank » ").withColor(colourProfile.infoColour.getAsInt())
-						.append(Text.literal("Api Disabled!")));
+				source.sendFeedback(Component.literal("Bank » ").withColor(colourProfile.infoColour.getAsInt())
+						.append(Component.literal("Api Disabled!")));
 			}
-			source.sendFeedback(Text.literal("Purse » " + purse).withColor(colourProfile.infoColour.getAsInt()));
+			source.sendFeedback(Component.literal("Purse » " + purse).withColor(colourProfile.infoColour.getAsInt()));
 
-			source.sendFeedback(Text.literal(""));
+			source.sendFeedback(Component.literal(""));
 
 			if (skillsEnabled) {
-				source.sendFeedback(Text.literal("Skill Average » " + Formatters.FLOAT_NUMBERS.format(skillAverage)).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())
-						.withHoverEvent(new HoverEvent.ShowText(Text.literal("Alchemy » " + String.valueOf(alchemyLevel) + "\n").withColor(colourProfile.infoColour.getAsInt())
+				source.sendFeedback(Component.literal("Skill Average » " + Formatters.FLOAT_NUMBERS.format(skillAverage)).withStyle(style -> style.withColor(colourProfile.infoColour.getAsInt())
+						.withHoverEvent(new HoverEvent.ShowText(Component.literal("Alchemy » " + String.valueOf(alchemyLevel) + "\n").withColor(colourProfile.infoColour.getAsInt())
 								.append("Carpentry » " + carpentryLevel + "\n")
 								.append("Combat » " + combatLevel + "\n")
 								.append("Enchanting » " + enchantingLevel + "\n")
@@ -133,28 +133,28 @@ public class ProfileCommand extends SkyblockCommand {
 								.append("Mining » " + miningLevel + "\n")
 								.append("Taming » " + tamingLevel)))));
 
-				source.sendFeedback(Text.literal("(Cosmetic Skills)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt()).withItalic(true)
-						.withHoverEvent(new HoverEvent.ShowText(Text.literal("Runecrafting » " + runecraftingLevel + "\n").styled(style1 -> style1.withColor(colourProfile.infoColour.getAsInt()).withItalic(false))
+				source.sendFeedback(Component.literal("(Cosmetic Skills)").withStyle(style -> style.withColor(colourProfile.hoverColour.getAsInt()).withItalic(true)
+						.withHoverEvent(new HoverEvent.ShowText(Component.literal("Runecrafting » " + runecraftingLevel + "\n").withStyle(style1 -> style1.withColor(colourProfile.infoColour.getAsInt()).withItalic(false))
 								.append("Social » " + socialLevel)))));
 			} else {
-				source.sendFeedback(Text.literal("Skill Average » ").withColor(colourProfile.infoColour.getAsInt())
-						.append(Text.literal("Api Disabled!")));
+				source.sendFeedback(Component.literal("Skill Average » ").withColor(colourProfile.infoColour.getAsInt())
+						.append(Component.literal("Api Disabled!")));
 
-				source.sendFeedback(Text.literal("(Cosmetic Skills)").styled(style -> style.withColor(colourProfile.hoverColour.getAsInt()).withItalic(true)
-						.withHoverEvent(new HoverEvent.ShowText(Text.literal("Api Disabled!").styled(style1 -> style1.withColor(colourProfile.infoColour.getAsInt()).withItalic(false))))));
+				source.sendFeedback(Component.literal("(Cosmetic Skills)").withStyle(style -> style.withColor(colourProfile.hoverColour.getAsInt()).withItalic(true)
+						.withHoverEvent(new HoverEvent.ShowText(Component.literal("Api Disabled!").withStyle(style1 -> style1.withColor(colourProfile.infoColour.getAsInt()).withItalic(false))))));
 			}
 
-			source.sendFeedback(Text.literal(""));
+			source.sendFeedback(Component.literal(""));
 
-			source.sendFeedback(Text.literal("Slayers » " + revenantHorrorLevel + " • " + tarantulaBroodfatherLevel +
-					" • " + svenPackmasterLevel + " • " + voidgloomSeraphLevel + " • " + infernoDemonlordLevel + " • " + riftstalkerBloodfiendLevel).styled(style -> style.withColor(colourProfile.infoColour.getAsInt())
-							.withHoverEvent(new HoverEvent.ShowText(Text.literal("Revenant Horror » " + revenantHorrorLevel + "\n").withColor(colourProfile.infoColour.getAsInt())
+			source.sendFeedback(Component.literal("Slayers » " + revenantHorrorLevel + " • " + tarantulaBroodfatherLevel +
+					" • " + svenPackmasterLevel + " • " + voidgloomSeraphLevel + " • " + infernoDemonlordLevel + " • " + riftstalkerBloodfiendLevel).withStyle(style -> style.withColor(colourProfile.infoColour.getAsInt())
+							.withHoverEvent(new HoverEvent.ShowText(Component.literal("Revenant Horror » " + revenantHorrorLevel + "\n").withColor(colourProfile.infoColour.getAsInt())
 									.append("Tarantula Broodfather » " + tarantulaBroodfatherLevel + "\n")
 									.append("Sven Packmaster » " + svenPackmasterLevel + "\n")
 									.append("Voidgloom Seraph » " + voidgloomSeraphLevel + "\n")
 									.append("Inferno Demonlord » " + infernoDemonlordLevel + "\n")
 									.append("Riftstalker Bloodfiend » " + riftstalkerBloodfiendLevel)))));
-			source.sendFeedback(Text.literal(CommandSystem.getEndSpaces(startText)).styled(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
+			source.sendFeedback(Component.literal(CommandSystem.getEndSpaces(startText)).withStyle(style -> style.withColor(colourProfile.primaryColour.getAsInt()).withStrikethrough(true)));
 		});
 	}
 }

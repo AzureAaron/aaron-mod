@@ -8,10 +8,10 @@ import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.systems.RenderPass;
 
 import net.azureaaron.mod.utils.render.GuiHelper;
-import net.minecraft.client.gl.PostEffectPass;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.PostPass;
+import net.minecraft.resources.Identifier;
 
-@Mixin(PostEffectPass.class)
+@Mixin(PostPass.class)
 public class PostEffectPassMixin {
 
 	@ModifyReceiver(method = "method_67884", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderPass;setPipeline(Lcom/mojang/blaze3d/pipeline/RenderPipeline;)V"))

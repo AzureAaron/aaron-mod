@@ -11,51 +11,50 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-
+import com.mojang.blaze3d.platform.Window;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.SeparateInventoryGuiScale;
 import net.azureaaron.mod.features.SeparateInventoryGuiScale.SavedScaleState;
 import net.azureaaron.mod.injected.MouseGuiPositioner;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.Mouse;
-import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
-import net.minecraft.client.util.Window;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.MouseHandler;
+import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 
-@Mixin(Mouse.class)
+@Mixin(MouseHandler.class)
 public class MouseMixin implements MouseGuiPositioner {
 	@Unique
-	private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
+	private static final Minecraft CLIENT = Minecraft.getInstance();
 
 	@Shadow
-	private double x;
+	private double xpos;
 	@Shadow
-	private double y;
+	private double ypos;
 	@Unique
 	private double guiX;
 	@Unique
 	private double guiY;
 
-	@Inject(method = "lockCursor", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Mouse;cursorLocked:Z", opcode = Opcodes.PUTFIELD))
+	@Inject(method = "grabMouse", at = @At(value = "FIELD", target = "Lnet/minecraft/client/MouseHandler;mouseGrabbed:Z", opcode = Opcodes.PUTFIELD))
 	private void aaronMod$beforePositionLocked(CallbackInfo ci) {
-		this.guiX = this.x;
-		this.guiY = this.y;
+		this.guiX = this.xpos;
+		this.guiY = this.ypos;
 	}
 
-	@Inject(method = "unlockCursor", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/InputUtil;setCursorParameters(Lnet/minecraft/client/util/Window;IDD)V", shift = At.Shift.AFTER))
+	@Inject(method = "releaseMouse", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/InputConstants;grabOrReleaseMouse(Lcom/mojang/blaze3d/platform/Window;IDD)V", shift = At.Shift.AFTER))
 	private void aaronMod$afterUnlock(CallbackInfo ci) {
-		if (AaronModConfigManager.get().refinements.input.dontResetCursorPosition && CLIENT.currentScreen instanceof GenericContainerScreen) {
-			this.x = this.guiX;
-			this.y = this.guiY;
+		if (AaronModConfigManager.get().refinements.input.dontResetCursorPosition && CLIENT.screen instanceof ContainerScreen) {
+			this.xpos = this.guiX;
+			this.ypos = this.guiY;
 
-			GLFW.glfwSetCursorPos(CLIENT.getWindow().getHandle(), this.x, this.y);
+			GLFW.glfwSetCursorPos(CLIENT.getWindow().handle(), this.xpos, this.ypos);
 		}
 	}
 
-	@WrapMethod(method = { "scaleX(Lnet/minecraft/client/util/Window;D)D", "scaleY(Lnet/minecraft/client/util/Window;D)D" })
+	@WrapMethod(method = { "getScaledXPos(Lcom/mojang/blaze3d/platform/Window;D)D", "getScaledYPos(Lcom/mojang/blaze3d/platform/Window;D)D" })
 	private static double aaronMod$adjustPosition(Window window, double xOrY, Operation<Double> operation) {
 		double scaled;
 
-		if (SeparateInventoryGuiScale.isEnabled(CLIENT.currentScreen)) {
+		if (SeparateInventoryGuiScale.isEnabled(CLIENT.screen)) {
 			SavedScaleState state = SavedScaleState.create(window).adjust();
 			scaled = operation.call(window, xOrY);
 
@@ -69,7 +68,7 @@ public class MouseMixin implements MouseGuiPositioner {
 
 	@Override
 	public void resetMousePos() {
-		this.x = CLIENT.getWindow().getWidth() / 2;
-		this.y = CLIENT.getWindow().getHeight() / 2;
+		this.xpos = CLIENT.getWindow().getScreenWidth() / 2;
+		this.ypos = CLIENT.getWindow().getScreenHeight() / 2;
 	}
 }
