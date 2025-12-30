@@ -1,6 +1,6 @@
 package net.azureaaron.mod.config.categories;
 
-import net.azureaaron.dandelion.systems.ConfigCategory;
+import net.azureaaron.dandelion.api.ConfigCategory;
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.Particles;
 import net.azureaaron.mod.config.AaronModConfig;

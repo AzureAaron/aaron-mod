@@ -7,7 +7,7 @@ import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
-import net.azureaaron.dandelion.systems.ButtonOption;
+import net.azureaaron.dandelion.api.ButtonOption;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.render.RenderHelper;
 import net.minecraft.client.Minecraft;

@@ -2,12 +2,12 @@ package net.azureaaron.mod.config.categories;
 
 import java.awt.Color;
 
-import net.azureaaron.dandelion.platform.ConfigType;
-import net.azureaaron.dandelion.systems.ButtonOption;
-import net.azureaaron.dandelion.systems.ConfigCategory;
-import net.azureaaron.dandelion.systems.Option;
-import net.azureaaron.dandelion.systems.OptionGroup;
-import net.azureaaron.dandelion.systems.controllers.ColourController;
+import net.azureaaron.dandelion.api.ConfigType;
+import net.azureaaron.dandelion.api.ButtonOption;
+import net.azureaaron.dandelion.api.ConfigCategory;
+import net.azureaaron.dandelion.api.Option;
+import net.azureaaron.dandelion.api.OptionGroup;
+import net.azureaaron.dandelion.api.controllers.ColourController;
 import net.azureaaron.mod.Colour;
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.config.AaronModConfig;

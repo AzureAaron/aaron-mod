@@ -3,8 +3,8 @@ package net.azureaaron.mod.config;
 import java.nio.file.Path;
 import java.util.function.UnaryOperator;
 
-import net.azureaaron.dandelion.systems.ConfigManager;
-import net.azureaaron.dandelion.systems.DandelionConfigScreen;
+import net.azureaaron.dandelion.api.ConfigManager;
+import net.azureaaron.dandelion.api.DandelionConfigScreen;
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.config.categories.GeneralCategory;
 import net.azureaaron.mod.config.categories.ItemModelCategory;

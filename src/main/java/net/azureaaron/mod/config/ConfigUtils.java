@@ -1,7 +1,7 @@
 package net.azureaaron.mod.config;
 
-import net.azureaaron.dandelion.systems.controllers.BooleanController;
-import net.azureaaron.dandelion.systems.controllers.EnumController;
+import net.azureaaron.dandelion.api.controllers.BooleanController;
+import net.azureaaron.dandelion.api.controllers.EnumController;
 
 public class ConfigUtils {
 

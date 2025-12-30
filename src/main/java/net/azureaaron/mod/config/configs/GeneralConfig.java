@@ -2,7 +2,7 @@ package net.azureaaron.mod.config.configs;
 
 import java.awt.Color;
 
-import net.azureaaron.dandelion.platform.ConfigType;
+import net.azureaaron.dandelion.api.ConfigType;
 import net.azureaaron.mod.Colour;
 
 public class GeneralConfig {
