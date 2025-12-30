@@ -12,7 +12,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
 import net.azureaaron.mod.annotations.Init;
-import net.azureaaron.mod.mixins.accessors.ChatAccessor;
+import net.azureaaron.mod.mixins.accessors.ChatComponentAccessor;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.ChatFormatting;
@@ -46,8 +46,8 @@ public class CopyChatCommand {
 	 * The new middle click to copy chat supersedes this feature!
 	 */
 	private static int copyMessage(FabricClientCommandSource source, String excerpt) {
-		List<GuiMessage> chatHistory = ((ChatAccessor) minecraftClient.gui.getChat()).getMessages();
-		int maxChatHistoryLength = ChatAccessor.getMaxHistoryLength();
+		List<GuiMessage> chatHistory = ((ChatComponentAccessor) minecraftClient.gui.getChat()).getMessages();
+		int maxChatHistoryLength = ChatComponentAccessor.getMaxHistoryLength();
 		int maxIteration = (chatHistory.size() >= maxChatHistoryLength) ? maxChatHistoryLength : chatHistory.size();
 		boolean foundAMessage = false;
 

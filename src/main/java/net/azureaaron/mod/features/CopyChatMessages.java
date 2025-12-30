@@ -11,7 +11,7 @@ import com.mojang.serialization.JsonOps;
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.config.configs.RefinementsConfig;
-import net.azureaaron.mod.mixins.accessors.ChatAccessor;
+import net.azureaaron.mod.mixins.accessors.ChatComponentAccessor;
 import net.azureaaron.mod.utils.ItemUtils;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
@@ -47,7 +47,7 @@ public class CopyChatMessages {
 
 	private static boolean onMouseInput(Screen screen, MouseButtonEvent click, boolean consumed) {
 		int configuredButton = AaronModConfigManager.get().refinements.chat.copyChatMouseButton == RefinementsConfig.MouseButton.MIDDLE ? GLFW.GLFW_MOUSE_BUTTON_MIDDLE : GLFW.GLFW_MOUSE_BUTTON_LEFT;
-		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.gui.getChat());
+		ChatComponentAccessor chatAccessor = ((ChatComponentAccessor) CLIENT.gui.getChat());
 
 		if (click.button() == configuredButton && AaronModConfigManager.get().refinements.chat.copyChatMessages) {
 			double chatLineX = toChatLineX(click.x());
@@ -111,7 +111,7 @@ public class CopyChatMessages {
 	}
 
 	private static int getMessageIndex(double chatLineX, double chatLineY) {
-		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.gui.getChat());
+		ChatComponentAccessor chatAccessor = ((ChatComponentAccessor) CLIENT.gui.getChat());
 
 		int lineIndex = getMessageLineIndex(chatLineX, chatLineY);
 		if (lineIndex == -1) return -1;
@@ -152,19 +152,19 @@ public class CopyChatMessages {
 	}
 
 	private static double toChatLineX(double x) {
-		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.gui.getChat());
+		ChatComponentAccessor chatAccessor = ((ChatComponentAccessor) CLIENT.gui.getChat());
 		return x / chatAccessor.invokeGetScale() - 4.0;
 	}
 
 	private static double toChatLineY(double y) {
-		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.gui.getChat());
+		ChatComponentAccessor chatAccessor = ((ChatComponentAccessor) CLIENT.gui.getChat());
 		double d = CLIENT.getWindow().getGuiScaledHeight() - y - 40.0;
 
 		return d / (chatAccessor.invokeGetScale() * chatAccessor.invokeGetLineHeight());
 	}
 
 	private static int getMessageEndLineIndex(double chatLineX, double chatLineY) {
-		ChatAccessor chatAccessor = ((ChatAccessor) CLIENT.gui.getChat());
+		ChatComponentAccessor chatAccessor = ((ChatComponentAccessor) CLIENT.gui.getChat());
 		int i = getMessageLineIndex(chatLineX, chatLineY);
 		if (i == -1) {
 			return -1;
@@ -183,7 +183,7 @@ public class CopyChatMessages {
 
 	private static int getMessageLineIndex(double chatLineX, double chatLineY) {
 		ChatComponent chatHud = CLIENT.gui.getChat();
-		ChatAccessor chatAccessor = (ChatAccessor) chatHud;
+		ChatComponentAccessor chatAccessor = (ChatComponentAccessor) chatHud;
 
 		if (chatHud.isChatFocused() && !chatAccessor.invokeIsChatHidden()) {
 			if (!(chatLineX < -4.0) && !(chatLineX > Mth.floor(chatAccessor.invokeGetWidth() / chatAccessor.invokeGetScale()))) {

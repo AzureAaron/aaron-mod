@@ -11,7 +11,7 @@ import net.azureaaron.dandelion.api.controllers.FloatController;
 import net.azureaaron.mod.config.AaronModConfig;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.config.ConfigUtils;
-import net.azureaaron.mod.mixins.accessors.BillboardParticleAccessor;
+import net.azureaaron.mod.mixins.accessors.SingleQuadParticleAccessor;
 import net.azureaaron.mod.utils.Functions;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.SingleQuadParticle;
@@ -49,7 +49,7 @@ public class Particles {
 		float scale = AaronModConfigManager.get().particles.scaling.getOrDefault(id, 1f);
 
 		//Only set the alpha if won't result in the particle being discarded by the fragment shader or if its not greater than the default
-		if (particle instanceof SingleQuadParticle billboard && billboard instanceof BillboardParticleAccessor accessor && alpha > 0.1f && alpha < accessor.getAlpha()) {
+		if (particle instanceof SingleQuadParticle billboard && billboard instanceof SingleQuadParticleAccessor accessor && alpha > 0.1f && alpha < accessor.getAlpha()) {
 			accessor.invokeSetAlpha(alpha);
 			billboard.markHasCustomAlpha();
 		}

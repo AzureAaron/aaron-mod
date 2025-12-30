@@ -9,8 +9,8 @@ import net.azureaaron.mod.Main;
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.WorldRenderExtractionCallback;
-import net.azureaaron.mod.mixins.accessors.ClientEntityManagerAccessor;
-import net.azureaaron.mod.mixins.accessors.ClientWorldAccessor;
+import net.azureaaron.mod.mixins.accessors.TransientEntitySectionManagerAccessor;
+import net.azureaaron.mod.mixins.accessors.ClientLevelAccessor;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.render.primitive.PrimitiveCollector;
 import net.minecraft.client.Minecraft;
@@ -41,7 +41,7 @@ public class DragonHealth {
 					for (Entity entity : world.entitiesForRendering()) {
 						if (entity instanceof EnderDragon dragon) {
 							@SuppressWarnings("unchecked")
-							EntityLookup<Entity> entityIndex = ((ClientEntityManagerAccessor<Entity>) ((ClientWorldAccessor) world).getEntityStorage()).getEntityStorage();
+							EntityLookup<Entity> entityIndex = ((TransientEntitySectionManagerAccessor<Entity>) ((ClientLevelAccessor) world).getEntityStorage()).getEntityStorage();
 
 							for (Entity indexedEntity : entityIndex.getAllEntities()) {
 								if (indexedEntity instanceof ArmorStand armourStand && armourStand.getBoundingBox().intersects(dragon.getBoundingBox()) && armourStand.hasCustomName()) {

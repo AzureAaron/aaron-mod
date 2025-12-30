@@ -21,7 +21,7 @@ import net.azureaaron.mod.Main;
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.debug.Debug;
-import net.azureaaron.mod.mixins.accessors.MinecraftClientAccessor;
+import net.azureaaron.mod.mixins.accessors.MinecraftAccessor;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
@@ -81,7 +81,7 @@ public class ApiAuthentication {
 	 */
 	private static void updateToken() {
 		//The fetching runs async in ProfileKeysImpl#getKeyPair
-		((MinecraftClientAccessor) CLIENT).getProfileKeyPairManager().prepareKeyPair().thenAcceptAsync(playerKeypairOpt -> {
+		((MinecraftAccessor) CLIENT).getProfileKeyPairManager().prepareKeyPair().thenAcceptAsync(playerKeypairOpt -> {
 			boolean expired = playerKeypairOpt.map(keyPair -> keyPair.publicKey().data().hasExpired()).orElse(false);
 
 			if (playerKeypairOpt.isPresent() && !expired) {
