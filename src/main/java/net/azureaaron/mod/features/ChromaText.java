@@ -10,7 +10,7 @@ import net.minecraft.resources.Identifier;
 
 public class ChromaText {
 	private static final Minecraft CLIENT = Minecraft.getInstance();
-	public static final Identifier ID = Identifier.fromNamespaceAndPath(Main.NAMESPACE, "chroma_text");
+	public static final Identifier ID = Main.id("chroma_text");
 
 	@Init
 	public static void init() {

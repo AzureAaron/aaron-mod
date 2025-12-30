@@ -12,7 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
 public class TickHud {
-	private static final Identifier ID = Identifier.fromNamespaceAndPath(Main.NAMESPACE, "ticks");
+	private static final Identifier ID = Main.id("ticks");
 	public static final int DEFAULT_X = 50;
 	private static final TextHudElement HUD_ELEMENT = new TextHudElement(
 			Component.nullToEmpty("20 tps"),

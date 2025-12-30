@@ -93,7 +93,7 @@ public class ImagePreview {
 					Minecraft client = Minecraft.getInstance();
 					InputStream inputStream = Http.sendGenericH2Request(uri, EXPECTED_CONTENT_TYPES);
 					NativeImage image = NativeImage.read(inputStream);
-					Identifier id = Identifier.fromNamespaceAndPath(Main.NAMESPACE, "image_preview/" + COUNTER.getAndIncrement());
+					Identifier id = Main.id("image_preview/" + COUNTER.getAndIncrement());
 
 					//Schedule the image to be uploaded as a texture on the render thread to avoid Mojang's
 					//horribly dangerous system for handling off-thread GL operations

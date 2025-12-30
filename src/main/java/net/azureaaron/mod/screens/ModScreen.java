@@ -24,7 +24,7 @@ public class ModScreen extends Screen {
 	public static final int BUTTON_WIDTH = 210;
 	public static final int HALF_BUTTON_WIDTH = 101; //Same as (210 - 8) / 2
 	private static final Component TITLE = Component.literal("Aaron's Mod " + Main.MOD_VERSION);
-	private static final Identifier ICON = Identifier.fromNamespaceAndPath(Main.NAMESPACE, "icon.png");
+	private static final Identifier ICON = Main.id("icon.png");
 	private static final Component CONFIGURATION_TEXT = Component.literal("Config...");
 	private static final Component SOURCE_TEXT = Component.literal("Source");
 	private static final Component REPORT_BUGS_TEXT = Component.translatable("menu.reportBugs");

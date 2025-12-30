@@ -12,7 +12,7 @@ import net.minecraft.resources.Identifier;
 
 public class FpsHud {
 	private static final Minecraft CLIENT = Minecraft.getInstance();
-	private static final Identifier ID = Identifier.fromNamespaceAndPath(Main.NAMESPACE, "fps");
+	private static final Identifier ID = Main.id("fps");
 	private static final TextHudElement HUD_ELEMENT = new TextHudElement(
 			Component.nullToEmpty("100 fps"),
 			FpsHud::getFpsText,

@@ -18,7 +18,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
 public class PingHud {
-	private static final Identifier ID = Identifier.fromNamespaceAndPath(Main.NAMESPACE, "ping");
+	private static final Identifier ID = Main.id("ping");
 	public static final int DEFAULT_Y = 2 + 9 + 4;
 	private static final TextHudElement HUD_ELEMENT = new TextHudElement(
 			Component.literal("30 ms"),
