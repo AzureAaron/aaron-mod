@@ -1,9 +1,7 @@
 package net.azureaaron.mod.utils.render;
 
-import com.mojang.blaze3d.systems.GpuDevice;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.GpuTexture;
-import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mojang.blaze3d.textures.TextureFormat;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -19,8 +17,8 @@ public class GlowRenderer implements AutoCloseable {
 	private static GlowRenderer instance = null;
 	private final Minecraft client;
 	private final OutlineBufferSource glowOutlineVertexConsumers;
-	private GpuTexture glowDepthTexture;
-	private GpuTextureView glowDepthTextureView;
+	private final TexturePool glowDepthTexturePool;
+	private int currentPoolIndex = -1;
 	private boolean isRenderingGlow = false;
 
 	private GlowRenderer() {
@@ -28,6 +26,7 @@ public class GlowRenderer implements AutoCloseable {
 		this.glowOutlineVertexConsumers = Util.make(new OutlineBufferSource(), outlineVertexConsumers -> {
 			((OutlineBufferSourceAccessor) outlineVertexConsumers).setOutlineBufferSource(new GlowVertexConsumerProvider(new ByteBufferBuilder(RenderType.TRANSIENT_BUFFER_SIZE)));
 		});
+		this.glowDepthTexturePool = TexturePool.create("Aaron Mod Glow Depth Tex", 2, GpuTexture.USAGE_RENDER_ATTACHMENT | GpuTexture.USAGE_TEXTURE_BINDING | GpuTexture.USAGE_COPY_DST, TextureFormat.DEPTH32);
 	}
 
 	public static GlowRenderer getInstance() {
@@ -43,13 +42,16 @@ public class GlowRenderer implements AutoCloseable {
 	}
 
 	public void updateGlowDepthTexDepth() {
-		tryUpdateDepthTexture();
-		RenderSystem.getDevice().createCommandEncoder().copyTextureToTexture(this.client.getMainRenderTarget().getDepthTexture(), this.glowDepthTexture, 0, 0, 0, 0, 0, this.glowDepthTexture.getWidth(0), this.glowDepthTexture.getHeight(0));
+		int requiredWidth = this.client.getWindow().getWidth();
+		int requiredHeight = this.client.getWindow().getHeight();
+		this.currentPoolIndex = this.glowDepthTexturePool.getNextAvailableIndex(requiredWidth, requiredHeight);
+
+		RenderSystem.getDevice().createCommandEncoder().copyTextureToTexture(this.client.getMainRenderTarget().getDepthTexture(), this.glowDepthTexturePool.getTexture(this.currentPoolIndex), 0, 0, 0, 0, 0, requiredWidth, requiredHeight);
 	}
 
 	private void startRenderingGlow() {
 		this.isRenderingGlow = true;
-		RenderSystem.outputDepthTextureOverride = this.glowDepthTextureView;
+		RenderSystem.outputDepthTextureOverride = this.glowDepthTexturePool.getTextureView(this.currentPoolIndex);
 	}
 
 	private void stopRenderingGlow() {
@@ -63,31 +65,9 @@ public class GlowRenderer implements AutoCloseable {
 		return instance != null ? instance.isRenderingGlow : false;
 	}
 
-	private void tryUpdateDepthTexture() {
-		int neededWidth = this.client.getWindow().getWidth();
-		int neededHeight = this.client.getWindow().getHeight();
-
-		//If the texture hasn't been created or needs resizing
-		if (this.glowDepthTexture == null || this.glowDepthTexture.getWidth(0) != neededWidth || this.glowDepthTexture.getHeight(0) != neededHeight) {
-			GpuDevice device = RenderSystem.getDevice();
-
-			//Delete the textures if they exist
-			if (this.glowDepthTexture != null) {
-				this.glowDepthTexture.close();
-				this.glowDepthTextureView.close();
-			}
-
-			this.glowDepthTexture = device.createTexture(() -> "Skyblocker Glow Depth Tex", GpuTexture.USAGE_RENDER_ATTACHMENT | GpuTexture.USAGE_COPY_DST | GpuTexture.USAGE_TEXTURE_BINDING, TextureFormat.DEPTH32, neededWidth, neededHeight, 1, 1);
-			this.glowDepthTextureView = device.createTextureView(this.glowDepthTexture);
-		}
-	}
-
 	@Override
 	public void close() {
-		if (this.glowDepthTexture != null) {
-			this.glowDepthTexture.close();
-			this.glowDepthTextureView.close();
-		}
+		this.glowDepthTexturePool.close();
 	}
 
 	private static class GlowVertexConsumerProvider extends MultiBufferSource.BufferSource {

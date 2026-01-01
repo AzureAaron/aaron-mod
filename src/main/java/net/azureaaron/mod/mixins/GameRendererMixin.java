@@ -17,7 +17,9 @@ import net.azureaaron.mod.Keybinds;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.features.SeparateInventoryGuiScale;
 import net.azureaaron.mod.features.SeparateInventoryGuiScale.SavedScaleState;
+import net.azureaaron.mod.utils.render.GlowRenderer;
 import net.azureaaron.mod.utils.render.GuiHelper;
+import net.azureaaron.mod.utils.render.Renderer;
 import net.azureaaron.mod.utils.render.ShaderUniforms;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -60,11 +62,6 @@ public class GameRendererMixin {
 		return fov;
 	}
 
-	@Inject(method = "processBlurEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/PostChain;process(Lcom/mojang/blaze3d/pipeline/RenderTarget;Lcom/mojang/blaze3d/resource/GraphicsResourceAllocator;)V", shift = At.Shift.AFTER))
-	private void aaronMod$afterBlurRendered(CallbackInfo ci) {
-		GuiHelper.disableBlurScissor();
-	}
-
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlobalSettingsUniform;update(IIDJLnet/minecraft/client/DeltaTracker;ILnet/minecraft/client/Camera;Z)V", shift = At.Shift.AFTER))
 	private void aaronMod$updateShaderUniforms(CallbackInfo ci, @Local(argsOnly = true) DeltaTracker tickCounter) {
 		ShaderUniforms.updateShaderUniforms(tickCounter);
@@ -73,6 +70,9 @@ public class GameRendererMixin {
 	@Inject(method = "close", at = @At("TAIL"))
 	private void aaronMod$closeResources(CallbackInfo ci) {
 		ShaderUniforms.close();
+		Renderer.close();
+		GlowRenderer.getInstance().close();
+		GuiHelper.close();
 	}
 
 	@WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;renderWithTooltipAndSubtitles(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"))

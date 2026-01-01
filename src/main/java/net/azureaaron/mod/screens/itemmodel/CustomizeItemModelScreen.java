@@ -190,8 +190,7 @@ public class CustomizeItemModelScreen extends Screen {
 		ScreenRectangle dimensions = this.getEffectiveDimensions(this.width, this.height);
 
 		context.enableScissor(dimensions.left(), dimensions.top(), dimensions.right(), dimensions.bottom());
-		GuiHelper.enableBlurScissor(dimensions.left(), dimensions.top(), dimensions.width(), dimensions.height());
-		this.renderBlurredBackground(context);
+		GuiHelper.submitBlurredRectangle(context, dimensions.left(), dimensions.top(), dimensions.right(), dimensions.bottom(), 5);
 		this.renderMenuBackground(context);
 		context.disableScissor();
 
