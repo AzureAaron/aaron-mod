@@ -29,7 +29,7 @@
   "mixins": [
     "aaron-mod.mixins.json"
   ],
-  "accessWidener": "aaron-mod.accesswidener",
+  "accessWidener": "aaron-mod.classtweaker",
   "depends": {
     "fabricloader": ">=0.18.4",
     "fabric-api": ">=0.140.2+1.21.11",
@@ -48,35 +48,6 @@
       "links": {
         "modmenu.discord": "https://discord.gg/CQH9Je8qJ9"
       }
-	},
-    "loom:injected_interfaces": {
-      "net/minecraft/class_1799": [
-        "net/azureaaron/mod/injected/AaronModItemMeta"
-      ],
-      "net/minecraft/class_312": [
-        "net/azureaaron/mod/injected/MouseGuiPositioner"
-      ],
-      "net/minecraft/class_437": [
-        "net/azureaaron/mod/injected/ScreenResizeMarker"
-      ],
-      "net/minecraft/class_1011": [
-        "net/azureaaron/mod/injected/NativeImageMarker"
-      ],
-      "net/minecraft/class_3940": [
-        "net/azureaaron/mod/injected/ParticleAlphaMarker"
-      ],
-	  "net/minecraft/class_898": [
-		"net/azureaaron/mod/injected/EntityRenderMarker"
-	  ],
-	  "net/minecraft/class_11661\u0024class_11668": [
-		"net/azureaaron/mod/injected/CustomGlowState"
-	  ],
-	  "net/minecraft/class_11661\u0024class_11789": [
-		"net/azureaaron/mod/injected/CustomGlowState"
-	  ],
-	  "net/minecraft/class_11661\u0024class_11670": [
-		"net/azureaaron/mod/injected/CustomGlowState"
-	  ]
-    }
+	}
   }
 }
