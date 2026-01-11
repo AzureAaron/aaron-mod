@@ -15,6 +15,7 @@ import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.util.ARGB;
 
 public class GuiHelper {
+	private static final Minecraft MINECRAFT = Minecraft.getInstance();
 	/**
 	 * Suitable for rendering two blurred rectangles at once
 	 */
@@ -26,7 +27,7 @@ public class GuiHelper {
 	 * @param radius The strength of the blur, must be positive.
 	 */
 	public static void submitBlurredRectangle(GuiGraphics graphics, int x0, int y0, int x1, int y1, int radius) {
-		RenderTarget mainRenderTarget = Minecraft.getInstance().getMainRenderTarget();
+		RenderTarget mainRenderTarget = MINECRAFT.getMainRenderTarget();
 		int requiredWidth = mainRenderTarget.width;
 		int requiredHeight = mainRenderTarget.height;
 
