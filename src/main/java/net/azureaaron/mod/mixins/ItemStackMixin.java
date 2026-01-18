@@ -160,9 +160,11 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 
 							//Exclude non-max enchants from counting towards total length since it looks weird & incomplete otherwise
 							for (Text currentComponent : textComponents) {
-								String componentString = currentComponent.getString().trim();
+								String componentString = currentComponent.getString();
+								// Remove any trailing commas and whitespace
+								String trimmed = trimEnchant(componentString);
 
-								if (maxEnchantmentColours.containsKey(componentString) && currentComponent.getStyle().getColor().getRgb() == Formatting.BLUE.getColorValue()) {
+								if (maxEnchantmentColours.containsKey(trimmed) && currentComponent.getStyle().getColor().getRgb() == Formatting.BLUE.getColorValue()) {
 									totalLength += componentString.length();
 								}
 							}
@@ -171,11 +173,12 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 
 							while (iterator.hasNext()) {
 								Text currentComponent = iterator.next();
-								String componentString = currentComponent.getString().trim();
+								String componentString = currentComponent.getString();
+								String trimmed = trimEnchant(componentString);
 
-								if (maxEnchantmentColours.containsKey(componentString) && currentComponent.getStyle().getColor().getRgb() == Formatting.BLUE.getColorValue()) {
+								if (maxEnchantmentColours.containsKey(trimmed) && currentComponent.getStyle().getColor().getRgb() == Formatting.BLUE.getColorValue()) {
 									iterator.set(TextTransformer.progressivelyRainbowify(componentString, totalLength, positionLeftOffAt).styled(style -> style.withItalic(false)));
-									maxEnchantmentColours.removeInt(componentString);
+									maxEnchantmentColours.removeInt(trimmed);
 									positionLeftOffAt += componentString.length();
 								}
 							}
@@ -183,7 +186,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 
 						case CHROMA -> {
 							for (Text currentComponent : textComponents) {
-								String enchant = currentComponent.getString().trim();
+								String enchant = trimEnchant(currentComponent.getString());
 
 								if (maxEnchantmentColours.containsKey(enchant) && currentComponent.getStyle().getColor().getRgb() == Formatting.BLUE.getColorValue()) {
 									((MutableText) currentComponent).withColor(maxEnchantmentColours.getInt(enchant));
@@ -196,7 +199,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 
 				if (!goodEnchantmentColours.isEmpty() && goodEnchantmentColours.keySet().stream().anyMatch(lineContains)) {
 					for (Text currentComponent : line.getSiblings()) {
-						String enchant = currentComponent.getString().trim();
+						String enchant = trimEnchant(currentComponent.getString());
 
 						if (goodEnchantmentColours.containsKey(enchant) && currentComponent.getStyle().getColor().getRgb() == Formatting.BLUE.getColorValue()) {
 							((MutableText) currentComponent).withColor(goodEnchantmentColours.getInt(enchant));
@@ -220,6 +223,13 @@ public abstract class ItemStackMixin implements AaronModItemMeta, ComponentHolde
 		String itemId = ItemUtils.getId(this);
 
 		return itemId.equals("DIAMOND_BONZO_HEAD") || itemId.equals("DIAMOND_SCARF_HEAD") || itemId.equals("DIAMOND_PROFESSOR_HEAD") || itemId.equals("DIAMOND_THORN_HEAD") || itemId.equals("DIAMOND_LIVID_HEAD") || itemId.equals("DIAMOND_SADAN_HEAD") || itemId.equals("DIAMOND_NECRON_HEAD");
+	}
+
+	@Unique
+	private String trimEnchant(String enchantString) {
+		int commaIndex = enchantString.indexOf(',');
+
+		return commaIndex > -1 ? enchantString.substring(0, commaIndex) : enchantString;
 	}
 
 	@Override
