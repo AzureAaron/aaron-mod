@@ -51,16 +51,6 @@ repositories {
 			includeGroup "net.azureaaron"
 		}
 	}
-
-	exclusiveContent {
-		forRepository {
-			maven { url = "https://maven.notenoughupdates.org/releases" }
-		}
-
-		filter {
-			includeGroup "org.notenoughupdates.moulconfig"
-		}
-	}
 }
 
 dependencies {
