@@ -16,7 +16,7 @@ public class StringDecomposerMixin {
 	@Unique
 	private static final TextColor CHROMA = TextColor.fromRgb(0xAA5500);
 
-	@ModifyExpressionValue(method = "iterateFormatted(Ljava/lang/String;ILnet/minecraft/network/chat/Style;Lnet/minecraft/network/chat/Style;Lnet/minecraft/util/FormattedCharSink;)Z", at = @At(value = "INVOKE", target = "Ljava/lang/String;charAt(I)C", ordinal = 1, remap = false))
+	@ModifyExpressionValue(method = "iterateFormatted(Ljava/lang/String;ILnet/minecraft/network/chat/Style;Lnet/minecraft/network/chat/Style;Lnet/minecraft/util/FormattedCharSink;)Z", at = @At(value = "INVOKE", target = "Ljava/lang/String;charAt(I)C", ordinal = 1))
 	private static char aaronMod$zFormattingCode(char code, @Local(ordinal = 2) LocalRef<Style> style) {
 		if (Character.toLowerCase(code) == 'z') {
 			Style currentStyle = style.get();
