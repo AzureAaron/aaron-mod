@@ -19,7 +19,7 @@ inject-interface	net/minecraft/client/MouseHandler	net/azureaaron/mod/injected/M
 inject-interface	net/minecraft/client/gui/screens/Screen	net/azureaaron/mod/injected/ScreenResizeMarker
 inject-interface	com/mojang/blaze3d/platform/NativeImage	net/azureaaron/mod/injected/NativeImageMarker
 inject-interface	net/minecraft/client/particle/SingleQuadParticle	net/azureaaron/mod/injected/ParticleAlphaMarker
-inject-interface	net/minecraft/client/renderer/entity/EntityRenderDispatcher	net/azureaaron/mod/injected/EntityRenderMarker
+inject-interface	net/minecraft/client/renderer/LevelRenderer	net/azureaaron/mod/injected/EntityRenderMarker
 inject-interface	net/minecraft/client/renderer/SubmitNodeStorage$ItemSubmit	net/azureaaron/mod/injected/CustomGlowState
 inject-interface	net/minecraft/client/renderer/SubmitNodeStorage$ModelPartSubmit	net/azureaaron/mod/injected/CustomGlowState
 inject-interface	net/minecraft/client/renderer/SubmitNodeStorage$ModelSubmit	net/azureaaron/mod/injected/CustomGlowState

@@ -15,7 +15,6 @@
 		"ClientPacketListenerMixin",
 		"ConnectionMixin",
 		"ContainerScreenMixin",
-		"EntityRenderDispatcherMixin",
 		"EntityRendererMixin",
 		"FireworkParticlesMixin",
 		"FogRendererMixin",

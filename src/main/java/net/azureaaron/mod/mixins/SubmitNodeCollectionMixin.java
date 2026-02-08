@@ -26,7 +26,7 @@ public class SubmitNodeCollectionMixin {
 			@At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/feature/ModelPartFeatureRenderer$Storage;add(Lnet/minecraft/client/renderer/rendertype/RenderType;Lnet/minecraft/client/renderer/SubmitNodeStorage$ModelPartSubmit;)V")
 	}, require = 2)
 	private void aaronMod$markCustomGlow(@Coerce Object commandList, RenderType layer, @Coerce CustomGlowState command, Operation<Void> operation) {
-		EntityRenderState entityStateBeingRendered = Minecraft.getInstance().getEntityRenderDispatcher().aaronMod$getEntityStateBeingRendered();
+		EntityRenderState entityStateBeingRendered = Minecraft.getInstance().levelRenderer.aaronMod$getEntityStateBeingRendered();
 
 		if (entityStateBeingRendered != null && entityStateBeingRendered.getDataOrDefault(MobGlow.ENTITY_CUSTOM_GLOW_COLOUR, MobGlow.NO_GLOW) != MobGlow.NO_GLOW) {
 			command.aaronMod$setCustomGlowColour(entityStateBeingRendered.getData(MobGlow.ENTITY_CUSTOM_GLOW_COLOUR));
@@ -37,7 +37,7 @@ public class SubmitNodeCollectionMixin {
 
 	@ModifyArg(method = "submitItem", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"))
 	private Object aaronMod$markCustomGlow(Object command) {
-		EntityRenderState entityStateBeingRendered = Minecraft.getInstance().getEntityRenderDispatcher().aaronMod$getEntityStateBeingRendered();
+		EntityRenderState entityStateBeingRendered = Minecraft.getInstance().levelRenderer.aaronMod$getEntityStateBeingRendered();
 
 		if (entityStateBeingRendered != null && entityStateBeingRendered.getDataOrDefault(MobGlow.ENTITY_CUSTOM_GLOW_COLOUR, MobGlow.NO_GLOW) != MobGlow.NO_GLOW) {
 			((SubmitNodeStorage.ItemSubmit) command).aaronMod$setCustomGlowColour(entityStateBeingRendered.getData(MobGlow.ENTITY_CUSTOM_GLOW_COLOUR));
