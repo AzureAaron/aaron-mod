@@ -4,7 +4,10 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.function.Consumers;
+
 import it.unimi.dsi.fastutil.floats.FloatConsumer;
+import net.azureaaron.mod.config.AaronModConfig;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.config.configs.ItemModelConfig.AbstractHand;
 import net.azureaaron.mod.screens.ModScreen;
@@ -41,7 +44,6 @@ public class CustomizeItemModelScreen extends Screen {
 	private final Screen parent;
 	public final InteractionHand hand;
 	public final ItemStack previewItem;
-	private final AbstractHand config;
 	private final AbstractHand backup;
 	private boolean hasChanges;
 
@@ -50,11 +52,7 @@ public class CustomizeItemModelScreen extends Screen {
 		this.parent = parent;
 		this.hand = hand;
 		this.previewItem = previewItem;
-		this.config = switch (this.hand) {
-			case InteractionHand.MAIN_HAND -> AaronModConfigManager.get().itemModel.mainHand;
-			case InteractionHand.OFF_HAND -> AaronModConfigManager.get().itemModel.offHand;
-		};
-		this.backup = new AbstractHand().copyFrom(this.config);
+		this.backup = new AbstractHand().copyFrom(getConfigForHand(AaronModConfigManager.get()));
 	}
 
 	@Override
@@ -81,9 +79,9 @@ public class CustomizeItemModelScreen extends Screen {
 
 	private void addEnableCustomizationsCheckbox(RowHelper adder) {
 		Checkbox enableCustomizations = Checkbox.builder(Component.nullToEmpty("Enable Customizations"), this.font)
-				.selected(this.config.enabled)
+				.selected(getConfigForHand(AaronModConfigManager.get()).enabled)
 				.onValueChange((checkbox, checked) -> {
-					this.config.enabled = checked;
+					AaronModConfigManager.updateOnly(config -> getConfigForHand(config).enabled = checked);
 					this.hasChanges = true;
 				})
 				.build();
@@ -96,9 +94,9 @@ public class CustomizeItemModelScreen extends Screen {
 		adder.addChild(new StringWidget(Component.literal("Y"), this.font));
 		adder.addChild(new StringWidget(Component.literal("Z"), this.font));
 
-		EditBox xTranslationField = this.newFloatField(Component.nullToEmpty("X Translation"), () -> this.config.x, newValue -> this.config.x = newValue);
-		EditBox yTranslationField = this.newFloatField(Component.nullToEmpty("Y Translation"), () -> this.config.y, newValue -> this.config.y = newValue);
-		EditBox zTranslationField = this.newFloatField(Component.nullToEmpty("Z Translation"), () -> this.config.z, newValue -> this.config.z = newValue);
+		EditBox xTranslationField = this.newFloatField(Component.nullToEmpty("X Translation"), () -> getConfigForHand(AaronModConfigManager.get()).x, newValue -> AaronModConfigManager.updateOnly(config -> getConfigForHand(config).x = newValue));
+		EditBox yTranslationField = this.newFloatField(Component.nullToEmpty("Y Translation"), () -> getConfigForHand(AaronModConfigManager.get()).y, newValue -> AaronModConfigManager.updateOnly(config -> getConfigForHand(config).y = newValue));
+		EditBox zTranslationField = this.newFloatField(Component.nullToEmpty("Z Translation"), () -> getConfigForHand(AaronModConfigManager.get()).z, newValue -> AaronModConfigManager.updateOnly(config -> getConfigForHand(config).z = newValue));
 
 		adder.addChild(xTranslationField);
 		adder.addChild(yTranslationField);
@@ -108,7 +106,7 @@ public class CustomizeItemModelScreen extends Screen {
 	private void addScaleButtons(RowHelper adder) {
 		adder.addChild(new StringWidget(Component.literal("Scaling"), this.font), 3);
 
-		EditBox scalingField = this.newFloatField(Component.nullToEmpty("Scaling"), () -> this.config.scale, newValue -> this.config.scale = newValue);
+		EditBox scalingField = this.newFloatField(Component.nullToEmpty("Scaling"), () -> getConfigForHand(AaronModConfigManager.get()).scale, newValue -> AaronModConfigManager.updateOnly(config -> getConfigForHand(config).scale = newValue));
 
 		adder.addChild(scalingField, 3);
 	}
@@ -119,9 +117,9 @@ public class CustomizeItemModelScreen extends Screen {
 		adder.addChild(new StringWidget(Component.literal("Y"), this.font));
 		adder.addChild(new StringWidget(Component.literal("Z"), this.font));
 
-		EditBox xRotationField = this.newFloatField(Component.nullToEmpty("X Rotation"), () -> this.config.xRotation, newValue -> this.config.xRotation = newValue);
-		EditBox yRotationField = this.newFloatField(Component.nullToEmpty("Y Rotation"), () -> this.config.yRotation, newValue -> this.config.yRotation = newValue);
-		EditBox zRotationField = this.newFloatField(Component.nullToEmpty("Z Rotation"), () -> this.config.zRotation, newValue -> this.config.zRotation = newValue);
+		EditBox xRotationField = this.newFloatField(Component.nullToEmpty("X Rotation"), () -> getConfigForHand(AaronModConfigManager.get()).xRotation, newValue -> AaronModConfigManager.updateOnly(config -> getConfigForHand(config).xRotation = newValue));
+		EditBox yRotationField = this.newFloatField(Component.nullToEmpty("Y Rotation"), () -> getConfigForHand(AaronModConfigManager.get()).yRotation, newValue -> AaronModConfigManager.updateOnly(config -> getConfigForHand(config).yRotation = newValue));
+		EditBox zRotationField = this.newFloatField(Component.nullToEmpty("Z Rotation"), () -> getConfigForHand(AaronModConfigManager.get()).zRotation, newValue -> AaronModConfigManager.updateOnly(config -> getConfigForHand(config).zRotation = newValue));
 
 		adder.addChild(xRotationField);
 		adder.addChild(yRotationField);
@@ -171,7 +169,7 @@ public class CustomizeItemModelScreen extends Screen {
 			textField.setTextColor(ARGB.opaque(ChatFormatting.RED.getColor()));
 		}
 
-		this.hasChanges = !this.config.equals(this.backup);
+		this.hasChanges = !getConfigForHand(AaronModConfigManager.get()).equals(this.backup);
 	}
 
 	/**
@@ -199,20 +197,27 @@ public class CustomizeItemModelScreen extends Screen {
 		context.vLine(isMainHand ? dimensions.right() - 1 : dimensions.left() + 1, dimensions.top() - 1, dimensions.bottom(), INNER_OUTLINE_COLOUR);
 	}
 
+	private AbstractHand getConfigForHand(AaronModConfig config) {
+		return switch (this.hand) {
+			case InteractionHand.MAIN_HAND -> config.itemModel.mainHand;
+			case InteractionHand.OFF_HAND -> config.itemModel.offHand;
+		};
+	}
+
 	private void saveAndClose() {
-		AaronModConfigManager.save();
+		AaronModConfigManager.update(Consumers.nop());
 		this.hasChanges = false;
 		this.onClose();
 	}
 
 	private void revert() {
-		this.config.copyFrom(this.backup);
+		AaronModConfigManager.updateOnly(config -> getConfigForHand(config).copyFrom(this.backup));
 		this.hasChanges = false;
 		this.rebuildWidgets();
 	}
 
 	private void reset() {
-		this.config.copyFrom(new AbstractHand());
+		AaronModConfigManager.updateOnly(config -> getConfigForHand(config).copyFrom(new AbstractHand()));
 		this.hasChanges = true;
 		this.rebuildWidgets();
 	}

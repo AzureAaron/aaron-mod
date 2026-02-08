@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.lang3.function.Consumers;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
@@ -191,7 +192,7 @@ public final class HudElementConfigScreen extends Screen {
 		}
 
 		//Save the config
-		AaronModConfigManager.save();
+		AaronModConfigManager.update(Consumers.nop());
 
 		this.minecraft.setScreen(parent);
 	}

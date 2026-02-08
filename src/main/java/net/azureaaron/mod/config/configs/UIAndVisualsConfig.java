@@ -1,7 +1,6 @@
 package net.azureaaron.mod.config.configs;
 
 import net.azureaaron.mod.features.SeparateInventoryGuiScale;
-import net.azureaaron.mod.utils.render.hud.HudElementAccess;
 
 public class UIAndVisualsConfig {
 	public Scoreboard scoreboard = new Scoreboard();
@@ -50,7 +49,7 @@ public class UIAndVisualsConfig {
 		public boolean hideTutorials = true;
 	}
 
-	public static class FpsHud implements HudElementAccess {
+	public static class FpsHud {
 		public boolean enableFpsHud = true;
 
 		public int x = 2;
@@ -58,44 +57,9 @@ public class UIAndVisualsConfig {
 		public int y = 2;
 
 		public float scale = 1f;
-
-		@Override
-		public int x() {
-			return this.x;
-		}
-
-		@Override
-		public void x(int x) {
-			this.x = x;
-		}
-
-		@Override
-		public int y() {
-			return this.y;
-		}
-
-		@Override
-		public void y(int y) {
-			this.y = y;
-		}
-
-		@Override
-		public float scale() {
-			return this.scale;
-		}
-
-		@Override
-		public void scale(float scale) {
-			this.scale = scale;
-		}
-
-		@Override
-		public boolean shouldRender() {
-			return enableFpsHud;
-		}
 	}
 
-	public static class PingHud implements HudElementAccess {
+	public static class PingHud {
 		public boolean enablePingHud = false;
 
 		public boolean colouredPing = true;
@@ -105,44 +69,9 @@ public class UIAndVisualsConfig {
 		public int y = net.azureaaron.mod.features.PingHud.DEFAULT_Y;
 
 		public float scale = 1f;
-
-		@Override
-		public int x() {
-			return this.x;
-		}
-
-		@Override
-		public void x(int x) {
-			this.x = x;
-		}
-
-		@Override
-		public int y() {
-			return this.y;
-		}
-
-		@Override
-		public void y(int y) {
-			this.y = y;
-		}
-
-		@Override
-		public float scale() {
-			return this.scale;
-		}
-
-		@Override
-		public void scale(float scale) {
-			this.scale = scale;
-		}
-
-		@Override
-		public boolean shouldRender() {
-			return enablePingHud;
-		}
 	}
 
-	public static class TpsHud implements HudElementAccess {
+	public static class TpsHud {
 		public boolean enableTpsHud = false;
 
 		public int x = net.azureaaron.mod.features.TickHud.DEFAULT_X;
@@ -150,41 +79,6 @@ public class UIAndVisualsConfig {
 		public int y = 2;
 
 		public float scale = 1f;
-
-		@Override
-		public int x() {
-			return this.x;
-		}
-
-		@Override
-		public void x(int x) {
-			this.x = x;
-		}
-
-		@Override
-		public int y() {
-			return this.y;
-		}
-
-		@Override
-		public void y(int y) {
-			this.y = y;
-		}
-
-		@Override
-		public float scale() {
-			return this.scale;
-		}
-
-		@Override
-		public void scale(float scale) {
-			this.scale = scale;
-		}
-
-		@Override
-		public boolean shouldRender() {
-			return this.enableTpsHud;
-		}
 	}
 
 	public static class DebugHud {

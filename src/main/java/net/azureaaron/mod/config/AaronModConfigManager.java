@@ -1,6 +1,7 @@
 package net.azureaaron.mod.config;
 
 import java.nio.file.Path;
+import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 import net.azureaaron.dandelion.api.ConfigManager;
@@ -34,8 +35,14 @@ public class AaronModConfigManager {
 		return CONFIG_MANAGER.instance();
 	}
 
-	public static void save() {
+	public static void update(Consumer<AaronModConfig> updater) {
+		updater.accept(CONFIG_MANAGER.unpatchedInstance());
 		CONFIG_MANAGER.save();
+	}
+
+	public static void updateOnly(Consumer<AaronModConfig> updater) {
+		updater.accept(CONFIG_MANAGER.unpatchedInstance());
+		CONFIG_MANAGER.updatePatchedInstance();
 	}
 
 	public static Screen createGui(Screen parent) {

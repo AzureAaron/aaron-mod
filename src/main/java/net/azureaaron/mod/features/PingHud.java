@@ -9,6 +9,7 @@ import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.PingResultCallback;
 import net.azureaaron.mod.utils.Scheduler;
+import net.azureaaron.mod.utils.render.hud.HudElementAccess;
 import net.azureaaron.mod.utils.render.hud.TextHudElement;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
@@ -23,7 +24,7 @@ public class PingHud {
 	private static final TextHudElement HUD_ELEMENT = new TextHudElement(
 			Component.literal("30 ms"),
 			PingHud::getPingText,
-			AaronModConfigManager.get().uiAndVisuals.pingHud,
+			new PingHudElementAccess(),
 			2,
 			DEFAULT_Y);
 	private static final Queue<Long> RESULTS = EvictingQueue.create(240); //240 is the amount of samples that the ping graph uses
@@ -65,5 +66,42 @@ public class PingHud {
 	private static void reset() {
 		RESULTS.clear();
 		average = 0L;
+	}
+
+	private record PingHudElementAccess() implements HudElementAccess {
+		@Override
+		public int x() {
+			return AaronModConfigManager.get().uiAndVisuals.pingHud.x;
+		}
+
+		@Override
+		public void x(int x) {
+			AaronModConfigManager.updateOnly(config -> config.uiAndVisuals.pingHud.x = x);
+		}
+
+		@Override
+		public int y() {
+			return AaronModConfigManager.get().uiAndVisuals.pingHud.y;
+		}
+
+		@Override
+		public void y(int y) {
+			AaronModConfigManager.updateOnly(config -> config.uiAndVisuals.pingHud.y = y);
+		}
+
+		@Override
+		public float scale() {
+			return AaronModConfigManager.get().uiAndVisuals.pingHud.scale;
+		}
+
+		@Override
+		public void scale(float scale) {
+			AaronModConfigManager.updateOnly(config -> config.uiAndVisuals.pingHud.scale = scale);
+		}
+
+		@Override
+		public boolean shouldRender() {
+			return AaronModConfigManager.get().uiAndVisuals.pingHud.enablePingHud;
+		}
 	}
 }

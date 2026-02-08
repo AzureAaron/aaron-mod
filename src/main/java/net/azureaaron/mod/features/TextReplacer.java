@@ -14,15 +14,13 @@ public class TextReplacer {
 	public static final Supplier<Object2ObjectLinkedOpenHashMap<String, Component>> TEXT_REPLACEMENTS = () -> AaronModConfigManager.get().textReplacer.textReplacements;
 
 	public static void addTextReplacement(String textToReplace, Component replacementText) {
-		TEXT_REPLACEMENTS.get().put(textToReplace, replacementText);
-		AaronModConfigManager.save();
+		AaronModConfigManager.update(config -> config.textReplacer.textReplacements.put(textToReplace, replacementText));
 	}
 
 	public static boolean removeTextReplacement(String textToReplace) {
 		if (!TEXT_REPLACEMENTS.get().containsKey(textToReplace)) return false;
 
-		TEXT_REPLACEMENTS.get().remove(textToReplace);
-		AaronModConfigManager.save();
+		AaronModConfigManager.update(config -> config.textReplacer.textReplacements.remove(textToReplace));
 
 		return true;
 	}
