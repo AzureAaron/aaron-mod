@@ -22,8 +22,8 @@ import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.debug.Debug;
 import net.azureaaron.mod.mixins.accessors.MinecraftAccessor;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
@@ -55,13 +55,13 @@ public class ApiAuthentication {
 		//Only do this if Skyblock Commands are enabled since thats all this is necessary for
 		if (AaronModConfigManager.get().skyblock.commands.enableSkyblockCommands) {
 			//Update token after the profileKeys instance is initialized
-			ClientLifecycleEvents.CLIENT_STARTED.register(_client -> updateToken());
+			ClientLifecycleEvents.CLIENT_STARTED.register(_ -> updateToken());
 		}
 		if (Debug.debugEnabled()) {
-			ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-				dispatcher.register(ClientCommandManager.literal("aaronmod")
-						.then(ClientCommandManager.literal("updateToken")
-						.executes(source -> {
+			ClientCommandRegistrationCallback.EVENT.register((dispatcher, _) -> {
+				dispatcher.register(ClientCommands.literal("aaronmod")
+						.then(ClientCommands.literal("updateToken")
+						.executes(_ -> {
 							updateToken();
 
 							return Command.SINGLE_SUCCESS;
@@ -153,7 +153,7 @@ public class ApiAuthentication {
 		if (retryAfter != -1) CLIENT.schedule(() -> Scheduler.INSTANCE.schedule(ApiAuthentication::updateToken, retryAfter, true));
 
 		if (CLIENT.player != null && !sentWarningOnce) {
-			CLIENT.player.displayClientMessage(Constants.PREFIX.get().append(warningMessage), false);
+			CLIENT.player.sendSystemMessage(Constants.PREFIX.get().append(warningMessage));
 			sentWarningOnce = true;
 		}
 	}

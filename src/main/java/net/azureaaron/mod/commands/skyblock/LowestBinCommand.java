@@ -2,8 +2,8 @@ package net.azureaaron.mod.commands.skyblock;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -50,7 +50,7 @@ public class LowestBinCommand {
 	private static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
 		final LiteralCommandNode<FabricClientCommandSource> lowestBinCommand = dispatcher.register(literal("lowestbin")
 				.then(argument("item", greedyString())
-						.suggests((context, builder) -> SharedSuggestionProvider.suggest(Cache.ITEMS_LIST, builder))
+						.suggests((_, builder) -> SharedSuggestionProvider.suggest(Cache.ITEMS_LIST, builder))
 						.executes(context -> handleCommand(context.getSource(), getString(context, "item")))));
 
 		dispatcher.register(literal("lbin").redirect(lowestBinCommand));

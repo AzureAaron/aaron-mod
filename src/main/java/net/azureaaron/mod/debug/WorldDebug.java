@@ -9,7 +9,7 @@ import net.minecraft.util.RandomSource;
 
 public class WorldDebug {
 	private static final Minecraft CLIENT = Minecraft.getInstance();
-	private static final RandomSource RANDOM = RandomSource.createNewThreadLocalInstance();
+	private static final RandomSource RANDOM = RandomSource.createThreadLocalInstance();
 	private static final long DEBUG_WORLD_SEED = 8642631819104237334L;
 
 	@Init

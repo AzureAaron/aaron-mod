@@ -19,7 +19,7 @@ import net.azureaaron.mod.config.configs.ItemModelConfig.AbstractHand;
 import net.azureaaron.mod.screens.itemmodel.CustomizeItemModelScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemInHandRenderer;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 
@@ -36,7 +36,7 @@ public class ItemInHandRendererMixin {
 			swingProgress.set(0f);
 			stack.set(itemModelScreen.previewItem);
 			equipProgress.set(0f);
-			light.set(LightTexture.FULL_BRIGHT);
+			light.set(LightCoordsUtil.FULL_BRIGHT);
 		}
 	}
 

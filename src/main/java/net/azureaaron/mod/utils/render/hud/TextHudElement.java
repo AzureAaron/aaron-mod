@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.CommonColors;
 import org.joml.Matrix3x2fStack;
@@ -41,24 +41,24 @@ public class TextHudElement extends HudElement {
 	}
 
 	@Override
-	public void renderScreen(GuiGraphics context) {
-		renderInternal(exampleText, context, x(), y(), scale());
+	public void extractScreen(GuiGraphicsExtractor graphics) {
+		extractInternal(exampleText, graphics, x(), y(), scale());
 	}
 
 	@Override
-	public void renderHud(GuiGraphics context, DeltaTracker tickCounter) {
+	public void extractGui(GuiGraphicsExtractor graphics, DeltaTracker tickCounter) {
 		if (shouldRender()) {
-			renderInternal(textSupplier.get(), context, access.x(), access.y(), access.scale());
+			extractInternal(textSupplier.get(), graphics, access.x(), access.y(), access.scale());
 		}
 	}
 
-	private void renderInternal(Component text, GuiGraphics context, int x, int y, float scale) {
-		Matrix3x2fStack matrices = context.pose();
+	private void extractInternal(Component text, GuiGraphicsExtractor graphics, int x, int y, float scale) {
+		Matrix3x2fStack matrices = graphics.pose();
 		matrices.pushMatrix();
 		matrices.scale(scale, scale);
 
-		//Render the text
-		context.drawString(getTextRenderer(), text, (int) (x / scale), (int) (y / scale), CommonColors.WHITE, false);
+		// Render the text
+		graphics.text(getTextRenderer(), text, (int) (x / scale), (int) (y / scale), CommonColors.WHITE, false);
 
 		matrices.popMatrix();
 	}

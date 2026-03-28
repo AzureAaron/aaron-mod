@@ -3,8 +3,8 @@ package net.azureaaron.mod.commands;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -40,12 +40,12 @@ public class ReflectCommand implements UnsafeAccess {
 			//Maybe turn this into subcommands
 			dispatcher.register(literal("reflect")
 					.then(argument("opcode", word())
-							.suggests((context, builder) -> SharedSuggestionProvider.suggest(OPCODES, builder))
+							.suggests((_, builder) -> SharedSuggestionProvider.suggest(OPCODES, builder))
 							.then(argument("target class", word())
 									.then(argument("target field", word())
 											.executes(context -> reflectionExecutor(context.getSource(), getString(context, "opcode"), getString(context, "target class"), getString(context, "target field"), null, null))
 											.then(argument("type", word())
-													.suggests((context, builder) -> SharedSuggestionProvider.suggest(TYPES, builder))
+													.suggests((_, builder) -> SharedSuggestionProvider.suggest(TYPES, builder))
 													.then(argument("new value", string())
 													.executes(context -> reflectionExecutor(context.getSource(), getString(context, "opcode"), getString(context, "target class"), getString(context, "target field"), getString(context, "type"), getString(context, "new value")))))))));
 		}
@@ -58,7 +58,7 @@ public class ReflectCommand implements UnsafeAccess {
 	private static final List<String> OPCODES = Arrays.asList("GETFIELD", "PUTFIELD");
 	private static final List<String> TYPES = Arrays.asList("byte", "char", "double", "float", "int", "long", "short", "boolean", "string");
 
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings("removal")
 	private static int reflectionExecutor(FabricClientCommandSource source, String opcode, String targetClass, String target, String type, String newValue) {
 		ColourProfiles colourProfile = Constants.PROFILE.get();
 
@@ -152,8 +152,8 @@ public class ReflectCommand implements UnsafeAccess {
 
 		} catch (ReflectiveOperationException e) {
 			switch (e) {
-				case ClassNotFoundException ex -> source.sendError(Constants.PREFIX.get().append(Component.literal("The requested class wasn't found!").withStyle(ChatFormatting.RED)));
-				case NoSuchFieldException ex -> source.sendError(Constants.PREFIX.get().append(Component.literal("The requested field wasn't found!").withStyle(ChatFormatting.RED)));
+				case ClassNotFoundException _ -> source.sendError(Constants.PREFIX.get().append(Component.literal("The requested class wasn't found!").withStyle(ChatFormatting.RED)));
+				case NoSuchFieldException _ -> source.sendError(Constants.PREFIX.get().append(Component.literal("The requested field wasn't found!").withStyle(ChatFormatting.RED)));
 
 				case null, default -> {}
 			}

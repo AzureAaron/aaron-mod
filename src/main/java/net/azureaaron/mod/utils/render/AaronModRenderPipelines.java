@@ -1,7 +1,8 @@
 package net.azureaaron.mod.utils.render;
 
+import java.util.Optional;
+
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.platform.DepthTestFunction;
 import com.mojang.blaze3d.shaders.UniformType;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -19,11 +20,11 @@ public class AaronModRenderPipelines {
 			.build());
 	public static final RenderPipeline FILLED_THROUGH_WALLS = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
 			.withLocation(Main.id("pipeline/debug_filled_box_through_walls"))
-			.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+			.withDepthStencilState(Optional.empty())
 			.build());
 	public static final RenderPipeline LINES_THROUGH_WALLS = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
 			.withLocation(Main.id("pipeline/lines_through_walls"))
-			.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+			.withDepthStencilState(Optional.empty())
 			.build());
 	public static final RenderPipeline BLURRED_RECTANGLE = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.GUI_SNIPPET, RenderPipelines.GLOBALS_SNIPPET)
 			.withLocation(Main.id("pipeline/blurred_rectangle"))

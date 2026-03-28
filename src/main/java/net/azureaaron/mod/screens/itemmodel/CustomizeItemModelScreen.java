@@ -13,7 +13,7 @@ import net.azureaaron.mod.config.configs.ItemModelConfig.AbstractHand;
 import net.azureaaron.mod.screens.ModScreen;
 import net.azureaaron.mod.utils.render.GuiHelper;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.EditBox;
@@ -37,6 +37,7 @@ public class CustomizeItemModelScreen extends Screen {
 	private static final int TEXT_FIELD_HEIGHT = 20;
 	/** Predicate to check the validity of the float. Also allows individual signs and trailing decimal points to allow people to input those types of numbers. */
 	//[-+]?[0-9]*\.?[0-9]*
+	@SuppressWarnings("unused")
 	private static final Predicate<String> FLOAT_INPUT_REGEX = Pattern.compile("[-+]?[0-9]*\\.?[0-9]*").asMatchPredicate();
 	private static final int BUTTON_WIDTH = 50;
 	private static final int OUTLINE_COLOUR = ARGB.color(191, 0, 0, 0);
@@ -80,7 +81,7 @@ public class CustomizeItemModelScreen extends Screen {
 	private void addEnableCustomizationsCheckbox(RowHelper adder) {
 		Checkbox enableCustomizations = Checkbox.builder(Component.nullToEmpty("Enable Customizations"), this.font)
 				.selected(getConfigForHand(AaronModConfigManager.get()).enabled)
-				.onValueChange((checkbox, checked) -> {
+				.onValueChange((_, checked) -> {
 					AaronModConfigManager.updateOnly(config -> getConfigForHand(config).enabled = checked);
 					this.hasChanges = true;
 				})
@@ -127,15 +128,15 @@ public class CustomizeItemModelScreen extends Screen {
 	}
 
 	private void addFinalButtons(RowHelper adder) {
-		Button saveButton = Button.builder(Component.literal("Save"), button -> this.saveAndClose())
+		Button saveButton = Button.builder(Component.literal("Save"), _ -> this.saveAndClose())
 				.tooltip(Tooltip.create(Component.literal("Saves the values and closes the screen.")))
 				.width(BUTTON_WIDTH)
 				.build();
-		Button revertButton = Button.builder(Component.literal("Revert"), button -> this.revert())
+		Button revertButton = Button.builder(Component.literal("Revert"), _ -> this.revert())
 				.tooltip(Tooltip.create(Component.literal("Reverts any edits made.")))
 				.width(BUTTON_WIDTH)
 				.build();
-		Button resetButton = Button.builder(Component.literal("Reset"), button -> this.reset())
+		Button resetButton = Button.builder(Component.literal("Reset"), _ -> this.reset())
 				.tooltip(Tooltip.create(Component.literal("Resets all values to their defaults.")))
 				.width(BUTTON_WIDTH)
 				.build();
@@ -148,7 +149,7 @@ public class CustomizeItemModelScreen extends Screen {
 	private EditBox newFloatField(Component text, Supplier<Float> getter, FloatConsumer setter) {
 		EditBox textField = new EditBox(this.font, TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT, text);
 		textField.setValue(String.valueOf(getter.get()));
-		textField.setFilter(FLOAT_INPUT_REGEX);
+		//textField.setFilter(FLOAT_INPUT_REGEX);
 		textField.setResponder(input -> handleFloatInput(textField, input, setter));
 
 		return textField;
@@ -184,17 +185,17 @@ public class CustomizeItemModelScreen extends Screen {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+	public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
 		ScreenRectangle dimensions = this.getEffectiveDimensions(this.width, this.height);
 
-		context.enableScissor(dimensions.left(), dimensions.top(), dimensions.right(), dimensions.bottom());
-		GuiHelper.submitBlurredRectangle(context, dimensions.left(), dimensions.top(), dimensions.right(), dimensions.bottom(), 5);
-		this.renderMenuBackground(context);
-		context.disableScissor();
+		graphics.enableScissor(dimensions.left(), dimensions.top(), dimensions.right(), dimensions.bottom());
+		GuiHelper.blurredRectangle(graphics, dimensions.left(), dimensions.top(), dimensions.right(), dimensions.bottom(), 5);
+		this.extractMenuBackground(graphics);
+		graphics.disableScissor();
 
 		boolean isMainHand = this.hand == InteractionHand.MAIN_HAND;
-		context.vLine(isMainHand ? dimensions.right() : dimensions.left(), dimensions.top() - 1, dimensions.bottom(), OUTLINE_COLOUR);
-		context.vLine(isMainHand ? dimensions.right() - 1 : dimensions.left() + 1, dimensions.top() - 1, dimensions.bottom(), INNER_OUTLINE_COLOUR);
+		graphics.verticalLine(isMainHand ? dimensions.right() : dimensions.left(), dimensions.top() - 1, dimensions.bottom(), OUTLINE_COLOUR);
+		graphics.verticalLine(isMainHand ? dimensions.right() - 1 : dimensions.left() + 1, dimensions.top() - 1, dimensions.bottom(), INNER_OUTLINE_COLOUR);
 	}
 
 	private AbstractHand getConfigForHand(AaronModConfig config) {

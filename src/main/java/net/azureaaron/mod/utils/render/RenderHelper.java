@@ -5,9 +5,9 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.events.WorldRenderExtractionCallback;
 import net.azureaaron.mod.utils.render.primitive.PrimitiveCollectorImpl;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldExtractionContext;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionContext;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -17,25 +17,25 @@ public class RenderHelper {
 
 	@Init
 	public static void init() {
-		WorldRenderEvents.END_EXTRACTION.register(RenderHelper::startExtraction);
-		WorldRenderEvents.END_MAIN.register(RenderHelper::executeDraws);
+		LevelRenderEvents.END_EXTRACTION.register(RenderHelper::startExtraction);
+		LevelRenderEvents.END_MAIN.register(RenderHelper::executeDraws);
 	}
 
-	public static void startExtraction(WorldExtractionContext context) {
+	public static void startExtraction(LevelExtractionContext context) {
 		ProfilerFiller profiler = Profiler.get();
 		profiler.push("aaronModPrimitiveCollection");
-		collector = new PrimitiveCollectorImpl(context.worldState(), context.frustum());
+		collector = new PrimitiveCollectorImpl(context.levelState(), context.levelState().cameraRenderState.cullFrustum);
 
 		WorldRenderExtractionCallback.EVENT.invoker().onExtract(collector);
 		collector.endCollection();
 		profiler.pop();
 	}
 
-	public static void executeDraws(WorldRenderContext context) {
+	public static void executeDraws(LevelRenderContext context) {
 		ProfilerFiller profiler = Profiler.get();
 
 		profiler.push("aaronModSubmitPrimitives");
-		collector.dispatchPrimitivesToRenderers(context.worldState().cameraRenderState);
+		collector.dispatchPrimitivesToRenderers(context.levelState().cameraRenderState);
 		collector = null;
 		profiler.pop();
 

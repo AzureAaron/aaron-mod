@@ -32,7 +32,7 @@ public class ScreenMixin implements ScreenResizeMarker {
 		return this.screenResized;
 	}
 
-	@Inject(method = "init(II)V", at = @At("TAIL"))
+	@Inject(method = "resize(II)V", at = @At("TAIL"))
 	private void aaronMod$hideCursor(CallbackInfo ci) {
 		Object instance = (Object) this;
 
@@ -42,7 +42,7 @@ public class ScreenMixin implements ScreenResizeMarker {
 		}
 	}
 
-	@Inject(method = "render", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "extractRenderState", at = @At("HEAD"), cancellable = true)
 	private void aaronMod$hideReconfiguringScreen(CallbackInfo ci) {
 		if ((Object) this instanceof ServerReconfigScreen && AaronModConfigManager.get().uiAndVisuals.world.hideWorldLoadingScreen) ci.cancel();
 	}

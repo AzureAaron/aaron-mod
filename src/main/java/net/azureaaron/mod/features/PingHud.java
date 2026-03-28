@@ -32,13 +32,13 @@ public class PingHud {
 
 	@Init
 	public static void init() {
-		HudElementRegistry.attachElementAfter(VanillaHudElements.STATUS_EFFECTS, ID, HUD_ELEMENT::renderHud);
+		HudElementRegistry.attachElementAfter(VanillaHudElements.MOB_EFFECTS, ID, HUD_ELEMENT::extractGui);
 		PingResultCallback.EVENT.register(RESULTS::offer);
 		Scheduler.INSTANCE.scheduleCyclic(() -> average = (long) RESULTS.stream()
 				.mapToLong(Long::longValue)
 				.average()
 				.orElse(0), 10);
-		ClientPlayConnectionEvents.JOIN.register((_handler, _sender, _client) -> reset());
+		ClientPlayConnectionEvents.JOIN.register((_, _, _) -> reset());
 	}
 
 	private static Component getPingText() {

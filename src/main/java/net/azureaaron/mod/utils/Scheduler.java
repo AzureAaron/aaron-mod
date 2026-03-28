@@ -19,7 +19,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
  */
 public class Scheduler {
 	public static final Scheduler INSTANCE = new Scheduler();
-	private static final IntFunction<ArrayList<Runnable>> NEW_TASK_LIST = _int -> new ArrayList<>();
+	private static final IntFunction<ArrayList<Runnable>> NEW_TASK_LIST = _ -> new ArrayList<>();
 	/** tick → tasks */
 	private final Int2ObjectMap<List<Runnable>> tasks = new Int2ObjectOpenHashMap<>();
 	private int currentTick = 0;

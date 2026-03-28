@@ -1,6 +1,6 @@
 package net.azureaaron.mod.mixins;
 
-import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -18,8 +18,8 @@ import net.minecraft.network.chat.Component;
 @Mixin(NameTagFeatureRenderer.class)
 public class NameTagFeatureRendererMixin {
 
-	@WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font;drawInBatch(Lnet/minecraft/network/chat/Component;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/client/gui/Font$DisplayMode;II)V"))
-	private void aaronMod$shadowedNametags(Font textRenderer, Component text, float x, float y, int colour, boolean shadow, Matrix4f matrix, MultiBufferSource vertexConsumers, DisplayMode layerType, int backgroundColour, int light, Operation<Void> operation) {
+	@WrapOperation(method = "renderTranslucent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font;drawInBatch(Lnet/minecraft/network/chat/Component;FFIZLorg/joml/Matrix4fc;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/client/gui/Font$DisplayMode;II)V"))
+	private void aaronMod$shadowedNametags(Font textRenderer, Component text, float x, float y, int colour, boolean shadow, Matrix4fc matrix, MultiBufferSource vertexConsumers, DisplayMode layerType, int backgroundColour, int light, Operation<Void> operation) {
 		shadow = AaronModConfigManager.get().uiAndVisuals.nameTags.shadowedNameTags;
 		backgroundColour = (AaronModConfigManager.get().uiAndVisuals.nameTags.hideNameTagBackground) ? 0 : backgroundColour;
 

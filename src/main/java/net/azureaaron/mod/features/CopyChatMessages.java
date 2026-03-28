@@ -16,7 +16,6 @@ import net.azureaaron.mod.utils.ItemUtils;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.GuiMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.gui.components.toasts.SystemToast;
@@ -24,6 +23,7 @@ import net.minecraft.client.gui.components.toasts.ToastManager;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.multiplayer.chat.GuiMessage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.util.FormattedCharSequence;
@@ -38,7 +38,7 @@ public class CopyChatMessages {
 
 	@Init
 	public static void init() {
-		ScreenEvents.AFTER_INIT.register((_client, screen, scaledWidth, scaledHeight) -> {
+		ScreenEvents.AFTER_INIT.register((_, screen, _, _) -> {
 			if (screen instanceof ChatScreen chat) {
 				ScreenMouseEvents.afterMouseClick(chat).register(CopyChatMessages::onMouseInput);
 			}
@@ -62,7 +62,7 @@ public class CopyChatMessages {
 						FormattedCharSequence orderedText = visibleMessages.get(messageLineIndex).content();
 						StringBuilder message = new StringBuilder();
 
-						orderedText.accept((index, style, codePoint) -> {
+						orderedText.accept((_, _, codePoint) -> {
 							message.appendCodePoint(codePoint);
 							return true;
 						});
@@ -135,7 +135,7 @@ public class CopyChatMessages {
 		for (int i = upperbound; i >= lowerbound; i--) { //Iterate over the entries apart of this message and build the messages content
 			GuiMessage.Line currentEntry = visibleMessages.get(i);
 
-			currentEntry.content().accept((index, style, codePoint) -> {
+			currentEntry.content().accept((_, _, codePoint) -> {
 				if (!Character.isWhitespace(codePoint)) hoveredMessage.appendCodePoint(codePoint);
 
 				return true;
@@ -185,7 +185,7 @@ public class CopyChatMessages {
 		ChatComponent chatHud = CLIENT.gui.getChat();
 		ChatComponentAccessor chatAccessor = (ChatComponentAccessor) chatHud;
 
-		if (chatHud.isChatFocused() && !chatAccessor.invokeIsChatHidden()) {
+		if (chatHud.isChatFocused()) {
 			if (!(chatLineX < -4.0) && !(chatLineX > Mth.floor(chatAccessor.invokeGetWidth() / chatAccessor.invokeGetScale()))) {
 				int i = Math.min(chatHud.getLinesPerPage(), chatAccessor.getVisibleMessages().size());
 				if (chatLineY >= 0.0 && chatLineY < i) {

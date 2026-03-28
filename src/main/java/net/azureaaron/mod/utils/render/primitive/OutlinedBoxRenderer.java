@@ -6,7 +6,7 @@ import net.azureaaron.mod.utils.render.AaronModRenderPipelines;
 import net.azureaaron.mod.utils.render.Renderer;
 import net.azureaaron.mod.utils.render.state.OutlinedBoxRenderState;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 
 public final class OutlinedBoxRenderer implements PrimitiveRenderer<OutlinedBoxRenderState> {
 	protected static final OutlinedBoxRenderer INSTANCE = new OutlinedBoxRenderer();

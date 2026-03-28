@@ -3,7 +3,7 @@ package net.azureaaron.mod.screens;
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.layouts.GridLayout;
@@ -47,12 +47,12 @@ public class ModScreen extends Screen {
 		gridWidget.defaultCellSetting().alignHorizontallyCenter();
 		GridLayout.RowHelper adder = gridWidget.createRowHelper(2);
 
-		adder.addChild(Button.builder(CONFIGURATION_TEXT, button -> this.openConfig()).width(BUTTON_WIDTH).build(), 2);
+		adder.addChild(Button.builder(CONFIGURATION_TEXT, _ -> this.openConfig()).width(BUTTON_WIDTH).build(), 2);
 		adder.addChild(Button.builder(SOURCE_TEXT, ConfirmLinkScreen.confirmLink(this, "https://github.com/AzureAaron/aaron-mod")).width(HALF_BUTTON_WIDTH).build());
 		adder.addChild(Button.builder(REPORT_BUGS_TEXT, ConfirmLinkScreen.confirmLink(this, "https://github.com/AzureAaron/aaron-mod/issues")).width(HALF_BUTTON_WIDTH).build());
 		adder.addChild(Button.builder(MODRINTH_TEXT, ConfirmLinkScreen.confirmLink(this, "https://modrinth.com/mod/aaron-mod")).width(HALF_BUTTON_WIDTH).build());
 		adder.addChild(Button.builder(DISCORD_TEXT, ConfirmLinkScreen.confirmLink(this, "https://discord.gg/CQH9Je8qJ9")).width(HALF_BUTTON_WIDTH).build());
-		adder.addChild(Button.builder(CommonComponents.GUI_DONE, button -> this.onClose()).width(BUTTON_WIDTH).build(), 2);
+		adder.addChild(Button.builder(CommonComponents.GUI_DONE, _ -> this.onClose()).width(BUTTON_WIDTH).build(), 2);
 
 		this.layout.addToFooter(new StringWidget(THANKS, this.font));
 		this.layout.arrangeElements();
@@ -74,8 +74,8 @@ public class ModScreen extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-		super.render(context, mouseX, mouseY, delta);
+	public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+		super.extractRenderState(graphics, mouseX, mouseY, delta);
 	}
 
 	private static class IconTextWidget extends StringWidget {
@@ -87,7 +87,7 @@ public class ModScreen extends Screen {
 		}
 
 		@Override
-		public void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
+		public void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
 			Component text = this.getMessage();
 			Font textRenderer = this.getFont();
 
@@ -102,8 +102,8 @@ public class ModScreen extends Screen {
 			int iconX = x - 34;
 			int iconY = y - 13;
 
-			context.drawString(textRenderer, orderedText, x, y, CommonColors.WHITE);
-			context.blit(RenderPipelines.GUI_TEXTURED, this.icon, iconX, iconY, 0, 0, 32, 32, 32, 32);
+			graphics.text(textRenderer, orderedText, x, y, CommonColors.WHITE);
+			graphics.blit(RenderPipelines.GUI_TEXTURED, this.icon, iconX, iconY, 0, 0, 32, 32, 32, 32);
 		}
 
 		//Copied from parent class

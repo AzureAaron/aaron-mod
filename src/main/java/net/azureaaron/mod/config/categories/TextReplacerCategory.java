@@ -37,7 +37,7 @@ public class TextReplacerCategory {
 								.append(Component.literal("\n\nYou're able to remove text replacements with the command "))
 								.append(Component.literal("/textreplacer remove \"<textReplacement>\"").withStyle(ChatFormatting.GRAY))
 								.append(Component.literal("\n\nIf you don't know how to create a text component use the website linked below, then copy n' paste the output!")))
-						.action(action -> {}) //Do nothing I guess
+						.action(_ -> {}) //Do nothing I guess
 						.build())
 				.option(ButtonOption.createBuilder()
 						.name(Component.literal("Text Component Generator Website"))

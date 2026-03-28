@@ -1,6 +1,6 @@
 package net.azureaaron.mod.screens.itemmodel;
 
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 
 import java.util.Locale;
 
@@ -48,7 +48,7 @@ public class ItemModelCustomizationScreen extends Screen {
 
 	@Init
 	public static void initClass() {
-		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+		ClientCommandRegistrationCallback.EVENT.register((dispatcher, _) -> {
 			dispatcher.register(literal("aaronmod")
 					.then(literal("itemModel")
 							.executes(context -> {
@@ -64,7 +64,7 @@ public class ItemModelCustomizationScreen extends Screen {
 	@Override
 	protected void init() {
 		this.layout.addToHeader(new StringWidget(this.getTitle(), this.font));
-		Button closeButton = Button.builder(CommonComponents.GUI_DONE, button -> this.onClose()).width(ModScreen.BUTTON_WIDTH).build();
+		Button closeButton = Button.builder(CommonComponents.GUI_DONE, _ -> this.onClose()).width(ModScreen.BUTTON_WIDTH).build();
 
 		if (!hasEnabledItemCustomization()) {
 			this.layout.addToContents(new StringWidget(Component.literal("\u2139 You must enable Item Model Customization in order to use this.").withColor(Colour.INFO), this.font));
@@ -82,8 +82,8 @@ public class ItemModelCustomizationScreen extends Screen {
 					.setCentered(true);
 
 			adder.addChild(explanationText, 2);
-			adder.addChild(Button.builder(Component.literal("Main Hand"), button -> openModelCustomizationScreen(InteractionHand.MAIN_HAND)).width(ModScreen.HALF_BUTTON_WIDTH).build());
-			adder.addChild(Button.builder(Component.literal("Off Hand"), button -> openModelCustomizationScreen(InteractionHand.OFF_HAND)).width(ModScreen.HALF_BUTTON_WIDTH).build());
+			adder.addChild(Button.builder(Component.literal("Main Hand"), _ -> openModelCustomizationScreen(InteractionHand.MAIN_HAND)).width(ModScreen.HALF_BUTTON_WIDTH).build());
+			adder.addChild(Button.builder(Component.literal("Off Hand"), _ -> openModelCustomizationScreen(InteractionHand.OFF_HAND)).width(ModScreen.HALF_BUTTON_WIDTH).build());
 
 			addPreviewItemWidgets(adder);
 

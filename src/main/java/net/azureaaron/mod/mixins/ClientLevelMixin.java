@@ -39,7 +39,7 @@ public class ClientLevelMixin {
 
 	// Block Crumble Particle Modifications
 
-	@ModifyExpressionValue(method = "method_74253", at = @At(value = "NEW", target = "Lnet/minecraft/client/particle/TerrainParticle;"))
+	@ModifyExpressionValue(method = "lambda$addDestroyBlockEffect$0", at = @At(value = "NEW", target = "Lnet/minecraft/client/particle/TerrainParticle;"))
 	private TerrainParticle aaronMod$modifyBlockBreakParticles(TerrainParticle original) {
 		return (TerrainParticle) Particles.modifyParticle(original, BuiltInRegistries.PARTICLE_TYPE.getKey(ParticleTypes.BLOCK_CRUMBLE));
 	}

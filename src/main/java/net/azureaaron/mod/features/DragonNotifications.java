@@ -28,7 +28,7 @@ public class DragonNotifications {
 			hud.resetTitleTimes();
 			hud.setTitle(text);
 
-			client.player.displayClientMessage(Constants.PREFIX.get().append(Component.literal("The ")).append(text).append(Component.literal(" dragon will spawn soon!")), false);
+			client.player.sendSystemMessage(Constants.PREFIX.get().append(Component.literal("The ")).append(text).append(Component.literal(" dragon will spawn soon!")));
 			client.player.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 100f, 0.1f);
 		}
 	}

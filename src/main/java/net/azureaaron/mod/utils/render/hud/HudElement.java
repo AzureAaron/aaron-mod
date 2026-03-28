@@ -3,7 +3,7 @@ package net.azureaaron.mod.utils.render.hud;
 import java.util.Objects;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 /**
  * An abstract representation of a HUD element. Extend this or use built-in subclasses to implement HUD elements.
@@ -83,12 +83,10 @@ public abstract class HudElement {
 	/**
 	 * Used for rendering this element to a {@link net.minecraft.client.gui.screens.Screen Screen}.
 	 */
-	public abstract void renderScreen(GuiGraphics context);
+	public abstract void extractScreen(GuiGraphicsExtractor graphics);
 
 	/**
 	 * Used for rendering this element to the HUD with Fabric's HUD layer rendering system.
-	 *
-	 * @implSpec The signature of this method must match the {@link net.minecraft.client.gui.LayeredDrawer.Layer#render(DrawContext, RenderTickCounter) LayeredDrawer$Layer#render} method.
 	 */
-	public abstract void renderHud(GuiGraphics context, DeltaTracker tickCounter);
+	public abstract void extractGui(GuiGraphicsExtractor graphics, DeltaTracker tickCounter);
 }

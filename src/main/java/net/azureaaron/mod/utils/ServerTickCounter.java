@@ -6,7 +6,7 @@ import com.google.common.collect.EvictingQueue;
 
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.events.ServerTickCallback;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLevelEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.common.ClientboundPingPacket;
 
@@ -43,7 +43,7 @@ public class ServerTickCounter {
 	public static void init() {
 		Scheduler.INSTANCE.scheduleCyclic(INSTANCE::onClientTick, 1);
 		Scheduler.INSTANCE.scheduleCyclic(INSTANCE::calculateTickRate, 20);
-		ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register((client, world) -> INSTANCE.reset());
+		ClientLevelEvents.AFTER_CLIENT_LEVEL_CHANGE.register((_, _) -> INSTANCE.reset());
 	}
 
 	public void onServerTick(ClientboundPingPacket packet) {

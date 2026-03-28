@@ -27,7 +27,7 @@ public class ChatComponentMixin {
 	@Final
 	private Minecraft minecraft;
 
-	@ModifyExpressionValue(method = { "addMessageToDisplayQueue", "addMessageToQueue(Lnet/minecraft/client/GuiMessage;)V", "addRecentChat" }, at = @At(value = "CONSTANT", args = "intValue=100"), require = 3)
+	@ModifyExpressionValue(method = { "addMessageToDisplayQueue", "addMessageToQueue(Lnet/minecraft/client/multiplayer/chat/GuiMessage;)V", "addRecentChat" }, at = @At(value = "CONSTANT", args = "intValue=100"), require = 3)
 	private int aaronMod$longerChatHistory(int maxMessages) {
 		int historyLength = Math.max(Math.max(maxMessages, AaronModConfigManager.get().refinements.chat.chatHistoryLength), 100);
 
@@ -39,7 +39,7 @@ public class ChatComponentMixin {
 		ImagePreview.clearCache(this.minecraft);
 	}
 
-	@ModifyReturnValue(method = "isChatHidden", at = @At("RETURN"))
+	@ModifyReturnValue(method = "isChatFocused", at = @At("RETURN"))
 	private boolean aaronMod$hideChatWhileCustomizingItemModel(boolean original) {
 		return original || this.minecraft.screen instanceof CustomizeItemModelScreen;
 	}

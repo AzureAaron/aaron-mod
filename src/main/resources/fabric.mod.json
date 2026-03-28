@@ -32,13 +32,13 @@
   "accessWidener": "aaron-mod.classtweaker",
   "depends": {
     "fabricloader": ">=0.18.4",
-    "fabric-api": ">=0.140.2+1.21.11",
+    "fabric-api": ">=0.144.0+26.1",
     "fabric-language-kotlin": "*",
-    "minecraft": "~1.21.11",
-    "java": ">=21",
-    "dandelion": ">=1.0.0-alpha.14+1.21.11",
-    "yet_another_config_lib_v3": ">=3.8.1+1.21.11",
-    "hm-api": ">=1.0.1+1.21.2"
+    "minecraft": "~26.1",
+    "java": ">=25",
+    "dandelion": ">=1.0.0-alpha.18+26.1",
+    "yet_another_config_lib_v3": ">=3.9.0+26.1",
+    "hm-api": ">=1.0.3+26.1"
   },
   "suggests": {
     "modmenu": ">=17.0.0-alpha.1"

@@ -22,7 +22,7 @@ public class ReceiveChatMessageListener {
 	@SuppressWarnings("removal")
 	@Init
 	public static void listen() {
-		ReceiveChatMessageEvent.EVENT.register((message, overlay, cancelled) -> {
+		ReceiveChatMessageEvent.EVENT.register((message, overlay, _) -> {
 			if (Functions.isOnHypixel() && !overlay) {
 				String stringForm = message.getString();
 				String strippedForm = ChatFormatting.stripFormatting(stringForm);

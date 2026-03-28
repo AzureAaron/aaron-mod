@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 
 @Mixin(GuiMessageTag.class)
 public class GuiMessageTagMixin {
@@ -22,7 +22,7 @@ public class GuiMessageTagMixin {
 		return AaronModConfigManager.get().uiAndVisuals.legacyRevival.oldMessageTrustIndicatorColours ? new GuiMessageTag(OLD_NOT_SECURE_COLOUR, original.icon(), original.text(), original.logTag()) : original;
 	}
 
-	@ModifyArg(method = "chatModified", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/GuiMessageTag;<init>(ILnet/minecraft/client/GuiMessageTag$Icon;Lnet/minecraft/network/chat/Component;Ljava/lang/String;)V"))
+	@ModifyArg(method = "chatModified", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/chat/GuiMessageTag;<init>(ILnet/minecraft/client/multiplayer/chat/GuiMessageTag$Icon;Lnet/minecraft/network/chat/Component;Ljava/lang/String;)V"))
 	private static int aaronMod$changeModifiedColour(int colour) {
 		return AaronModConfigManager.get().uiAndVisuals.legacyRevival.oldMessageTrustIndicatorColours ? OLD_MODIFIED_COLOUR : colour;
 	}

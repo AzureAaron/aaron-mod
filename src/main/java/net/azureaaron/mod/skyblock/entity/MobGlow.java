@@ -32,7 +32,7 @@ public class MobGlow {
 	@Init
 	public static void init() {
 		// Have the cache cleared every tick to ensure correctness
-		ClientTickEvents.END_CLIENT_TICK.register(_client -> reset());
+		ClientTickEvents.END_CLIENT_TICK.register(_ -> reset());
 	}
 
 	/**

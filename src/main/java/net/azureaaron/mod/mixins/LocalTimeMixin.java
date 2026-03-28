@@ -3,7 +3,6 @@ package net.azureaaron.mod.mixins;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.spongepowered.asm.mixin.Final;
@@ -27,10 +26,6 @@ import net.minecraft.world.item.Items;
 
 @Mixin(LocalTime.class)
 public class LocalTimeMixin {
-	@Unique
-	private static final Identifier CHEST_MODEL = Objects.requireNonNull(Items.CHEST.components().get(DataComponents.ITEM_MODEL), "[Aaron's Mod] Chest item model cannot be null.");
-	@Unique
-	private static final Identifier TRAPPED_CHEST_MODEL = Objects.requireNonNull(Items.TRAPPED_CHEST.components().get(DataComponents.ITEM_MODEL), "[Aaron's Mod] Trapped Chest item model cannot be null.");
 	@Unique
 	private static final String CHRISTMAS_DATE_FORMAT = "MM-dd";
 	@Unique
@@ -58,6 +53,6 @@ public class LocalTimeMixin {
 	private static boolean isChest(ItemStack stack) {
 		Identifier model = stack.get(DataComponents.ITEM_MODEL);
 
-		return CHEST_MODEL.equals(model) || TRAPPED_CHEST_MODEL.equals(model);
+		return Items.CHEST.components().get(DataComponents.ITEM_MODEL).equals(model) || Items.TRAPPED_CHEST.components().get(DataComponents.ITEM_MODEL).equals(model);
 	}
 }

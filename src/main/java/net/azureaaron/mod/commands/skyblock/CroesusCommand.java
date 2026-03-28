@@ -2,8 +2,8 @@ package net.azureaaron.mod.commands.skyblock;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -42,8 +42,8 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.util.Util;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.BundleContents;
 
@@ -162,14 +162,14 @@ public class CroesusCommand extends SkyblockCommand {
 		bundle.set(DataComponents.CUSTOM_NAME, Component.literal("✦ Rare Loot Preview ✦").withStyle(style -> style.withItalic(false).withColor(colourProfile.infoColour.getAsInt())));
 
 		//We use a map because ItemStacks have no determinate hash code thus we need a key that to allow for deduplication which will result in the same rare drops being stacked
-		HashMap<String, ItemStack> stacks = new HashMap<>();
+		HashMap<String, ItemStackTemplate> stacks = new HashMap<>();
 
 		for (String item : rareLoot) {
 			int occurrences = Collections.frequency(rareLoot, item);
 
 			//We need to copy the item stack because you can't share the same stack across different bundles for some reason?
 			if (!stacks.containsKey(item)) {
-				stacks.put(item, Util.make(Skyblock.getRareLootItems().get(item).copy(), stack -> stack.setCount(occurrences)));
+				stacks.put(item, Skyblock.getRareLootItems().get(item).withCount(occurrences));
 			}
 		}
 
@@ -186,7 +186,7 @@ public class CroesusCommand extends SkyblockCommand {
 
 			source.sendFeedback(Component.literal("Unclaimed Chests » " + runs.size()).withColor(colourProfile.infoColour.getAsInt()));
 			source.sendFeedback(Component.literal("Rare Loot Awaits » " + ((rareLootAwaits) ? "✓" : "✗"))
-					.withStyle(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent.ShowItem(bundle))));
+					.withStyle(style -> style.withColor(colourProfile.infoColour.getAsInt()).withHoverEvent(new HoverEvent.ShowItem(ItemStackTemplate.fromNonEmptyStack(bundle)))));
 			source.sendFeedback(Component.literal(""));
 
 			int count = 0;

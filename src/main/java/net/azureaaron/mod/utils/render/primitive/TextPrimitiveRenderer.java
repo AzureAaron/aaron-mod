@@ -11,9 +11,9 @@ import net.azureaaron.mod.utils.render.state.TextRenderState;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.font.TextRenderable;
 import net.minecraft.client.gui.render.TextureSetup;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.util.LightCoordsUtil;
 
 public final class TextPrimitiveRenderer implements PrimitiveRenderer<TextRenderState> {
 	protected static final TextPrimitiveRenderer INSTANCE = new TextPrimitiveRenderer();
@@ -45,7 +45,7 @@ public final class TextPrimitiveRenderer implements PrimitiveRenderer<TextRender
 				TextureSetup textureSetup = TextureSetup.singleTextureWithLightmap(glyph.textureView(), RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST));
 				BufferBuilder buffer = Renderer.getBuffer(pipeline, textureSetup);
 
-				glyph.render(positionMatrix, buffer, LightTexture.FULL_BRIGHT, false);
+				glyph.render(positionMatrix, buffer, LightCoordsUtil.FULL_BRIGHT, false);
 			}
 		});
 	}

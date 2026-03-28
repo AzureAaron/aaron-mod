@@ -12,7 +12,7 @@ import net.azureaaron.dandelion.api.ButtonOption;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.render.RenderHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -52,24 +52,24 @@ public final class HudElementConfigScreen extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-		super.render(context, mouseX, mouseY, delta);
-		renderTips(context);
-		renderElements(context);
+	public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+		super.extractRenderState(graphics, mouseX, mouseY, a);
+		extractTips(graphics);
+		extractElements(graphics);
 	}
 
-	private void renderTips(GuiGraphics context) {
-		context.drawCenteredString(font, "Left click to select an element", width >> 1, font.lineHeight * 2, CommonColors.LIGHT_GRAY);
-		context.drawCenteredString(font, "Right click to unselect an element", width >> 1, font.lineHeight * 3 + 4, CommonColors.LIGHT_GRAY);
-		context.drawCenteredString(font, "Press +/- to scale an element", width >> 1, font.lineHeight * 4 + 8, CommonColors.LIGHT_GRAY);
-		context.drawCenteredString(font, "Press R to reset an element's position/scale", width >> 1, font.lineHeight * 5 + 12, CommonColors.LIGHT_GRAY);
-		context.drawCenteredString(font, "Press TAB to cycle between elements", width >> 1, font.lineHeight * 6 + 16, CommonColors.LIGHT_GRAY);
+	private void extractTips(GuiGraphicsExtractor graphics) {
+		graphics.centeredText(font, "Left click to select an element", width >> 1, font.lineHeight * 2, CommonColors.LIGHT_GRAY);
+		graphics.centeredText(font, "Right click to unselect an element", width >> 1, font.lineHeight * 3 + 4, CommonColors.LIGHT_GRAY);
+		graphics.centeredText(font, "Press +/- to scale an element", width >> 1, font.lineHeight * 4 + 8, CommonColors.LIGHT_GRAY);
+		graphics.centeredText(font, "Press R to reset an element's position/scale", width >> 1, font.lineHeight * 5 + 12, CommonColors.LIGHT_GRAY);
+		graphics.centeredText(font, "Press TAB to cycle between elements", width >> 1, font.lineHeight * 6 + 16, CommonColors.LIGHT_GRAY);
 	}
 
-	private void renderElements(GuiGraphics context) {
+	private void extractElements(GuiGraphicsExtractor graphics) {
 		//Render all HUD elements
 		for (HudElement element : ELEMENTS) {
-			element.renderScreen(context);
+			element.extractScreen(graphics);
 		}
 
 		//Render box around selected element
@@ -80,16 +80,16 @@ public final class HudElementConfigScreen extends Screen {
 			int height = selected.height();
 
 			//Top line
-			context.hLine(Math.max(x - 1, 0), Math.min(x + width + 1, this.width), Math.max(y - 1, 0), CommonColors.RED);
+			graphics.horizontalLine(Math.max(x - 1, 0), Math.min(x + width + 1, this.width), Math.max(y - 1, 0), CommonColors.RED);
 
 			//Bottom line
-			context.hLine(Math.max(x - 1, 0), Math.min(x + width + 1, this.width), Math.min(y + height + 1, this.height), CommonColors.RED);
+			graphics.horizontalLine(Math.max(x - 1, 0), Math.min(x + width + 1, this.width), Math.min(y + height + 1, this.height), CommonColors.RED);
 
 			//Left line
-			context.vLine(Math.max(x - 1, 0), Math.max(y - 1, 0), Math.min(y + height + 1, this.height), CommonColors.RED);
+			graphics.verticalLine(Math.max(x - 1, 0), Math.max(y - 1, 0), Math.min(y + height + 1, this.height), CommonColors.RED);
 
 			//Right line
-			context.vLine(Math.min(x + width + 1, this.width), Math.max(y - 1, 0), Math.min(y + height + 1, this.height), CommonColors.RED);
+			graphics.verticalLine(Math.min(x + width + 1, this.width), Math.max(y - 1, 0), Math.min(y + height + 1, this.height), CommonColors.RED);
 		}
 	}
 

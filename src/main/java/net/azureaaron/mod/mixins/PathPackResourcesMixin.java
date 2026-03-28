@@ -17,8 +17,8 @@ public class PathPackResourcesMixin {
 		return !AaronModConfigManager.get().refinements.silenceResourcePackLogSpam;
 	}
 
-	@WrapWithCondition(method = "getNamespaces", at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V"))
-	private boolean aaronMod$silenceDsStoreWarnings(Logger logger, String message, Object fileName, Object root) {
+	@WrapWithCondition(method = "getNamespaces(Ljava/nio/file/Path;)Ljava/util/Set;", at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;error(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V"))
+	private static boolean aaronMod$silenceDsStoreWarnings(Logger logger, String message, Object fileName, Object root) {
 		return !AaronModConfigManager.get().refinements.silenceResourcePackLogSpam && ((String) fileName).equals(".DS_Store");
 	}
 }

@@ -25,7 +25,7 @@ import net.azureaaron.mod.utils.Http;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ActiveTextCollector;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -47,9 +47,9 @@ public class ImagePreview {
 	@Init
 	public static void init() {
 		ReceiveChatMessageEvent.EVENT.register(ImagePreview::inspectMessageForImageLinks);
-		ScreenEvents.AFTER_INIT.register((client, screen, _scaledWidth, _scaledHeight) -> {
+		ScreenEvents.AFTER_INIT.register((client, screen, _, _) -> {
 			if (screen instanceof ChatScreen && AaronModConfigManager.get().uiAndVisuals.imagePreview.enableImagePreview) {
-				ScreenEvents.afterRender(screen).register((screen1, context, mouseX, mouseY, _delta) -> {
+				ScreenEvents.afterExtract(screen).register((screen1, context, mouseX, mouseY, _) -> {
 					afterScreenRendered(client, screen1, context, mouseX, mouseY);
 				});
 			}
@@ -61,7 +61,7 @@ public class ImagePreview {
 			ObjectOpenHashSet<String> foundImages = new ObjectOpenHashSet<>();
 
 			//Visit the text to find all image links inside of its click events
-			text.visit((style, stringified) -> {
+			text.visit((style, _) -> {
 				ClickEvent clickEvent = style.getClickEvent();
 
 				if (clickEvent instanceof ClickEvent.OpenUrl(URI uri) && uri != null) {
@@ -108,7 +108,7 @@ public class ImagePreview {
 		});
 	}
 
-	private static void afterScreenRendered(Minecraft client, Screen screen, GuiGraphics context, int mouseX, int mouseY) {
+	private static void afterScreenRendered(Minecraft client, Screen screen, GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
 		if (!AaronModConfigManager.get().uiAndVisuals.imagePreview.enableImagePreview) return;
 
 		ActiveTextCollector.ClickableStyleFinder clickHandler = new ActiveTextCollector.ClickableStyleFinder(screen.getFont(), mouseX, mouseY)
@@ -122,7 +122,7 @@ public class ImagePreview {
 				CachedImage image = ImagePreview.IMAGE_CACHE.getOrDefault(fixupLink(uri.toString()), null);
 
 				if (image != null && image != CachedImage.EMPTY) {
-					Matrix3x2fStack matrices = context.pose();
+					Matrix3x2fStack matrices = graphics.pose();
 					int width = image.width();
 					int height = image.height();
 
@@ -132,7 +132,7 @@ public class ImagePreview {
 					matrices.pushMatrix();
 					matrices.scale(scale, scale); //The 1f is needed otherwise it'll render behind the chat (the chat's z is scaled by 1 too)
 
-					context.blit(RenderPipelines.GUI_TEXTURED, image.texture(), 0, 0, 0, 0, width, height, width, height);
+					graphics.blit(RenderPipelines.GUI_TEXTURED, image.texture(), 0, 0, 0, 0, width, height, width, height);
 
 					matrices.popMatrix();
 				}

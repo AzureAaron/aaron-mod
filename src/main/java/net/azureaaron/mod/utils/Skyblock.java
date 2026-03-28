@@ -21,7 +21,7 @@ import net.azureaaron.mod.annotations.Init;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 
 public class Skyblock {
 	private static final Logger LOGGER = LogUtils.getLogger();
@@ -30,7 +30,7 @@ public class Skyblock {
 	@Init
 	public static void init() {
 		ClientLifecycleEvents.CLIENT_STARTED.register(client -> CompletableFuture.allOf(loadRareLootItems(client))
-				.whenComplete((_result, _throwable) -> loaded = true));
+				.whenComplete((_, _) -> loaded = true));
 	}
 
 	private static CompletableFuture<Void> loadRareLootItems(Minecraft client) {
@@ -42,12 +42,12 @@ public class Skyblock {
 			} catch (Exception e) {
 				LOGGER.error("[Aaron's Mod] Failed to load rare loot items file!", e);
 
-				return Map.<String, ItemStack>of();
+				return Map.<String, ItemStackTemplate>of();
 			}
 		}).thenAccept(RARE_LOOT_ITEMS::putAll);
 	}
 
-	public static Map<String, ItemStack> getRareLootItems() {
+	public static Map<String, ItemStackTemplate> getRareLootItems() {
 		return loaded ? RARE_LOOT_ITEMS : Map.of();
 	}
 
@@ -78,12 +78,12 @@ public class Skyblock {
 
 	public static String getDojoGrade(int score) {
 		return switch ((Integer) score) {
-			case Integer ignored5 when score == 0 -> "None";
-			case Integer ignored4 when score >= 1000 -> "S";
-			case Integer ignored3 when score >= 800 -> "A";
-			case Integer ignored2 when score >= 600 -> "B";
-			case Integer ignored1 when score >= 400 -> "C";
-			case Integer ignored when score >= 200 -> "D";
+			case Integer _ when score == 0 -> "None";
+			case Integer _ when score >= 1000 -> "S";
+			case Integer _ when score >= 800 -> "A";
+			case Integer _ when score >= 600 -> "B";
+			case Integer _ when score >= 400 -> "C";
+			case Integer _ when score >= 200 -> "D";
 			default -> "F";
 		};
 	}

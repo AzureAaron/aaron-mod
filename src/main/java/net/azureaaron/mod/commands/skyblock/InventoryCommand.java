@@ -2,8 +2,8 @@ package net.azureaaron.mod.commands.skyblock;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -38,6 +38,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 
 public class InventoryCommand extends SkyblockCommand {
 	private static final Command INSTANCE = new InventoryCommand();
@@ -67,7 +68,7 @@ public class InventoryCommand extends SkyblockCommand {
 	private record ItemData4(ItemStack stack, String fallback) {
 		private MutableComponent feedbackMessage() {
 			if (!stack.isEmpty()) {
-				return stack.getHoverName().copy().withStyle(style -> style.withHoverEvent(new HoverEvent.ShowItem(stack)));
+				return stack.getHoverName().copy().withStyle(style -> style.withHoverEvent(new HoverEvent.ShowItem(ItemStackTemplate.fromNonEmptyStack(stack))));
 			} else {
 				return Component.literal(fallback).withStyle(ChatFormatting.RED);
 			}

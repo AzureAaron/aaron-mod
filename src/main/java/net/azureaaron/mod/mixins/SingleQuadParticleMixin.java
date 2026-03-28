@@ -19,7 +19,7 @@ public class SingleQuadParticleMixin implements ParticleAlphaMarker {
 		this.hasCustomAlpha = true;
 	}
 
-	@ModifyExpressionValue(method = "extractRotatedQuad(Lnet/minecraft/client/renderer/state/QuadParticleRenderState;Lorg/joml/Quaternionf;FFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/particle/SingleQuadParticle;getLayer()Lnet/minecraft/client/particle/SingleQuadParticle$Layer;"))
+	@ModifyExpressionValue(method = "extractRotatedQuad(Lnet/minecraft/client/renderer/state/level/QuadParticleRenderState;Lorg/joml/Quaternionf;FFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/particle/SingleQuadParticle;getLayer()Lnet/minecraft/client/particle/SingleQuadParticle$Layer;"))
 	private SingleQuadParticle.Layer aaronMod$particleAlphaTranslucency(SingleQuadParticle.Layer original) {
 		return this.hasCustomAlpha && original.equals(SingleQuadParticle.Layer.OPAQUE) ? SingleQuadParticle.Layer.TRANSLUCENT : original;
 	}

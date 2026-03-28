@@ -2,8 +2,8 @@ package net.azureaaron.mod.commands;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
@@ -34,7 +34,7 @@ public class TextReplacerCommand {
 										.executes(context -> addReplacement(context.getSource(), getString(context, "replacementText"), context.getArgument("textComponent", Component.class))))))
 				.then(literal("remove")
 						.then(argument("replacementText", string())
-								.suggests((commandSource, builder) -> SharedSuggestionProvider.suggest(TextReplacer.getTextReplacements(), builder))
+								.suggests((_, builder) -> SharedSuggestionProvider.suggest(TextReplacer.getTextReplacements(), builder))
 								.executes(context -> removeReplacement(context.getSource(), getString(context, "replacementText"))))));
 	}
 

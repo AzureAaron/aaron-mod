@@ -13,7 +13,7 @@ import net.azureaaron.mod.config.datafixer.ConfigDataFixer;
 import net.azureaaron.mod.utils.Scheduler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.SharedConstants;
@@ -58,7 +58,7 @@ public class Main implements ClientModInitializer {
 	@Init
 	public static void registerKeybindings() {
 		//I used to cheat the translation key system but now I abide by it :)
-		Keybinds.zoomKeybind = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.aaron-mod.zoom", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_C, KEYBINDING_CATEGORY));
+		Keybinds.zoomKeybind = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.aaron-mod.zoom", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_C, KEYBINDING_CATEGORY));
 	}
 
 	public static Identifier id(String path) {

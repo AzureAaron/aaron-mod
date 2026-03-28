@@ -36,7 +36,7 @@ public class ItemModelCategory {
 								Component.literal("This feature allows you to tweak the appearence of item models while they are held in first person."),
 								Component.literal("\nYou can change the position, scale (size), and the rotation for items held in the main or off hand, as well as being able to customize the swing animation!"),
 								Component.literal("\nOpen the menu below while in a world to begin customizing!"))
-						.action(screen -> {}) //TODO make this BiConsumer a constant value somewhere for reuse
+						.action(_ -> {}) //TODO make this BiConsumer a constant value somewhere for reuse
 						.build())
 				.option(ButtonOption.createBuilder()
 						.name(Component.literal("Item Model Customization Menu"))

@@ -23,7 +23,7 @@ public class FpsHud {
 
 	@Init
 	public static void init() {
-		HudElementRegistry.attachElementAfter(VanillaHudElements.STATUS_EFFECTS, ID, HUD_ELEMENT::renderHud);
+		HudElementRegistry.attachElementAfter(VanillaHudElements.MOB_EFFECTS, ID, HUD_ELEMENT::extractGui);
 	}
 
 	private static Component getFpsText() {

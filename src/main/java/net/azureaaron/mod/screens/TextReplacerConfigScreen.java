@@ -7,7 +7,7 @@ import com.mojang.serialization.JsonOps;
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.features.TextReplacer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.StringWidget;
@@ -48,7 +48,7 @@ public class TextReplacerConfigScreen extends Screen {
 
 		generateTextFields(adder);
 
-		this.layout.addToFooter(Button.builder(CommonComponents.GUI_DONE, button -> this.onClose()).build());
+		this.layout.addToFooter(Button.builder(CommonComponents.GUI_DONE, _ -> this.onClose()).build());
 		this.layout.arrangeElements();
 		this.layout.visitWidgets(this::addRenderableWidget);
 
@@ -69,7 +69,7 @@ public class TextReplacerConfigScreen extends Screen {
 			replacementTextField.setValue(replacementText);
 			replacementComponentField.setMaxLength(Integer.MAX_VALUE);
 			replacementComponentField.setValue(replacementComponent);
-			Button removeButton = Button.builder(Component.nullToEmpty("🗑"), (button) -> {
+			Button removeButton = Button.builder(Component.nullToEmpty("🗑"), _ -> {
 				TextReplacer.removeTextReplacement(replacementText);
 				Minecraft.getInstance().setScreen(new TextReplacerConfigScreen(null));
 			})
@@ -95,9 +95,9 @@ public class TextReplacerConfigScreen extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-		this.renderBackground(context, mouseX, mouseY, delta);
-		context.drawString(this.font, "Thanks for using the mod!", 2, this.height - 10, 0xFFFFFF);
-		super.render(context, mouseX, mouseY, delta);
+	public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+		this.extractBackground(graphics, mouseX, mouseY, a);
+		graphics.text(this.font, "Thanks for using the mod!", 2, this.height - 10, 0xFFFFFF);
+		super.extractRenderState(graphics, mouseX, mouseY, a);
 	}
 }

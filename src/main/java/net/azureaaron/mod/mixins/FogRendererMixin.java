@@ -24,7 +24,7 @@ import net.minecraft.world.level.material.FogType;
 @Mixin(FogRenderer.class)
 public class FogRendererMixin {
 
-	@WrapOperation(method = "setupFog(Lnet/minecraft/client/Camera;ILnet/minecraft/client/DeltaTracker;FLnet/minecraft/client/multiplayer/ClientLevel;)Lorg/joml/Vector4f;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/fog/environment/FogEnvironment;isApplicable(Lnet/minecraft/world/level/material/FogType;Lnet/minecraft/world/entity/Entity;)Z"))
+	@WrapOperation(method = "setupFog", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/fog/environment/FogEnvironment;isApplicable(Lnet/minecraft/world/level/material/FogType;Lnet/minecraft/world/entity/Entity;)Z"))
 	private boolean aaronMod$checkIfEffectModifierApplies(FogEnvironment modifier, FogType submersionType, Entity cameraEntity, Operation<Boolean> operation, @Share("effectModifierApplied") LocalBooleanRef effectModifierApplied) {
 		boolean applies = operation.call(modifier, submersionType, cameraEntity);
 
@@ -35,7 +35,7 @@ public class FogRendererMixin {
 		return applies;
 	}
 
-	@Inject(method = "setupFog(Lnet/minecraft/client/Camera;ILnet/minecraft/client/DeltaTracker;FLnet/minecraft/client/multiplayer/ClientLevel;)Lorg/joml/Vector4f;", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/fog/FogData;renderDistanceEnd:F", opcode = Opcodes.PUTFIELD, shift = At.Shift.AFTER))
+	@Inject(method = "setupFog", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/fog/FogData;renderDistanceEnd:F", opcode = Opcodes.PUTFIELD, shift = At.Shift.AFTER))
 	private void aaronMod$noTerrainFog(CallbackInfoReturnable<Vector4f> cir, @Local FogType submersionType, @Local FogData fogData, @Share("effectModifierApplied") LocalBooleanRef effectModifierApplied) {
 		if (AaronModConfigManager.get().uiAndVisuals.world.hideFog && !effectModifierApplied.get() && (submersionType == FogType.ATMOSPHERIC)) {
 			fogData.environmentalStart = Float.MAX_VALUE;

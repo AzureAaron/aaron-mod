@@ -42,11 +42,11 @@ public abstract class SimpleAnimatedParticleMixin extends SingleQuadParticle {
 	@ModifyExpressionValue(method = "tick", at = @At(value = "CONSTANT", args = "floatValue=1.0"))
 	private float aaronMod$useConfiguredAlpha(float original) {
 		Identifier id = switch ((Object) this) {
-			case EndRodParticle ignored -> END_ROD;
-			case FireworkParticles.SparkParticle ignored -> FIREWORK;
-			case SquidInkParticle ignored when rCol == 204 && gCol == 31 && bCol == 102 -> GLOW_SQUID_INK;
-			case SquidInkParticle ignored -> SQUID_INK;
-			case TotemParticle ignored -> TOTEM;
+			case EndRodParticle _ -> END_ROD;
+			case FireworkParticles.SparkParticle _ -> FIREWORK;
+			case SquidInkParticle _ when rCol == 204 && gCol == 31 && bCol == 102 -> GLOW_SQUID_INK;
+			case SquidInkParticle _ -> SQUID_INK;
+			case TotemParticle _ -> TOTEM;
 
 			default -> null;
 		};

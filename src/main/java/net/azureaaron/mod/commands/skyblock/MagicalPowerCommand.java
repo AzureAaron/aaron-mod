@@ -2,8 +2,8 @@ package net.azureaaron.mod.commands.skyblock;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -169,7 +169,7 @@ public class MagicalPowerCommand extends SkyblockCommand {
 					//Drop if there is a higher rarity of the same accessory collected
 					return highestTierOfSameCollected != 0 ? !(highestTierOfSameCollected > RARITY_TIER_MAP.getOrDefault(pair.right(), 0)) : true;
 				})
-				.collect(Collectors.toMap(p -> p.left().id(), Function.identity(), (oldValue, newValue) -> newValue, Object2ObjectOpenHashMap::new));
+				.collect(Collectors.toMap(p -> p.left().id(), Function.identity(), (_, newValue) -> newValue, Object2ObjectOpenHashMap::new));
 
 		int magicalPower = 0;
 		int hegeMp = 0;
@@ -218,7 +218,7 @@ public class MagicalPowerCommand extends SkyblockCommand {
 					//Drop if all the accessories in the family have the same tier and this accessory isn't the one with the greatest hash code
 					return allAccessoriesFromFamilyAreTheSameTier ? accessory.hashCode() == greatestHashCodeInFamily : true;
 				})
-				.collect(Collectors.toMap(p -> p.left().id(), Function.identity(), (oldValue, newValue) -> newValue, Object2ObjectOpenHashMap::new));
+				.collect(Collectors.toMap(p -> p.left().id(), Function.identity(), (_, newValue) -> newValue, Object2ObjectOpenHashMap::new));
 
 		//Calculate the magical power!
 		for (Map.Entry<String, Pair<Accessory, String>> accessory : validAccessories.entrySet()) {

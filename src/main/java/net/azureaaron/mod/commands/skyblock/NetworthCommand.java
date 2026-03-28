@@ -2,8 +2,8 @@ package net.azureaaron.mod.commands.skyblock;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 
 import java.util.Comparator;
 import java.util.List;
@@ -129,7 +129,7 @@ public class NetworthCommand extends SkyblockCommand {
 					.map(petInfo -> new Dynamic<>(JsonOps.INSTANCE, petInfo))
 					.map(PetInfo.CODEC::parse)
 					.map(DataResult::getOrThrow)
-					.collect(Collectors.toMap(Function.identity(), petInfo -> NetworthCalculator.calculatePetNetworth(petInfo).price(), (a, b) -> a, Object2DoubleOpenHashMap::new)));
+					.collect(Collectors.toMap(Function.identity(), petInfo -> NetworthCalculator.calculatePetNetworth(petInfo).price(), (a, _) -> a, Object2DoubleOpenHashMap::new)));
 
 			//Essence
 			JsonObject essences = JsonHelper.getObject(profile, "currencies.essence").orElseGet(JsonObject::new);

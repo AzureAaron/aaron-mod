@@ -64,7 +64,7 @@ public class NetworthDataSuppliers {
 				JsonObject bazaarPriceData = JsonParser.parseString(Http.sendGetRequest("https://hysky.de/api/bazaar")).getAsJsonObject();
 				Object2DoubleMap<String> bazaar = bazaarPriceData.asMap().entrySet().stream()
 						.map(e -> Pair.of(e.getKey(), e.getValue().getAsJsonObject()))
-						.collect(Collectors.toMap(Pair::left, p -> JsonHelper.getDouble(p.right(), "buyPrice").orElse(0d), (a, b) -> a, Object2DoubleOpenHashMap::new));
+						.collect(Collectors.toMap(Pair::left, p -> JsonHelper.getDouble(p.right(), "buyPrice").orElse(0d), (a, _) -> a, Object2DoubleOpenHashMap::new));
 
 				lbinPrices = lbins;
 				bazaarPrices = bazaar;

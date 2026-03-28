@@ -12,7 +12,7 @@ import net.minecraft.client.Screenshot;
 @Mixin(Screenshot.class)
 public class ScreenshotMixin {
 
-	@Inject(method = "method_68156", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V"))
+	@Inject(method = "lambda$takeScreenshot$1", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V"))
 	private static void aaronMod$markScreenshotImages(CallbackInfo ci, @Local NativeImage image) {
 		image.markScreenshot();
 	}

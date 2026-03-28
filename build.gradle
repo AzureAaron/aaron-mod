@@ -1,5 +1,5 @@
 plugins {
-	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'maven-publish'
 	id 'net.azureaaron.mod.annotation-processor'
 	id "com.diffplug.spotless" version "${spotless_version}"
@@ -58,11 +58,10 @@ dependencies {
 
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
 	// Loom does not always add this
 	implementation "ca.weblite:java-objc-bridge:1.1"
@@ -70,28 +69,24 @@ dependencies {
 	//Mr. Jackson Json is no more :(
 
 	// Dandelion
-	include modImplementation("net.azureaaron:dandelion:${project.dandelion_version}")
+	include implementation("net.azureaaron:dandelion:${project.dandelion_version}")
 
-	include modImplementation("dev.isxander:yet-another-config-lib:${yacl_version}-fabric")
+	include implementation("dev.isxander:yet-another-config-lib:${yacl_version}-fabric")
 
-	modCompileOnly "com.terraformersmc:modmenu:${modmenu_version}"
+	compileOnly "com.terraformersmc:modmenu:${modmenu_version}"
 
-	include modImplementation("net.azureaaron:hm-api:${hm_api_version}")
+	include implementation("net.azureaaron:hm-api:${hm_api_version}")
 
 	include implementation("net.azureaaron:networth-calculator:${networth_calculator_version}")
 
 	include implementation("net.azureaaron:legacy-item-dfu:${legacy_item_dfu_version}")
 
 	// Fabric Language Kotlin for using MoulConfig - we are still a Java-exclusive mod
-	modImplementation("net.fabricmc:fabric-language-kotlin:${project.flk_version}")
+	implementation("net.fabricmc:fabric-language-kotlin:${project.flk_version}")
 }
 
 loom {
 	accessWidenerPath = file("src/main/resources/aaron-mod.classtweaker")
-
-	mixin {
-		useLegacyMixinAp = false
-	}
 
 	decompilers {
 		vineflower {
@@ -111,13 +106,13 @@ processResources {
 	inputs.property "version", project.version
 
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+		expand "version": inputs.properties.version
 	}
 }
 
 tasks.withType(JavaCompile).configureEach {
 	// Minecraft 1.20.5 (24w14a) upwards uses Java 21.
-	it.options.release = 21
+	it.options.release = 25
 }
 
 java {
@@ -126,8 +121,8 @@ java {
 	// If you remove this line, sources will not be generated.
 	//withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 test {

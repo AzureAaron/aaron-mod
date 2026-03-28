@@ -13,7 +13,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import net.azureaaron.mod.features.ChromaText;
 import net.azureaaron.mod.utils.render.AaronModRenderPipelines;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
@@ -53,9 +53,9 @@ public abstract class SkyblockerCustomizeNameWidgetMixin {
 		}
 
 		@Override
-		public void renderContents(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
-			this.renderDefaultSprite(context);
-			context.fill(AaronModRenderPipelines.CHROMA_GUI, this.getX() + 2, this.getY() + 2, this.getRight() - 2, this.getBottom() - 2, 0xFFAA5500);
+		public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+			this.extractDefaultSprite(graphics);
+			graphics.fill(AaronModRenderPipelines.CHROMA_GUI, this.getX() + 2, this.getY() + 2, this.getRight() - 2, this.getBottom() - 2, 0xFFAA5500);
 		}
 
 		@Override

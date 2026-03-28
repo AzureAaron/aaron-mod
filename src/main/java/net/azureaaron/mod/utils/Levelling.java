@@ -120,15 +120,15 @@ public class Levelling {
 		int[] xpChart = slayer.xpChart;
 
 		return switch ((Integer) xp) {
-			case Integer i when xpChart.length > 5 && xp >= xpChart[8] -> 9;
-			case Integer i when xpChart.length > 5 && xp >= xpChart[7] -> 8;
-			case Integer i when xpChart.length > 5 && xp >= xpChart[6] -> 7;
-			case Integer i when xpChart.length > 5 && xp >= xpChart[5] -> 6;
-			case Integer i when xp >= xpChart[4] -> 5;
-			case Integer i when xp >= xpChart[3] -> 4;
-			case Integer i when xp >= xpChart[2] -> 3;
-			case Integer i when xp >= xpChart[1] -> 2;
-			case Integer i when xp >= xpChart[0] -> 1;
+			case Integer _ when xpChart.length > 5 && xp >= xpChart[8] -> 9;
+			case Integer _ when xpChart.length > 5 && xp >= xpChart[7] -> 8;
+			case Integer _ when xpChart.length > 5 && xp >= xpChart[6] -> 7;
+			case Integer _ when xpChart.length > 5 && xp >= xpChart[5] -> 6;
+			case Integer _ when xp >= xpChart[4] -> 5;
+			case Integer _ when xp >= xpChart[3] -> 4;
+			case Integer _ when xp >= xpChart[2] -> 3;
+			case Integer _ when xp >= xpChart[1] -> 2;
+			case Integer _ when xp >= xpChart[0] -> 1;
 
 			default -> 0;
 		};

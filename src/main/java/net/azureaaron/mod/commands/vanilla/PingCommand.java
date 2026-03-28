@@ -1,6 +1,6 @@
 package net.azureaaron.mod.commands.vanilla;
 
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
@@ -51,8 +51,8 @@ public class PingCommand {
 	private static int printPing(Minecraft client, long ping) {
 		ColourProfiles colourProfile = Constants.PROFILE.get();
 
-		client.player.displayClientMessage(Component.literal("Ping » ").withColor(colourProfile.primaryColour.getAsInt())
-				.append(Component.literal(ping + " ms").withColor(colourProfile.secondaryColour.getAsInt())), false);
+		client.player.sendSystemMessage(Component.literal("Ping » ").withColor(colourProfile.primaryColour.getAsInt())
+				.append(Component.literal(ping + " ms").withColor(colourProfile.secondaryColour.getAsInt())));
 
 		return Command.SINGLE_SUCCESS;
 	}

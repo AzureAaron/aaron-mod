@@ -226,7 +226,7 @@ public class TextTransformer {
 	public static FormattedCharSequence replaceInOrdered(FormattedCharSequence orderedText, String wantedWord, Component replacementText) {
 		MutableComponent text = Component.empty();
 
-		orderedText.accept((index, style, codePoint) -> {
+		orderedText.accept((_, style, codePoint) -> {
 			text.append(Component.literal(Character.toString(codePoint)).setStyle(style));
 
 			return true;
@@ -258,7 +258,7 @@ public class TextTransformer {
 	public static FormattedCharSequence replaceMultipleInOrdered(FormattedCharSequence orderedText, String wantedWord, Component replacementText) {
 		MutableComponent text = Component.empty();
 
-		orderedText.accept((index, style, codePoint) -> {
+		orderedText.accept((_, style, codePoint) -> {
 			text.append(Component.literal(Character.toString(codePoint)).setStyle(style));
 
 			return true;
@@ -334,7 +334,7 @@ public class TextTransformer {
 				cache.put(current, orderedText);
 			}*/
 
-			current.getVisualOrderText().accept((index, style, codePoint) -> {
+			current.getVisualOrderText().accept((_, style, codePoint) -> {
 				newComponents.add(Component.literal(Character.toString(codePoint)).setStyle(style));
 
 				return true;
@@ -355,7 +355,7 @@ public class TextTransformer {
 		List<Component> newComponents = newText.getSiblings();
 
 		//Deconstruct the main text
-		text.getVisualOrderText().accept((index, style, codePoint) -> {
+		text.getVisualOrderText().accept((_, style, codePoint) -> {
 			newComponents.add(Component.literal(Character.toString(codePoint)).setStyle(style));
 
 			return true;
@@ -373,7 +373,7 @@ public class TextTransformer {
 
 			//The conversion to ordered text is the only way to efficiently traverse the replacement component
 			//as it could have nesting layers or legacy formatting -- maybe we can cache this?
-			current.getVisualOrderText().accept((index, style, codePoint) -> {
+			current.getVisualOrderText().accept((_, style, codePoint) -> {
 				newComponents.add(Component.literal(Character.toString(codePoint)).setStyle(style));
 
 				return true;
@@ -389,7 +389,7 @@ public class TextTransformer {
 	public static FormattedCharSequence replaceMultipleEntriesInOrdered(FormattedCharSequence orderedText, Object2ObjectLinkedOpenHashMap<String, Component> replacements) {
 		MutableComponent text = Component.empty();
 
-		orderedText.accept((index, style, codePoint) -> {
+		orderedText.accept((_, style, codePoint) -> {
 			text.append(Component.literal(Character.toString(codePoint)).setStyle(style));
 
 			return true;

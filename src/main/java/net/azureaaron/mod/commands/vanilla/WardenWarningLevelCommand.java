@@ -1,6 +1,6 @@
 package net.azureaaron.mod.commands.vanilla;
 
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 
 import java.util.Set;
 import java.util.function.Supplier;
@@ -37,7 +37,7 @@ public class WardenWarningLevelCommand {
 	@Init
 	public static void init() {
 		ClientCommandRegistrationCallback.EVENT.register(WardenWarningLevelCommand::register);
-		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> reset());
+		ClientPlayConnectionEvents.JOIN.register((_, _, _) -> reset());
 		PlaySoundEvent.EVENT.register(WardenWarningLevelCommand::onPlaySound);
 	}
 
