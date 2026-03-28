@@ -31,7 +31,7 @@
   ],
   "accessWidener": "aaron-mod.classtweaker",
   "depends": {
-    "fabricloader": ">=0.18.4",
+    "fabricloader": ">=0.18.5",
     "fabric-api": ">=0.144.0+26.1",
     "fabric-language-kotlin": "*",
     "minecraft": "~26.1",
