@@ -24,7 +24,7 @@ public interface UnsafeAccess {
 			Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
 			theUnsafe.setAccessible(true);
 			return (Unsafe) theUnsafe.get(null);
-		} catch (ReflectiveOperationException e) {
+		} catch (ReflectiveOperationException _) {
 			throw new UnsupportedOperationException("Unable to access Unsafe instance.");
 		}
 	}

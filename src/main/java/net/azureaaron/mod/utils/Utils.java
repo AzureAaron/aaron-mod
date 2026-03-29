@@ -28,16 +28,16 @@ public class Utils {
 		HypixelPacketEvents.HELLO.register(Utils::handlePacket);
 		HypixelPacketEvents.LOCATION_UPDATE.register(Utils::handlePacket);
 		//TODO set skyblock to false too
-		ClientPlayConnectionEvents.DISCONNECT.register((_handler, _client) -> isOnHypixel = false);
+		ClientPlayConnectionEvents.DISCONNECT.register((_, _) -> isOnHypixel = false);
 	}
 
 	private static void handlePacket(HypixelS2CPacket packet) {
 		switch (packet) {
-			case HelloS2CPacket(var _environment) -> {
+			case HelloS2CPacket _ -> {
 				isOnHypixel = true;
 			}
 
-			case LocationUpdateS2CPacket(var _serverName, var serverType, var _lobbyName, var mode, var _map) -> {
+			case LocationUpdateS2CPacket(_, var serverType, _, var mode, _) -> {
 				isOnSkyblock = serverType.orElse("").equals("SKYBLOCK");
 				Utils.mode = mode.orElse("");
 			}

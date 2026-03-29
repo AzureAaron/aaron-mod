@@ -166,7 +166,7 @@ public class CustomizeItemModelScreen extends Screen {
 			} else {
 				textField.setTextColor(ARGB.opaque(ChatFormatting.RED.getColor()));
 			}
-		} catch (NumberFormatException e) {
+		} catch (NumberFormatException _) {
 			textField.setTextColor(ARGB.opaque(ChatFormatting.RED.getColor()));
 		}
 

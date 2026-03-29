@@ -33,7 +33,7 @@ public class ChromaText {
 					return true;
 				}
 			}
-		} catch (Throwable ignored) {}
+		} catch (Throwable _) {}
 
 		return false;
 	}

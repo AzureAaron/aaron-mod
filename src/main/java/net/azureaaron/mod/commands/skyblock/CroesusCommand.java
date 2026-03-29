@@ -138,7 +138,7 @@ public class CroesusCommand extends SkyblockCommand {
 
 				//Add rewards to the rewards HashSet to later check for rare drops
 				//rare drops can be duplicated in the list however common drops are deduplicated.
-				chest.rewards().forEach((element) -> {
+				chest.rewards().forEach(element -> {
 					String stringForm = element.getAsString();
 					boolean isRareLoot = Skyblock.getRareLootItems().keySet().stream().anyMatch(stringForm::equals);
 
