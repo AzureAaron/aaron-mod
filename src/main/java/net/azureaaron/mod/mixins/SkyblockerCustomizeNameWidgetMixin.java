@@ -60,6 +60,5 @@ public abstract class SkyblockerCustomizeNameWidgetMixin {
 
 		@Override
 		protected void updateWidgetNarration(NarrationElementOutput builder) {}
-
 	}
 }
