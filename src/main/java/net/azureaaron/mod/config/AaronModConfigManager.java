@@ -6,6 +6,7 @@ import java.util.function.UnaryOperator;
 
 import net.azureaaron.dandelion.api.ConfigManager;
 import net.azureaaron.dandelion.api.DandelionConfigScreen;
+import net.azureaaron.dandelion.api.PlatformLinks;
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.config.categories.GeneralCategory;
 import net.azureaaron.mod.config.categories.ItemModelCategory;
@@ -55,6 +56,10 @@ public class AaronModConfigManager {
 				.category(ParticlesCategory.create(defaults, config))
 				.category(TextReplacerCategory.create(defaults, config))
 				.category(ItemModelCategory.create(defaults, config))
+				.platformLinks(PlatformLinks.createBuilder()
+						.link(Component.literal("GitHub"), PlatformLinks.GITHUB_ICON, "https://github.com/AzureAaron/aaron-mod")
+						.link(Component.literal("Modrinth"), PlatformLinks.MODRINTH_ICON, "https://modrinth.com/mod/aaron-mod")
+						.build())
 				).generateScreen(parent, get().general.configBackend);
 	}
 }
