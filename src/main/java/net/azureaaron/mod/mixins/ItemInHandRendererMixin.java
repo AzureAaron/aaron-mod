@@ -30,18 +30,18 @@ public class ItemInHandRendererMixin {
 	private Minecraft minecraft;
 
 	@Inject(method = "renderArmWithItem", at = @At("HEAD"))
-	private void aaronMod$changeVariablesForPreviewScreen(CallbackInfo ci, @Local(argsOnly = true) LocalRef<InteractionHand> hand, @Local(argsOnly = true, ordinal = 2) LocalFloatRef swingProgress, @Local LocalRef<ItemStack> stack, @Local(argsOnly = true, ordinal = 3) LocalFloatRef equipProgress, @Local(argsOnly = true) LocalIntRef light) {
+	private void aaronMod$changeVariablesForPreviewScreen(CallbackInfo ci, @Local(name = "hand") LocalRef<InteractionHand> hand, @Local(name = "attack") LocalFloatRef swingProgress, @Local(name = "itemStack") LocalRef<ItemStack> stack, @Local(name = "inverseArmHeight") LocalFloatRef equipProgress, @Local(name = "lightCoords") LocalIntRef lightCoords) {
 		if (this.minecraft.screen instanceof CustomizeItemModelScreen itemModelScreen) {
 			hand.set(itemModelScreen.hand);
 			swingProgress.set(0f);
 			stack.set(itemModelScreen.previewItem);
 			equipProgress.set(0f);
-			light.set(LightCoordsUtil.FULL_BRIGHT);
+			lightCoords.set(LightCoordsUtil.FULL_BRIGHT);
 		}
 	}
 
 	@Inject(method = "renderArmWithItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemInHandRenderer;renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;I)V"))
-	private void aaronMod$transformHandheldItem(CallbackInfo ci, @Local(argsOnly = true) InteractionHand hand, @Local(argsOnly = true) PoseStack matrices) {
+	private void aaronMod$transformHandheldItem(CallbackInfo ci, @Local(name = "hand") InteractionHand hand, @Local(name = "poseStack") PoseStack matrices) {
 		if (AaronModConfigManager.get().itemModel.enableItemModelCustomization) {
 			AbstractHand config = switch (hand) {
 				case MAIN_HAND -> AaronModConfigManager.get().itemModel.mainHand;

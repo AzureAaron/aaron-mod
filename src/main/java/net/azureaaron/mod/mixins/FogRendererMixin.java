@@ -36,12 +36,12 @@ public class FogRendererMixin {
 	}
 
 	@Inject(method = "setupFog", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/fog/FogData;renderDistanceEnd:F", opcode = Opcodes.PUTFIELD, shift = At.Shift.AFTER))
-	private void aaronMod$noTerrainFog(CallbackInfoReturnable<Vector4f> cir, @Local FogType submersionType, @Local FogData fogData, @Share("effectModifierApplied") LocalBooleanRef effectModifierApplied) {
-		if (AaronModConfigManager.get().uiAndVisuals.world.hideFog && !effectModifierApplied.get() && (submersionType == FogType.ATMOSPHERIC)) {
-			fogData.environmentalStart = Float.MAX_VALUE;
-			fogData.environmentalEnd = Float.MAX_VALUE;
-			fogData.renderDistanceStart = Float.MAX_VALUE;
-			fogData.renderDistanceEnd = Float.MAX_VALUE;
+	private void aaronMod$noTerrainFog(CallbackInfoReturnable<Vector4f> cir, @Local(name = "fogType") FogType fogType, @Local(name = "fog") FogData fog, @Share("effectModifierApplied") LocalBooleanRef effectModifierApplied) {
+		if (AaronModConfigManager.get().uiAndVisuals.world.hideFog && !effectModifierApplied.get() && (fogType == FogType.ATMOSPHERIC)) {
+			fog.environmentalStart = Float.MAX_VALUE;
+			fog.environmentalEnd = Float.MAX_VALUE;
+			fog.renderDistanceStart = Float.MAX_VALUE;
+			fog.renderDistanceEnd = Float.MAX_VALUE;
 		}
 	}
 }

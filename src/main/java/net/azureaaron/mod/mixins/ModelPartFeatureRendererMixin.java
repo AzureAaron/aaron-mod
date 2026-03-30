@@ -18,12 +18,12 @@ import net.minecraft.client.renderer.feature.ModelPartFeatureRenderer;
 public class ModelPartFeatureRendererMixin {
 
 	@WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeStorage$ModelPartSubmit;outlineColor()I"), require = 2)
-	private int aaronMod$useCustomGlowColour(SubmitNodeStorage.ModelPartSubmit command, Operation<Integer> operation) {
-		return command.aaronMod$getCustomGlowColour() != MobGlow.NO_GLOW ? command.aaronMod$getCustomGlowColour() : operation.call(command);
+	private int aaronMod$useCustomGlowColour(SubmitNodeStorage.ModelPartSubmit submit, Operation<Integer> operation) {
+		return submit.aaronMod$getCustomGlowColour() != MobGlow.NO_GLOW ? submit.aaronMod$getCustomGlowColour() : operation.call(submit);
 	}
 
-	@ModifyVariable(method = "render", at = @At("LOAD"), argsOnly = true, require = 2)
-	private OutlineBufferSource aaronMod$useCustomGlowConsumers(OutlineBufferSource original, @Local SubmitNodeStorage.ModelPartSubmit command) {
-		return command.aaronMod$getCustomGlowColour() != MobGlow.NO_GLOW ? GlowRenderer.getInstance().getGlowVertexConsumers() : original;
+	@ModifyVariable(method = "render", at = @At("LOAD"), name = "outlineBufferSource", require = 2)
+	private OutlineBufferSource aaronMod$useCustomGlowConsumers(OutlineBufferSource original, @Local(name = "modelPartSubmit") SubmitNodeStorage.ModelPartSubmit submit) {
+		return submit.aaronMod$getCustomGlowColour() != MobGlow.NO_GLOW ? GlowRenderer.getInstance().getGlowVertexConsumers() : original;
 	}
 }

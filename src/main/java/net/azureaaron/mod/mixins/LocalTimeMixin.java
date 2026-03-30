@@ -38,7 +38,7 @@ public class LocalTimeMixin {
 	private DateFormat parsedFormat;
 
 	@WrapOperation(method = "get", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/item/properties/select/LocalTime;update()Ljava/lang/String;"))
-	private String aaronMod$decemberChristmasChests(LocalTime property, Operation<String> operation, @Local(argsOnly = true) ItemStack stack) {
+	private String aaronMod$decemberChristmasChests(LocalTime property, Operation<String> operation, @Local(name = "itemStack") ItemStack stack) {
 		if (AaronModConfigManager.get().uiAndVisuals.seasonal.decemberChristmasChests && isChest(stack) && ExtendedHolidays.isChristmasSeason()) {
 			//Ensure that we can format the date given that LocalDates are not equivalent to Dates in terms of what they represent
 			if (data.format().equals(CHRISTMAS_DATE_FORMAT)) {

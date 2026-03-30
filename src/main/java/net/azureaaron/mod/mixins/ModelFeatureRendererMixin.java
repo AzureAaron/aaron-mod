@@ -18,12 +18,12 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 public class ModelFeatureRendererMixin {
 
 	@WrapOperation(method = "renderModel(Lnet/minecraft/client/renderer/SubmitNodeStorage$ModelSubmit;Lnet/minecraft/client/renderer/rendertype/RenderType;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/client/renderer/OutlineBufferSource;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeStorage$ModelSubmit;outlineColor()I"), require = 2)
-	private <S> int aaronMod$useCustomGlowColour(SubmitNodeStorage.ModelSubmit<S> command, Operation<Integer> operation) {
-		return command.aaronMod$getCustomGlowColour() != MobGlow.NO_GLOW ? command.aaronMod$getCustomGlowColour() : operation.call(command);
+	private <S> int aaronMod$useCustomGlowColour(SubmitNodeStorage.ModelSubmit<S> submit, Operation<Integer> operation) {
+		return submit.aaronMod$getCustomGlowColour() != MobGlow.NO_GLOW ? submit.aaronMod$getCustomGlowColour() : operation.call(submit);
 	}
 
-	@ModifyVariable(method = "renderModel(Lnet/minecraft/client/renderer/SubmitNodeStorage$ModelSubmit;Lnet/minecraft/client/renderer/rendertype/RenderType;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/client/renderer/OutlineBufferSource;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;)V", at = @At("LOAD"), argsOnly = true, require = 2)
-	private <S> OutlineBufferSource aaronMod$useCustomGlowConsumers(OutlineBufferSource original, @Local(argsOnly = true) SubmitNodeStorage.ModelSubmit<S> command) {
-		return command.aaronMod$getCustomGlowColour() != MobGlow.NO_GLOW ? GlowRenderer.getInstance().getGlowVertexConsumers() : original;
+	@ModifyVariable(method = "renderModel(Lnet/minecraft/client/renderer/SubmitNodeStorage$ModelSubmit;Lnet/minecraft/client/renderer/rendertype/RenderType;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/client/renderer/OutlineBufferSource;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;)V", at = @At("LOAD"), name = "outlineBufferSource", require = 2)
+	private <S> OutlineBufferSource aaronMod$useCustomGlowConsumers(OutlineBufferSource original, @Local(name = "submit") SubmitNodeStorage.ModelSubmit<S> submit) {
+		return submit.aaronMod$getCustomGlowColour() != MobGlow.NO_GLOW ? GlowRenderer.getInstance().getGlowVertexConsumers() : original;
 	}
 }

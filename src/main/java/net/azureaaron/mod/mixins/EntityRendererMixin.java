@@ -17,7 +17,7 @@ import net.minecraft.world.entity.Entity;
 public class EntityRendererMixin {
 
 	@Inject(method = "extractRenderState", at = @At("TAIL"))
-	private void aaronMod$customGlow(CallbackInfo ci, @Local(argsOnly = true) Entity entity, @Local(argsOnly = true) EntityRenderState state) {
+	private void aaronMod$customGlow(CallbackInfo ci, @Local(name = "entity") Entity entity, @Local(name = "state") EntityRenderState state) {
 		if (MobGlow.hasOrComputeMobGlow(entity)) {
 			// Only use custom colour flag if the entity has no vanilla glow (so we can change Hypixel's glow colours without changing the glow's visibility)
 			// NB: Custom glow needs to be separate to avoid weird rendering bugs.

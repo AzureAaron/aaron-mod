@@ -53,8 +53,8 @@ public class GameRendererMixin {
 	private final GuiRenderState screenGuiRenderState = new GuiRenderState();
 
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlobalSettingsUniform;update(IIDJLnet/minecraft/client/DeltaTracker;ILnet/minecraft/world/phys/Vec3;Z)V", shift = At.Shift.AFTER))
-	private void aaronMod$updateShaderUniforms(CallbackInfo ci, @Local(argsOnly = true) DeltaTracker tickCounter) {
-		ShaderUniforms.updateShaderUniforms(tickCounter);
+	private void aaronMod$updateShaderUniforms(CallbackInfo ci, @Local(name = "deltaTracker") DeltaTracker deltaTracker) {
+		ShaderUniforms.updateShaderUniforms(deltaTracker);
 	}
 
 	@Inject(method = "render", at = @At(value = "CONSTANT", args = "stringValue=gui"))

@@ -20,9 +20,9 @@ import net.minecraft.resources.Identifier;
 public class ParticleEngineMixin {
 
 	@ModifyVariable(method = "createParticle(Lnet/minecraft/core/particles/ParticleOptions;DDDDDD)Lnet/minecraft/client/particle/Particle;", at = @At("STORE"))
-	private Particle aaronMod$modifyParticles(Particle original, @Local(argsOnly = true) ParticleOptions parameters, @Cancellable CallbackInfoReturnable<Particle> cir) {
+	private Particle aaronMod$modifyParticles(Particle original, @Local(name = "options") ParticleOptions options, @Cancellable CallbackInfoReturnable<Particle> cir) {
 		if (original != null) {
-			Identifier particleId = BuiltInRegistries.PARTICLE_TYPE.getKey(parameters.getType());
+			Identifier particleId = BuiltInRegistries.PARTICLE_TYPE.getKey(options.getType());
 
 			if (AaronModConfigManager.get().particles.states.getOrDefault(particleId, true)) {
 				return Particles.modifyParticle(original, particleId);
