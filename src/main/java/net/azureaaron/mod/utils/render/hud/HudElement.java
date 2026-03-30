@@ -34,7 +34,7 @@ public abstract class HudElement {
 	}
 
 	public int x() {
-		return x;
+		return this.x;
 	}
 
 	public void x(int x) {
@@ -42,7 +42,7 @@ public abstract class HudElement {
 	}
 
 	public int y() {
-		return y;
+		return this.y;
 	}
 
 	public void y(int y) {
@@ -50,7 +50,7 @@ public abstract class HudElement {
 	}
 
 	public float scale() {
-		return scale;
+		return this.scale;
 	}
 
 	public void scale(float scale) {
@@ -62,22 +62,22 @@ public abstract class HudElement {
 	public abstract int height();
 
 	public void apply() {
-		access.x(x);
-		access.y(y);
-		access.scale(scale);
+		this.access.x(this.x);
+		this.access.y(this.y);
+		this.access.scale(this.scale);
 	}
 
 	public void reset() {
-		x = defaultX;
-		y = defaultY;
-		scale = 1f;
+		this.x = this.defaultX;
+		this.y = this.defaultY;
+		this.scale = 1f;
 	}
 
 	/**
 	 * Returns whether this element should be rendered onto the HUD.
 	 */
 	protected boolean shouldRender() {
-		return !CLIENT.getDebugOverlay().showDebugScreen() && access.shouldRender();
+		return this.access.shouldRender();
 	}
 
 	/**
@@ -88,5 +88,5 @@ public abstract class HudElement {
 	/**
 	 * Used for rendering this element to the HUD with Fabric's HUD layer rendering system.
 	 */
-	public abstract void extractGui(GuiGraphicsExtractor graphics, DeltaTracker tickCounter);
+	public abstract void extractGui(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker);
 }

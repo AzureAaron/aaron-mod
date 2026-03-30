@@ -46,7 +46,7 @@ public class TextHudElement extends HudElement {
 	}
 
 	@Override
-	public void extractGui(GuiGraphicsExtractor graphics, DeltaTracker tickCounter) {
+	public void extractGui(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
 		if (shouldRender()) {
 			extractInternal(textSupplier.get(), graphics, access.x(), access.y(), access.scale());
 		}
