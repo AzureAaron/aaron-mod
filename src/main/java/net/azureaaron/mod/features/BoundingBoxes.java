@@ -2,7 +2,7 @@ package net.azureaaron.mod.features;
 
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.events.WorldRenderExtractionCallback;
+import net.azureaaron.mod.events.LevelRenderExtractionCallback;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.render.primitive.PrimitiveCollector;
@@ -11,7 +11,7 @@ public class BoundingBoxes {
 
 	@Init
 	public static void init() {
-		WorldRenderExtractionCallback.EVENT.register(BoundingBoxes::extractRendering);
+		LevelRenderExtractionCallback.EVENT.register(BoundingBoxes::extractRendering);
 	}
 
 	private static void extractRendering(PrimitiveCollector collector) {

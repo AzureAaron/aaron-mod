@@ -5,7 +5,7 @@ import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.events.ParticleSpawnEvent;
 import net.azureaaron.mod.events.ServerTickCallback;
-import net.azureaaron.mod.events.WorldRenderExtractionCallback;
+import net.azureaaron.mod.events.LevelRenderExtractionCallback;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.ServerTickCounter;
@@ -34,7 +34,7 @@ public class DragonTimers {
 
 	@Init
 	public static void init() {
-		WorldRenderExtractionCallback.EVENT.register(DragonTimers::extractRendering);
+		LevelRenderExtractionCallback.EVENT.register(DragonTimers::extractRendering);
 		ParticleSpawnEvent.EVENT.register(DragonTimers::onParticle);
 		ServerTickCallback.EVENT.register(DragonTimers::onServerTick);
 	}

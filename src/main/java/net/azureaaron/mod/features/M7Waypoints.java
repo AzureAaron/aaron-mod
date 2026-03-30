@@ -2,7 +2,7 @@ package net.azureaaron.mod.features;
 
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.events.WorldRenderExtractionCallback;
+import net.azureaaron.mod.events.LevelRenderExtractionCallback;
 import net.azureaaron.mod.utils.Cache;
 import net.azureaaron.mod.utils.Functions;
 import net.azureaaron.mod.utils.render.primitive.PrimitiveCollector;
@@ -28,7 +28,7 @@ public class M7Waypoints {
 
 	@Init
 	public static void init() {
-		WorldRenderExtractionCallback.EVENT.register(M7Waypoints::extractRendering);
+		LevelRenderExtractionCallback.EVENT.register(M7Waypoints::extractRendering);
 	}
 
 	private static void extractRendering(PrimitiveCollector collector) {

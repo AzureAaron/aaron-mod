@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.events.WorldRenderExtractionCallback;
+import net.azureaaron.mod.events.LevelRenderExtractionCallback;
 import net.azureaaron.mod.mixins.accessors.TransientEntitySectionManagerAccessor;
 import net.azureaaron.mod.mixins.accessors.ClientLevelAccessor;
 import net.azureaaron.mod.utils.Cache;
@@ -28,7 +28,7 @@ public class DragonHealth {
 
 	@Init
 	public static void init() {
-		WorldRenderExtractionCallback.EVENT.register(DragonHealth::extractRendering);
+		LevelRenderExtractionCallback.EVENT.register(DragonHealth::extractRendering);
 	}
 
 	private static void extractRendering(PrimitiveCollector collector) {

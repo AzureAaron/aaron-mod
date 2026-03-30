@@ -3,7 +3,7 @@ package net.azureaaron.mod.utils.render;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.azureaaron.mod.annotations.Init;
-import net.azureaaron.mod.events.WorldRenderExtractionCallback;
+import net.azureaaron.mod.events.LevelRenderExtractionCallback;
 import net.azureaaron.mod.utils.render.primitive.PrimitiveCollectorImpl;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionContext;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
@@ -26,7 +26,7 @@ public class RenderHelper {
 		profiler.push("aaronModPrimitiveCollection");
 		collector = new PrimitiveCollectorImpl(context.levelState(), context.levelState().cameraRenderState.cullFrustum);
 
-		WorldRenderExtractionCallback.EVENT.invoker().onExtract(collector);
+		LevelRenderExtractionCallback.EVENT.invoker().onExtract(collector);
 		collector.endCollection();
 		profiler.pop();
 	}
