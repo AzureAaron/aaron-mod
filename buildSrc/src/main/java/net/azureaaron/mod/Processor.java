@@ -4,26 +4,34 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.classfile.ClassFile;
+import java.lang.classfile.ClassHierarchyResolver;
+import java.lang.classfile.ClassModel;
+import java.lang.classfile.ClassFile.ClassHierarchyResolverOption;
+import java.lang.constant.ClassDesc;
+import java.lang.constant.ConstantDescs;
+import java.lang.reflect.AccessFlag;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.tasks.compile.JavaCompile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
+import org.jspecify.annotations.Nullable;
 
 import net.azureaaron.mod.init.InitProcessor;
 import net.azureaaron.mod.object.ObjectProcessor;
@@ -33,24 +41,106 @@ public class Processor implements Plugin<Project> {
 	/**
 	 * The directory where compiled .class files are output.
 	 */
-	public static File classesDir;
+	public static @Nullable File classesDir;
+	public static @Nullable URLClassLoader compileClasspathLoader;
 
 	@Override
 	public void apply(Project project) {
 		project.getTasks().withType(JavaCompile.class).named("compileJava").get().doLast(task -> {
-			classesDir = ((JavaCompile) task).getDestinationDirectory().get().getAsFile();
+			JavaCompile javaCompile = (JavaCompile) task;
+			classesDir = javaCompile.getDestinationDirectory().get().getAsFile();
 
-			InitProcessor.apply();
-			ObjectProcessor.apply();
+			// Used for quickly extracting information from the mod's classes (so we don't reparse them a bunch of times)
+			// NB: These class models MUST NOT be used when injecting into the class otherwise transformations will not stack!!!
+			Map<Path, ClassModel> aaronModClasses = readAaronModClasses();
+
+			// The ClassFile API needs the complete hierarchy of classes in use to construct correct bytecode, so we
+			// create the appropriate resolvers that provide such information.
+			ClassHierarchyResolver aaronModClassHierarchyResolver = aaronModClassHierarchyResolver(aaronModClasses);
+			ClassHierarchyResolver compileClassPathHierarchyResolver = compileClasspathHierarchyResolver(javaCompile);
+			ClassHierarchyResolver completeClassHierarchyResolver = aaronModClassHierarchyResolver
+					.orElse(compileClassPathHierarchyResolver)
+					.orElse(ClassHierarchyResolver.defaultResolver());
+			ClassFile context = ClassFile.of(ClassHierarchyResolverOption.of(completeClassHierarchyResolver));
+
+			// Apply processors
+			InitProcessor.apply(context, aaronModClasses);
+			ObjectProcessor.apply(context, aaronModClasses);
+
+			// Close URL class loader
+			if (compileClasspathLoader != null) {
+				try {
+					compileClasspathLoader.close();
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
 		});
 	}
 
-	public static void forEachClass(@NotNull File directory, BiConsumer<Path, InputStream> consumer) {
+	private static Map<Path, ClassModel> readAaronModClasses() {
+		Map<Path, ClassModel> aaronModClasses = new HashMap<>();
+		ClassFile classFile = ClassFile.of();
+
+		forEachClass((path, _) -> {
+			try {
+				ClassModel model = classFile.parse(path);
+
+				aaronModClasses.put(path, model);
+			} catch (Exception e) {
+				LOGGER.error("Failed to parse class {}", path, e);
+			}
+		});
+
+		return aaronModClasses;
+	}
+
+	/// Builds a {@code ClassHierarchyResolver} for Aaron Mod's classes.
+	private static ClassHierarchyResolver aaronModClassHierarchyResolver(Map<Path, ClassModel> classes) {
+		List<ClassDesc> interfaces = new ArrayList<>();
+		Map<ClassDesc, ClassDesc> classToSuperClass = new HashMap<>();
+
+		for (ClassModel model : classes.values()) {
+			ClassDesc desc = model.thisClass().asSymbol();
+
+			if (model.flags().has(AccessFlag.INTERFACE)) {
+				interfaces.add(desc);
+			}
+
+			if (!model.isModuleInfo() && !desc.equals(ConstantDescs.CD_Object)) {
+				classToSuperClass.put(desc, model.superclass().get().asSymbol());
+			}
+		}
+
+		return ClassHierarchyResolver.of(interfaces, classToSuperClass);
+	}
+
+	/// Builds a {@code ClassHierarchyResolver} for all classes on the compile time classpath.
+	private static ClassHierarchyResolver compileClasspathHierarchyResolver(JavaCompile javaCompile) {
+		// Creates a URLClassLoader that will provide the compile classes to the ClassFile API on-demand.
+		URL[] urls = javaCompile.getClasspath().getFiles().stream()
+				.map(File::toURI)
+				.map(uri -> {
+					try {
+						return uri.toURL();
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+				})
+				.toArray(URL[]::new);
+		compileClasspathLoader = new URLClassLoader(urls, null);
+
+		// We only want the classes to be parsed, not completely loaded so we want the resource parsing resolver.
+		return ClassHierarchyResolver.ofResourceParsing(compileClasspathLoader);
+	}
+
+	public static void forEachClass(File directory, BiConsumer<Path, InputStream> consumer) {
 		try {
 			Files.walkFileTree(directory.toPath(), new SimpleFileVisitor<>() {
 				@Override
 				public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
 					if (!path.toString().endsWith(".class")) return FileVisitResult.CONTINUE;
+
 					try (InputStream inputStream = Files.newInputStream(path)) {
 						consumer.accept(path, inputStream);
 					} catch (IOException e) {
@@ -70,11 +160,10 @@ public class Processor implements Plugin<Project> {
 	}
 
 	public static void forEachClass(Consumer<InputStream> consumer) {
-		forEachClass((_path, inputStream) -> consumer.accept(inputStream));
+		forEachClass((_, inputStream) -> consumer.accept(inputStream));
 	}
 
-	@Nullable
-	public static File findClass(File directory, String className) {
+	public static @Nullable File findClass(File directory, String className) {
 		if (!className.endsWith(".class")) className += ".class";
 
 		if (!directory.isDirectory()) throw new IllegalArgumentException("Not a directory");
@@ -91,34 +180,26 @@ public class Processor implements Plugin<Project> {
 		return null;
 	}
 
-	@Nullable
-	public static File findClass(String className) {
+	public static @Nullable File findClass(String className) {
 		return findClass(classesDir, className);
 	}
 
-	public static void readClass(InputStream classData, Function<ClassReader, ClassVisitor> visitorFactory) {
-		try {
-			ClassReader classReader = new ClassReader(classData);
-			classReader.accept(visitorFactory.apply(classReader), ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+	public static void writeClass(Path classFilePath, byte[] classBytes) {
+		try (OutputStream outputStream = Files.newOutputStream(classFilePath)) {
+			outputStream.write(classBytes);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public static void writeClass(Path classFilePath, Function<ClassWriter, ClassVisitor> visitorFactory) {
-		try (InputStream inputStream = Files.newInputStream(classFilePath)) {
-			ClassReader classReader = new ClassReader(inputStream);
-			//ASM's frame calculation reads classes reflectively which will cause a TypeNotPresentException
-			//since the classes we are transforming aren't on the class path. So we need to manually calculate
-			//the stack frames.
-			ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-			classReader.accept(visitorFactory.apply(classWriter), 0);
+	/// Prints out any {@code VerifyErrors} that arise from class transformations.
+	///
+	/// All class transformations should call this at the end to ensure everything is correct.
+	public static void verifyClass(ClassFile context, ClassDesc desc, byte[] newClassBytes) {
+		List<VerifyError> verifyErrors = context.verify(newClassBytes);
 
-			try (OutputStream outputStream = Files.newOutputStream(classFilePath)) {
-				outputStream.write(classWriter.toByteArray());
-			}
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		for (VerifyError error : verifyErrors) {
+			System.out.println("Verify error for '%s': %s".formatted(desc.packageName(), error));
 		}
 	}
 }
