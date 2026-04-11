@@ -11,7 +11,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.azureaaron.mod.config.AaronModConfigManager;
 
-public class ChromaSettings implements AutoCloseable {
+public class ChromaSettingsUniform implements AutoCloseable {
 	private static final int SIZE = new Std140SizeCalculator().putFloat().putFloat().putFloat().putFloat().get();
 	protected final GpuBuffer buffer = RenderSystem.getDevice().createBuffer(() -> "Chroma Settings", GpuBuffer.USAGE_COPY_DST | GpuBuffer.USAGE_UNIFORM, SIZE);
 
