@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
+import java.util.function.Supplier;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.renderer.MappableRingBuffer;
@@ -218,17 +220,17 @@ public class Renderer {
 			int vertexBufferSize = entry.getIntValue();
 			MappableRingBuffer vertexBuffer = VERTEX_BUFFERS.get(format);
 
-			VERTEX_BUFFERS.put(format, initOrResizeBuffer(vertexBuffer, "Skyblocker vertex buffer for: " + format, vertexBufferSize, GpuBuffer.USAGE_VERTEX));
+			VERTEX_BUFFERS.put(format, initOrResizeBuffer(vertexBuffer, () -> "Skyblocker vertex buffer for: " + format, vertexBufferSize, GpuBuffer.USAGE_VERTEX));
 		}
 	}
 
-	private static MappableRingBuffer initOrResizeBuffer(MappableRingBuffer buffer, String name, int neededSize, int usageType) {
+	private static MappableRingBuffer initOrResizeBuffer(MappableRingBuffer buffer, Supplier<String> name, int neededSize, int usageType) {
 		if (buffer == null || buffer.size() < neededSize) {
 			if (buffer != null) {
 				buffer.close();
 			}
 
-			return new MappableRingBuffer(() -> name, GpuBuffer.USAGE_MAP_WRITE | usageType, neededSize);
+			return new MappableRingBuffer(name, GpuBuffer.USAGE_MAP_WRITE | usageType, neededSize);
 		}
 
 		return buffer;
