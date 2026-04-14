@@ -3,6 +3,7 @@ package net.azureaaron.mod.utils.render.primitive;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.azureaaron.mod.debug.Debug;
 import net.azureaaron.mod.utils.render.FrustumUtils;
 import net.azureaaron.mod.utils.render.state.FilledBoxRenderState;
 import net.azureaaron.mod.utils.render.state.OutlinedBoxRenderState;
@@ -20,7 +21,8 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public final class PrimitiveCollectorImpl implements PrimitiveCollector {
-	private static final Minecraft CLIENT = Minecraft.getInstance();
+	private static final Minecraft MINECRAFT = Minecraft.getInstance();
+	private static final boolean USE_INSTANCING = Debug.debugEnabled();
 	protected static final int MAX_OVERWORLD_BUILD_HEIGHT = 319;
 	@SuppressWarnings("unused")
 	private final LevelRenderState worldState;
@@ -130,7 +132,7 @@ public final class PrimitiveCollectorImpl implements PrimitiveCollector {
 			this.textStates = new ArrayList<>();
 		}
 
-		Font textRenderer = CLIENT.font;
+		Font textRenderer = MINECRAFT.font;
 		float xOffset = -textRenderer.width(text) / 2f;
 		Font.PreparedText glyphs = textRenderer.prepareText(text, xOffset, yOffset, CommonColors.WHITE, false, false, 0);
 
@@ -163,8 +165,12 @@ public final class PrimitiveCollectorImpl implements PrimitiveCollector {
 		}
 
 		if (this.filledBoxStates != null) {
-			for (FilledBoxRenderState state : this.filledBoxStates) {
-				FilledBoxRenderer.INSTANCE.submitPrimitives(state, cameraState);
+			if (USE_INSTANCING) {
+				FilledBoxInstancedRenderer.INSTANCE.submitPrimitives(this.filledBoxStates, cameraState);
+			} else {
+				for (FilledBoxRenderState state : this.filledBoxStates) {
+					FilledBoxRenderer.INSTANCE.submitPrimitives(state, cameraState);
+				}
 			}
 		}
 

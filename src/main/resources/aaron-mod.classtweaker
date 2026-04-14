@@ -1,4 +1,4 @@
-classTweaker v1 official
+classTweaker v2 official
 
 # Optimized Screenshots
 accessible	class	com/mojang/blaze3d/platform/NativeImage$WriteCallback
@@ -23,3 +23,6 @@ inject-interface	net/minecraft/client/renderer/LevelRenderer	net/azureaaron/mod/
 inject-interface	net/minecraft/client/renderer/SubmitNodeStorage$ItemSubmit	net/azureaaron/mod/injected/CustomGlowState
 inject-interface	net/minecraft/client/renderer/SubmitNodeStorage$ModelPartSubmit	net/azureaaron/mod/injected/CustomGlowState
 inject-interface	net/minecraft/client/renderer/SubmitNodeStorage$ModelSubmit	net/azureaaron/mod/injected/CustomGlowState
+
+# Texel Buffers
+extend-enum com/mojang/blaze3d/textures/TextureFormat AARON_MOD$RGBA32F

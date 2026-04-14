@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.shaders.UniformType;
+import com.mojang.blaze3d.textures.TextureFormat;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 
@@ -17,6 +18,19 @@ public class AaronModRenderPipelines {
 			.withVertexShader(Main.id("core/chroma_gui"))
 			.withFragmentShader(Main.id("core/chroma_gui"))
 			.withUniform("Chroma", UniformType.UNIFORM_BUFFER)
+			.build());
+	public static final RenderPipeline FILLED_INSTANCED = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
+			.withLocation(Main.id("pipeline/debug_filled_box_instanced"))
+			.withVertexShader(Main.id("core/filled_box"))
+			.withUniform("BoxData", UniformType.TEXEL_BUFFER, TextureFormat.AARON_MOD$RGBA32F)
+			.withVertexFormat(DefaultVertexFormat.POSITION, VertexFormat.Mode.QUADS)
+			.build());
+	public static final RenderPipeline FILLED_THROUGH_WALLS_INSTANCED = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
+			.withLocation(Main.id("pipeline/debug_filled_box_through_walls_instanced"))
+			.withVertexShader(Main.id("core/filled_box"))
+			.withUniform("BoxData", UniformType.TEXEL_BUFFER, TextureFormat.AARON_MOD$RGBA32F)
+			.withVertexFormat(DefaultVertexFormat.POSITION, VertexFormat.Mode.QUADS)
+			.withDepthStencilState(Optional.empty())
 			.build());
 	public static final RenderPipeline FILLED_THROUGH_WALLS = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.DEBUG_FILLED_SNIPPET)
 			.withLocation(Main.id("pipeline/debug_filled_box_through_walls"))
