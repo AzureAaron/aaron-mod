@@ -21,6 +21,7 @@ import net.azureaaron.mod.utils.render.GlowRenderer;
 import net.azureaaron.mod.utils.render.GuiHelper;
 import net.azureaaron.mod.utils.render.Renderer;
 import net.azureaaron.mod.utils.render.ShaderUniforms;
+import net.azureaaron.mod.utils.render.primitive.FilledBoxInstancedRenderer;
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -65,6 +66,7 @@ public class GameRendererMixin {
 	@Inject(method = "close", at = @At("TAIL"))
 	private void aaronMod$closeResources(CallbackInfo ci) {
 		ShaderUniforms.close();
+		FilledBoxInstancedRenderer.INSTANCE.close();
 		Renderer.close();
 		GlowRenderer.getInstance().close();
 		GuiHelper.close();

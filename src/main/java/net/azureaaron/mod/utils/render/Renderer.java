@@ -60,7 +60,7 @@ public class Renderer {
 	private static final Map<VertexFormat, MappableRingBuffer> VERTEX_BUFFERS = new Object2ObjectOpenHashMap<>();
 	private static final List<PreparedDraw> PREPARED_DRAWS = new ArrayList<>();
 	private static final List<Draw> DRAWS = new ArrayList<>();
-	private static BatchedDraw lastUnbatchedDraw = null;
+	private static @Nullable BatchedDraw lastUnbatchedDraw = null;
 
 	public static BufferBuilder getBuffer(RenderPipeline pipeline) {
 		return getBuffer(pipeline, TextureSetup.noTexture(), 1f);
@@ -77,7 +77,7 @@ public class Renderer {
 	/**
 	 * Returns the appropriate {@code BufferBuilder} that should be used with the given pipeline, texture view, and line width.
 	 */
-	private static BufferBuilder getBuffer(RenderPipeline pipeline, TextureSetup textureSetup, float alphaMultiplier) {
+	public static BufferBuilder getBuffer(RenderPipeline pipeline, TextureSetup textureSetup, float alphaMultiplier) {
 		if (!EXCLUDED_FROM_BATCHING.contains(pipeline)) {
 			return setupBatched(pipeline, textureSetup, alphaMultiplier);
 		} else {
