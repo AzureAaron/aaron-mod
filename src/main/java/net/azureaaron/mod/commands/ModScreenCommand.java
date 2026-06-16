@@ -34,21 +34,21 @@ public class ModScreenCommand {
 
 	private static int handleOpenModScreen(FabricClientCommandSource source) {
 		Minecraft client = source.getClient();
-		client.schedule(() -> client.setScreen(new ModScreen(null)));
+		client.schedule(() -> client.gui.setScreen(new ModScreen(null)));
 
 		return Command.SINGLE_SUCCESS;
 	}
 
 	private static int handleOpenConfig(FabricClientCommandSource source) {
 		Minecraft client = source.getClient();
-		client.schedule(() -> client.setScreen(AaronModConfigManager.createGui(null)));
+		client.schedule(() -> client.gui.setScreen(AaronModConfigManager.createGui(null)));
 
 		return Command.SINGLE_SUCCESS;
 	}
 
 	private static int handleOpenHudConfig(FabricClientCommandSource source) {
 		Minecraft client = source.getClient();
-		client.schedule(() -> client.setScreen(new HudElementConfigScreen(null)));
+		client.schedule(() -> client.gui.setScreen(new HudElementConfigScreen(null)));
 
 		return Command.SINGLE_SUCCESS;
 	}

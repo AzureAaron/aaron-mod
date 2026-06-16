@@ -29,9 +29,9 @@ public class ItemInHandRendererMixin {
 	@Final
 	private Minecraft minecraft;
 
-	@Inject(method = "renderArmWithItem", at = @At("HEAD"))
+	@Inject(method = "submitArmWithItem", at = @At("HEAD"))
 	private void aaronMod$changeVariablesForPreviewScreen(CallbackInfo ci, @Local(name = "hand") LocalRef<InteractionHand> hand, @Local(name = "attack") LocalFloatRef swingProgress, @Local(name = "itemStack") LocalRef<ItemStack> stack, @Local(name = "inverseArmHeight") LocalFloatRef equipProgress, @Local(name = "lightCoords") LocalIntRef lightCoords) {
-		if (this.minecraft.screen instanceof CustomizeItemModelScreen itemModelScreen) {
+		if (this.minecraft.gui.screen() instanceof CustomizeItemModelScreen itemModelScreen) {
 			hand.set(itemModelScreen.hand);
 			swingProgress.set(0f);
 			stack.set(itemModelScreen.previewItem);
@@ -40,7 +40,7 @@ public class ItemInHandRendererMixin {
 		}
 	}
 
-	@Inject(method = "renderArmWithItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemInHandRenderer;renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;I)V"))
+	@Inject(method = "submitArmWithItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemInHandRenderer;renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;I)V"))
 	private void aaronMod$transformHandheldItem(CallbackInfo ci, @Local(name = "hand") InteractionHand hand, @Local(name = "poseStack") PoseStack matrices) {
 		if (AaronModConfigManager.get().itemModel.enableItemModelCustomization) {
 			AbstractHand config = switch (hand) {

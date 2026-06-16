@@ -31,6 +31,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemLore;
@@ -163,7 +164,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta, DataComponentH
 								// Remove any trailing commas and whitespace
 								String trimmed = trimEnchant(componentString);
 
-								if (maxEnchantmentColours.containsKey(trimmed) && currentComponent.getStyle().getColor().getValue() == ChatFormatting.BLUE.getColor()) {
+								if (maxEnchantmentColours.containsKey(trimmed) && currentComponent.getStyle().getColor().getValue() == TextColor.BLUE.getValue()) {
 									totalLength += componentString.length();
 								}
 							}
@@ -175,7 +176,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta, DataComponentH
 								String componentString = currentComponent.getString();
 								String trimmed = trimEnchant(componentString);
 
-								if (maxEnchantmentColours.containsKey(trimmed) && currentComponent.getStyle().getColor().getValue() == ChatFormatting.BLUE.getColor()) {
+								if (maxEnchantmentColours.containsKey(trimmed) && currentComponent.getStyle().getColor().getValue() == TextColor.BLUE.getValue()) {
 									iterator.set(TextTransformer.progressivelyRainbowify(componentString, totalLength, positionLeftOffAt).withStyle(style -> style.withItalic(false)));
 									maxEnchantmentColours.removeInt(trimmed);
 									positionLeftOffAt += componentString.length();
@@ -187,7 +188,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta, DataComponentH
 							for (Component currentComponent : textComponents) {
 								String enchant = trimEnchant(currentComponent.getString());
 
-								if (maxEnchantmentColours.containsKey(enchant) && currentComponent.getStyle().getColor().getValue() == ChatFormatting.BLUE.getColor()) {
+								if (maxEnchantmentColours.containsKey(enchant) && currentComponent.getStyle().getColor().getValue() == TextColor.BLUE.getValue()) {
 									((MutableComponent) currentComponent).withColor(maxEnchantmentColours.getInt(enchant));
 									maxEnchantmentColours.removeInt(enchant);
 								}
@@ -200,7 +201,7 @@ public abstract class ItemStackMixin implements AaronModItemMeta, DataComponentH
 					for (Component currentComponent : line.getSiblings()) {
 						String enchant = trimEnchant(currentComponent.getString());
 
-						if (goodEnchantmentColours.containsKey(enchant) && currentComponent.getStyle().getColor().getValue() == ChatFormatting.BLUE.getColor()) {
+						if (goodEnchantmentColours.containsKey(enchant) && currentComponent.getStyle().getColor().getValue() == TextColor.BLUE.getValue()) {
 							((MutableComponent) currentComponent).withColor(goodEnchantmentColours.getInt(enchant));
 							goodEnchantmentColours.removeInt(enchant);
 						}

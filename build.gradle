@@ -103,10 +103,11 @@ base {
 }
 
 processResources {
-	inputs.property "version", project.version
+	def version = project.version
+	inputs.property "version", version
 
 	filesMatching("fabric.mod.json") {
-		expand "version": inputs.properties.version
+		expand "version": version
 	}
 }
 
@@ -132,8 +133,11 @@ test {
 }
 
 jar {
+	def archivesName = project.base.archivesName
+	inputs.property "archivesName", archivesName
+
 	from("LICENSE") {
-		rename { "${it}_${base.archivesName.get()}"}
+		rename { "${it}_${archivesName}"}
 	}
 }
 

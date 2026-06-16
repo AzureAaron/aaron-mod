@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.ScreenEffectRenderer;
 @Mixin(ScreenEffectRenderer.class)
 public class ScreenEffectRendererMixin {
 
-	@Inject(method = "renderFire", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "submitFire", at = @At("HEAD"), cancellable = true)
 	private static void aaronMod$hideFireOverlay(CallbackInfo ci) {
 		if (AaronModConfigManager.get().uiAndVisuals.overlays.hideFireOverlay) ci.cancel();
 	}

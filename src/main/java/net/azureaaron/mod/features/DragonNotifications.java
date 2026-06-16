@@ -5,7 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.Constants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.Hud;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 
@@ -21,7 +21,7 @@ public class DragonNotifications {
 
 			if (client.player == null) return; //Shouldn't be the case ever
 
-			Gui hud = client.gui;
+			Hud hud = client.gui.hud;
 			Component text = Component.literal(dragon.name).withColor(dragon.colour);
 
 			hud.clearTitles();

@@ -65,12 +65,12 @@ public class ModScreen extends Screen {
 	}
 
 	private void openConfig() {
-		this.minecraft.setScreen(AaronModConfigManager.createGui(this));
+		this.minecraft.gui.setScreen(AaronModConfigManager.createGui(this));
 	}
 
 	@Override
 	public void onClose() {
-		this.minecraft.setScreen(parent);
+		this.minecraft.gui.setScreen(parent);
 	}
 
 	@Override

@@ -1,7 +1,8 @@
 package net.azureaaron.mod.utils.render.primitive;
 
 import org.joml.Matrix4f;
-import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.azureaaron.mod.utils.render.AaronModRenderPipelines;
 import net.azureaaron.mod.utils.render.Renderer;
 import net.azureaaron.mod.utils.render.state.FilledBoxRenderState;
@@ -15,19 +16,19 @@ public final class FilledBoxRenderer implements PrimitiveRenderer<FilledBoxRende
 
 	@Override
 	public void submitPrimitives(FilledBoxRenderState state, CameraRenderState cameraState) {
-		BufferBuilder buffer = Renderer.getBuffer(state.throughWalls ? AaronModRenderPipelines.FILLED_THROUGH_WALLS : RenderPipelines.DEBUG_FILLED_BOX);
+		VertexConsumer buffer = Renderer.getBuffer(state.throughWalls() ? AaronModRenderPipelines.FILLED_THROUGH_WALLS : RenderPipelines.DEBUG_FILLED_BOX);
 		Matrix4f positionMatrix = new Matrix4f()
 				.translate((float) -cameraState.pos.x, (float) -cameraState.pos.y, (float) -cameraState.pos.z);
-		float minX = (float) state.minX;
-		float minY = (float) state.minY;
-		float minZ = (float) state.minZ;
-		float maxX = (float) state.maxX;
-		float maxY = (float) state.maxY;
-		float maxZ = (float) state.maxZ;
-		float red = state.colourComponents[0];
-		float green = state.colourComponents[1];
-		float blue = state.colourComponents[2];
-		float alpha = state.alpha;
+		float minX = (float) state.minX();
+		float minY = (float) state.minY();
+		float minZ = (float) state.minZ();
+		float maxX = (float) state.maxX();
+		float maxY = (float) state.maxY();
+		float maxZ = (float) state.maxZ();
+		float red = state.colourComponents()[0];
+		float green = state.colourComponents()[1];
+		float blue = state.colourComponents()[2];
+		float alpha = state.alpha();
 
 		// Front face
 		buffer.addVertex(positionMatrix, minX, minY, minZ).setColor(red, green, blue, alpha);

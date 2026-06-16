@@ -41,6 +41,6 @@ public class ChatComponentMixin {
 
 	@ModifyReturnValue(method = "isChatFocused", at = @At("RETURN"))
 	private boolean aaronMod$hideChatWhileCustomizingItemModel(boolean original) {
-		return original || this.minecraft.screen instanceof CustomizeItemModelScreen;
+		return original || this.minecraft.gui.screen() instanceof CustomizeItemModelScreen;
 	}
 }

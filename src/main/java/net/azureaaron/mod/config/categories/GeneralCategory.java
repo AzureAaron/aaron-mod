@@ -28,7 +28,7 @@ public class GeneralCategory {
 				.option(ButtonOption.createBuilder()
 						.name(Component.literal("Aaron's Mod Main Screen"))
 						.prompt(Component.literal("Open"))
-						.action(screen -> Minecraft.getInstance().setScreen(new ModScreen(screen)))
+						.action(screen -> Minecraft.getInstance().gui.setScreen(new ModScreen(screen)))
 						.build())
 				.option(HudElementConfigScreen.createOption())
 				.option(Option.<ConfigType>createBuilder()

@@ -42,7 +42,7 @@ public class MouseHandlerMixin implements MouseGuiPositioner {
 
 	@Inject(method = "releaseMouse", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/InputConstants;grabOrReleaseMouse(Lcom/mojang/blaze3d/platform/Window;IDD)V", shift = At.Shift.AFTER))
 	private void aaronMod$afterUnlock(CallbackInfo ci) {
-		if (AaronModConfigManager.get().refinements.input.dontResetCursorPosition && CLIENT.screen instanceof ContainerScreen) {
+		if (AaronModConfigManager.get().refinements.input.dontResetCursorPosition && CLIENT.gui.screen() instanceof ContainerScreen) {
 			this.xpos = this.guiX;
 			this.ypos = this.guiY;
 
@@ -54,7 +54,7 @@ public class MouseHandlerMixin implements MouseGuiPositioner {
 	private static double aaronMod$adjustPosition(Window window, double xOrY, Operation<Double> operation) {
 		double scaled;
 
-		if (SeparateInventoryGuiScale.isEnabled(CLIENT.screen)) {
+		if (SeparateInventoryGuiScale.isEnabled(CLIENT.gui.screen())) {
 			SavedScaleState state = SavedScaleState.create(window).adjust();
 			scaled = operation.call(window, xOrY);
 

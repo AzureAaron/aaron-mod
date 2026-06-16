@@ -28,6 +28,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.InteractionHand;
@@ -53,7 +54,7 @@ public class ItemModelCustomizationScreen extends Screen {
 					.then(literal("itemModel")
 							.executes(context -> {
 								Minecraft client = context.getSource().getClient();
-								client.schedule(() -> client.setScreen(new ItemModelCustomizationScreen(null)));
+								client.schedule(() -> client.gui.setScreen(new ItemModelCustomizationScreen(null)));
 
 								return Command.SINGLE_SUCCESS;
 							}))
@@ -110,7 +111,7 @@ public class ItemModelCustomizationScreen extends Screen {
 				itemIdField.setTextColor(EditBox.DEFAULT_TEXT_COLOR);
 				this.previewItem = new ItemStack(BuiltInRegistries.ITEM.getValue(id));
 			} else {
-				itemIdField.setTextColor(ARGB.opaque(ChatFormatting.RED.getColor()));
+				itemIdField.setTextColor(ARGB.opaque(TextColor.RED.getValue()));
 			}
 		});
 
@@ -118,7 +119,7 @@ public class ItemModelCustomizationScreen extends Screen {
 	}
 
 	private void openModelCustomizationScreen(InteractionHand hand) {
-		this.minecraft.setScreen(new CustomizeItemModelScreen(this, hand, this.previewItem));
+		this.minecraft.gui.setScreen(new CustomizeItemModelScreen(this, hand, this.previewItem));
 	}
 
 	private boolean hasEnabledItemCustomization() {
@@ -146,6 +147,6 @@ public class ItemModelCustomizationScreen extends Screen {
 
 	@Override
 	public void onClose() {
-		this.minecraft.setScreen(this.parent);
+		this.minecraft.gui.setScreen(this.parent);
 	}
 }

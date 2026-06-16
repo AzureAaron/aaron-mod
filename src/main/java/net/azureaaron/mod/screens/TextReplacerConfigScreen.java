@@ -71,7 +71,7 @@ public class TextReplacerConfigScreen extends Screen {
 			replacementComponentField.setValue(replacementComponent);
 			Button removeButton = Button.builder(Component.nullToEmpty("🗑"), _ -> {
 				TextReplacer.removeTextReplacement(replacementText);
-				Minecraft.getInstance().setScreen(new TextReplacerConfigScreen(null));
+				Minecraft.getInstance().gui.setScreen(new TextReplacerConfigScreen(null));
 			})
 					.bounds(0, 0, 20, 20)
 					.build();
@@ -91,7 +91,7 @@ public class TextReplacerConfigScreen extends Screen {
 	@Override
 	public void onClose() {
 		assert this.minecraft != null;
-		this.minecraft.setScreen(parent);
+		this.minecraft.gui.setScreen(parent);
 	}
 
 	@Override

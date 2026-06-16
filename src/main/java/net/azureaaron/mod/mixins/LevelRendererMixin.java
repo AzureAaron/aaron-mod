@@ -1,6 +1,7 @@
 package net.azureaaron.mod.mixins;
 
 import org.jspecify.annotations.Nullable;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -10,7 +11,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import net.azureaaron.mod.injected.EntityRenderMarker;
@@ -33,24 +33,13 @@ public class LevelRendererMixin implements EntityRenderMarker {
 		return this.currentStateBeingRendered;
 	}
 
-	@ModifyExpressionValue(method = "extractVisibleEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/state/EntityRenderState;appearsGlowing()Z"))
-	private boolean aaronMod$markCustomGlowUsedThisFrame(boolean hasVanillaGlow, @Local(name = "state") EntityRenderState entityRenderState) {
-		boolean hasCustomGlow = entityRenderState.getDataOrDefault(MobGlow.ENTITY_CUSTOM_GLOW_COLOUR, MobGlow.NO_GLOW) != MobGlow.NO_GLOW;
-
-		if (hasCustomGlow) {
-			this.levelRenderState.setData(MobGlow.FRAME_USES_CUSTOM_GLOW, true);
-		}
-
-		return hasVanillaGlow || hasCustomGlow;
-	}
-
 	@Inject(method = "lambda$addMainPass$0",
-			slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;shouldShowEntityOutlines()Z")),
-			at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/CommandEncoder;clearColorAndDepthTextures(Lcom/mojang/blaze3d/textures/GpuTexture;ILcom/mojang/blaze3d/textures/GpuTexture;D)V", ordinal = 0, shift = At.Shift.AFTER)
+			slice = @Slice(from = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/state/level/LevelRenderState;shouldShowEntityOutlines:Z", opcode = Opcodes.GETFIELD)),
+			at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/CommandEncoder;clearColorAndDepthTextures(Lcom/mojang/blaze3d/textures/GpuTexture;Lorg/joml/Vector4fc;Lcom/mojang/blaze3d/textures/GpuTexture;D)V", ordinal = 0, shift = At.Shift.AFTER)
 	)
 	private void aaronMod$updateGlowDepthTexDepth(CallbackInfo ci) {
 		if (this.levelRenderState.getDataOrDefault(MobGlow.FRAME_USES_CUSTOM_GLOW, false)) {
-			GlowRenderer.getInstance().updateGlowDepthTexDepth();
+			GlowRenderer.INSTANCE.updateGlowDepthTexDepth();
 		}
 	}
 
@@ -62,10 +51,5 @@ public class LevelRendererMixin implements EntityRenderMarker {
 	@Inject(method = "submitEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/EntityRenderDispatcher;submit(Lnet/minecraft/client/renderer/entity/state/EntityRenderState;Lnet/minecraft/client/renderer/state/level/CameraRenderState;DDDLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;)V", shift = At.Shift.AFTER))
 	private void aaronMod$clearEntityStateBeingRendered(CallbackInfo ci) {
 		this.currentStateBeingRendered = null;
-	}
-
-	@Inject(method = "lambda$addMainPass$0", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/OutlineBufferSource;endOutlineBatch()V"))
-	private void aaronMod$drawGlowVertexConsumers(CallbackInfo ci) {
-		GlowRenderer.getInstance().getGlowVertexConsumers().endOutlineBatch();
 	}
 }

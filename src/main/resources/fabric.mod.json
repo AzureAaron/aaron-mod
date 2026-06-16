@@ -31,17 +31,17 @@
   ],
   "accessWidener": "aaron-mod.classtweaker",
   "depends": {
-    "fabricloader": ">=0.19.1",
-    "fabric-api": ">=0.145.4+26.1.2",
+    "fabricloader": ">=0.19.3",
+    "fabric-api": ">=0.152.1+26.2",
     "fabric-language-kotlin": "*",
-    "minecraft": "~26.1",
+    "minecraft": "~26.2",
     "java": ">=25",
-    "dandelion": ">=1.0.0-alpha.18+26.1",
-    "yet_another_config_lib_v3": ">=3.9.2+26.1",
-    "hm-api": ">=1.0.3+26.1"
+    "dandelion": ">=1.0.0-alpha.20+26.2",
+    "yet_another_config_lib_v3": ">=3.9.4+26.2",
+    "hm-api": ">=1.0.4+26.2"
   },
   "suggests": {
-    "modmenu": ">=18.0.0-alpha.8"
+    "modmenu": ">=20.0.0-beta.2"
   },
   "custom": {
     "modmenu": {

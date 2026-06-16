@@ -46,7 +46,7 @@ public class CopyChatCommand {
 	 * The new middle click to copy chat supersedes this feature!
 	 */
 	private static int copyMessage(FabricClientCommandSource source, String excerpt) {
-		List<GuiMessage> chatHistory = ((ChatComponentAccessor) minecraftClient.gui.getChat()).getMessages();
+		List<GuiMessage> chatHistory = ((ChatComponentAccessor) minecraftClient.gui.hud.getChat()).getMessages();
 		int maxChatHistoryLength = ChatComponentAccessor.getMaxHistoryLength();
 		int maxIteration = (chatHistory.size() >= maxChatHistoryLength) ? maxChatHistoryLength : chatHistory.size();
 		boolean foundAMessage = false;
@@ -56,12 +56,12 @@ public class CopyChatCommand {
 			currentMessage = ChatFormatting.stripFormatting(currentMessage);
 			if (currentMessage.contains(excerpt)) {
 				minecraftClient.keyboardHandler.setClipboard(currentMessage);
-				SystemToast.add(minecraftClient.getToastManager(), SystemToast.SystemToastId.PERIODIC_NOTIFICATION, successToastTitle, successToastDescription);
+				SystemToast.add(minecraftClient.gui.toastManager(), SystemToast.SystemToastId.PERIODIC_NOTIFICATION, successToastTitle, successToastDescription);
 				foundAMessage = true;
 				break;
 			}
 		}
-		if (!foundAMessage) SystemToast.add(minecraftClient.getToastManager(), SystemToast.SystemToastId.PERIODIC_NOTIFICATION, notFoundToastTitle, notFoundToastDescription);
+		if (!foundAMessage) SystemToast.add(minecraftClient.gui.toastManager(), SystemToast.SystemToastId.PERIODIC_NOTIFICATION, notFoundToastTitle, notFoundToastDescription);
 		return Command.SINGLE_SUCCESS;
 	}
 }

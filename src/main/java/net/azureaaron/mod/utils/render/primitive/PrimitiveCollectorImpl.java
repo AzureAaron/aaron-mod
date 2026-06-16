@@ -64,17 +64,7 @@ public final class PrimitiveCollectorImpl implements PrimitiveCollector {
 			this.filledBoxStates = new ArrayList<>();
 		}
 
-		FilledBoxRenderState state = new FilledBoxRenderState();
-		state.minX = minX;
-		state.minY = minY;
-		state.minZ = minZ;
-		state.maxX = maxX;
-		state.maxY = maxY;
-		state.maxZ = maxZ;
-		state.colourComponents = colourComponents;
-		state.alpha = alpha;
-		state.throughWalls = throughWalls;
-
+		FilledBoxRenderState state = new FilledBoxRenderState(minX, minY, minZ, maxX, maxY, maxZ, colourComponents, alpha, throughWalls);
 		this.filledBoxStates.add(state);
 	}
 
@@ -95,18 +85,7 @@ public final class PrimitiveCollectorImpl implements PrimitiveCollector {
 			this.outlinedBoxStates = new ArrayList<>();
 		}
 
-		OutlinedBoxRenderState state = new OutlinedBoxRenderState();
-		state.minX = minX;
-		state.minY = minY;
-		state.minZ = minZ;
-		state.maxX = maxX;
-		state.maxY = maxY;
-		state.maxZ = maxZ;
-		state.colourComponents = colourComponents;
-		state.alpha = alpha;
-		state.lineWidth = lineWidth;
-		state.throughWalls = throughWalls;
-
+		OutlinedBoxRenderState state = new OutlinedBoxRenderState(minX, minY, minZ, maxX, maxY, maxZ, colourComponents, alpha, lineWidth, throughWalls);
 		this.outlinedBoxStates.add(state);
 	}
 
@@ -136,13 +115,7 @@ public final class PrimitiveCollectorImpl implements PrimitiveCollector {
 		float xOffset = -textRenderer.width(text) / 2f;
 		Font.PreparedText glyphs = textRenderer.prepareText(text, xOffset, yOffset, CommonColors.WHITE, false, false, 0);
 
-		TextRenderState state = new TextRenderState();
-		state.glyphs = glyphs;
-		state.pos = pos;
-		state.scale = scale * 0.025f;
-		state.yOffset = yOffset;
-		state.throughWalls = throughWalls;
-
+		TextRenderState state = new TextRenderState(glyphs, pos, scale * 0.025f, yOffset, throughWalls);
 		this.textStates.add(state);
 	}
 

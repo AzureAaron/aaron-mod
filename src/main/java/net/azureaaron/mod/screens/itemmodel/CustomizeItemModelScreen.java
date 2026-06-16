@@ -12,7 +12,6 @@ import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.config.configs.ItemModelConfig.AbstractHand;
 import net.azureaaron.mod.screens.ModScreen;
 import net.azureaaron.mod.utils.render.GuiHelper;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
@@ -28,6 +27,7 @@ import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
@@ -164,10 +164,10 @@ public class CustomizeItemModelScreen extends Screen {
 				setter.accept(value);
 				textField.setTextColor(EditBox.DEFAULT_TEXT_COLOR);
 			} else {
-				textField.setTextColor(ARGB.opaque(ChatFormatting.RED.getColor()));
+				textField.setTextColor(ARGB.opaque(TextColor.RED.getValue()));
 			}
 		} catch (NumberFormatException _) {
-			textField.setTextColor(ARGB.opaque(ChatFormatting.RED.getColor()));
+			textField.setTextColor(ARGB.opaque(TextColor.RED.getValue()));
 		}
 
 		this.hasChanges = !getConfigForHand(AaronModConfigManager.get()).equals(this.backup);
@@ -226,16 +226,16 @@ public class CustomizeItemModelScreen extends Screen {
 	@Override
 	public void onClose() {
 		if (this.hasChanges) {
-			this.minecraft.setScreen(new ConfirmScreen(confirmed -> {
+			this.minecraft.gui.setScreen(new ConfirmScreen(confirmed -> {
 				if (confirmed) {
 					this.revert();
-					this.minecraft.setScreen(this.parent);
+					this.minecraft.gui.setScreen(this.parent);
 				} else {
-					this.minecraft.setScreen(this);
+					this.minecraft.gui.setScreen(this);
 				}
 			}, Component.literal("Unsaved Changes"), Component.literal("Are you sure you want to exit this screen? Any changes will not be saved!"), Component.literal("Quit & Discard Changes"), CommonComponents.GUI_CANCEL));
 		} else {
-			this.minecraft.setScreen(this.parent);
+			this.minecraft.gui.setScreen(this.parent);
 		}
 	}
 }

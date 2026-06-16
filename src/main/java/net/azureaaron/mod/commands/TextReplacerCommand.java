@@ -42,7 +42,7 @@ public class TextReplacerCommand {
 	private static int openTextReplacerConfig(FabricClientCommandSource source) {
 		Minecraft client = source.getClient();
 
-		client.schedule(() -> client.setScreen(new TextReplacerConfigScreen(null)));
+		client.schedule(() -> client.gui.setScreen(new TextReplacerConfigScreen(null)));
 
 		return Command.SINGLE_SUCCESS;
 	}

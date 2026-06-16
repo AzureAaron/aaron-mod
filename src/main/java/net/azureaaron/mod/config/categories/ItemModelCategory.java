@@ -42,7 +42,7 @@ public class ItemModelCategory {
 						.name(Component.literal("Item Model Customization Menu"))
 						.prompt(Component.literal("Open"))
 						.description(Component.literal("Click here to customize your item model. Note you must be in a world to do this."))
-						.action(screen -> Minecraft.getInstance().setScreen(new ItemModelCustomizationScreen(screen)))
+						.action(screen -> Minecraft.getInstance().gui.setScreen(new ItemModelCustomizationScreen(screen)))
 						.build())
 				.option(Option.<Integer>createBuilder()
 						.name(Component.literal("Swing Duration"))

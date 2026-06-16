@@ -47,7 +47,7 @@ public final class HudElementConfigScreen extends Screen {
 		return ButtonOption.createBuilder()
 				.name(Component.literal("HUD Manager"))
 				.prompt(Component.literal("Open"))
-				.action(screen -> Minecraft.getInstance().setScreen(new HudElementConfigScreen(screen)))
+				.action(screen -> Minecraft.getInstance().gui.setScreen(new HudElementConfigScreen(screen)))
 				.build();
 	}
 
@@ -194,6 +194,6 @@ public final class HudElementConfigScreen extends Screen {
 		//Save the config
 		AaronModConfigManager.update(Consumers.nop());
 
-		this.minecraft.setScreen(parent);
+		this.minecraft.gui.setScreen(parent);
 	}
 }

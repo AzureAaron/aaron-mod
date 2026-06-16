@@ -5,7 +5,8 @@ import org.joml.Matrix4f;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
-import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.azureaaron.mod.utils.render.Renderer;
 import net.azureaaron.mod.utils.render.state.TextRenderState;
 import net.minecraft.client.gui.Font;
@@ -24,13 +25,13 @@ public final class TextPrimitiveRenderer implements PrimitiveRenderer<TextRender
 
 	@Override
 	public void submitPrimitives(TextRenderState state, CameraRenderState cameraState) {
-		RenderPipeline pipeline = state.throughWalls ? SEE_THROUGH : NORMAL;
+		RenderPipeline pipeline = state.throughWalls() ? SEE_THROUGH : NORMAL;
 		Matrix4f positionMatrix = new Matrix4f()
-				.translate((float) (state.pos.x() - cameraState.pos.x()), (float) (state.pos.y() - cameraState.pos.y()), (float) (state.pos.z() - cameraState.pos.z()))
+				.translate((float) (state.pos().x() - cameraState.pos.x()), (float) (state.pos().y() - cameraState.pos.y()), (float) (state.pos().z() - cameraState.pos.z()))
 				.rotate(cameraState.orientation)
-				.scale(state.scale, -state.scale, state.scale);
+				.scale(state.scale(), -state.scale(), state.scale());
 
-		state.glyphs.visit(new Font.GlyphVisitor() {
+		state.glyphs().visit(new Font.GlyphVisitor() {
 			@Override
 			public void acceptGlyph(TextRenderable.Styled glyph) {
 				this.draw(glyph);
@@ -43,7 +44,7 @@ public final class TextPrimitiveRenderer implements PrimitiveRenderer<TextRender
 
 			private void draw(TextRenderable glyph) {
 				TextureSetup textureSetup = TextureSetup.singleTextureWithLightmap(glyph.textureView(), RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST));
-				BufferBuilder buffer = Renderer.getBuffer(pipeline, textureSetup);
+				VertexConsumer buffer = Renderer.getBuffer(pipeline, textureSetup);
 
 				glyph.render(positionMatrix, buffer, LightCoordsUtil.FULL_BRIGHT, false);
 			}

@@ -14,8 +14,8 @@ import net.azureaaron.mod.utils.render.hud.TextHudElement;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.Identifier;
 
 public class PingHud {
@@ -47,7 +47,7 @@ public class PingHud {
 		if (!AaronModConfigManager.get().uiAndVisuals.pingHud.colouredPing) {
 			colour = 0xFFFFFF;
 		} else if (average < 0) {
-			colour = ChatFormatting.GRAY.getColor();
+			colour = TextColor.GRAY.getValue();
 		} else if (average < 150) {
 			colour = 0x00FF21;
 		} else if (average < 300) {

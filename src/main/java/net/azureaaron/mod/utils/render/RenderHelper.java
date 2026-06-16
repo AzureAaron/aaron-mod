@@ -6,6 +6,7 @@ import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.events.LevelRenderExtractionCallback;
 import net.azureaaron.mod.utils.render.primitive.PrimitiveCollectorImpl;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionContext;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.minecraft.client.Minecraft;
@@ -17,7 +18,7 @@ public class RenderHelper {
 
 	@Init
 	public static void init() {
-		LevelRenderEvents.END_EXTRACTION.register(RenderHelper::startExtraction);
+		LevelExtractionEvents.END_EXTRACTION.register(RenderHelper::startExtraction);
 		LevelRenderEvents.END_MAIN.register(RenderHelper::executeDraws);
 	}
 
