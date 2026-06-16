@@ -3,7 +3,8 @@ package net.azureaaron.mod.utils.render.primitive;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.azureaaron.mod.debug.Debug;
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.azureaaron.mod.utils.render.FrustumUtils;
 import net.azureaaron.mod.utils.render.state.FilledBoxRenderState;
 import net.azureaaron.mod.utils.render.state.OutlinedBoxRenderState;
@@ -22,8 +23,8 @@ import net.minecraft.world.phys.Vec3;
 
 public final class PrimitiveCollectorImpl implements PrimitiveCollector {
 	private static final Minecraft MINECRAFT = Minecraft.getInstance();
-	private static final boolean USE_INSTANCING = Debug.debugEnabled();
 	protected static final int MAX_OVERWORLD_BUILD_HEIGHT = 319;
+	private final boolean isVulkan;
 	@SuppressWarnings("unused")
 	private final LevelRenderState worldState;
 	private final Frustum frustum;
@@ -33,6 +34,7 @@ public final class PrimitiveCollectorImpl implements PrimitiveCollector {
 	private boolean frozen = false;
 
 	public PrimitiveCollectorImpl(LevelRenderState worldState, Frustum frustum) {
+		this.isVulkan = RenderSystem.getDevice().getDeviceInfo().backendName().equalsIgnoreCase("vulkan");
 		this.worldState = worldState;
 		this.frustum = frustum;
 	}
@@ -138,7 +140,7 @@ public final class PrimitiveCollectorImpl implements PrimitiveCollector {
 		}
 
 		if (this.filledBoxStates != null) {
-			if (USE_INSTANCING) {
+			if (this.isVulkan) {
 				FilledBoxInstancedRenderer.INSTANCE.submitPrimitives(this.filledBoxStates, cameraState);
 			} else {
 				for (FilledBoxRenderState state : this.filledBoxStates) {
@@ -148,7 +150,7 @@ public final class PrimitiveCollectorImpl implements PrimitiveCollector {
 		}
 
 		if (this.outlinedBoxStates != null) {
-			if (USE_INSTANCING) {
+			if (this.isVulkan) {
 				OutlinedBoxInstancedRenderer.INSTANCE.submitPrimitives(this.outlinedBoxStates, cameraState);
 			} else {
 				for (OutlinedBoxRenderState state : this.outlinedBoxStates) {
