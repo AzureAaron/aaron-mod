@@ -1,7 +1,7 @@
 package net.azureaaron.mod.utils;
 
+import java.time.Duration;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ public class ApiUtils {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final Minecraft CLIENT = Minecraft.getInstance();
 	private static final LoadingCache<String, ProfileResult> GAME_PROFILE_CACHE = CacheBuilder.newBuilder()
-			.expireAfterWrite(20, TimeUnit.MINUTES)
+			.expireAfterWrite(Duration.ofMinutes(20))
 			.build(new CacheLoader<>() {
 				@Override
 				public ProfileResult load(String key) throws Exception {
