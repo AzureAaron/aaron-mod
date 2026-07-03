@@ -34,3 +34,4 @@ inject-interface	net/minecraft/client/particle/SingleQuadParticle	net/azureaaron
 inject-interface	net/minecraft/client/renderer/LevelRenderer	net/azureaaron/mod/injected/EntityRenderMarker
 inject-interface	net/minecraft/client/renderer/feature/ItemFeatureRenderer$Submit	net/azureaaron/mod/injected/CustomGlowState
 inject-interface	net/minecraft/client/renderer/rendertype/RenderType	net/azureaaron/mod/injected/GlowRenderTypeHolder
+inject-interface	net/minecraft/client/gui/font/GlyphRenderTypes	net/azureaaron/mod/injected/IdentifiableGlyphRenderType

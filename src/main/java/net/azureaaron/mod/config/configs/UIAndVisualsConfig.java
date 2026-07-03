@@ -122,13 +122,13 @@ public class UIAndVisualsConfig {
 	}
 
 	public static class ChromaText {
+		public boolean enableChromaText = true;
+
 		public int chromaSize = 100;
 
 		public float chromaSpeed = 4f;
 
 		public float chromaSaturation = 0.75f;
-
-		public boolean canDisableChromaPack = false;
 	}
 
 	public static class Seasonal {

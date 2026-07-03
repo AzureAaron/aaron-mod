@@ -1,7 +1,0 @@
-{
-	"pack": {
-		"min_format": 69,
-		"max_format": 2147483647,
-		"description": "Provides the chroma text colour feature."
-	}
-}

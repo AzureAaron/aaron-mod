@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.google.common.collect.ImmutableList;
 import com.llamalad7.mixinextras.sugar.Local;
 
-import net.azureaaron.mod.features.ChromaText;
+import net.azureaaron.mod.config.AaronModConfigManager;
 import net.azureaaron.mod.utils.render.AaronModRenderPipelines;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractButton;
@@ -35,7 +35,7 @@ public abstract class SkyblockerCustomizeNameWidgetMixin {
 
 	@Inject(method = "addFormattingButtons", at = @At("RETURN"), require = 0)
 	private void aaronMod$addChromaButton(ImmutableList.Builder<AbstractWidget> builder, CallbackInfo ci, @Local(name = "colorButtonIndex") int colourButtonIndex) {
-		if (ChromaText.chromaColourAvailable()) {
+		if (AaronModConfigManager.get().uiAndVisuals.chromaText.enableChromaText) {
 			builder.add(grid.addChild(new ChromaColourButton(), 2, colourButtonIndex));
 		}
 	}
