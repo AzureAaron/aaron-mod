@@ -9,8 +9,7 @@ in vec4 vertexColor;
 out vec4 fragColor;
 
 void main() {
-	vec4 colour = vertexColor;
-	colour = applyChroma(vertexColor, colour);
+	vec4 colour = applyChromaColour(vertexColor, 1.0);
 
 	if (colour.a == 0.0) {
 		discard;

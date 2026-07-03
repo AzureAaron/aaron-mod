@@ -21,10 +21,6 @@ in float cylindricalVertexDistance;
 in vec4 vertexColor;
 in vec2 texCoord0;
 
-#ifdef AARON_MOD_CHROMA
-in vec4 rawColour;
-#endif
-
 out vec4 fragColor;
 
 void main() {
@@ -44,7 +40,7 @@ void main() {
 	}
 
 #ifdef AARON_MOD_CHROMA
-	color = applyChroma(rawColour, color);
+	color = applyChromaTextColour(color);
 #endif
 
 #ifdef IS_SEE_THROUGH

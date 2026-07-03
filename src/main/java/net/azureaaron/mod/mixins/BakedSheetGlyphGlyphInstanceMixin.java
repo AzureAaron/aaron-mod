@@ -18,6 +18,7 @@ import net.minecraft.client.gui.font.GlyphRenderTypes;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 
 @Mixin(targets = "net.minecraft.client.gui.font.glyphs.BakedSheetGlyph$GlyphInstance")
 public abstract class BakedSheetGlyphGlyphInstanceMixin {
@@ -54,6 +55,7 @@ public abstract class BakedSheetGlyphGlyphInstanceMixin {
 
 	@Unique
 	private boolean isChroma() {
-		return AaronModConfigManager.get().uiAndVisuals.chromaText.enableChromaText && this.color() == 0xFFAA5500;
+		// The colour is forced to have an alpha of 255 so that this detects the chroma colour when the alpha is different (e.g. with name tags behind walls)
+		return AaronModConfigManager.get().uiAndVisuals.chromaText.enableChromaText && ARGB.opaque(this.color()) == 0xFFAA5500;
 	}
 }
