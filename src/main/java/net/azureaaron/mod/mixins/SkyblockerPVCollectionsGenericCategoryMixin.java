@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
-import net.azureaaron.mod.features.ChromaText;
+import net.azureaaron.mod.config.AaronModConfigManager;
 
 @Mixin(targets = "de.hysky.skyblocker.skyblock.profileviewer.collections.GenericCategory")
 @Pseudo
@@ -15,6 +15,6 @@ public class SkyblockerPVCollectionsGenericCategoryMixin {
 
 	@ModifyArg(method = "extractRenderState", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;text(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;IIIZ)V", ordinal = 1), index = 4, require = 0)
 	private int aaronMod$maxCollectionsChromaText(int colour) {
-		return colour == Color.MAGENTA.getRGB() && ChromaText.chromaColourAvailable() ? 0xFFAA5500 : colour;
+		return colour == Color.MAGENTA.getRGB() && AaronModConfigManager.get().uiAndVisuals.chromaText.enableChromaText ? 0xFFAA5500 : colour;
 	}
 }

@@ -23,6 +23,7 @@ inject-interface	net/minecraft/client/renderer/LevelRenderer	net/azureaaron/mod/
 inject-interface	net/minecraft/client/renderer/SubmitNodeStorage$ItemSubmit	net/azureaaron/mod/injected/CustomGlowState
 inject-interface	net/minecraft/client/renderer/SubmitNodeStorage$ModelPartSubmit	net/azureaaron/mod/injected/CustomGlowState
 inject-interface	net/minecraft/client/renderer/SubmitNodeStorage$ModelSubmit	net/azureaaron/mod/injected/CustomGlowState
+inject-interface	net/minecraft/client/gui/font/GlyphRenderTypes	net/azureaaron/mod/injected/IdentifiableGlyphRenderType
 
 # Texel Buffers
 extend-enum com/mojang/blaze3d/textures/TextureFormat AARON_MOD$RGBA32F

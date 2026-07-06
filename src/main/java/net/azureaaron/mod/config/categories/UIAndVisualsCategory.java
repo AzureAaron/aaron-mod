@@ -279,6 +279,14 @@ public class UIAndVisualsCategory {
 				.group(OptionGroup.createBuilder()
 						.name(Component.literal("Chroma Text"))
 						.collapsed(true)
+						.option(Option.<Boolean>createBuilder()
+								.name(Component.literal("Enable Chroma Text"))
+								.description(Component.literal("Enables using chroma text with the HEX code #AA5500 or &z (section symbol)."))
+								.binding(defaults.uiAndVisuals.chromaText.enableChromaText,
+										() -> config.uiAndVisuals.chromaText.enableChromaText,
+										newValue -> config.uiAndVisuals.chromaText.enableChromaText = newValue)
+								.controller(ConfigUtils.createBooleanController())
+								.build())
 						.option(Option.<Integer>createBuilder()
 								.name(Component.literal("Chroma Size"))
 								.description(Component.literal("Allows you to change the size of colours in the chroma gradient. The value must be between 1 and 200."))
@@ -302,15 +310,6 @@ public class UIAndVisualsCategory {
 										() -> config.uiAndVisuals.chromaText.chromaSaturation,
 										newValue -> config.uiAndVisuals.chromaText.chromaSaturation = newValue)
 								.controller(FloatController.createBuilder().range(0f, 1f).build())
-								.build())
-						.option(Option.<Boolean>createBuilder()
-								.name(Component.literal("Disable Chroma Pack"))
-								.description(Component.literal("Enabling this option allows you to disable the built-in chroma text resourcepack. Only turn this on if you actually want to turn off the pack otherwise it may misbehave and not work properly."))
-								.binding(defaults.uiAndVisuals.chromaText.canDisableChromaPack,
-										() -> config.uiAndVisuals.chromaText.canDisableChromaPack,
-										newValue -> config.uiAndVisuals.chromaText.canDisableChromaPack = newValue)
-								.controller(ConfigUtils.createBooleanController())
-								//.flag(OptionFlag.GAME_RESTART)
 								.build())
 						.build())
 
