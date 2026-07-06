@@ -1,10 +1,12 @@
 package net.azureaaron.mod.config.categories;
 
 import net.azureaaron.dandelion.api.ConfigCategory;
+import net.azureaaron.dandelion.api.KeyMappingOption;
 import net.azureaaron.dandelion.api.Option;
 import net.azureaaron.dandelion.api.OptionGroup;
 import net.azureaaron.dandelion.api.controllers.FloatController;
 import net.azureaaron.dandelion.api.controllers.IntegerController;
+import net.azureaaron.mod.Keybinds;
 import net.azureaaron.mod.Main;
 import net.azureaaron.mod.config.AaronModConfig;
 import net.azureaaron.mod.config.ConfigUtils;
@@ -162,6 +164,10 @@ public class UIAndVisualsCategory {
 				.group(OptionGroup.createBuilder()
 						.name(Component.literal("World"))
 						.collapsed(true)
+						.optionIf(Keybinds.zoomKeybind != null, () -> KeyMappingOption.createBuilder()
+								.name(Component.literal("Zoom"))
+								.keyMapping(Keybinds.zoomKeybind)
+								.build())
 						.option(Option.<Float>createBuilder()
 								.name(Component.literal("Zoom Multiplier"))
 								.description(Component.literal("Modifies how much your screen will zoom in by when zooming in."))
