@@ -1,5 +1,6 @@
 package net.azureaaron.mod.mixins;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.function.Predicate;
@@ -144,13 +145,22 @@ public abstract class ItemStackMixin implements AaronModItemMeta, DataComponentH
 			//Copy the text to ensure that we don't modify the original
 			List<Component> lines = lore.lines().stream()
 					.map(TextTransformer::recursiveCopy)
-					.collect(Collectors.toList());
+					.collect(Collectors.toCollection(ArrayList::new));
 
-			for (Component line : lines) {
+			for (int i = 0; i < lines.size(); i++) {
+				Component line = lines.get(i);
 				Predicate<String> lineContains = line.getString()::contains;
 
 				if (!maxEnchantmentColours.isEmpty() && maxEnchantmentColours.keySet().stream().anyMatch(lineContains)) {
-					List<Component> textComponents = line.getSiblings();
+					List<Component> textComponents;
+
+					// Lore lines with only a single enchant do no have any siblings so we "pretend" that they do (and its only one)
+					// FIXME this should really be refactored to not rely on the sibling structure
+					if (line.getSiblings().isEmpty()) {
+						textComponents = lines.subList(i, i + 1);
+					} else {
+						textComponents = line.getSiblings();
+					}
 
 					switch (AaronModConfigManager.get().skyblock.enchantments.rainbowMode) {
 						case STATIC -> {
@@ -197,7 +207,17 @@ public abstract class ItemStackMixin implements AaronModItemMeta, DataComponentH
 				}
 
 				if (!goodEnchantmentColours.isEmpty() && goodEnchantmentColours.keySet().stream().anyMatch(lineContains)) {
-					for (Component currentComponent : line.getSiblings()) {
+					List<Component> textComponents;
+
+					// Lore lines with only a single enchant do no have any siblings so we "pretend" that they do (and its only one)
+					// FIXME this should really be refactored to not rely on the sibling structure
+					if (line.getSiblings().isEmpty()) {
+						textComponents = lines.subList(i, i + 1);
+					} else {
+						textComponents = line.getSiblings();
+					}
+
+					for (Component currentComponent : textComponents) {
 						String enchant = trimEnchant(currentComponent.getString());
 
 						if (goodEnchantmentColours.containsKey(enchant) && currentComponent.getStyle().getColor().getValue() == ChatFormatting.BLUE.getColor()) {
@@ -209,8 +229,8 @@ public abstract class ItemStackMixin implements AaronModItemMeta, DataComponentH
 				}
 			}
 
-			//Return a new lore component with the updated text
-			//Note that the styledLines list is actively transformed as its read so we can't create this component ahead of time and modify the contents of that list (it won't work)
+			// Return a new lore component with the updated text
+			// Note that the styledLines list is actively transformed as its read so we can't create this component ahead of time and modify the contents of that list (it won't work)
 			return new ItemLore(lines);
 		}
 
