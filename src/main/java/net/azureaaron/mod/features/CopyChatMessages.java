@@ -46,7 +46,10 @@ public class CopyChatMessages {
 	}
 
 	private static boolean onMouseInput(Screen screen, MouseButtonEvent click, boolean consumed) {
-		int configuredButton = AaronModConfigManager.get().refinements.chat.copyChatMouseButton == RefinementsConfig.MouseButton.MIDDLE ? GLFW.GLFW_MOUSE_BUTTON_MIDDLE : GLFW.GLFW_MOUSE_BUTTON_LEFT;
+        int configuredButton = switch(AaronModConfigManager.get().refinements.chat.copyChatMouseButton) {
+            case MIDDLE -> GLFW.GLFW_MOUSE_BUTTON_MIDDLE;
+            case RIGHT -> GLFW.GLFW_MOUSE_BUTTON_RIGHT;
+        };
 		ChatComponentAccessor chatAccessor = ((ChatComponentAccessor) CLIENT.gui.hud.getChat());
 
 		if (click.button() == configuredButton && AaronModConfigManager.get().refinements.chat.copyChatMessages) {
