@@ -2,15 +2,14 @@ package net.azureaaron.mod.features;
 
 import java.util.List;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import org.apache.commons.lang3.StringUtils;
-import org.lwjgl.glfw.GLFW;
 
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.config.AaronModConfigManager;
-import net.azureaaron.mod.config.configs.RefinementsConfig;
 import net.azureaaron.mod.mixins.accessors.ChatComponentAccessor;
 import net.azureaaron.mod.utils.ItemUtils;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
@@ -46,7 +45,10 @@ public class CopyChatMessages {
 	}
 
 	private static boolean onMouseInput(Screen screen, MouseButtonEvent click, boolean consumed) {
-		int configuredButton = AaronModConfigManager.get().refinements.chat.copyChatMouseButton == RefinementsConfig.MouseButton.MIDDLE ? GLFW.GLFW_MOUSE_BUTTON_MIDDLE : GLFW.GLFW_MOUSE_BUTTON_LEFT;
+		int configuredButton = switch (AaronModConfigManager.get().refinements.chat.copyChatMouseButton) {
+			case MIDDLE -> InputConstants.MOUSE_BUTTON_MIDDLE;
+			case RIGHT -> InputConstants.MOUSE_BUTTON_RIGHT;
+		};
 		ChatComponentAccessor chatAccessor = ((ChatComponentAccessor) CLIENT.gui.hud.getChat());
 
 		if (click.button() == configuredButton && AaronModConfigManager.get().refinements.chat.copyChatMessages) {
