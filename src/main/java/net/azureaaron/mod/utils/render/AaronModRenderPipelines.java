@@ -44,12 +44,12 @@ public class AaronModRenderPipelines {
 			.withShaderDefine("IS_GRAYSCALE")
 			.withDepthStencilState(new DepthStencilState(CompareOp.GREATER_THAN_OR_EQUAL, true, 1.0F, 10.0F))
 			.build());
-	public static final RenderPipeline CHROMA_TEXT_SEE_THROUGH = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.WORLD_TEXT_SNIPPET, CHROMA_TEXT_SNIPPET)
+	public static final RenderPipeline CHROMA_TEXT_SEE_THROUGH = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.TEXT_SNIPPET, CHROMA_TEXT_SNIPPET)
 			.withLocation(Main.id("pipeline/chroma_text_see_through"))
 			.withShaderDefine("IS_SEE_THROUGH")
 			.withDepthStencilState(Optional.empty())
 			.build());
-	public static final RenderPipeline CHROMA_TEXT_GREYSCALE_SEE_THROUGH = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.WORLD_TEXT_SNIPPET, CHROMA_TEXT_SNIPPET)
+	public static final RenderPipeline CHROMA_TEXT_GREYSCALE_SEE_THROUGH = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.TEXT_SNIPPET, CHROMA_TEXT_SNIPPET)
 			.withLocation(Main.id("pipeline/chroma_text_greyscale_see_through"))
 			.withShaderDefine("IS_GRAYSCALE")
 			.withShaderDefine("IS_SEE_THROUGH")
