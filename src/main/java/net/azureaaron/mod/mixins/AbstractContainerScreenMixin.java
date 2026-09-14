@@ -9,13 +9,13 @@ import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.mojang.blaze3d.platform.InputConstants;
 
 @Mixin(AbstractContainerScreen.class)
 public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMenu> extends Screen implements MenuAccess<T> {
@@ -31,7 +31,7 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
 
 	@Inject(method = "keyPressed", at = @At("HEAD"))
 	private void aaronMod$onKeyPress(KeyEvent input, CallbackInfoReturnable<Boolean> cir) {
-		if (this.minecraft.options.keyInventory.matches(input) || (input.key() == GLFW.GLFW_KEY_ESCAPE && shouldCloseOnEsc())) {
+		if (this.minecraft.options.keyInventory.matches(input) || (input.key() == InputConstants.KEY_ESCAPE && shouldCloseOnEsc())) {
 			this.minecraft.mouseHandler.resetMousePos();
 		}
 	}

@@ -6,7 +6,8 @@ import java.util.Objects;
 
 import org.apache.commons.lang3.function.Consumers;
 import org.jspecify.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
+
+import com.mojang.blaze3d.platform.InputConstants;
 
 import net.azureaaron.dandelion.api.ButtonOption;
 import net.azureaaron.mod.config.AaronModConfigManager;
@@ -97,7 +98,7 @@ public final class HudElementConfigScreen extends Screen {
 	public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
 		switch (click.button()) {
 			//Select HUD element via left click
-			case GLFW.GLFW_MOUSE_BUTTON_LEFT -> {
+			case InputConstants.MOUSE_BUTTON_LEFT -> {
 				for (HudElement element : ELEMENTS) {
 					//If the HUD element was clicked and not already selected then select it
 					//this behaviour means that if two HUD elements overlap you can click to the next one - cycling is a must though if many are overlapping
@@ -111,7 +112,7 @@ public final class HudElementConfigScreen extends Screen {
 			}
 
 			//Unselect currently selected element
-			case GLFW.GLFW_MOUSE_BUTTON_RIGHT -> {
+			case InputConstants.MOUSE_BUTTON_RIGHT -> {
 				selected = null;
 
 				return true;
@@ -123,7 +124,7 @@ public final class HudElementConfigScreen extends Screen {
 
 	@Override
 	public boolean mouseDragged(MouseButtonEvent click, double offsetX, double offsetY) {
-		if (selected != null && click.button() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+		if (selected != null && click.button() == InputConstants.MOUSE_BUTTON_LEFT) {
 			selected.x((int) Math.clamp(click.x() - (selected.width() >> 1), 0, this.width - selected.width()));
 			selected.y((int) Math.clamp(click.y() - (selected.height() >> 1), 0, this.height - selected.height()));
 		}
@@ -135,7 +136,7 @@ public final class HudElementConfigScreen extends Screen {
 	public boolean keyPressed(KeyEvent input) {
 		switch (input.key()) {
 			//Scale up
-			case GLFW.GLFW_KEY_EQUAL -> {
+			case InputConstants.KEY_EQUALS -> {
 				//Ensure this was from the + key or = (for easier scaling)
 				if (selected != null) {
 					selected.scale(selected.scale() + 0.1f);
@@ -145,7 +146,7 @@ public final class HudElementConfigScreen extends Screen {
 			}
 
 			//Scale down
-			case GLFW.GLFW_KEY_MINUS -> {
+			case InputConstants.KEY_MINUS -> {
 				//Ensure _ wasn't the key pressed
 				if (selected != null && !input.hasShiftDown()) {
 					selected.scale(selected.scale() - 0.1f);
@@ -155,7 +156,7 @@ public final class HudElementConfigScreen extends Screen {
 			}
 
 			//Reset position & scaling
-			case GLFW.GLFW_KEY_R -> {
+			case InputConstants.KEY_R -> {
 				if (selected != null) {
 					selected.reset();
 
@@ -164,7 +165,7 @@ public final class HudElementConfigScreen extends Screen {
 			}
 
 			//Tab navigation between each element
-			case GLFW.GLFW_KEY_TAB -> {
+			case InputConstants.KEY_TAB -> {
 				if (!ELEMENTS.isEmpty()) {
 					if (selected == null) {
 						selected = ELEMENTS.getFirst();
