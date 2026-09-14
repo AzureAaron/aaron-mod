@@ -50,7 +50,7 @@ public class ItemModelCategory {
 						.binding(defaults.itemModel.swingDuration,
 								() -> config.itemModel.swingDuration,
 								newValue -> config.itemModel.swingDuration = newValue)
-						.controller(IntegerController.createBuilder().range(0, 16).slider(1).build())
+						.controller(IntegerController.createBuilder().range(0, 32).slider(1).build())
 						.build())
 				.option(Option.<Boolean>createBuilder()
 						.name(Component.literal("Ignore Mining Effects"))
