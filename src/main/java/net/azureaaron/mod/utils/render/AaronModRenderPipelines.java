@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 
 public class AaronModRenderPipelines {
 	private static final RenderPipeline.Snippet CHROMA_TEXT_SNIPPET = RenderPipeline.builder()
-			.withVertexShader("core/text")
+			.withVertexShader(Main.id("core/chroma_text"))
 			.withFragmentShader(Main.id("core/chroma_text"))
 			.withShaderDefine("AARON_MOD_CHROMA")
 			.withBindGroupLayout(AaronModBindGroupLayouts.CHROMA)
