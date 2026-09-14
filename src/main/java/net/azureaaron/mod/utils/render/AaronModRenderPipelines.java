@@ -108,15 +108,6 @@ public class AaronModRenderPipelines {
 			.withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR)
 			.withPrimitiveTopology(PrimitiveTopology.QUADS)
 			.build());
-	public static final RenderPipeline OUTLINE_DEPTH_CULL = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.OUTLINE_SNIPPET)
-			.withLocation(Main.id("outline_depth_cull"))
-			.withDepthStencilState(new DepthStencilState(CompareOp.GREATER_THAN_OR_EQUAL, true))
-			.build());
-	public static final RenderPipeline OUTLINE_DEPTH_NO_CULL = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.OUTLINE_SNIPPET)
-			.withLocation(Main.id("outline_depth_no_cull"))
-			.withDepthStencilState(new DepthStencilState(CompareOp.GREATER_THAN_OR_EQUAL, true))
-			.withCull(false)
-			.build());
 
 	@Init
 	public static void init() {}

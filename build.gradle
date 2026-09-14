@@ -75,6 +75,8 @@ dependencies {
 
 	compileOnly "com.terraformersmc:modmenu:${modmenu_version}"
 
+	include implementation("net.azureaaron:render-chest:${project.render_chest_version}")
+
 	include implementation("net.azureaaron:hm-api:${hm_api_version}")
 
 	include implementation("net.azureaaron:networth-calculator:${networth_calculator_version}")

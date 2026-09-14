@@ -15,7 +15,6 @@ import com.mojang.blaze3d.platform.Window;
 import net.azureaaron.mod.features.SeparateInventoryGuiScale;
 import net.azureaaron.mod.features.SeparateInventoryGuiScale.SavedScaleState;
 import net.azureaaron.mod.mixins.accessors.GuiRendererAccessor;
-import net.azureaaron.mod.utils.render.GlowRenderer;
 import net.azureaaron.mod.utils.render.GuiHelper;
 import net.azureaaron.mod.utils.render.Renderer;
 import net.azureaaron.mod.utils.render.ShaderUniforms;
@@ -55,7 +54,6 @@ public class GameRendererMixin {
 		FilledBoxInstancedRenderer.INSTANCE.close();
 		OutlinedBoxInstancedRenderer.INSTANCE.close();
 		Renderer.close();
-		GlowRenderer.INSTANCE.close();
 		GuiHelper.close();
 	}
 
