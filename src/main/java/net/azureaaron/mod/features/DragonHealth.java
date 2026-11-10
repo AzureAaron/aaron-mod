@@ -23,8 +23,8 @@ import net.minecraft.world.level.entity.EntityLookup;
 import net.minecraft.world.phys.Vec3;
 
 public class DragonHealth {
-	//﴾ (?:.+ )?Withered Dragon (?:\u16E4 )?(?<health>[\dkKMB.]+)\/(?<max>[\dkKMB.]+)\u2764 ﴿
-	private static final Pattern DRAGON_HP = Pattern.compile("﴾ (?:.+ )?Withered Dragon (?:\\u16E4 )?(?<health>[\\dkKMB.]+)\\/(?<max>[\\dkKMB.]+)\\u2764 ﴿");
+	//(?:.+ )?Withered Dragon (?:\u16E4 )?(?<health>[\dkKMB.]+)\/(?<max>[\dkKMB.]+)\u2764
+	private static final Pattern DRAGON_HP = Pattern.compile("(?:.+ )?Withered Dragon (?:\\u16E4 )?(?<health>[\\dkKMB.]+)\\/(?<max>[\\dkKMB.]+)\\u2764");
 
 	@Init
 	public static void init() {
