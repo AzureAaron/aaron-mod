@@ -4,7 +4,13 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.azureaaron.mod.annotations.Init;
 import net.azureaaron.mod.events.LevelRenderExtractionCallback;
+import net.azureaaron.mod.utils.render.primitive.FilledBoxFeatureRenderer;
+import net.azureaaron.mod.utils.render.primitive.FilledBoxInstancedFeatureRenderer;
+import net.azureaaron.mod.utils.render.primitive.OutlinedBoxFeatureRenderer;
+import net.azureaaron.mod.utils.render.primitive.OutlinedBoxInstancedFeatureRenderer;
 import net.azureaaron.mod.utils.render.primitive.PrimitiveCollectorImpl;
+import net.azureaaron.mod.utils.render.primitive.TextFeatureRenderer;
+import net.fabricmc.fabric.api.client.rendering.v1.FeatureRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionContext;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
@@ -19,7 +25,12 @@ public class RenderHelper {
 	@Init
 	public static void init() {
 		LevelExtractionEvents.END_EXTRACTION.register(RenderHelper::startExtraction);
-		LevelRenderEvents.END_MAIN.register(RenderHelper::executeDraws);
+		LevelRenderEvents.COLLECT_SUBMITS.register(RenderHelper::dispatchSubmits);
+		FeatureRendererRegistry.register(FilledBoxInstancedFeatureRenderer.TYPE, FilledBoxInstancedFeatureRenderer::new);
+		FeatureRendererRegistry.register(FilledBoxFeatureRenderer.TYPE, FilledBoxFeatureRenderer::new);
+		FeatureRendererRegistry.register(OutlinedBoxInstancedFeatureRenderer.TYPE, OutlinedBoxInstancedFeatureRenderer::new);
+		FeatureRendererRegistry.register(OutlinedBoxFeatureRenderer.TYPE, OutlinedBoxFeatureRenderer::new);
+		FeatureRendererRegistry.register(TextFeatureRenderer.TYPE, TextFeatureRenderer::new);
 	}
 
 	public static void startExtraction(LevelExtractionContext context) {
@@ -32,16 +43,10 @@ public class RenderHelper {
 		profiler.pop();
 	}
 
-	public static void executeDraws(LevelRenderContext context) {
+	public static void dispatchSubmits(LevelRenderContext context) {
 		ProfilerFiller profiler = Profiler.get();
-
-		profiler.push("aaronModSubmitPrimitives");
-		collector.dispatchPrimitivesToRenderers(context.levelState().cameraRenderState);
-		collector = null;
-		profiler.pop();
-
-		profiler.push("aaronModExecuteDraws");
-		Renderer.executeDraws();
+		profiler.push("aaronModDispatchSubmits");
+		collector.dispatchSubmits(context.levelState(), context.submitNodeCollector());
 		profiler.pop();
 	}
 

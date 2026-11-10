@@ -9,8 +9,10 @@ import net.azureaaron.mod.utils.render.FrustumUtils;
 import net.azureaaron.mod.utils.render.state.FilledBoxRenderState;
 import net.azureaaron.mod.utils.render.state.OutlinedBoxRenderState;
 import net.azureaaron.mod.utils.render.state.TextRenderState;
+import net.fabricmc.fabric.api.client.rendering.v1.SubmitRenderPhases;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.state.level.LevelRenderState;
@@ -28,9 +30,12 @@ public final class PrimitiveCollectorImpl implements PrimitiveCollector {
 	@SuppressWarnings("unused")
 	private final LevelRenderState worldState;
 	private final Frustum frustum;
-	private List<FilledBoxRenderState> filledBoxStates = null;
-	private List<OutlinedBoxRenderState> outlinedBoxStates = null;
-	private List<TextRenderState> textStates = null;
+	private final List<FilledBoxRenderState> filledBoxStates = new ArrayList<>();
+	private final List<FilledBoxRenderState> filledBoxThroughWallsStates = new ArrayList<>();
+	private final List<OutlinedBoxRenderState> outlinedBoxStates = new ArrayList<>();
+	private final List<OutlinedBoxRenderState> outlinedBoxThroughWallsStates = new ArrayList<>();
+	private final List<TextRenderState> textStates = new ArrayList<>();
+	private final List<TextRenderState> textThroughWallsStates = new ArrayList<>();
 	private boolean frozen = false;
 
 	public PrimitiveCollectorImpl(LevelRenderState worldState, Frustum frustum) {
@@ -62,12 +67,13 @@ public final class PrimitiveCollectorImpl implements PrimitiveCollector {
 			return;
 		}
 
-		if (this.filledBoxStates == null) {
-			this.filledBoxStates = new ArrayList<>();
-		}
+		FilledBoxRenderState state = new FilledBoxRenderState(minX, minY, minZ, maxX, maxY, maxZ, colourComponents, alpha);
 
-		FilledBoxRenderState state = new FilledBoxRenderState(minX, minY, minZ, maxX, maxY, maxZ, colourComponents, alpha, throughWalls);
-		this.filledBoxStates.add(state);
+		if (throughWalls) {
+			this.filledBoxThroughWallsStates.add(state);
+		} else {
+			this.filledBoxStates.add(state);
+		}
 	}
 
 	@Override
@@ -83,12 +89,13 @@ public final class PrimitiveCollectorImpl implements PrimitiveCollector {
 			return;
 		}
 
-		if (this.outlinedBoxStates == null) {
-			this.outlinedBoxStates = new ArrayList<>();
-		}
+		OutlinedBoxRenderState state = new OutlinedBoxRenderState(minX, minY, minZ, maxX, maxY, maxZ, colourComponents, alpha, lineWidth);
 
-		OutlinedBoxRenderState state = new OutlinedBoxRenderState(minX, minY, minZ, maxX, maxY, maxZ, colourComponents, alpha, lineWidth, throughWalls);
-		this.outlinedBoxStates.add(state);
+		if (throughWalls) {
+			this.outlinedBoxThroughWallsStates.add(state);
+		} else {
+			this.outlinedBoxStates.add(state);
+		}
 	}
 
 	@Override
@@ -109,16 +116,17 @@ public final class PrimitiveCollectorImpl implements PrimitiveCollector {
 	private void submitText(FormattedCharSequence text, Vec3 pos, float scale, float yOffset, boolean throughWalls) {
 		ensureNotFrozen();
 
-		if (this.textStates == null) {
-			this.textStates = new ArrayList<>();
-		}
-
 		Font textRenderer = MINECRAFT.font;
 		float xOffset = -textRenderer.width(text) / 2f;
 		Font.PreparedText glyphs = textRenderer.prepareText(text, xOffset, yOffset, CommonColors.WHITE, false, false, 0);
 
-		TextRenderState state = new TextRenderState(glyphs, pos, scale * 0.025f, yOffset, throughWalls);
-		this.textStates.add(state);
+		TextRenderState state = new TextRenderState(glyphs, pos, scale * 0.025f, yOffset);
+
+		if (throughWalls) {
+			this.textThroughWallsStates.add(state);
+		} else {
+			this.textStates.add(state);
+		}
 	}
 
 	public void endCollection() {
@@ -134,35 +142,51 @@ public final class PrimitiveCollectorImpl implements PrimitiveCollector {
 		}
 	}
 
-	public void dispatchPrimitivesToRenderers(CameraRenderState cameraState) {
+	public void dispatchSubmits(LevelRenderState levelState, SubmitNodeCollector submitNodeCollector) {
 		if (!this.frozen) {
 			throw new IllegalStateException("Cannot dispatch primitives until the collection phase has ended!");
 		}
 
-		if (this.filledBoxStates != null) {
+		CameraRenderState camera = levelState.cameraRenderState;
+
+		if (!this.filledBoxStates.isEmpty()) {
 			if (this.isVulkan) {
-				FilledBoxInstancedRenderer.INSTANCE.submitPrimitives(this.filledBoxStates, cameraState);
+				submitNodeCollector.submitCustom(SubmitRenderPhases.AFTER_TERRAIN, new FilledBoxInstancedFeatureRenderer.Submit(this.filledBoxStates, camera, false));
 			} else {
-				for (FilledBoxRenderState state : this.filledBoxStates) {
-					FilledBoxRenderer.INSTANCE.submitPrimitives(state, cameraState);
-				}
+				submitNodeCollector.submitCustom(SubmitRenderPhases.AFTER_TERRAIN, new FilledBoxFeatureRenderer.Submit(this.filledBoxStates, camera, false));
 			}
 		}
 
-		if (this.outlinedBoxStates != null) {
+		if (!this.filledBoxThroughWallsStates.isEmpty()) {
 			if (this.isVulkan) {
-				OutlinedBoxInstancedRenderer.INSTANCE.submitPrimitives(this.outlinedBoxStates, cameraState);
+				submitNodeCollector.submitCustom(SubmitRenderPhases.ALWAYS_ON_TOP, new FilledBoxInstancedFeatureRenderer.Submit(this.filledBoxThroughWallsStates, camera, true));
 			} else {
-				for (OutlinedBoxRenderState state : this.outlinedBoxStates) {
-					OutlinedBoxRenderer.INSTANCE.submitPrimitives(state, cameraState);
-				}
+				submitNodeCollector.submitCustom(SubmitRenderPhases.ALWAYS_ON_TOP, new FilledBoxFeatureRenderer.Submit(this.filledBoxThroughWallsStates, camera, true));
 			}
 		}
 
-		if (this.textStates != null) {
-			for (TextRenderState state : this.textStates) {
-				TextPrimitiveRenderer.INSTANCE.submitPrimitives(state, cameraState);
+		if (!this.outlinedBoxStates.isEmpty()) {
+			if (this.isVulkan) {
+				submitNodeCollector.submitCustom(SubmitRenderPhases.AFTER_TERRAIN, new OutlinedBoxInstancedFeatureRenderer.Submit(this.outlinedBoxStates, camera, false));
+			} else {
+				submitNodeCollector.submitCustom(SubmitRenderPhases.AFTER_TERRAIN, new OutlinedBoxFeatureRenderer.Submit(this.outlinedBoxStates, camera, false));
 			}
+		}
+
+		if (!this.outlinedBoxThroughWallsStates.isEmpty()) {
+			if (this.isVulkan) {
+				submitNodeCollector.submitCustom(SubmitRenderPhases.ALWAYS_ON_TOP, new OutlinedBoxInstancedFeatureRenderer.Submit(this.outlinedBoxThroughWallsStates, camera, true));
+			} else {
+				submitNodeCollector.submitCustom(SubmitRenderPhases.ALWAYS_ON_TOP, new OutlinedBoxFeatureRenderer.Submit(this.outlinedBoxThroughWallsStates, camera, true));
+			}
+		}
+
+		if (!this.textStates.isEmpty()) {
+			submitNodeCollector.submitCustom(SubmitRenderPhases.TEXTS, new TextFeatureRenderer.Submit(this.textStates, camera, false));
+		}
+
+		if (!this.textThroughWallsStates.isEmpty()) {
+			submitNodeCollector.submitCustom(SubmitRenderPhases.ALWAYS_ON_TOP, new TextFeatureRenderer.Submit(this.textThroughWallsStates, camera, true));
 		}
 	}
 }

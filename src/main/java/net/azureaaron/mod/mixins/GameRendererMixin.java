@@ -16,10 +16,7 @@ import net.azureaaron.mod.features.SeparateInventoryGuiScale;
 import net.azureaaron.mod.features.SeparateInventoryGuiScale.SavedScaleState;
 import net.azureaaron.mod.mixins.accessors.GuiRendererAccessor;
 import net.azureaaron.mod.utils.render.GuiHelper;
-import net.azureaaron.mod.utils.render.Renderer;
 import net.azureaaron.mod.utils.render.ShaderUniforms;
-import net.azureaaron.mod.utils.render.primitive.FilledBoxInstancedRenderer;
-import net.azureaaron.mod.utils.render.primitive.OutlinedBoxInstancedRenderer;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.GuiRenderer;
@@ -51,9 +48,6 @@ public class GameRendererMixin {
 	@Inject(method = "close", at = @At("TAIL"))
 	private void aaronMod$closeResources(CallbackInfo ci) {
 		ShaderUniforms.close();
-		FilledBoxInstancedRenderer.INSTANCE.close();
-		OutlinedBoxInstancedRenderer.INSTANCE.close();
-		Renderer.close();
 		GuiHelper.close();
 	}
 
